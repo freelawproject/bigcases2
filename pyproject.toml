@@ -1,0 +1,60 @@
+[tool.poetry]
+authors = ["Free Law Project <info@free.law>"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+description = "{{PROJECT_DESCRIPTION}}"
+keywords = ["legal", "courts"]
+license = "BSD-2-Clause"
+maintainers = ["Free Law Project <info@free.law>"]
+name = "{{PROJECT_NAME}}"
+readme = "README.md"
+repository = "https://github.com/freelawproject/{{PROJECT_NAME}}"
+version = "0.0.1"
+
+[tool.poetry.urls]
+"Organisation Homepage" = "https://free.law/"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.dev-dependencies]
+black = "^22.10.0"
+flake8 = "^5.0.4"
+isort = "^5.10.1"
+mypy = "^0.990"
+pylint = "^2.13.9"
+wheel = "^0.38.4"
+pre-commit = "^2.20.0"
+flynt = "^0.76"
+
+[tool.black]
+include = '''.*\.pyi?$'''
+line-length = 79
+
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.pylint.messages_control]
+disable = "C0330, C0326"
+
+[tool.pylint.format]
+max-line-length = "79"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
