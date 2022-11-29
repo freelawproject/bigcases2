@@ -18,7 +18,7 @@ We believe to be the ....
 ## What does it need to do?
 
 - Store cases, documents, and posting criteria in a database (SQLite)
-- Process incoming new-document webhooks from CourtListener (`/webhooks/cl`)
+- Process incoming new-document webhooks from CourtListener (`/webhooks/docket`)
   - Look up case
   - Save to DB
   - Decide if it's worth posting
@@ -28,7 +28,7 @@ We believe to be the ....
     - To Mastodon
     - To Twitter
 - Process incoming messages from Mastodon or Twitter
-  - Mastodon: check notifications ([Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/#reading-data-notifications) or [ananas](https://github.com/chr-1x/ananas#decorators))
+  - Mastodon: check notifications ([Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/#reading-data-notifications) - webhook at `/webhooks/mastodon`
   - Twitter: check notifications/stream
   - Is the user authorized to instruct the bot?
   - Parse message

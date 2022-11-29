@@ -25,10 +25,7 @@ BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mas
 - `big_cases restore-db`: Restore database from a saved snapshot
 - `big_cases load-bcb1-json`: Import cases from Big Cases Bot 1's JSON file
 - `big_cases load-bcb1-db`: Import more data from Big Cases Bot 1's MySQL database
-- `big_cases start`: Start server
-- `big_cases restart`: Restart server
-- `big_cases stop`: Stop server
-- `big_cases follow nysd 22-cv-12345`: Follow a case
+- `big_cases search nysd 22-cv-12345`: Search for a case and add it
 - `big_cases post`: Post a message
 - `big_cases list`: List subscribed cases
 
@@ -41,7 +38,7 @@ BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mas
 
 ## Incoming webhooks
 
-- `/webhooks/document`: From CourtListner, delievered when there is a new document in a followed case
+- `/webhooks/docket`: From CourtListner, delievered when there is a new document in a followed case
 - `/webhooks/twitter`: From Twitter, Account Activity API
 - `/webhooks/mastodon`: From Mastodon instance, Web Push API
 
@@ -52,7 +49,6 @@ BCB2 generates images of the first few pages of a document.
 ## Pending Questions
 
 - [ ] How do we receive messages from Mastodon?
-  - [Poll `Mastodon.notifications(types=["mentions"])`](https://mastodonpy.readthedocs.io/en/stable/#reading-data-notifications)
   - [Web Push API](https://docs.joinmastodon.org/methods/push/)
     - Set `data[alerts][mention]` to `true`
     - [In Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/#push-subscriptions)
