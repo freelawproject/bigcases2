@@ -39,6 +39,7 @@ python-dotenv = "^0.21.0"
 "Mastodon.py" = {extras = ["cryptography"], version = "^1.7.0"}
 cryptography = "^38.0.4"
 http-ece = "^1.1.0"
+psycopg2-binary = "^2.9.5"
 
 [tool.poetry.dev-dependencies]
 black = "^22.10.0"

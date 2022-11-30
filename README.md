@@ -17,7 +17,7 @@ We believe to be the ....
 
 ## What does it need to do?
 
-- Store cases, documents, and posting criteria in a database (SQLite)
+- Store cases, documents, and posting criteria in a database (Postgres)
 - Process incoming new-document webhooks from CourtListener (`/webhooks/docket`)
   - Look up case
   - Save to DB

@@ -6,7 +6,7 @@ Big Cases Bot 2 uses [CourtListener's REST API](https://www.courtlistener.com/ap
 
 ## Database
 
-BCB2 uses a [SQLite](https://sqlite.org/index.html) database to keep track of cases and documents it knows about. The original BCB1 used MySQL. We can get away with less overhead and use SQLite, which is free, uses simple files instead of a complex server, and is included with Python.
+BCB2 uses a [Postres](https://www.postgresql.org/) database to keep track of cases and documents it knows about. The original BCB1 used MySQL.
 
 ## Posting
 

@@ -1,11 +1,12 @@
 import json
-import sqlite3
 
 import click
 from flask import current_app, g
+import psycopg2
 
-import courts_db
+from bigcases2.misc import lookup_court
 
+DATABASE_SCHEMA_PATH = "../database/schema.sql"
 BCB1_JSON_PATH = "../data/bigcases.json"
 
 #####################################################################
@@ -15,11 +16,13 @@ BCB1_JSON_PATH = "../data/bigcases.json"
 
 def get_db():
     if "db" not in g:
-        g.db = sqlite3.connect(
-            current_app.config["DATABASE"],
-            detect_types=sqlite3.PARSE_DECLTYPES,
+        g.db = psycopg2.connect(
+            host=current_app.config["DATABASE"]["HOSTNAME"],
+            database=current_app.config["DATABASE"]["DATABASE"],
+            user=current_app.config["DATABASE"]["USERNAME"],
+            password=current_app.config["DATABASE"]["PASSWORD"],
         )
-        g.db.row_factory = sqlite3.Row
+        current_app.logger.debug(f"Database connection: {g.db}")
 
     return g.db
 
@@ -31,16 +34,18 @@ def close_db(e=None):
         db.close()
 
 
-def init_db():
-    current_app.logger.info("db.init_db() called.")
-    click.echo("db.init_db() called")
-    db = get_db()
+def init_app(app):
+    # https://flask.palletsprojects.com/en/2.2.x/tutorial/database/#register-with-the-application
+    app.teardown_appcontext(close_db)
+    app.cli.add_command(init_db_command)
+    app.cli.add_command(load_bcb1_command)
+    app.cli.add_command(empty_db_command)
+    app.cli.add_command(export_db_command)
 
-    with current_app.open_resource("schema.sql") as f:
-        click.echo(f)
-        db.executescript(f.read().decode("utf8"))
 
-    current_app.logger.info("db.init_db() done.")
+#####################################################################
+# COMMANDS
+#####################################################################
 
 
 @click.command("init-db")
@@ -48,46 +53,27 @@ def init_db_command():
     """
     Initialize a new database
     """
-    click.echo("db.init_db_command() called")
-    init_db()
-    click.echo("Initialized the database.")
+    click.echo("Initializing database...")
+
+    cur = get_db().cursor()
+    with current_app.open_resource(DATABASE_SCHEMA_PATH) as f:
+        click.echo(f)
+        cur.execute(f.read().decode("utf8"))
+        cur.connection.commit()
+        cur.close()
+
+    click.echo("Done initializing database.")
 
 
-def init_app(app):
-    # https://flask.palletsprojects.com/en/2.2.x/tutorial/database/#register-with-the-application
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
-    app.cli.add_command(empty_db_command)
-
-
-#####################################################################
-
-
-def lookup_court(court: str):
-    results = courts_db.find_court(court)
-    if len(results) == 1:
-        return results[0]
-    elif len(results) == 0:
-        print(f"No results for court '{court}'")
-        return None
-    else:
-        print(f"Could not resolve court '{court}'")
-        return None
-
-
-def truncate_db():
-    q = "DELETE FROM cases"
-    result = g.db.execute(q)
-    num_rows = result.rowcount
-    return num_rows
-
-
-def load_bcb1_json():
+@click.command("load-bcb1")
+def load_bcb1_command():
     """
-    Load the JSON file from the original Big Cases Bot
+    Import BCB1 cases from JSON file into the database
     https://github.com/bdheath/Big-Cases/blob/master/bigcases.json
     """
-    json_f = open(BCB1_JSON_PATH, "r")
+    click.echo("Loading Big Cases Bot v1 JSON file...")
+
+    json_f = current_app.open_resource(BCB1_JSON_PATH)
     bcb1_data = json.load(json_f)
 
     # Quick validations
@@ -120,32 +106,17 @@ def load_bcb1_json():
         print(bcb1_name)
 
         # Write to DB
-        g.db.execute(
-            "INSERT INTO cases (court, case_number, bcb1_description, in_bcb1) VALUES(?, ?, ?, ?)",
-            (court_key, bcb1_case_number, bcb1_name, 1),
+        cur = get_db().cursor()
+        cur.execute(
+            'INSERT INTO "case" (court, case_number, bcb1_description, in_bcb1) VALUES(%s, %s, %s, %s)',
+            (court_key, bcb1_case_number, bcb1_name, True),
         )
 
     # Commit DB transaction
-    g.db.commit()
+    cur.connection.commit()
+    cur.close()
 
-
-def add_case(
-    court: str,
-    case_number: str,
-    name: str,
-    bcb1_name: str = None,
-    cl_id: int = None,
-    in_bcb1=0,
-):
-
-    # Write to DB
-    g.db.execute(
-        "INSERT INTO cases (court, case_number, bcb1_description, cl_case_title, cl_docket_id, in_bcb1) VALUES(?, ?, ?, ?, ?, ?)",
-        (court, case_number, bcb1_name, name, cl_id, in_bcb1),
-    )
-
-    # Commit DB transaction
-    g.db.commit()
+    click.echo("Done.")
 
 
 @click.command("empty-db")
@@ -154,23 +125,45 @@ def empty_db_command():
     Delete data from DB but leave structure intact
     """
     click.echo("Emptying database...")
-    num_rows = truncate_db()
-    click.echo(f"Done. Deleted {num_rows} rows.")
+
+    q = 'DELETE FROM "case"'
+    cur = get_db().cursor()
+    cur.execute(q)
+    cur.connection.commit()
+    cur.close()
+
+    click.echo(f"Done.")
 
 
 @click.command()
-def load_db():
+def export_db_command():
     """
-    Load database from BCB1 JSON file
+    Export a copy of the database
     """
-    click.echo("Loading Big Cases Bot v1 JSON file...")
-    load_bcb1_json()
-    click.echo("Done.")
+    raise NotImplementedError
 
 
-@click.command()
-def export_db():
-    """
-    Export database to a CSV file
-    """
-    pass
+#####################################################################
+# UTILITY FUNCTIONS
+#####################################################################
+
+
+def add_case(
+    court: str,
+    case_number: str,
+    name: str,
+    bcb1_name: str = None,
+    cl_id: int = None,
+    in_bcb1=False,
+):
+
+    # Write to DB
+    cur = get_db().cursor()
+    cur.execute(
+        'INSERT INTO "case" (court, case_number, bcb1_description, cl_case_title, cl_docket_id, in_bcb1) VALUES(%s, %s, %s, %s, %s, %s)',
+        (court, case_number, bcb1_name, name, cl_id, in_bcb1),
+    )
+
+    # Commit DB transaction
+    cur.connection.commit()
+    cur.close()

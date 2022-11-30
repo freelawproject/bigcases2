@@ -21,8 +21,6 @@ from flask import (
 import click
 from mastodon import Mastodon, MastodonNotFoundError
 
-from bigcases2.db import get_db
-
 bp = Blueprint("mastodon", __name__)
 
 
