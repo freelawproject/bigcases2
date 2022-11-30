@@ -441,6 +441,14 @@ toml = "*"
 virtualenv = ">=20.0.8"
 
 [[package]]
+name = "psycopg2-binary"
+version = "2.9.5"
+description = "psycopg2 - Python-PostgreSQL Database Adapter"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "pycodestyle"
 version = "2.9.1"
 description = "Python style guide checker"
@@ -657,7 +665,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "2b539ef012cad7edbc4561649b59e3e840fb6f51c9794b094cd277d97154d1bc"
+content-hash = "740e0db17bc6eddec50d47c4250bae63d33045385d4ec649923bd423b5881d17"
 
 [metadata.files]
 art = []
@@ -697,6 +705,7 @@ nodeenv = []
 pathspec = []
 platformdirs = []
 pre-commit = []
+psycopg2-binary = []
 pycodestyle = []
 pycparser = []
 pyflakes = []

@@ -29,15 +29,6 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
         app.logger.debug(f"app.config after adding test_config: {app.config}")
 
-    # Update DATABASE path to use instance folder
-    app.config.update(
-        {
-            "DATABASE": os.path.join(
-                app.instance_path, app.config.get("DATABASE")
-            )
-        }
-    )
-
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
@@ -57,7 +48,7 @@ def create_app(test_config=None):
     app.register_blueprint(courtlistener.bp)
 
     # Mastodon
-    
+
     from . import masto
 
     app.register_blueprint(masto.bp)
