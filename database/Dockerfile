@@ -2,4 +2,4 @@
 FROM postgres
 ENV POSTGRES_PASSWORD docker
 ENV POSTGRES_DB bigcases2
-COPY bigcases2-ddl.sql /docker-entrypoint-initdb.d/
+COPY schema.sql /docker-entrypoint-initdb.d/

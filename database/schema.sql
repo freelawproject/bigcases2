@@ -1,3 +1,6 @@
+BEGIN TRANSACTION;
+DROP TABLE IF EXISTS "case";
+
 CREATE TABLE "case" (
     id integer PRIMARY KEY,
     court character varying(100) NOT NULL,
@@ -7,3 +10,5 @@ CREATE TABLE "case" (
     cl_docket_id integer,
     in_bcb1 boolean DEFAULT FALSE
 );
+
+COMMIT;
