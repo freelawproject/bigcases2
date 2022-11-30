@@ -43,7 +43,7 @@ def init():
     # Init DB
     # Load BCB1 cases
     # Follow cases
-    pass
+    raise NotImplementedError
 
 
 @cli.command()
@@ -53,8 +53,8 @@ def lookup(add):
     Lookup a case in the RECAP archive by its CourtListener ID,
     and optionally add it.
     """
-    cl_id = 63385389
-    result = lookup_docket_by_cl_id(cl_id)
+    dummy_cl_id = 63385389
+    result = lookup_docket_by_cl_id(dummy_cl_id)
     # click.echo(pformat(result))
     court_url = result["court"]
     court = court_url_to_key(court_url)
@@ -69,7 +69,7 @@ def lookup(add):
 
     if add:
         click.echo("We'll try to add this case to the DB.")
-        add_case(court, docket_number, case_name, cl_id)
+        add_case(court, docket_number, case_name, dummy_cl_id)
         click.echo("Added!")
 
 
@@ -80,7 +80,7 @@ def lookup(add):
 def search_command(court: str, case_number: str, add):
     """
     Search for a case in CourtListener, and optionally add it to the database.
-    Example usage: flask --app bigcases2 search vawd "22-cv-00038"
+    Example usage: flask --app bigcases2 search cand "22-cv-00123"
     """
     click.echo("cli.search() called")
     cl_result = get_case_from_cl(court, case_number)
