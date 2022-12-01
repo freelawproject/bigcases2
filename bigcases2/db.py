@@ -4,7 +4,7 @@ import click
 from flask import current_app, g
 import psycopg2
 
-from bigcases2.misc import lookup_court
+from bigcases2.misc import lookup_court, trim_weird_ending
 
 DATABASE_SCHEMA_PATH = "../database/schema.sql"
 BCB1_JSON_PATH = "../data/bigcases.json"
@@ -93,11 +93,8 @@ def load_bcb1_command():
         if bcb1_court == "D. Ore.":
             bcb1_court = "D. Or."
 
-        # Handle stray "-1" at end of case numbers, e.g., "1:19-cr-00366-1"
-        # TODO: Use regex instead; there are some -4's and other numbers. Why?? Who knows.
-        if bcb1_case_number.endswith("-1"):
-            print("** ends in -1 **")
-            bcb1_case_number = bcb1_case_number.rstrip("-1")
+        # Handle stray stuff at end of case numbers, e.g., "1:19-cr-00366-1"
+        bcb1_case_number = trim_weird_ending(bcb1_case_number)
 
         court_key = lookup_court(bcb1_court)  # Transform to courts-db format
         print(
@@ -158,12 +155,20 @@ def add_case(
 ):
 
     # Write to DB
-    cur = get_db().cursor()
-    cur.execute(
-        'INSERT INTO "case" (court, case_number, bcb1_description, cl_case_title, cl_docket_id, in_bcb1) VALUES(%s, %s, %s, %s, %s, %s)',
-        (court, case_number, bcb1_name, name, cl_id, in_bcb1),
-    )
+    with get_db().cursor() as cur:
+        cur.execute(
+            'INSERT INTO "case" (court, case_number, bcb1_description, cl_case_title, cl_docket_id, in_bcb1) VALUES(%s, %s, %s, %s, %s, %s)',
+            (court, case_number, bcb1_name, name, cl_id, in_bcb1),
+        )
 
-    # Commit DB transaction
-    cur.connection.commit()
-    cur.close()
+        # Commit DB transaction
+        cur.connection.commit()
+
+
+def update_case(bcb2_id: int, cl_id: int, cl_name: str):
+    update_query = (
+        'UPDATE "case" SET cl_docket_id = %s, cl_case_title = %s WHERE id = %s'
+    )
+    with get_db().cursor() as cur:
+        cur.execute(update_query, (cl_id, cl_name, bcb2_id))
+        cur.connection.commit()

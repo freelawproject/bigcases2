@@ -46,6 +46,7 @@ def create_app(test_config=None):
     from . import courtlistener
 
     app.register_blueprint(courtlistener.bp)
+    courtlistener.init_app(app)
 
     # Mastodon
 

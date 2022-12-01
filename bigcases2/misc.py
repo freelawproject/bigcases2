@@ -1,4 +1,11 @@
+import re
+
 import courts_db
+from flask import current_app
+
+
+WEIRD_ENDING_PATTERN = r"\d+(-\d+)$"
+WEIRD_ENDING_RE = re.compile(WEIRD_ENDING_PATTERN)
 
 
 def lookup_court(court: str):
@@ -16,3 +23,20 @@ def lookup_court(court: str):
     else:
         print(f"Could not resolve court '{court}'")
         return None
+
+
+def trim_weird_ending(s: str) -> str:
+    """
+    Trims weird numeric endings from BCB1 case numbers, like
+    "-12" from "1:18-cr-00215-12"
+    """
+    match = WEIRD_ENDING_RE.search(s)
+    if match:
+        current_app.logger.debug(f'Found a weird ending in "{s}"')
+        ending = match.groups()[0]
+        length = len(ending)
+        ret = s[:-length]
+        current_app.logger.debug(f'Trimmed to "{ret}"')
+        return ret
+    else:
+        return s
