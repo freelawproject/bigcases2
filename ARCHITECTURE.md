@@ -2,7 +2,7 @@
 
 ## CourtListener API
 
-Big Cases Bot 2 uses [CourtListener's REST API](https://www.courtlistener.com/api/rest-info/) to receive news about new filings. It does this via [webhooks](https://www.courtlistener.com/profile/webhooks/), which are a new feature of the API. When a new document in a followed case arrives, CourtListener will POST a webhook to BCB2 with information about the document. 
+Big Cases Bot 2 uses [CourtListener's REST API](https://www.courtlistener.com/api/rest-info/) to receive news about new filings. It does this via [webhooks](https://www.courtlistener.com/profile/webhooks/), which are a new feature of the API. When CourtListener learns about a new docket entry in a followed case, CourtListener will POST a webhook to BCB2 with information about the docket entry and documents associated with it.
 
 ## Database
 
@@ -38,7 +38,7 @@ BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mas
 
 ## Incoming webhooks
 
-- `/webhooks/docket`: From CourtListner, delievered when there is a new document in a followed case
+- `/webhooks/docket-[secret]`: From CourtListner, delievered when there is a new document in a followed case. The full URL is secret.
 - `/webhooks/twitter`: From Twitter, Account Activity API
 - `/webhooks/mastodon`: From Mastodon instance, Web Push API
 
