@@ -56,10 +56,16 @@ def cl_webhook():
 
     # Check headers
     current_app.logger.debug(f"Request headers: {pformat(request.headers)}")
+
     # 'Content-Type: application/json'
     assert "Content-Type" in request.headers
     assert request.headers.get("Content-Type") == "application/json"
-    # TODO: 'Idempotency-Key: 59f1be59-e428-427a-a346-9cacded5c1d4'
+
+    # Idempotency key
+    # 'Idempotency-Key: 59f1be59-e428-427a-a346-9cacded5c1d4'
+    idempotency_key = request.headers.get("Idempotency-Key")
+    assert idempotency_key is not None
+    # TODO: Actually check that we haven't recevied this key before
 
     # Check request body
     assert "webhook" in data
@@ -72,14 +78,22 @@ def cl_webhook():
         data["webhook"]["event_type"] == 1
     )  # Just docket alerts for this endpoint
     assert "results" in data
+
     results = data["results"]
+
     for result in results:
+        # Check the result
         for requirement in REQUIRED_FIELDS:
             assert requirement in result
+        
+        # TODO: Store docket entry in DB
 
-    current_app.logger.debug("Passed checks")
-
-    # TODO: Actually do something with the request
+        # Handle any documents attached
+        if "recap_documents" in result and len(result["recap_documents"] > 0):
+            for doc in result["recap_documents"]:
+                pass
+        
+        # TODO: Actually do something with this docket entry
 
     # TODO: Send 201 Created HTTP status
     # TODO: Return real data, like an our ID of a created record
