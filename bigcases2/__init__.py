@@ -3,11 +3,9 @@ bigcases2 app setup
 """
 
 import os
-from pprint import pprint
 
 import toml
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 
 
 def create_app(test_config=None):
@@ -41,7 +39,7 @@ def create_app(test_config=None):
     # Database
 
     # https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/quickstart/#configure-the-extension
-    app.logger.debug(app.config.get("SQLALCHEMY_DATABASE_URI"))
+    # app.logger.debug(app.config.get("SQLALCHEMY_DATABASE_URI"))
 
     from bigcases2.models import db
 

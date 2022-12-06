@@ -133,6 +133,14 @@ def init_db_command():
     # click.echo("Just kidding; we didn't do anything!")
 
 
+@click.command("bootstrap-dev")
+def bootstrap_dev_data_command():
+    """
+    Add some minimal information for development
+    """
+    pass
+
+
 def init_app(app):
     app.cli.add_command(info)
     app.cli.add_command(init)
@@ -140,3 +148,4 @@ def init_app(app):
     app.cli.add_command(search_command)
     app.cli.add_command(add)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(bootstrap_dev_data_command)

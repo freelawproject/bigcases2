@@ -61,6 +61,27 @@ BCB2 generates images of the first few pages of a document.
 - [ ] Are Celery tasks needed?
   - Image generation: Probably
 - [ ] How do we pick up or get a callback when the thumbnails are done?
+- [ ] What data do we need to track in the database?
+  - Cases
+    - Belong to one or more Beats
+  - Docket entries
+    - Rationale: to see whether they're new to BCB or not
+    - Counter: If the webhook fires, that means it's new!
+  - Documents
+    - Rationale: Keep some metadata so we can post to multiple channels easily, keep track of thumbnails, etc.
+  - Document page thumbnails
+    - Rationale: Reuse for posting to multiple channels
+  - Beats
+    - May publish its own subject area [Little Cases Bot](https://github.com/freelawproject/bigcases2/issues/8)
+  - Users
+    - May be assigned to curate one or more Beats
+    - Get command privileges
+    - Optionally crawl with their own PACER credentials
+    - May associate a [DocumentCloud account](https://github.com/freelawproject/bigcases2/issues/15) to collect documents from their Beats
+    - Accounts for allow-listing
+  - Channels
+    - Service (Twitter, Mastodon)
+    - Account (e.g., @big_cases, @bigcases@law.builders)
 
 ## Key Dependencies
 
@@ -68,6 +89,7 @@ BCB2 generates images of the first few pages of a document.
 
 - [Flask](https://flask.palletsprojects.com/en/2.2.x/)
 - [Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/)
+- [SQLAlchemy (v1.4)](https://docs.sqlalchemy.org/en/14/index.html) & [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/)
 
 ### External Packages
 
