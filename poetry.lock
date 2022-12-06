@@ -1,4 +1,12 @@
 [[package]]
+name = "ansicolors"
+version = "1.1.8"
+description = "ANSI colors for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "art"
 version = "5.8"
 description = "ASCII Art Library For Python"
@@ -713,9 +721,10 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "68c1cb362ea62a52fe6ee97660222a2da5d60f26a5dbd99cef9173214ff683b3"
+content-hash = "474731aab9774af36b76c7cf6d3017c88010764c11ccb3a28d8dda1be9b92bcd"
 
 [metadata.files]
+ansicolors = []
 art = []
 astor = []
 astroid = []

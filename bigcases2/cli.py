@@ -1,7 +1,9 @@
 # from pprint import pformat
+from os import uname
 
 import click
 import art  # https://www.4r7.ir/
+from colors import color
 from flask import current_app
 from werkzeug.security import generate_password_hash
 
@@ -26,7 +28,7 @@ def cli():
 
 
 def headline():
-    click.echo(art.text2art(HEADLINE_TEXT, font=HEADLINE_FONT))
+    click.echo(color(art.text2art(HEADLINE_TEXT, font=HEADLINE_FONT), fg="green"))
 
 
 @cli.command()
@@ -36,6 +38,9 @@ def info():
     """
     headline()
     click.echo(f"bigcases2 version {VERSION}")
+    click.echo(f"Environment: {current_app.config.get('ENV')}")
+    click.echo(f"Database: {db.engine}")
+    click.echo(f"Operating system: {uname().version}")
 
 
 @cli.command()
