@@ -59,6 +59,12 @@ def create_app(test_config=None):
     app.register_blueprint(masto.bp)
     masto.init_app(app)
 
+    # Registration stuff
+
+    from . import registration
+    app.register_blueprint(registration.bp)
+    registration.init_app(app)
+
     # CLI
 
     from . import cli

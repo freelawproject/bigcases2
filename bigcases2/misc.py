@@ -2,7 +2,7 @@ import re
 
 import courts_db
 from flask import current_app
-
+from os import urandom
 
 WEIRD_ENDING_PATTERN = r"\d+(-\d+)$"
 WEIRD_ENDING_RE = re.compile(WEIRD_ENDING_PATTERN)
@@ -40,3 +40,7 @@ def trim_weird_ending(s: str) -> str:
         return ret
     else:
         return s
+
+
+def generate_key(length=32) -> str:
+    return urandom(length).hex()
