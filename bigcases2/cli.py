@@ -2,6 +2,8 @@ from pprint import pformat
 
 import click
 import art  # https://www.4r7.ir/
+from flask import current_app
+from flask_sqlalchemy import SQLAlchemy
 
 from bigcases2.courtlistener import (
     lookup_docket_by_cl_id,
@@ -115,9 +117,26 @@ def add():
     pass
 
 
+@click.command("init-db")
+def init_db_command():
+    """
+    Initialize a new database
+    """
+    click.echo("Initializing database...")
+
+    from bigcases2.models import db
+
+    with current_app.app_context():
+        db.create_all()
+
+    click.echo("Done initializing database.")
+    # click.echo("Just kidding; we didn't do anything!")
+
+
 def init_app(app):
     app.cli.add_command(info)
     app.cli.add_command(init)
     app.cli.add_command(lookup)
     app.cli.add_command(search_command)
     app.cli.add_command(add)
+    app.cli.add_command(init_db_command)

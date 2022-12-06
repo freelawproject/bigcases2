@@ -9,18 +9,9 @@ import click
 
 from flask import (
     Blueprint,
-    # flash,
-    # g,
-    # redirect,
-    # render_template,
     request,
-    # url_for,
     current_app,
 )
-
-# from werkzeug.exceptions import abort
-
-# from flask import Flask, request, Response
 
 from bigcases2.db import get_db, update_case
 from bigcases2.misc import trim_weird_ending
@@ -85,14 +76,14 @@ def cl_webhook():
         # Check the result
         for requirement in REQUIRED_FIELDS:
             assert requirement in result
-        
+
         # TODO: Store docket entry in DB
 
         # Handle any documents attached
         if "recap_documents" in result and len(result["recap_documents"] > 0):
             for doc in result["recap_documents"]:
                 pass
-        
+
         # TODO: Actually do something with this docket entry
 
     # TODO: Send 201 Created HTTP status

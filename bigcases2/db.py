@@ -2,12 +2,15 @@ import json
 
 import click
 from flask import current_app, g
+from flask_sqlalchemy import SQLAlchemy
 import psycopg2
 
 from bigcases2.misc import lookup_court, trim_weird_ending
 
 DATABASE_SCHEMA_PATH = "../database/schema.sql"
 BCB1_JSON_PATH = "../data/bigcases.json"
+
+db = SQLAlchemy()
 
 #####################################################################
 # See https://flask.palletsprojects.com/en/2.2.x/tutorial/database/ #
@@ -36,33 +39,17 @@ def close_db(e=None):
 
 def init_app(app):
     # https://flask.palletsprojects.com/en/2.2.x/tutorial/database/#register-with-the-application
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
-    app.cli.add_command(load_bcb1_command)
-    app.cli.add_command(empty_db_command)
-    app.cli.add_command(export_db_command)
+    # app.cli.add_command(init_db_command)
+    # app.teardown_appcontext(close_db)
+    # app.cli.add_command(load_bcb1_command)
+    # app.cli.add_command(empty_db_command)
+    # app.cli.add_command(export_db_command)
+    pass
 
 
 #####################################################################
 # COMMANDS
 #####################################################################
-
-
-@click.command("init-db")
-def init_db_command():
-    """
-    Initialize a new database
-    """
-    click.echo("Initializing database...")
-
-    cur = get_db().cursor()
-    with current_app.open_resource(DATABASE_SCHEMA_PATH) as f:
-        click.echo(f)
-        cur.execute(f.read().decode("utf8"))
-        cur.connection.commit()
-        cur.close()
-
-    click.echo("Done initializing database.")
 
 
 @click.command("load-bcb1")

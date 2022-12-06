@@ -7,6 +7,7 @@ from pprint import pprint
 
 import toml
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 
 def create_app(test_config=None):
@@ -22,12 +23,14 @@ def create_app(test_config=None):
         TOML_FN = os.path.join(app.instance_path, "config.toml")
         app.logger.debug(f"Loading configuration TOML file: {TOML_FN}")
         app.config.from_file(TOML_FN, load=toml.load)
-        # app.logger.debug(f"app.config after loading TOML: {app.config}")
+        app.logger.debug(f"app.config after loading TOML: {app.config}")
+        app.logger.debug("-" * 50)
     else:
         # load the test config if passed in
         app.logger.debug(f"Loading test_config: {test_config}")
         app.config.from_mapping(test_config)
         app.logger.debug(f"app.config after adding test_config: {app.config}")
+        app.logger.debug("-" * 50)
 
     # ensure the instance folder exists
     try:
@@ -37,7 +40,10 @@ def create_app(test_config=None):
 
     # Database
 
-    from . import db
+    # https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/quickstart/#configure-the-extension
+    app.logger.debug(app.config.get("SQLALCHEMY_DATABASE_URI"))
+
+    from bigcases2.models import db
 
     db.init_app(app)
 
