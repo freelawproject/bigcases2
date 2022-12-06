@@ -48,7 +48,7 @@ BCB2 generates images of the first few pages of a document.
 
 ## Pending Questions
 
-- [ ] How do we receive messages from Mastodon?
+- [x] How do we receive messages from Mastodon?
   - [Web Push API](https://docs.joinmastodon.org/methods/push/)
     - Set `data[alerts][mention]` to `true`
     - [In Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/#push-subscriptions)
@@ -56,7 +56,7 @@ BCB2 generates images of the first few pages of a document.
   - [Webhooks via Account Activity API](https://developer.twitter.com/en/docs/twitter-api/enterprise/account-activity-api/guides/getting-started-with-webhooks) (application pending)
 - [ ] Is an admin page needed? (Will require further locking down the server (nginx).)
 - [ ] How does BCB1 generate images?
-- [ ] How does CL generate thumbnail images? (e.g., [this one](https://storage.courtlistener.com/recap-thumbnails/gov.uscourts.cand.297616/2176640.thumb.1068.jpeg))
+- [x] How does CL generate thumbnail images? (e.g., [this one](https://storage.courtlistener.com/recap-thumbnails/gov.uscourts.cand.297616/2176640.thumb.1068.jpeg))
   - [Doctor](https://github.com/freelawproject/doctor) microservice, [`/convert/pdf/thumbnails/`](https://github.com/freelawproject/doctor#endpoint-convertpdfthumbnails) endpoint
 - [ ] Are Celery tasks needed?
   - Image generation: Probably
