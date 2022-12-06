@@ -12,8 +12,8 @@ db = SQLAlchemy()
 
 class Case(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    court = db.Column(db.String(100))
-    case_number = db.Column(db.String(100))
+    court = db.Column(db.String(100), nullable=False)
+    case_number = db.Column(db.String(100), nullable=False)
     bcb1_description = db.Column(db.String(200))
     cl_case_title = db.Column(db.Text)
     cl_docket_id = db.Column(db.Integer)
@@ -57,8 +57,8 @@ class DocumentThumbnail(db.Model):
     document_id = db.Column(
         db.Integer, sa.ForeignKey("document.id", ondelete="CASCADE")
     )
-    page_number = db.Column(db.Integer)
-    storage_url = db.Column(db.String(200))  # URL to file on CL storage
+    page_number = db.Column(db.Integer, nullable=False)
+    storage_url = db.Column(db.String(200), nullable=False)  # URL to file on CL storage
     document = db.relationship(
         "Document", back_populates="document_thumbnails"
     )
@@ -66,6 +66,7 @@ class DocumentThumbnail(db.Model):
 
 class Beat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    # TODO: Friendly name
     # <-> Cases
     # <-> Curators (Users)
 
@@ -94,13 +95,13 @@ class User(db.Model):
     allow_follow = db.Column(db.Boolean, default=False)
 
     # Login stuff
-    email = db.Column(db.String(250))
-    password = db.Column(db.Text)
+    email = db.Column(db.String(250), nullable=False)
+    password = db.Column(db.Text, nullable=False)
 
 
 class RegistrationToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    token = db.Column(db.String(200))
+    token = db.Column(db.String(200), nullable=False)
     user_id = db.Column(
         db.Integer, sa.ForeignKey("user.id", ondelete="CASCADE")
     )  # FK to User: set after use
@@ -123,7 +124,7 @@ class Channel(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    service = db.Column(db.String(100))  # e.g., "twitter", "mastodon"
+    service = db.Column(db.String(100), nullable=False)  # e.g., "twitter", "mastodon"
     account = db.Column(db.String(100))  # e.g., "big_cases"
     account_id = db.Column(
         db.String(100), default=None
