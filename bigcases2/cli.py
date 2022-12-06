@@ -1,9 +1,9 @@
-from pprint import pformat
+# from pprint import pformat
 
 import click
 import art  # https://www.4r7.ir/
 from flask import current_app
-from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash
 
 from bigcases2.courtlistener import (
     lookup_docket_by_cl_id,
@@ -11,6 +11,7 @@ from bigcases2.courtlistener import (
     get_case_from_cl,
 )
 from bigcases2.db import add_case
+from bigcases2.models import User, db
 
 
 VERSION = "0.0.1"
@@ -43,8 +44,14 @@ def init():
     Initialize!
     """
     # Init DB
-    # Load BCB1 cases
-    # Follow cases
+    init_db_command()
+
+    # Add some dev users if we're in dev
+    if current_app.config.get("ENV") == "dev":
+        bootstrap_dev_data_command()
+
+    # TODO: Load BCB1 cases
+    # TODO: Follow cases
     raise NotImplementedError
 
 
@@ -138,7 +145,21 @@ def bootstrap_dev_data_command():
     """
     Add some minimal information for development
     """
-    pass
+    new_users = []
+    for user_info in current_app.config.get("BOOTSTRAP").get("USERS"):
+        u = User(
+            email=user_info["EMAIL"],
+            password=generate_password_hash(user_info["PASSWORD"]),
+        )
+        u.enabled = True
+        u.allow_login = True
+        u.allow_spend = False
+        u.allow_follow = True
+        current_app.logger.debug(f"Creating new user for {u.email}")
+        db.session.add(u)
+        new_users.append(u)
+    db.session.commit()
+    current_app.logger.debug(f"New users: {new_users}")
 
 
 def init_app(app):
