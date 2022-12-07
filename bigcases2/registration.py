@@ -36,9 +36,9 @@ def create_registration_token(email: str = None, issuer: User = None):
     db.session.add(new_token)
     db.session.commit()
 
-    current_app.logger.info(
-        f"Created registration token #{new_token.id}: {url_safe_token}"
-    )
+    msg = f"Created registration token #{new_token.id}: {url_safe_token}"
+    current_app.logger.info(msg)
+    click.echo(msg)
 
     # TODO: Send an email to the target; cc issuer if present
     if email is not None:

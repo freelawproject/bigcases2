@@ -22,17 +22,14 @@ HEADLINE_FONT = "slant"
 CL_BASE = "https://www.courtlistener.com"
 
 
-@click.group()
-def cli():
-    pass
-
-
 def headline():
-    click.echo(color(art.text2art(HEADLINE_TEXT, font=HEADLINE_FONT), fg="green"))
+    click.echo(
+        color(art.text2art(HEADLINE_TEXT, font=HEADLINE_FONT), fg="green")
+    )
 
 
-@cli.command()
-def info():
+@click.command("info")
+def info_command():
     """
     Display information about Big Cases Bot 2
     """
@@ -43,8 +40,8 @@ def info():
     click.echo(f"Operating system: {uname().version}")
 
 
-@cli.command()
-def init():
+@click.command("init")
+def init_command():
     """
     Initialize!
     """
@@ -57,12 +54,49 @@ def init():
 
     # TODO: Load BCB1 cases
     # TODO: Follow cases
-    raise NotImplementedError
+    # raise NotImplementedError
 
 
-@cli.command()
+@click.command("init-db")
+def init_db_command():
+    """
+    Initialize a new database
+    """
+    click.echo("Initializing database...")
+
+    from bigcases2.models import db
+
+    with current_app.app_context():
+        db.create_all()
+
+    click.echo("Done initializing database.")
+
+
+@click.command("bootstrap-dev")
+def bootstrap_dev_data_command():
+    """
+    Add some minimal information for development
+    """
+    new_users = []
+    for user_info in current_app.config.get("BOOTSTRAP").get("USERS"):
+        u = User(
+            email=user_info["EMAIL"],
+            password=generate_password_hash(user_info["PASSWORD"]),
+        )
+        u.enabled = True
+        u.allow_login = True
+        u.allow_spend = False
+        u.allow_follow = True
+        current_app.logger.debug(f"Creating new user for {u.email}")
+        db.session.add(u)
+        new_users.append(u)
+    db.session.commit()
+    current_app.logger.debug(f"New users: {new_users}")
+
+
+@click.command()
 @click.option("--add/--no-add", default=False)
-def lookup(add):
+def lookup_command(add):
     """
     Lookup a case in the RECAP archive by its CourtListener ID,
     and optionally add it.
@@ -121,57 +155,19 @@ def search_command(court: str, case_number: str, add):
         click.echo("No results.")
 
 
-@cli.command()
-def add():
+@click.command()
+def add_command():
     """
     Interactively add a new case
     """
     pass
 
 
-@click.command("init-db")
-def init_db_command():
-    """
-    Initialize a new database
-    """
-    click.echo("Initializing database...")
-
-    from bigcases2.models import db
-
-    with current_app.app_context():
-        db.create_all()
-
-    click.echo("Done initializing database.")
-    # click.echo("Just kidding; we didn't do anything!")
-
-
-@click.command("bootstrap-dev")
-def bootstrap_dev_data_command():
-    """
-    Add some minimal information for development
-    """
-    new_users = []
-    for user_info in current_app.config.get("BOOTSTRAP").get("USERS"):
-        u = User(
-            email=user_info["EMAIL"],
-            password=generate_password_hash(user_info["PASSWORD"]),
-        )
-        u.enabled = True
-        u.allow_login = True
-        u.allow_spend = False
-        u.allow_follow = True
-        current_app.logger.debug(f"Creating new user for {u.email}")
-        db.session.add(u)
-        new_users.append(u)
-    db.session.commit()
-    current_app.logger.debug(f"New users: {new_users}")
-
-
 def init_app(app):
-    app.cli.add_command(info)
-    app.cli.add_command(init)
-    app.cli.add_command(lookup)
-    app.cli.add_command(search_command)
-    app.cli.add_command(add)
+    app.cli.add_command(info_command)
+    app.cli.add_command(init_command)
     app.cli.add_command(init_db_command)
     app.cli.add_command(bootstrap_dev_data_command)
+    app.cli.add_command(lookup_command)
+    app.cli.add_command(search_command)
+    app.cli.add_command(add_command)
