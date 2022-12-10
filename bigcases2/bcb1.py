@@ -84,7 +84,9 @@ def load_bcb1_command():
 
 @click.command("match-bcb1-cases")
 def match_bcb1_cases_command():
-    """ """
+    """
+    Match cases in the BCB1 database with CourtListener
+    """
 
     exceptions = []
     click.echo(f"Matching up to {MATCH_LIMIT} BCB1 cases to CourtListener...")
