@@ -15,7 +15,7 @@ from bigcases2.courtlistener import get_case_from_cl
 
 DATABASE_SCHEMA_PATH = "../database/schema.sql"
 BCB1_JSON_PATH = "../data/bigcases.json"
-MATCH_LIMIT = 2  # 3000
+MATCH_LIMIT = 10  # 3000
 
 
 #####################################################################
@@ -45,7 +45,7 @@ def load_bcb1_command():
     record_num = 0
     for bcb1_record in bcb1_data["cases"]:
         record_num += 1
-        if record_num >= MATCH_LIMIT:
+        if record_num >= MATCH_LIMIT + 1:
             break
 
         for key in ("court", "name", "case_number"):
@@ -91,7 +91,7 @@ def match_bcb1_cases_command():
     exceptions = []
     click.echo(f"Matching up to {MATCH_LIMIT} BCB1 cases to CourtListener...")
 
-    stmt = db.select(Case).where(Case.in_bcb1 == True)
+    stmt = db.select(Case).where(Case.in_bcb1 == True).where(Case.cl_docket_id == None)
     click.echo(stmt)
 
     row_num = 0
@@ -99,11 +99,12 @@ def match_bcb1_cases_command():
     db_result = db.session.execute(stmt)
     for case in db_result.scalars():
         row_num += 1
-        if row_num >= MATCH_LIMIT:
+        if row_num >= MATCH_LIMIT + 1:
             break
         click.echo(f"#{row_num}: {case}")
 
         case.case_number = trim_weird_ending(case.case_number)
+        cl_case = None
         try:
             cl_case = get_case_from_cl(case.court, case.case_number)
         except Exception as e:
@@ -133,7 +134,7 @@ def match_bcb1_cases_command():
             case.cl_docket_id = cl_docket_id
             case.cl_case_title = cl_case_name
 
-    db.session.commit()
+            db.session.commit()
 
     click.echo("Done.")
 
