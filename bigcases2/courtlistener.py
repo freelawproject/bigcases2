@@ -5,7 +5,6 @@ CourtListener webhook
 from pprint import pformat
 
 import requests
-import click
 
 from flask import (
     Blueprint,
@@ -13,13 +12,8 @@ from flask import (
     current_app,
 )
 
-from bigcases2.db import get_db, update_case
-from bigcases2.misc import trim_weird_ending
-
 
 API_ROOT = "https://www.courtlistener.com/api/rest/v3"
-
-MATCH_LIMIT = 3000
 
 REQUIRED_FIELDS = (
     # TODO: Validate against a schema instead.
@@ -142,57 +136,5 @@ def get_case_from_cl(court: str, case_number: str):
     return ret
 
 
-@click.command("match-bcb1-cases")
-def match_bcb1_cases_command():
-    exceptions = []
-    click.echo(f"Matching up to {MATCH_LIMIT} BCB1 cases to CourtListener...")
-    query = f'SELECT id, court, case_number from "case" WHERE in_bcb1 = TRUE LIMIT {MATCH_LIMIT};'
-    click.echo(f"Query: {query}")
-    with get_db().cursor() as cur:
-        click.echo(cur)
-        cur.execute(query)
-        for row in cur.fetchall():
-            click.echo(row)
-            case_ = None
-            bcb2_id = row[0]
-            court = row[1]
-            case_number = row[2]
-            case_number = trim_weird_ending(case_number)
-            try:
-                case_ = get_case_from_cl(court, case_number)
-            except Exception as e:
-                e_record = [
-                    e,
-                    court,
-                    case_number,
-                ]
-                exceptions.append(e_record)
-            if case_:
-                current_app.logger.debug("Got a case from CL...")
-                current_app.logger.debug(pformat(case_))
-                cl_docket_id = case_["id"]
-                nos_code = case_["nature_of_suit"]
-                cl_court_uri = case_[
-                    "court"
-                ]  # "https://www.courtlistener.com/api/rest/v3/courts/mad/"
-                cl_case_name = case_["case_name"]
-                assert cl_court_uri.endswith(f"/courts/{court}/")
-                # if case_:
-                click.echo(
-                    f"Got a case for {court} {case_number}: {cl_docket_id}, NOS={nos_code}"
-                )
-                click.echo(pformat(case_))
-                update_case(bcb2_id, cl_docket_id, cl_case_name)
-    click.echo("Done.")
-
-    if len(exceptions) > 0:
-        current_app.logger.error("*" * 50)
-        current_app.logger.error(f"ENCOUNTERED {len(exceptions)} EXCEPTIONS:")
-        for e_record in exceptions:
-            current_app.logger.error("*" * 50)
-            current_app.logger.error(pformat(e_record))
-        current_app.logger.error("*" * 50)
-
-
 def init_app(app):
-    app.cli.add_command(match_bcb1_cases_command)
+    pass  # Nothing to do here yet

@@ -58,7 +58,9 @@ class DocumentThumbnail(db.Model):
         db.Integer, sa.ForeignKey("document.id", ondelete="CASCADE")
     )
     page_number = db.Column(db.Integer, nullable=False)
-    storage_url = db.Column(db.String(200), nullable=False)  # URL to file on CL storage
+    storage_url = db.Column(
+        db.String(200), nullable=False
+    )  # URL to file on CL storage
     document = db.relationship(
         "Document", back_populates="document_thumbnails"
     )
@@ -124,7 +126,9 @@ class Channel(db.Model):
     """
 
     id = db.Column(db.Integer, primary_key=True)
-    service = db.Column(db.String(100), nullable=False)  # e.g., "twitter", "mastodon"
+    service = db.Column(
+        db.String(100), nullable=False
+    )  # e.g., "twitter", "mastodon"
     account = db.Column(db.String(100))  # e.g., "big_cases"
     account_id = db.Column(
         db.String(100), default=None

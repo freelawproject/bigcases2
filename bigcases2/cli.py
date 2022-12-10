@@ -12,8 +12,8 @@ from bigcases2.courtlistener import (
     court_url_to_key,
     get_case_from_cl,
 )
-from bigcases2.db import add_case
-from bigcases2.models import User, db
+from bigcases2.misc import add_case
+from bigcases2.models import db, User
 
 
 VERSION = "0.0.1"
@@ -64,12 +64,34 @@ def init_db_command():
     """
     click.echo("Initializing database...")
 
-    from bigcases2.models import db
-
-    with current_app.app_context():
-        db.create_all()
+    db.create_all()
 
     click.echo("Done initializing database.")
+
+
+@click.command("empty-db")
+def empty_db_command():
+    """
+    Delete data from DB but leave structure intact
+    """
+    # TODO: Move this command to models.py
+
+    click.echo("Emptying database...")
+    q = 'DELETE FROM "case" CASCADE'
+    # TODO: Find a more SA way to do this
+
+    db.session.execute(q)
+    db.session.commit()
+
+    click.echo(f"Done.")
+
+
+@click.command("export-db")
+def export_db_command():
+    """
+    Export a copy of the database
+    """
+    raise NotImplementedError
 
 
 @click.command("bootstrap-dev")
@@ -94,7 +116,7 @@ def bootstrap_dev_data_command():
     current_app.logger.debug(f"New users: {new_users}")
 
 
-@click.command()
+@click.command("lookup")
 @click.option("--add/--no-add", default=False)
 def lookup_command(add):
     """
@@ -155,7 +177,7 @@ def search_command(court: str, case_number: str, add):
         click.echo("No results.")
 
 
-@click.command()
+@click.command("add-case")
 def add_command():
     """
     Interactively add a new case
@@ -167,6 +189,8 @@ def init_app(app):
     app.cli.add_command(info_command)
     app.cli.add_command(init_command)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(empty_db_command)
+    app.cli.add_command(export_db_command)
     app.cli.add_command(bootstrap_dev_data_command)
     app.cli.add_command(lookup_command)
     app.cli.add_command(search_command)

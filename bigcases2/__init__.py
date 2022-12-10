@@ -36,15 +36,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    # Database
-
-    # https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/quickstart/#configure-the-extension
-    # app.logger.debug(app.config.get("SQLALCHEMY_DATABASE_URI"))
-
-    from bigcases2.models import db
-
-    db.init_app(app)
-
     # CourtListener webhook
 
     from . import courtlistener
@@ -62,8 +53,21 @@ def create_app(test_config=None):
     # Registration stuff
 
     from . import registration
+
     app.register_blueprint(registration.bp)
     registration.init_app(app)
+
+    # BCB1 data loading
+
+    from . import bcb1
+
+    bcb1.init_app(app)
+
+    # Database
+
+    from .models import db
+
+    db.init_app(app)
 
     # CLI
 
