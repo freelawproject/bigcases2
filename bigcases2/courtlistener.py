@@ -5,30 +5,17 @@ CourtListener webhook
 from pprint import pformat
 
 import requests
-import click
 
 from flask import (
     Blueprint,
-    # flash,
-    # g,
-    # redirect,
-    # render_template,
     request,
-    # url_for,
     current_app,
 )
 
-# from werkzeug.exceptions import abort
-
-# from flask import Flask, request, Response
-
-from bigcases2.db import get_db, update_case
-from bigcases2.misc import trim_weird_ending
+from .exceptions import MultiDefendantCaseError
 
 
 API_ROOT = "https://www.courtlistener.com/api/rest/v3"
-
-MATCH_LIMIT = 3000
 
 REQUIRED_FIELDS = (
     # TODO: Validate against a schema instead.
@@ -85,14 +72,14 @@ def cl_webhook():
         # Check the result
         for requirement in REQUIRED_FIELDS:
             assert requirement in result
-        
+
         # TODO: Store docket entry in DB
 
         # Handle any documents attached
         if "recap_documents" in result and len(result["recap_documents"] > 0):
             for doc in result["recap_documents"]:
                 pass
-        
+
         # TODO: Actually do something with this docket entry
 
     # TODO: Send 201 Created HTTP status
@@ -130,13 +117,13 @@ def lookup_docket_by_cl_id(cl_id: int):
 
 def get_case_from_cl(court: str, case_number: str):
     url = f"{API_ROOT}/dockets/?court__id={court}&docket_number={case_number}"
-    # print(url)
+    print(url)
     current_app.logger.debug(url)
     response = requests.get(url)
     print(response)
     data = response.json()
     current_app.logger.debug(pformat(data))
-    # print(pformat(data))
+    print(pformat(data))
     ret = None
 
     num_results = data["count"]
@@ -146,62 +133,43 @@ def get_case_from_cl(court: str, case_number: str):
     elif num_results == 0:
         return None
     else:
-        raise ValueError(f"Expected 0 or 1 results, but got {num_results}")
+        msg = f"Expected 0 or 1 results, but got {num_results}"
+        current_app.logger.error(msg)
+
+        # Produce some useful information for debugging, maybe
+        pacer_ids = {}
+        for result in data["results"]:
+            cl_id = result["id"]
+            pacer_id = result.get("pacer_case_id")
+            pacer_ids[cl_id] = pacer_id
+        current_app.logger.error(pformat(pacer_ids))
+        raise MultiDefendantCaseError(msg)
+
+        # RESULT: We have multiple CL dockets corresponding to
+        # multiple PACER IDs :(
+        #
+        # See, e.g., nyed 1:09-cr-00466, which gives this mapping
+        # of CL IDs to PACER IDs
+        # {
+        #     4319866: '294052',
+        #     6146972: '294050',
+        #     6360330: '294049',
+        #     6452146: '294051',
+        #     14197745: '294048',
+        #     14569244: '294054',
+        #     14665429: '294053'
+        # }
+        # The PACER IDs are all consecutive, from 294048 to 294054.
+        # This is a criminal case with 6 defendants. Is that it?
+        #
+        # Aha. Yep. Brad had the case number "1:09-cr-00466-4". I'd trimmed the "-4".
+        #
+        # Notes in Issue: https://github.com/freelawproject/bigcases2/issues/18
+
+        # TODO: Figure out how to choose the "best" of multiple dockets
 
     return ret
 
 
-@click.command("match-bcb1-cases")
-def match_bcb1_cases_command():
-    exceptions = []
-    click.echo(f"Matching up to {MATCH_LIMIT} BCB1 cases to CourtListener...")
-    query = f'SELECT id, court, case_number from "case" WHERE in_bcb1 = TRUE LIMIT {MATCH_LIMIT};'
-    click.echo(f"Query: {query}")
-    with get_db().cursor() as cur:
-        click.echo(cur)
-        cur.execute(query)
-        for row in cur.fetchall():
-            click.echo(row)
-            case_ = None
-            bcb2_id = row[0]
-            court = row[1]
-            case_number = row[2]
-            case_number = trim_weird_ending(case_number)
-            try:
-                case_ = get_case_from_cl(court, case_number)
-            except Exception as e:
-                e_record = [
-                    e,
-                    court,
-                    case_number,
-                ]
-                exceptions.append(e_record)
-            if case_:
-                current_app.logger.debug("Got a case from CL...")
-                current_app.logger.debug(pformat(case_))
-                cl_docket_id = case_["id"]
-                nos_code = case_["nature_of_suit"]
-                cl_court_uri = case_[
-                    "court"
-                ]  # "https://www.courtlistener.com/api/rest/v3/courts/mad/"
-                cl_case_name = case_["case_name"]
-                assert cl_court_uri.endswith(f"/courts/{court}/")
-                # if case_:
-                click.echo(
-                    f"Got a case for {court} {case_number}: {cl_docket_id}, NOS={nos_code}"
-                )
-                click.echo(pformat(case_))
-                update_case(bcb2_id, cl_docket_id, cl_case_name)
-    click.echo("Done.")
-
-    if len(exceptions) > 0:
-        current_app.logger.error("*" * 50)
-        current_app.logger.error(f"ENCOUNTERED {len(exceptions)} EXCEPTIONS:")
-        for e_record in exceptions:
-            current_app.logger.error("*" * 50)
-            current_app.logger.error(pformat(e_record))
-        current_app.logger.error("*" * 50)
-
-
 def init_app(app):
-    app.cli.add_command(match_bcb1_cases_command)
+    pass  # Nothing to do here yet

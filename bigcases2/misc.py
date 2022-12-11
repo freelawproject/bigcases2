@@ -2,7 +2,7 @@ import re
 
 import courts_db
 from flask import current_app
-
+from os import urandom
 
 WEIRD_ENDING_PATTERN = r"\d+(-\d+)$"
 WEIRD_ENDING_RE = re.compile(WEIRD_ENDING_PATTERN)
@@ -40,3 +40,28 @@ def trim_weird_ending(s: str) -> str:
         return ret
     else:
         return s
+
+
+def generate_key(length=32) -> str:
+    return urandom(length).hex()
+
+
+def add_case(
+    court: str,
+    case_number: str,
+    name: str,
+    bcb1_name: str = None,
+    cl_id: int = None,
+    in_bcb1=False,
+):
+    raise NotImplementedError
+
+
+def update_case(bcb2_id: int, cl_id: int, cl_name: str):
+    # update_query = (
+    #     'UPDATE "case" SET cl_docket_id = %s, cl_case_title = %s WHERE id = %s'
+    # )
+    # with get_db().cursor() as cur:
+    #     cur.execute(update_query, (cl_id, cl_name, bcb2_id))
+    #     cur.connection.commit()
+    raise NotImplementedError

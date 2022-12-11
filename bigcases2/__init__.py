@@ -3,7 +3,6 @@ bigcases2 app setup
 """
 
 import os
-from pprint import pprint
 
 import toml
 from flask import Flask
@@ -22,24 +21,20 @@ def create_app(test_config=None):
         TOML_FN = os.path.join(app.instance_path, "config.toml")
         app.logger.debug(f"Loading configuration TOML file: {TOML_FN}")
         app.config.from_file(TOML_FN, load=toml.load)
-        # app.logger.debug(f"app.config after loading TOML: {app.config}")
+        app.logger.debug(f"app.config after loading TOML: {app.config}")
+        app.logger.debug("-" * 50)
     else:
         # load the test config if passed in
         app.logger.debug(f"Loading test_config: {test_config}")
         app.config.from_mapping(test_config)
         app.logger.debug(f"app.config after adding test_config: {app.config}")
+        app.logger.debug("-" * 50)
 
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    # Database
-
-    from . import db
-
-    db.init_app(app)
 
     # CourtListener webhook
 
@@ -54,6 +49,25 @@ def create_app(test_config=None):
 
     app.register_blueprint(masto.bp)
     masto.init_app(app)
+
+    # Registration stuff
+
+    from . import registration
+
+    app.register_blueprint(registration.bp)
+    registration.init_app(app)
+
+    # BCB1 data loading
+
+    from . import bcb1
+
+    bcb1.init_app(app)
+
+    # Database
+
+    from .models import db
+
+    db.init_app(app)
 
     # CLI
 
