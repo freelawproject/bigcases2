@@ -8,9 +8,9 @@ from pprint import pformat
 import click
 from flask import current_app
 
-from bigcases2.models import db, Case
-from bigcases2.misc import lookup_court, trim_weird_ending, update_case
-from bigcases2.courtlistener import get_case_from_cl
+from .models import db, Case
+from .misc import lookup_court, trim_weird_ending, update_case
+from .courtlistener import get_case_from_cl
 from .exceptions import MultiDefendantCaseError
 
 
@@ -30,7 +30,7 @@ def load_bcb1_command():
     Import BCB1 cases from JSON file into the database
     https://github.com/bdheath/Big-Cases/blob/master/bigcases.json
     """
-    from bigcases2.models import db, Case
+    from .models import db, Case
 
     click.echo("Loading Big Cases Bot v1 JSON file...")
 

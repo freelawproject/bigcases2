@@ -2,8 +2,8 @@ import click
 from flask import current_app, Blueprint
 from itsdangerous.url_safe import URLSafeSerializer
 
-from bigcases2.models import RegistrationToken, User, db
-from bigcases2.misc import generate_key
+from .models import RegistrationToken, User, db
+from .misc import generate_key
 
 REG_TOKEN_SALT = "mmmSalty!"
 

@@ -8,13 +8,13 @@ from colors import color
 from flask import current_app
 from werkzeug.security import generate_password_hash
 
-from bigcases2.courtlistener import (
+from .courtlistener import (
     lookup_docket_by_cl_id,
     court_url_to_key,
     get_case_from_cl,
 )
-from bigcases2.misc import add_case
-from bigcases2.models import db, User
+from .misc import add_case
+from .models import db, User
 
 
 VERSION = "0.0.1"
