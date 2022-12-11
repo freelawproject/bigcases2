@@ -1,20 +1,53 @@
-# new-project-template
-A template repo for new CL projects
+# Big Cases Bot 2
 
-# {{NEW-PROJECT}}
+Big Cases Bot 2 is the sequel to Brad Heath's excellent Big Cases Bot
+for Twitter.
 
-{{NEW-PROJECT}} is an open source repository to ...
-It was built for use with Courtlistener.com.
+The goals of Big Cases Bot 2 are:
 
-Its main goal is to ...
-It incldues mechanisms to ...
+- First and foremost, to bring the bot back!
+- Expand the bot to Mastodon
 
-Further development is intended and all contributors, corrections and additions are welcome.
+Further development is intended, and all contributors, corrections and additions are welcome.
 
 ## Background
 
 Free Law Project built this ...  This project represents ...  
 We believe to be the ....
+
+## What does it need to do?
+
+- Store cases, documents, and posting criteria in a database (Postgres)
+- Process incoming new-document webhooks from CourtListener (`/webhooks/docket`)
+  - Look up case
+  - Save to DB
+  - Decide if it's worth posting
+  - Construct a message
+  - Construct any media attachments
+  - Post
+    - To Mastodon
+    - To Twitter
+- Process incoming messages from Mastodon or Twitter
+  - Mastodon: check notifications ([Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/#reading-data-notifications) - webhook at `/webhooks/mastodon`
+  - Twitter: check notifications/stream
+  - Is the user authorized to instruct the bot?
+  - Parse message
+    - Read up-thread if necessary to find what case is being discussed
+  - Respond
+    - Follow a case
+      - POST to CL API?
+      - Send reply message confirming case followed
+    - Send a RECAP docket link (construct from case ID)
+    - Send a RECAP document link
+  - Check dockets for updates
+    - Original bot did this via polling court RSS feeds
+    - Decide if a new entry looks like it's worth downloading
+    - If yes, download the new document. (Webhook will fire at that point, so this is as far as the bot's checking needs to go.)
+
+## Dependencies
+
+- Flask
+- Free Law Project's [`courts-db`](https://github.com/freelawproject/courts-db)
 
 ## Quickstart
 
@@ -47,17 +80,17 @@ Somethings to keep in mind as ....
 
 ## Installation
 
-Installing {{NEW-PROJECT}} is easy.
+Installing Big Cases Bot 2 is easy.
 
 ```sh
-pip install {{NEW-PROJECT}}
+pip install bigcases2
 ```
 
 
-Or install the latest dev version from github
+Or install the latest dev version from GitHub
 
 ```sh
-pip install git+https://github.com/freelawproject/{{NEW-PROJECT}}.git@master
+pip install git+https://github.com/freelawproject/bigcases2.git@master
 ```
 
 ## Future

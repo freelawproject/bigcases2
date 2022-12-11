@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}: Big Cases Bot</title>
+    {#
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <!-- <script src="script.js"></script> -->
+    #}
+    {% endblock %}
+</head>
+
+<body>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        <span>&copy; Copyright 2022 <a href="https://free.law/">Free Law Project</a>.</span>
+        {% endblock %}
+    </div>
+</body>
+
+</html>

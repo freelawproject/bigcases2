@@ -2,7 +2,7 @@
 
 ## Current
 
-0.0.1 - Intiial release
+0.0.1 - Initial release
 
 ## Past
 
