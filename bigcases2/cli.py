@@ -141,7 +141,7 @@ def lookup_command(cl_id, add, save_json):
     click.echo(f"Link: {cl_url}")
 
     if save_json:
-        json_fn = f"cl-{cl_id}.json"
+        json_fn = f"output/cl-{cl_id}.json"
         with open(json_fn, "w") as json_f:
             json.dump(result, json_f)
         click.echo(f"Saved {json_fn}.")
