@@ -51,7 +51,7 @@ mypy = "^0.991"
 pylint = "^2.13.9"
 wheel = "^0.38.4"
 pre-commit = "^2.20.0"
-flynt = "^0.76"
+flynt = "^0.77"
 
 [tool.black]
 include = '''.*\.pyi?$'''
