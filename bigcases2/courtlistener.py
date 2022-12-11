@@ -12,6 +12,8 @@ from flask import (
     current_app,
 )
 
+from .exceptions import MultiDefendantCaseError
+
 
 API_ROOT = "https://www.courtlistener.com/api/rest/v3"
 
@@ -115,13 +117,13 @@ def lookup_docket_by_cl_id(cl_id: int):
 
 def get_case_from_cl(court: str, case_number: str):
     url = f"{API_ROOT}/dockets/?court__id={court}&docket_number={case_number}"
-    # print(url)
+    print(url)
     current_app.logger.debug(url)
     response = requests.get(url)
     print(response)
     data = response.json()
     current_app.logger.debug(pformat(data))
-    # print(pformat(data))
+    print(pformat(data))
     ret = None
 
     num_results = data["count"]
@@ -131,7 +133,40 @@ def get_case_from_cl(court: str, case_number: str):
     elif num_results == 0:
         return None
     else:
-        raise ValueError(f"Expected 0 or 1 results, but got {num_results}")
+        msg = f"Expected 0 or 1 results, but got {num_results}"
+        current_app.logger.error(msg)
+
+        # Produce some useful information for debugging, maybe
+        pacer_ids = {}
+        for result in data["results"]:
+            cl_id = result["id"]
+            pacer_id = result.get("pacer_case_id")
+            pacer_ids[cl_id] = pacer_id
+        current_app.logger.error(pformat(pacer_ids))
+        raise MultiDefendantCaseError(msg)
+
+        # RESULT: We have multiple CL dockets corresponding to
+        # multiple PACER IDs :(
+        #
+        # See, e.g., nyed 1:09-cr-00466, which gives this mapping
+        # of CL IDs to PACER IDs
+        # {
+        #     4319866: '294052',
+        #     6146972: '294050',
+        #     6360330: '294049',
+        #     6452146: '294051',
+        #     14197745: '294048',
+        #     14569244: '294054',
+        #     14665429: '294053'
+        # }
+        # The PACER IDs are all consecutive, from 294048 to 294054.
+        # This is a criminal case with 6 defendants. Is that it?
+        #
+        # Aha. Yep. Brad had the case number "1:09-cr-00466-4". I'd trimmed the "-4".
+        #
+        # Notes in Issue: https://github.com/freelawproject/bigcases2/issues/18
+
+        # TODO: Figure out how to choose the "best" of multiple dockets
 
     return ret
 

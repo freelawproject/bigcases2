@@ -11,6 +11,7 @@ from flask import current_app
 from bigcases2.models import db, Case
 from bigcases2.misc import lookup_court, trim_weird_ending, update_case
 from bigcases2.courtlistener import get_case_from_cl
+from .exceptions import MultiDefendantCaseError
 
 
 DATABASE_SCHEMA_PATH = "../database/schema.sql"
@@ -91,7 +92,11 @@ def match_bcb1_cases_command():
     exceptions = []
     click.echo(f"Matching up to {MATCH_LIMIT} BCB1 cases to CourtListener...")
 
-    stmt = db.select(Case).where(Case.in_bcb1 == True).where(Case.cl_docket_id == None)
+    stmt = (
+        db.select(Case)
+        .where(Case.in_bcb1 == True)
+        .where(Case.cl_docket_id == None)
+    )
     click.echo(stmt)
 
     row_num = 0
@@ -136,15 +141,46 @@ def match_bcb1_cases_command():
 
             db.session.commit()
 
-    click.echo("Done.")
+    # Shunt multi-defendant cases into a queue for separate handling.
+    # Probably not worth the effort for a few 1-off imports, but this
+    # could be Cerlery-ized later.
+
+    retry_multi_defendant_queue = []
 
     if len(exceptions) > 0:
         current_app.logger.error("*" * 50)
         current_app.logger.error(f"ENCOUNTERED {len(exceptions)} EXCEPTIONS:")
         for e_record in exceptions:
+            e_, e_court, e_case_number = e_record
+            if isinstance(e_, MultiDefendantCaseError):
+                retry_multi_defendant_queue.append((e_court, e_case_number))
+                current_app.logger.info(
+                    f"Added to multi-defendant retry queue: {e_court} {e_case_number}"
+                )
             current_app.logger.error("*" * 50)
             current_app.logger.error(pformat(e_record))
         current_app.logger.error("*" * 50)
+
+    num_to_retry = len(retry_multi_defendant_queue)
+    if num_to_retry > 0:
+        current_app.logger.info(
+            f"There are {num_to_retry} cases to retry as multi-defendant cases."
+        )
+        handle_multi_defendant_cases(retry_multi_defendant_queue)
+
+    click.echo("Done.")
+
+
+def handle_multi_defendant_cases(queue):
+    current_app.logger.debug("handle_multi_defendant_cases(): started")
+    for tpl in queue:
+        court, case_number = tpl
+        current_app.logger.debug(
+            f"handle_multi_defendant_cases(): trying {court} {case_number}"
+        )
+        # TODO
+        raise NotImplementedError
+    current_app.logger.debug("handle_multi_defendant_cases(): done")
 
 
 def init_app(app):

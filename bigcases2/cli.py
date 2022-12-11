@@ -1,5 +1,6 @@
 # from pprint import pformat
 from os import uname
+import json
 
 import click
 import art  # https://www.4r7.ir/
@@ -117,14 +118,16 @@ def bootstrap_dev_data_command():
 
 
 @click.command("lookup")
+@click.argument("cl-id")
 @click.option("--add/--no-add", default=False)
-def lookup_command(add):
+@click.option("--save-json/--no-save-json", default=False)
+def lookup_command(cl_id, add, save_json):
     """
     Lookup a case in the RECAP archive by its CourtListener ID,
     and optionally add it.
     """
-    dummy_cl_id = 63385389
-    result = lookup_docket_by_cl_id(dummy_cl_id)
+    # dummy_cl_id = 63385389
+    result = lookup_docket_by_cl_id(cl_id)  # dummy_cl_id)
     # click.echo(pformat(result))
     court_url = result["court"]
     court = court_url_to_key(court_url)
@@ -137,9 +140,15 @@ def lookup_command(add):
     click.echo(f"Court: {court}")
     click.echo(f"Link: {cl_url}")
 
+    if save_json:
+        json_fn = f"cl-{cl_id}.json"
+        with open(json_fn, "w") as json_f:
+            json.dump(result, json_f)
+        click.echo(f"Saved {json_fn}.")
+
     if add:
         click.echo("We'll try to add this case to the DB.")
-        add_case(court, docket_number, case_name, dummy_cl_id)
+        add_case(court, docket_number, case_name, cl_id)
         click.echo("Added!")
 
 
