@@ -2,7 +2,7 @@
 CourtListener webhook
 """
 
-from pprint import pformat
+from pprint import pformat, pprint
 
 import requests
 
@@ -16,6 +16,7 @@ from .exceptions import MultiDefendantCaseError
 
 
 API_ROOT = "https://www.courtlistener.com/api/rest/v3"
+ENDPOINT_DOCKET_ALERTS = f"{API_ROOT}/docket-alerts/"
 
 REQUIRED_FIELDS = (
     # TODO: Validate against a schema instead.
@@ -90,8 +91,10 @@ def cl_webhook():
 
 
 def auth_header() -> dict:
-    token = current_app.config.get("COURTLISTENER").get("CL_API_KEY")
-    return {"Authorization": f"Token {token}"}
+    token = current_app.config.get("COURTLISTENER").get("API_KEY")
+    header_dict = {"Authorization": f"Token {token}"}
+    print(header_dict)
+    return header_dict
 
 
 def court_url_to_key(url: str) -> str:
@@ -109,7 +112,7 @@ def court_url_to_key(url: str) -> str:
 def lookup_docket_by_cl_id(cl_id: int):
     url = f"{API_ROOT}/dockets/{cl_id}/"
     # print(url)
-    response = requests.get(url)
+    response = requests.get(url, headers=auth_header())
     # print(response)
     data = response.json()
     return data
@@ -119,7 +122,7 @@ def get_case_from_cl(court: str, case_number: str):
     url = f"{API_ROOT}/dockets/?court__id={court}&docket_number={case_number}"
     print(url)
     current_app.logger.debug(url)
-    response = requests.get(url)
+    response = requests.get(url, headers=auth_header())
     print(response)
     data = response.json()
     current_app.logger.debug(pformat(data))
@@ -169,6 +172,47 @@ def get_case_from_cl(court: str, case_number: str):
         # TODO: Figure out how to choose the "best" of multiple dockets
 
     return ret
+
+
+def get_docket_alert_subscriptions() -> list:
+    """
+    Performs a GET query on /api/rest/v3/docket-alerts/
+    to get a list of CourtListener docket IDs to which
+    we are subscribed.
+    """
+    response = requests.get(ENDPOINT_DOCKET_ALERTS, headers=auth_header())
+    response_data = response.json()
+    pprint(response_data)
+
+    if response_data.get("count") == 0:
+        return []
+
+    filtered = [
+        r for r in response_data["results"] if r.get("alert_type") == 1
+    ]
+    return filtered
+
+
+def subscribe_to_docket_alert(cl_id: int) -> bool:
+    """
+    Performs a POST query on /api/rest/v3/docket-alerts/
+    to subscribe to docket alerts for a given CourtListener docket ID.
+    """
+    response = requests.post(
+        ENDPOINT_DOCKET_ALERTS,
+        headers=auth_header(),
+        data={
+            "docket": cl_id,
+        },
+    )
+
+    if response.status_code == 201:
+        return True
+    else:
+        current_app.logger.error(
+            f"Error subscribing to case {cl_id}: got HTTP response {response.status_code}"
+        )
+        return False
 
 
 def init_app(app):

@@ -1,6 +1,7 @@
 # from pprint import pformat
 from os import uname
 import json
+from pprint import pformat
 
 import click
 import art  # https://www.4r7.ir/
@@ -12,6 +13,8 @@ from .courtlistener import (
     lookup_docket_by_cl_id,
     court_url_to_key,
     get_case_from_cl,
+    get_docket_alert_subscriptions,
+    subscribe_to_docket_alert,
 )
 from .misc import add_case
 from .models import db, User
@@ -126,8 +129,7 @@ def lookup_command(cl_id, add, save_json):
     Lookup a case in the RECAP archive by its CourtListener ID,
     and optionally add it.
     """
-    # dummy_cl_id = 63385389
-    result = lookup_docket_by_cl_id(cl_id)  # dummy_cl_id)
+    result = lookup_docket_by_cl_id(cl_id)
     # click.echo(pformat(result))
     court_url = result["court"]
     court = court_url_to_key(court_url)
@@ -194,6 +196,26 @@ def add_command():
     pass
 
 
+@click.command("cl-list-subscriptions")
+def cl_list_subscriptions_command():
+    """
+    List CourtListener docket alert subscriptions
+    """
+    subs = get_docket_alert_subscriptions()
+    click.echo("Subscriptions: (CourtListener IDs)")
+    click.echo(pformat(subs))
+
+
+@click.command("cl-subscribe")
+@click.argument("cl_id")
+def cl_subscribe_command(cl_id: int):
+    """
+    Add a CourtListener docket alert subscription
+    """
+    result = subscribe_to_docket_alert(cl_id)
+    click.echo(result)
+
+
 def init_app(app):
     app.cli.add_command(info_command)
     app.cli.add_command(init_command)
@@ -204,3 +226,5 @@ def init_app(app):
     app.cli.add_command(lookup_command)
     app.cli.add_command(search_command)
     app.cli.add_command(add_command)
+    app.cli.add_command(cl_list_subscriptions_command)
+    app.cli.add_command(cl_subscribe_command)
