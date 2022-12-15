@@ -69,6 +69,13 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
+    # Pages
+
+    from . import pages
+
+    app.register_blueprint(pages.bp)
+    # pages.init_app(app)
+
     # CLI
 
     from . import cli

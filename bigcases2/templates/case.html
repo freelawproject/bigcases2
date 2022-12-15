@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ case_name }} - Big Cases{% endblock %}
+{% block content %}
+<h1>{{ case_name }}</h1>
+<ul>
+    <li>Court: {{ court_name }} <small>({{ court_id }})</small></li>
+    {% for judge in judges %}
+    <li>{{judge.name()}}</li>
+    {% endfor %}
+</ul>
+<p>Lorem ipsum etc. etc.</p>
+<p><a href="{{cl_url}}">View docket on CourtListener</a></p>
+<p><a href="/case/{{next_id}}">Next case &gt;</a></p>
+{% endblock %}

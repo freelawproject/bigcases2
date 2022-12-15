@@ -215,5 +215,20 @@ def subscribe_to_docket_alert(cl_id: int) -> bool:
         return False
 
 
+def lookup_judge(judge_resource: str):
+    """
+    Query CL and return information about a judge.
+    Input: judge_resource: a CL People resource URI like "https://www.courtlistener.com/api/rest/v3/people/664/"
+    """
+    response = requests.get(
+        judge_resource,
+        headers=auth_header(),
+    )
+    current_app.logger.debug(f"lookup_judge(): <{response.status_code}> for query to {judge_resource}")
+    response_data = response.json()
+    current_app.logger.debug(pformat(response_data))
+    return response_data
+
+
 def init_app(app):
     pass  # Nothing to do here yet

@@ -8,9 +8,9 @@ from pprint import pformat
 import click
 from flask import current_app
 
-from .models import db, Case
+from .models import db, Case, Judge
 from .misc import lookup_court, trim_weird_ending, update_case
-from .courtlistener import get_case_from_cl
+from .courtlistener import get_case_from_cl, lookup_judge
 from .exceptions import MultiDefendantCaseError
 
 
@@ -138,6 +138,17 @@ def match_bcb1_cases_command():
             # Update in DB
             case.cl_docket_id = cl_docket_id
             case.cl_case_title = cl_case_name
+            case.cl_slug = cl_case["slug"]
+
+            # Add judges
+            if cl_case.get("assigned_to") not in (None, ""):
+                cl_judge = lookup_judge(cl_case.get("assigned_to"))  # "assigned_to" will be in the form of a full CL resource URL like "https://www.courtlistener.com/api/rest/v3/people/664/"
+                j = Judge.from_json(cl_judge)
+                j.cases.append(case)
+            if cl_case.get("referred_to") not in (None, ""):
+                cl_judge = lookup_judge(cl_case.get("referred_to"))
+                j = Judge.from_json(cl_judge)
+                j.cases.append(case)
 
             db.session.commit()
 

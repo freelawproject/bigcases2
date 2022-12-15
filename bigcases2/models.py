@@ -6,8 +6,19 @@ SQLAlchemy ORM models
 
 from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy as sa
+from sqlalchemy.orm import declarative_base
 
 db = SQLAlchemy()
+
+
+# M2M association table
+# https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html#many-to-many
+# https://flask-sqlalchemy.palletsprojects.com/en/3.0.x/models/#defining-tables (omit metadata)
+case_judge_table = db.Table(
+    "case_judge",
+    db.Column("case_id", sa.ForeignKey("case.id"), primary_key=True),
+    db.Column("judge_id", sa.ForeignKey("judge.id"), primary_key=True),
+)
 
 
 class Case(db.Model):
@@ -18,8 +29,19 @@ class Case(db.Model):
     cl_case_title = db.Column(db.Text)
     cl_docket_id = db.Column(db.Integer)
     in_bcb1 = db.Column(db.Boolean, default=False)
+    cl_slug = db.Column(db.Text, default=None)
+    cl_alerts = db.Column(db.Boolean, default=None)  # Set up to receive docket alerts?
     docket_entries = db.relationship("DocketEntry", back_populates="case")
     documents = db.relationship("Document", back_populates="case")
+    # judges = db.relationship("Judge", back_populates="cases")
+    judges = db.relationship(
+        # "Judge", back_populates="cases")
+        "Judge", secondary=case_judge_table
+    )
+
+    def cl_url(self):
+        return f"https://www.courtlistener.com/docket/{self.cl_docket_id}/{self.cl_slug}/"
+
 
 
 class DocketEntry(db.Model):
@@ -156,6 +178,51 @@ class Post(db.Model):
     text = db.Column(db.Text)
 
     # TODO: posted_at TIMESTAMP WITHOUT TIME ZONE
+
+
+class Judge(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    cl_person_id = db.Column(db.Integer)
+    name_first = db.Column(db.String(200))
+    name_middle = db.Column(db.String(200))
+    name_last = db.Column(db.String(200))
+    name_suffix = db.Column(db.String(200))
+    cases = db.relationship(
+        # "Case", back_populates="judges"
+        "Case", secondary=case_judge_table
+    )
+
+    def name(self):
+        n = ""
+        if self.name_middle and self.name_middle != "":
+            n = f"{self.name_first} {self.name_middle} {self.name_last}"
+        else:
+            n = f"{self.name_first} {self.name_last}"
+        if self.name_suffix and self.name_suffix != "":
+            n = f"{n}, {self.name_suffix}"
+        return n
+    
+    @staticmethod
+    def from_json(json_data):
+        # first try to .get() it
+        existing = db.session.get(Judge, json_data["id"])
+
+        if existing:
+            return existing
+
+        # if not, make a new record
+        else:
+            j = Judge(
+                cl_person_id=json_data["id"],
+                name_first=json_data["name_first"],
+                name_middle=json_data["name_middle"],
+                name_last=json_data["name_last"],
+                name_suffix=json_data["name_suffix"],
+            )
+            # save to DB
+            db.session.add(j)
+            db.session.commit()
+            return j
 
 
 # Many-to-many relationships:
