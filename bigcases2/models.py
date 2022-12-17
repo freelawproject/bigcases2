@@ -7,6 +7,7 @@ SQLAlchemy ORM models
 from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy as sa
 from sqlalchemy.orm import declarative_base
+from judge_pics.search import portrait, ImageSizes
 
 db = SQLAlchemy()
 
@@ -30,18 +31,20 @@ class Case(db.Model):
     cl_docket_id = db.Column(db.Integer)
     in_bcb1 = db.Column(db.Boolean, default=False)
     cl_slug = db.Column(db.Text, default=None)
-    cl_alerts = db.Column(db.Boolean, default=None)  # Set up to receive docket alerts?
+    cl_alerts = db.Column(
+        db.Boolean, default=None
+    )  # Set up to receive docket alerts?
     docket_entries = db.relationship("DocketEntry", back_populates="case")
     documents = db.relationship("Document", back_populates="case")
     # judges = db.relationship("Judge", back_populates="cases")
     judges = db.relationship(
         # "Judge", back_populates="cases")
-        "Judge", secondary=case_judge_table
+        "Judge",
+        secondary=case_judge_table,
     )
 
     def cl_url(self):
         return f"https://www.courtlistener.com/docket/{self.cl_docket_id}/{self.cl_slug}/"
-
 
 
 class DocketEntry(db.Model):
@@ -189,7 +192,8 @@ class Judge(db.Model):
     name_suffix = db.Column(db.String(200))
     cases = db.relationship(
         # "Case", back_populates="judges"
-        "Case", secondary=case_judge_table
+        "Case",
+        secondary=case_judge_table,
     )
 
     def name(self):

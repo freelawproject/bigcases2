@@ -224,7 +224,9 @@ def lookup_judge(judge_resource: str):
         judge_resource,
         headers=auth_header(),
     )
-    current_app.logger.debug(f"lookup_judge(): <{response.status_code}> for query to {judge_resource}")
+    current_app.logger.debug(
+        f"lookup_judge(): <{response.status_code}> for query to {judge_resource}"
+    )
     response_data = response.json()
     current_app.logger.debug(pformat(response_data))
     return response_data

@@ -1,5 +1,6 @@
 from flask import current_app, render_template, Blueprint
 from courts_db import find_court_by_id
+from judge_pics.search import portrait, ImageSizes
 
 from .models import db, Case
 
@@ -25,7 +26,7 @@ def case_page(case_id):
         cl_id=the_case.cl_docket_id,
         cl_url=the_case.cl_url(),
         judges=the_case.judges,
-        next_id=the_case.id+1,
+        next_id=the_case.id + 1,
     )
 
 

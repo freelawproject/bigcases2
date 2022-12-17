@@ -142,7 +142,9 @@ def match_bcb1_cases_command():
 
             # Add judges
             if cl_case.get("assigned_to") not in (None, ""):
-                cl_judge = lookup_judge(cl_case.get("assigned_to"))  # "assigned_to" will be in the form of a full CL resource URL like "https://www.courtlistener.com/api/rest/v3/people/664/"
+                cl_judge = lookup_judge(
+                    cl_case.get("assigned_to")
+                )  # "assigned_to" will be in the form of a full CL resource URL like "https://www.courtlistener.com/api/rest/v3/people/664/"
                 j = Judge.from_json(cl_judge)
                 j.cases.append(case)
             if cl_case.get("referred_to") not in (None, ""):
