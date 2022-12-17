@@ -5,7 +5,11 @@
 <ul>
     <li>Court: {{ court_name }} <small>({{ court_id }})</small></li>
     {% for judge in judges %}
-    <li>{{judge.name()}} <img src="{{ judge.portrait() }}"/></li>
+    <li>{{judge.name()}} 
+        {% if judge.portrait() %}
+        <img src="{{ judge.portrait() }}"/>
+        {% endif %}
+    </li>
     {% endfor %}
 </ul>
 <p>Lorem ipsum etc. etc.</p>
