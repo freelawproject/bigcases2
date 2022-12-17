@@ -201,7 +201,11 @@ class Judge(db.Model):
         if self.name_suffix and self.name_suffix != "":
             n = f"{n}, {self.name_suffix}"
         return n
-    
+
+    def portrait(self, size=ImageSizes.SMALL):
+        portrait_url = portrait(self.cl_person_id, ImageSizes.SMALL)
+        return portrait_url
+
     @staticmethod
     def from_json(json_data):
         # first try to .get() it

@@ -42,6 +42,7 @@ http-ece = "^1.1.0"
 psycopg2-binary = "^2.9.5"
 flask-sqlalchemy = "^3.0.2"
 ansicolors = "^1.1.8"
+judge-pics = "^2.0.3"
 
 [tool.poetry.dev-dependencies]
 black = "^22.10.0"
