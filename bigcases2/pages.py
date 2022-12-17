@@ -27,6 +27,8 @@ def case_page(case_id):
         cl_url=the_case.cl_url(),
         judges=the_case.judges,
         next_id=the_case.id + 1,
+        beats=the_case.beats,
+        num_beats=len(the_case.beats),
     )
 
 

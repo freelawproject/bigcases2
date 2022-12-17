@@ -11,6 +11,15 @@
         {% endif %}
     </li>
     {% endfor %}
+    {% if num_beats > 0 %}
+    <li>Beats</li>
+    <ul>
+        {% for beat in beats %}
+        <li>{{ beat.name }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
 </ul>
 <p>Lorem ipsum etc. etc.</p>
 <p><a href="{{cl_url}}">View docket on CourtListener</a></p>
