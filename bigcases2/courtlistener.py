@@ -3,6 +3,7 @@ CourtListener webhook
 """
 
 from pprint import pformat, pprint
+import json
 
 import requests
 
@@ -12,7 +13,11 @@ from flask import (
     current_app,
 )
 
+from sqlalchemy.exc import NoResultFound
+
 from .exceptions import MultiDefendantCaseError
+from .models import db, Case, Judge
+from .misc import lookup_court, trim_weird_ending
 
 
 API_ROOT = "https://www.courtlistener.com/api/rest/v3"
@@ -109,12 +114,15 @@ def court_url_to_key(url: str) -> str:
     return key
 
 
-def lookup_docket_by_cl_id(cl_id: int):
+def lookup_docket_by_cl_id(cl_id: int, save=False):
     url = f"{API_ROOT}/dockets/{cl_id}/"
     # print(url)
     response = requests.get(url, headers=auth_header())
     # print(response)
     data = response.json()
+    if save:
+        with open(f"output/cl-{cl_id}.json", "w") as fp:
+            json.dump(data, fp)
     return data
 
 
@@ -230,6 +238,63 @@ def lookup_judge(judge_resource: str):
     response_data = response.json()
     current_app.logger.debug(pformat(response_data))
     return response_data
+
+
+def docket_to_case(docket):
+    """
+    Creates a new Case record for a given Docket from the CL API.
+    Call get_case_from_cl() to get a Docket first.
+    """
+    cl_docket_id = docket["id"]
+    cl_court_uri = docket[
+        "court"
+    ]  # "https://www.courtlistener.com/api/rest/v3/courts/mad/"
+    cl_case_name = docket["case_name"]    
+    court_key = court_url_to_key(cl_court_uri)  # Transform to courts-db format
+    case_number = docket["docket_number"]
+    
+    # Trim unless it's a bankruptcy case; they don't have a "-cv-" part
+    if not court_key.endswith("b"):
+        case_number = trim_weird_ending(case_number)
+
+    # Check if it's already there
+    stmt = (
+        db.select(Case)
+        .where(Case.case_number == case_number)
+        .where(Case.court == court_key)
+    )
+    current_app.logger.debug(stmt)
+    db_result = db.session.execute(stmt)
+    current_app.logger.debug(f"db_result: {db_result}")
+    
+    try:
+        case_result = db_result.one()
+        return case_result
+    except NoResultFound:
+        # Add to DB
+        case = Case(
+            court=court_key,
+            case_number=case_number,
+            cl_case_title=cl_case_name,
+            cl_docket_id=cl_docket_id,
+            cl_slug=docket["slug"],
+        )
+
+        # Add judges
+        if docket.get("assigned_to") not in (None, ""):
+            cl_judge = lookup_judge(
+                docket.get("assigned_to")
+            )  # "assigned_to" will be in the form of a full CL resource URL like "https://www.courtlistener.com/api/rest/v3/people/664/"
+            j = Judge.from_json(cl_judge)
+            j.cases.append(case)
+        if docket.get("referred_to") not in (None, ""):
+            cl_judge = lookup_judge(docket.get("referred_to"))
+            j = Judge.from_json(cl_judge)
+            j.cases.append(case)
+
+        db.session.commit()
+
+        return case
 
 
 def init_app(app):

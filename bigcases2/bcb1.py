@@ -123,6 +123,9 @@ def match_bcb1_cases_command():
         if cl_case:
             current_app.logger.debug("Got a case from CL...")
             current_app.logger.debug(pformat(cl_case))
+
+            ## Refactor from here --v
+
             cl_docket_id = cl_case["id"]
             cl_nos_code = cl_case["nature_of_suit"]
             cl_court_uri = cl_case[
@@ -153,6 +156,8 @@ def match_bcb1_cases_command():
                 j.cases.append(case)
 
             db.session.commit()
+
+            ## Refactor to here --^
 
     # Shunt multi-defendant cases into a queue for separate handling.
     # Probably not worth the effort for a few 1-off imports, but this

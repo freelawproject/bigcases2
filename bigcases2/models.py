@@ -21,6 +21,18 @@ case_judge_table = db.Table(
     db.Column("judge_id", sa.ForeignKey("judge.id"), primary_key=True),
 )
 
+case_beat_table = db.Table(
+    "case_beat",
+    db.Column("case_id", sa.ForeignKey("case.id"), primary_key=True),
+    db.Column("beat_id", sa.ForeignKey("beat.id"), primary_key=True),
+)
+
+beat_user_table = db.Table(
+    "beat_user",
+    db.Column("beat_id", sa.ForeignKey("beat.id"), primary_key=True),
+    db.Column("user_id", sa.ForeignKey("user.id"), primary_key=True),
+)
+
 
 class Case(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,12 +48,11 @@ class Case(db.Model):
     )  # Set up to receive docket alerts?
     docket_entries = db.relationship("DocketEntry", back_populates="case")
     documents = db.relationship("Document", back_populates="case")
-    # judges = db.relationship("Judge", back_populates="cases")
     judges = db.relationship(
-        # "Judge", back_populates="cases")
         "Judge",
         secondary=case_judge_table,
     )
+    beats = db.relationship("Beat", secondary=case_beat_table)
 
     def cl_url(self):
         return f"https://www.courtlistener.com/docket/{self.cl_docket_id}/{self.cl_slug}/"
@@ -93,16 +104,17 @@ class DocumentThumbnail(db.Model):
 
 class Beat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # TODO: Friendly name
+    name = db.Column(db.String(100))
     # <-> Cases
     # <-> Curators (Users)
+    cases = db.relationship("Case", secondary=case_beat_table)
+    curators = db.relationship("User", secondary=beat_user_table)
 
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     affiliation = db.Column(db.Text)
     # <-> Channels
-    # <-> Beats
 
     # Overall enable switch. Disable to shut out account entirely.
     # Disabled by default; must enable manually
@@ -124,6 +136,9 @@ class User(db.Model):
     # Login stuff
     email = db.Column(db.String(250), nullable=False)
     password = db.Column(db.Text, nullable=False)
+
+    # <-> Beats
+    beats = db.relationship("Beat", secondary=beat_user_table)
 
 
 class RegistrationToken(db.Model):

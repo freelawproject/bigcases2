@@ -15,9 +15,10 @@ from .courtlistener import (
     get_case_from_cl,
     get_docket_alert_subscriptions,
     subscribe_to_docket_alert,
+    docket_to_case,
 )
 from .misc import add_case
-from .models import db, User
+from .models import db, User, Beat
 
 
 VERSION = "0.0.1"
@@ -116,7 +117,26 @@ def bootstrap_dev_data_command():
         current_app.logger.debug(f"Creating new user for {u.email}")
         db.session.add(u)
         new_users.append(u)
+
     db.session.commit()
+
+    user = new_users[0]
+    docket = lookup_docket_by_cl_id(65748821, save=True)
+    case = docket_to_case(docket)
+
+    beat = Beat(name="FTX")
+    db.session.add(beat)
+
+    db.session.commit()
+
+    beat.curators.append(user)
+    beat.cases.append(case)
+
+    db.session.commit()
+
+    click.echo(f"User: {user}")
+    click.echo(f"Beat: {beat}")
+    click.echo(f"Case: {case}")
     current_app.logger.debug(f"New users: {new_users}")
 
 
