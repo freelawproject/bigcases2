@@ -50,6 +50,13 @@ def create_app(test_config=None):
     app.register_blueprint(masto.bp)
     masto.init_app(app)
 
+    # Twitter
+
+    from . import twitter
+
+    app.register_blueprint(twitter.bp)
+    twitter.init_app(app)
+
     # Registration stuff
 
     from . import registration

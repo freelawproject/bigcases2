@@ -52,7 +52,7 @@ BCB2 generates images of the first few pages of a document.
   - [Web Push API](https://docs.joinmastodon.org/methods/push/)
     - Set `data[alerts][mention]` to `true`
     - [In Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/#push-subscriptions)
-- [ ] How do we receive messages from Twitter?
+- [x] How do we receive messages from Twitter?
   - [Webhooks via Account Activity API](https://developer.twitter.com/en/docs/twitter-api/enterprise/account-activity-api/guides/getting-started-with-webhooks) (application pending)
 - [ ] Is an admin page needed? (Will require further locking down the server (nginx).)
 - [ ] How does BCB1 generate images?
