@@ -559,6 +559,21 @@ toml = "*"
 virtualenv = ">=20.0.8"
 
 [[package]]
+name = "prettytable"
+version = "3.5.0"
+description = "A simple Python library for easily displaying tabular data in a visually appealing ASCII table format"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
+wcwidth = "*"
+
+[package.extras]
+tests = ["pytest", "pytest-cov", "pytest-lazy-fixture"]
+
+[[package]]
 name = "psycopg2-binary"
 version = "2.9.5"
 description = "psycopg2 - Python-PostgreSQL Database Adapter"
@@ -794,6 +809,14 @@ docs = ["proselint (>=0.10.2)", "sphinx (>=3)", "sphinx-argparse (>=0.2.5)", "sp
 testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", "packaging (>=20.0)", "pytest (>=4)", "pytest-env (>=0.6.2)", "pytest-freezegun (>=0.4.1)", "pytest-mock (>=2)", "pytest-randomly (>=1)", "pytest-timeout (>=1)"]
 
 [[package]]
+name = "wcwidth"
+version = "0.2.5"
+description = "Measures the displayed width of unicode strings in a terminal"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "werkzeug"
 version = "2.2.2"
 description = "The comprehensive WSGI web application library."
@@ -830,7 +853,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "e9d0af093ea9c1604939eb93df3577dbd01b61eae763b022a46c111a35b39b9f"
+content-hash = "7baf7634113173068205f7bc0ba490743ca5ad128d98be74d32a0e5d5531b6dd"
 
 [metadata.files]
 ansicolors = []
@@ -880,6 +903,7 @@ pathspec = []
 pillow = []
 platformdirs = []
 pre-commit = []
+prettytable = []
 psycopg2-binary = []
 pycodestyle = []
 pycparser = []
@@ -903,6 +927,7 @@ typed-ast = []
 typing-extensions = []
 urllib3 = []
 virtualenv = []
+wcwidth = []
 werkzeug = []
 wrapt = []
 zipp = []

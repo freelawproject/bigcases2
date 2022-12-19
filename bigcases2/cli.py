@@ -8,6 +8,7 @@ import art  # https://www.4r7.ir/
 from colors import color
 from flask import current_app
 from werkzeug.security import generate_password_hash
+from prettytable import PrettyTable
 
 from .courtlistener import (
     lookup_docket_by_cl_id,
@@ -18,7 +19,8 @@ from .courtlistener import (
     docket_to_case,
 )
 from .misc import add_case
-from .models import db, User, Beat
+from .models import db, User, Beat, Channel
+from .masto import get_mastodon
 
 
 VERSION = "0.0.1"
@@ -134,9 +136,21 @@ def bootstrap_dev_data_command():
 
     db.session.commit()
 
+    ch = Channel(
+        service="mastodon",
+        account="@bigcases@law.builders",
+        account_id="anseljh+bigcases@gmail.com",
+    )
+    db.session.add(ch)
+    db.session.commit()
+
+    beat.channels.append(ch)
+    db.session.commit()
+
     click.echo(f"User: {user}")
     click.echo(f"Beat: {beat}")
     click.echo(f"Case: {case}")
+    click.echo(f"Channel: {ch}")
     current_app.logger.debug(f"New users: {new_users}")
 
 
@@ -236,6 +250,87 @@ def cl_subscribe_command(cl_id: int):
     click.echo(result)
 
 
+@click.command("list-channels")
+def list_channels_command():
+    """
+    List channels to which BCB2 can post.
+    """
+    stmt = db.select(Channel)
+    click.echo(stmt)
+    db_result = db.session.execute(stmt)
+
+    # TODO: Refactor from post_command
+    for channel in db_result.scalars():
+        textline = f"{channel.id}\t{channel.service} {channel.account} {channel.self_url()}"
+        if channel.enabled:
+            click.echo(click.style(textline, fg="green"))
+        else:
+            # Output but greyed out
+            click.echo(click.style(textline, fg="magenta"))
+
+
+@click.command("post")
+def post_command():
+    """
+    Post something manually to one or more channels.
+    """
+    tab = PrettyTable()
+    channel_mapping = {}
+    tab.field_names = ["ID", "Service", "Account", "Enabled", "URL"]
+    stmt = db.select(Channel)
+    db_result = db.session.execute(stmt)
+    for channel in db_result.scalars():
+        tab.add_row(
+            [
+                channel.id,
+                channel.service,
+                channel.account,
+                channel.enabled,
+                channel.self_url(),
+            ]
+        )
+        channel_mapping[channel.id] = channel
+    click.echo(tab)
+
+    channel_input = click.prompt(
+        "Which channels? Input ID, comma-separate for multiple, or 'all' for all of them.\n"
+    )
+    click.echo(channel_input)
+
+    channel_ids = None
+    if channel_input == "all":
+        # raise NotImplementedError("Don't know how to post to all just yet.")
+        channel_ids = list(channel_mapping.keys())
+    else:
+        channel_ids = list(
+            map(int, [s.strip() for s in channel_input.split(",")])
+        )
+    click.echo(f"Posting to channels: {channel_ids}")
+
+    post_text = click.prompt("What do you want to say?")
+
+    for chid in channel_ids:
+        channel = channel_mapping.get(chid)
+        if channel is None:
+            raise ValueError(f"No channel {chid}")
+
+        if channel.service == "mastodon":
+
+            # TODO: Look up the actual credentials for *this* account and whatnot
+
+            click.echo(f"Let's toot from {channel.account}!")
+            click.echo(f"Here's what we're going to say:\n\t{post_text}")
+            ready = click.confirm("Ready?")
+            if ready:
+                m = get_mastodon()
+                m.status_post(post_text)
+            else:
+                click.echo("OK, then!")
+
+        else:
+            raise NotImplementedError(f"Not posting to {channel.service} yet")
+
+
 def init_app(app):
     app.cli.add_command(info_command)
     app.cli.add_command(init_command)
@@ -248,3 +343,5 @@ def init_app(app):
     app.cli.add_command(add_command)
     app.cli.add_command(cl_list_subscriptions_command)
     app.cli.add_command(cl_subscribe_command)
+    app.cli.add_command(list_channels_command)
+    app.cli.add_command(post_command)

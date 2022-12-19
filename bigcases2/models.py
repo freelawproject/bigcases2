@@ -9,6 +9,9 @@ import sqlalchemy as sa
 from sqlalchemy.orm import declarative_base
 from judge_pics.search import portrait, ImageSizes
 
+from .masto import masto_regex
+
+
 db = SQLAlchemy()
 
 
@@ -33,6 +36,12 @@ beat_user_table = db.Table(
     db.Column("user_id", sa.ForeignKey("user.id"), primary_key=True),
 )
 
+beat_channel_table = db.Table(
+    "beat_channel",
+    db.Column("beat_id", sa.ForeignKey("beat.id"), primary_key=True),
+    db.Column("channel_id", sa.ForeignKey("channel.id"), primary_key=True),
+)
+
 
 class Case(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -51,8 +60,12 @@ class Case(db.Model):
     judges = db.relationship(
         "Judge",
         secondary=case_judge_table,
+        overlaps="cases",
+        # back_populates="cases",
     )
-    beats = db.relationship("Beat", secondary=case_beat_table)
+    beats = db.relationship(
+        "Beat", secondary=case_beat_table, overlaps="cases"
+    )
 
     def cl_url(self):
         return f"https://www.courtlistener.com/docket/{self.cl_docket_id}/{self.cl_slug}/"
@@ -107,8 +120,15 @@ class Beat(db.Model):
     name = db.Column(db.String(100))
     # <-> Cases
     # <-> Curators (Users)
-    cases = db.relationship("Case", secondary=case_beat_table)
-    curators = db.relationship("User", secondary=beat_user_table)
+    cases = db.relationship(
+        "Case", secondary=case_beat_table, overlaps="beats"
+    )
+    curators = db.relationship(
+        "User", secondary=beat_user_table, overlaps="beats"
+    )
+    channels = db.relationship(
+        "Channel", secondary=beat_channel_table, overlaps="beats"
+    )
 
 
 class User(db.Model):
@@ -138,7 +158,9 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
 
     # <-> Beats
-    beats = db.relationship("Beat", secondary=beat_user_table)
+    beats = db.relationship(
+        "Beat", secondary=beat_user_table, overlaps="curators"
+    )
 
 
 class RegistrationToken(db.Model):
@@ -172,13 +194,30 @@ class Channel(db.Model):
     account = db.Column(db.String(100))  # e.g., "big_cases"
     account_id = db.Column(
         db.String(100), default=None
-    )  # Service's ID number for the account, if applicable
+    )  # Service's ID number, username, etc. for the account, if applicable
     user_id = db.Column(
         db.Integer, sa.ForeignKey("user.id", ondelete="CASCADE")
     )  # FK to User
     enabled = db.Column(
         db.Boolean, default=False
     )  # Disabled by default; must enable manually
+    # <-> Beats
+    beats = db.relationship(
+        "Beat", secondary=beat_channel_table, overlaps="channels"
+    )
+
+    def self_url(self):
+        if self.service == "twitter":
+            return f"https://twitter.com/{self.account}"
+        elif self.service == "mastodon":
+            result = masto_regex.search(self.account)
+            assert len(result.groups()) == 2
+            account_part, instance_part = result.groups()
+            return f"https://{instance_part}/@{account_part}"
+        else:
+            raise NotImplementedError(
+                f"Channel.self_url() not yet implemented for service {self.service}"
+            )
 
 
 class Post(db.Model):
@@ -206,9 +245,10 @@ class Judge(db.Model):
     name_last = db.Column(db.String(200))
     name_suffix = db.Column(db.String(200))
     cases = db.relationship(
-        # "Case", back_populates="judges"
         "Case",
         secondary=case_judge_table,
+        # back_populates="judges,"
+        overlaps="judges",
     )
 
     def name(self):

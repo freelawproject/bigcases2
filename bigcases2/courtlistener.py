@@ -249,10 +249,10 @@ def docket_to_case(docket):
     cl_court_uri = docket[
         "court"
     ]  # "https://www.courtlistener.com/api/rest/v3/courts/mad/"
-    cl_case_name = docket["case_name"]    
+    cl_case_name = docket["case_name"]
     court_key = court_url_to_key(cl_court_uri)  # Transform to courts-db format
     case_number = docket["docket_number"]
-    
+
     # Trim unless it's a bankruptcy case; they don't have a "-cv-" part
     if not court_key.endswith("b"):
         case_number = trim_weird_ending(case_number)
@@ -266,7 +266,7 @@ def docket_to_case(docket):
     current_app.logger.debug(stmt)
     db_result = db.session.execute(stmt)
     current_app.logger.debug(f"db_result: {db_result}")
-    
+
     try:
         case_result = db_result.one()
         return case_result

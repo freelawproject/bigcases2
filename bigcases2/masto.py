@@ -11,6 +11,7 @@ import os
 import base64
 from pprint import pformat, pprint
 from copy import copy
+import re
 
 from flask import (
     Blueprint,
@@ -20,6 +21,8 @@ from flask import (
 )
 import click
 from mastodon import Mastodon, MastodonNotFoundError
+
+masto_regex = re.compile(r"@(.+)@(.+)")
 
 bp = Blueprint("mastodon", __name__)
 
