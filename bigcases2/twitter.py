@@ -97,11 +97,16 @@ def register_webhook_command():
     """
     load_secrets()
     url = f"https://api.twitter.com/1.1/account_activity/webhooks.json?url={NGROK_ROOT}{ENDPOINT}"
+    current_app.logger.debug(f"url: {url}")
+
     token = SECRETS[0]["bearer_token"]
+    # access_token = SECRETS[0]["access_token"]
+
     response = requests.post(
         url,
         headers={
             "authorization": f"bearer {token}",
+            # "authorization": f"bearer {access_token}",
         },
     )
     current_app.logger.debug(response)
