@@ -17,17 +17,21 @@ from flask import (
 )
 import click
 import requests
+from twitter import Twitter, OAuth
 
 bp = Blueprint("twitter", __name__)
 
 NGROK_ROOT = "https://efaf-2601-647-4c81-79f7-68c1-2edc-33b7-e78c.ngrok.io"
 ENDPOINT = "/webhooks/twitter"
 SECRETS = None
+CONSUMER_KEY = None
 CONSUMER_SECRET = None
+ACCESS_TOKEN = None
+ACCESS_TOKEN_SECRET = None
 
 
 def load_secrets():
-    global SECRETS, CONSUMER_SECRET
+    global SECRETS, CONSUMER_SECRET, CONSUMER_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET
     if SECRETS is None:
         SECRETS_PATH = os.path.join(
             current_app.instance_path, "credentials.json"
@@ -35,6 +39,10 @@ def load_secrets():
         with open(SECRETS_PATH, "r") as secrets_fp:
             SECRETS = json.load(secrets_fp)
         CONSUMER_SECRET = SECRETS[0]["api_key_secret"]
+        CONSUMER_KEY = SECRETS[0]["api_key"]
+        ACCESS_TOKEN = SECRETS[0]["access_token"]
+        ACCESS_TOKEN_SECRET = SECRETS[0]["access_token_secret"]
+
     return True
 
 
@@ -44,6 +52,16 @@ def twitter_test_command():
     Tweet a test message and check push subscription.
     """
     pass
+
+
+@click.command("twitter-post")
+def twitter_post_command():
+    """
+    Send a Tweet.
+    """
+    get_twitter()
+    result = g.twitter.statuses.update(status="Hello, world!")
+    current_app.logger.info(result)
 
 
 @bp.route(ENDPOINT, methods=["POST", "GET"])
@@ -115,7 +133,27 @@ def register_webhook_command():
     current_app.logger.debug(pformat(response.json()))
 
 
+def get_twitter():
+    if "twitter" not in g:
+        current_app.logger.debug("not g.twitter")
+        load_secrets()
+        t = Twitter(
+            auth=OAuth(
+                ACCESS_TOKEN,
+                ACCESS_TOKEN_SECRET,
+                CONSUMER_KEY,
+                CONSUMER_SECRET,
+            )
+        )
+        g.twitter = t
+    else:
+        current_app.logger.debug("yep g.twitter")
+    current_app.logger.debug(g.twitter)
+    return g.twitter
+
+
 def init_app(app):
     # https://flask.palletsprojects.com/en/2.2.x/tutorial/database/#register-with-the-application
     app.cli.add_command(twitter_test_command)
     app.cli.add_command(register_webhook_command)
+    app.cli.add_command(twitter_post_command)
