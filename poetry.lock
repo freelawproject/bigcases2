@@ -40,6 +40,17 @@ typing-extensions = {version = ">=3.10", markers = "python_version < \"3.10\""}
 wrapt = ">=1.11,<2"
 
 [[package]]
+name = "authlib"
+version = "1.2.0"
+description = "The ultimate Python library in building OAuth and OpenID Connect servers and clients."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+cryptography = ">=3.2"
+
+[[package]]
 name = "black"
 version = "22.12.0"
 description = "The uncompromising code formatter."
@@ -864,13 +875,14 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "flake8 (<5)", "pytest-co
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "03bb478204371caa44504604dc80a51a013da38f8025d3ab512f2a69cc224ad0"
+content-hash = "af31e2c3b967d28d8590fe685820ad273cad6eca93dabc96ab444c427c18ac4e"
 
 [metadata.files]
 ansicolors = []
 art = []
 astor = []
 astroid = []
+authlib = []
 black = []
 blurhash = []
 certifi = []

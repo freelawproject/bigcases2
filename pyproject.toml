@@ -45,6 +45,7 @@ ansicolors = "^1.1.8"
 judge-pics = "^2.0.3"
 prettytable = "^3.5.0"
 twitter = "^1.19.6"
+Authlib = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.10.0"
