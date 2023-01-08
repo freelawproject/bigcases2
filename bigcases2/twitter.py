@@ -23,27 +23,16 @@ bp = Blueprint("twitter", __name__)
 
 NGROK_ROOT = "https://efaf-2601-647-4c81-79f7-68c1-2edc-33b7-e78c.ngrok.io"
 ENDPOINT = "/webhooks/twitter"
+MAIN_ACCOUNT = "bcb2-dev"
 SECRETS = None
-CONSUMER_KEY = None
-CONSUMER_SECRET = None
-ACCESS_TOKEN = None
-ACCESS_TOKEN_SECRET = None
 
 
 def load_secrets():
-    global SECRETS, CONSUMER_SECRET, CONSUMER_KEY, ACCESS_TOKEN, ACCESS_TOKEN_SECRET
-    if SECRETS is None:
-        SECRETS_PATH = os.path.join(
-            current_app.instance_path, "credentials.json"
-        )
-        with open(SECRETS_PATH, "r") as secrets_fp:
-            SECRETS = json.load(secrets_fp)
-        CONSUMER_SECRET = SECRETS[0]["api_key_secret"]
-        CONSUMER_KEY = SECRETS[0]["api_key"]
-        ACCESS_TOKEN = SECRETS[0]["access_token"]
-        ACCESS_TOKEN_SECRET = SECRETS[0]["access_token_secret"]
-
-    return True
+    global SECRETS
+    SECRETS_PATH = os.path.join(current_app.instance_path, "credentials2.json")
+    with open(SECRETS_PATH, "r") as secrets_fp:
+        SECRETS = json.load(secrets_fp)
+    return SECRETS
 
 
 @click.command("twitter-test")
@@ -55,11 +44,12 @@ def twitter_test_command():
 
 
 @click.command("twitter-post")
-def twitter_post_command():
+@click.argument("account")
+def twitter_post_command(account):
     """
     Send a Tweet.
     """
-    get_twitter()
+    get_twitter(account)
     result = g.twitter.statuses.update(status="Hello, world!")
     current_app.logger.info(result)
 
@@ -71,12 +61,16 @@ def receive_webhook():
     current_app.logger.debug(f"Request headers: {request.headers}")
     current_app.logger.debug(f"Request data: {request.data}")
 
+    if not SECRETS:
+        load_secrets()
+
     if request.method == "GET":
         current_app.logger.debug(
             "It's a GET request, so it's a CRC challenge."
         )
 
         load_secrets()
+        CONSUMER_SECRET = SECRETS["twitter"][MAIN_ACCOUNT]["api_key_secret"]
 
         # CRC: https://developer.twitter.com/en/docs/twitter-api/enterprise/account-activity-api/guides/securing-webhooks
         crc_token = request.headers.get("crc_token")
@@ -113,18 +107,17 @@ def register_webhook_command():
     """
     Register a webhook with Twitter
     """
-    load_secrets()
+    if not SECRETS:
+        load_secrets()
     url = f"https://api.twitter.com/1.1/account_activity/webhooks.json?url={NGROK_ROOT}{ENDPOINT}"
     current_app.logger.debug(f"url: {url}")
 
-    token = SECRETS[0]["bearer_token"]
-    # access_token = SECRETS[0]["access_token"]
+    token = SECRETS["twitter"][MAIN_ACCOUNT]["bearer_token"]
 
     response = requests.post(
         url,
         headers={
             "authorization": f"bearer {token}",
-            # "authorization": f"bearer {access_token}",
         },
     )
     current_app.logger.debug(response)
@@ -133,21 +126,19 @@ def register_webhook_command():
     current_app.logger.debug(pformat(response.json()))
 
 
-def get_twitter():
-    if "twitter" not in g:
-        current_app.logger.debug("not g.twitter")
+def get_twitter(account=None):
+    current_app.logger.debug(f"get_twitter(): called with account={account}")
+    if not SECRETS:
         load_secrets()
-        t = Twitter(
-            auth=OAuth(
-                ACCESS_TOKEN,
-                ACCESS_TOKEN_SECRET,
-                CONSUMER_KEY,
-                CONSUMER_SECRET,
-            )
+    t = Twitter(
+        auth=OAuth(
+            SECRETS["twitter"].get(account).get("access_token"),
+            SECRETS["twitter"].get(account).get("access_token_secret"),
+            SECRETS["twitter"].get(MAIN_ACCOUNT).get("api_key"),
+            SECRETS["twitter"].get(MAIN_ACCOUNT).get("api_key_secret"),
         )
-        g.twitter = t
-    else:
-        current_app.logger.debug("yep g.twitter")
+    )
+    g.twitter = t
     current_app.logger.debug(g.twitter)
     return g.twitter
 
