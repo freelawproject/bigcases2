@@ -1,0 +1,16 @@
+# Ignore everything...
+*
+
+# Except a few things...
+!bc
+!poetry.lock
+!pyproject.toml
+!docker
+!manage.py
+
+# But no matter what, ignore these things.
+cl/assets/static
+cl/node_modules
+*.secrets
+*.env.dev
+*.env
