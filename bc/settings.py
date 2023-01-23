@@ -16,9 +16,7 @@ SECRET_KEY = env("SECRET_KEY", default="THIS-is-a-Secret")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=True)
 
-ALLOWED_HOSTS: list[str] = env(
-    "ALLOWED_HOSTS", default=["*"]
-)
+ALLOWED_HOSTS: list[str] = env("ALLOWED_HOSTS", default=["*"])
 
 TEMPLATE_ROOT = BASE_DIR / "bc/assets/templates/"
 
