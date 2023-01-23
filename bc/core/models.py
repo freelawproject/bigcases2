@@ -11,7 +11,7 @@ class AbstractDateTimeModel(models.Model):
     )
     date_modified = models.DateTimeField(
         help_text="The last moment when the item was modified. A value in year"
-                  " 1750 indicates the value is unknown",
+        " 1750 indicates the value is unknown",
         auto_now=True,
         db_index=True,
     )

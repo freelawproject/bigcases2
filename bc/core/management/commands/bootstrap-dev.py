@@ -27,7 +27,7 @@ class Command(BaseCommand):
             service="mastodon",
             account=settings.MASTODON_ACCOUNT,
             account_id=settings.MASTODON_EMAIL,
-            enabled=True
+            enabled=True,
         )
 
         beat.channels.add(ch)

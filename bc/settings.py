@@ -17,7 +17,7 @@ SECRET_KEY = env("SECRET_KEY", default="THIS-is-a-Secret")
 DEBUG = env.bool("DEBUG", default=True)
 
 ALLOWED_HOSTS: list[str] = env(
-    "ALLOWED_HOSTS", default=["www.courtlistener.com"]
+    "ALLOWED_HOSTS", default=["*"]
 )
 
 TEMPLATE_ROOT = BASE_DIR / "bc/assets/templates/"
@@ -31,13 +31,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "bc.core",
     "bc.users",
     "bc.channels",
     "bc.people",
     "bc.cases",
-    "bc.beats"
+    "bc.beats",
 ]
 
 MIDDLEWARE = [
@@ -51,7 +50,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "bc.urls"
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = "users.User"
 
 TEMPLATES = [
     {
@@ -128,9 +127,9 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 COURTLISTENER_API_KEY = env("COURTLISTENER_API_KEY")
-BCB_MATCH_LIMIT = env('BCB_MATCH_LIMIT')
+BCB_MATCH_LIMIT = env("BCB_MATCH_LIMIT")
 
 MASTODON_ACCOUNT = env("MASTODON_ACCOUNT")
 MASTODON_EMAIL = env("MASTODON_EMAIL")
-MASTODON_SERVER = env('MASTODON_SERVER')
-MASTODON_TOKEN = env('MASTODON_TOKEN')
+MASTODON_SERVER = env("MASTODON_SERVER")
+MASTODON_TOKEN = env("MASTODON_TOKEN")
