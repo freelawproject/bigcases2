@@ -29,7 +29,7 @@ class Command(BaseCommand):
         case_name = result["case_name"]
         docket_number = result["docket_number"]
         uri = result["absolute_url"]
-        cl_url = f"{CL_BASE}{uri}"
+        cl_url = f"https://www.courtlistener.com{uri}"
         click.echo(f"Name: {case_name}")
         click.echo(f"Case no.: {docket_number}")
         click.echo(f"Court: {court}")
