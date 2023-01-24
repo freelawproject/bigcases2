@@ -55,7 +55,9 @@ jobs:
           mypy \
           --follow-imports=skip \
           --exclude 'migrations/*' \
-          -p bc.core
+          -p bc.core \
+          -p bc.users \
+          -p bc.people
 
       - name: Flynt f-string Formatter
         run: >
