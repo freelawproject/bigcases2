@@ -1,17 +1,17 @@
 import logging
-from django.http import HttpRequest, HttpResponse
 
+from django.http import HttpRequest, HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .utils.masto import get_mastodon, get_keys
+from .utils.masto import get_keys, get_mastodon
 
 logger = logging.getLogger(__name__)
 
 
-@api_view(['POST'])
-def receive_mastodon_push(request: HttpRequest)-> HttpResponse:
+@api_view(["POST"])
+def receive_mastodon_push(request: HttpRequest) -> HttpResponse:
     logger.debug("Received a push webhook from Mastodon.")
     logger.debug(f"Request: {request}")
     logger.debug(f"Request headers: {request.headers}")
