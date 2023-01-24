@@ -6,7 +6,7 @@ Big Cases Bot 2 uses [CourtListener's REST API](https://www.courtlistener.com/ap
 
 ## Database
 
-BCB2 uses a [Postres](https://www.postgresql.org/) database to keep track of cases and documents it knows about. The original BCB1 used MySQL.
+BCB2 uses a [Postgres](https://www.postgresql.org/) database to keep track of cases and documents it knows about. The original BCB1 used MySQL.
 
 ## Posting
 
@@ -18,13 +18,9 @@ BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mas
 
 ## Command Line Interface
 
-- `big_cases init`: Initialize BCB2 (create database, check environment, etc.)
-- `big_cases init-db`: Re-initialize database
-- `big_cases backup`: Save a snapshot of the database with current timestamp
 - `big_cases empty-db`: Delete all rows in database, but leave structure intact
 - `big_cases restore-db`: Restore database from a saved snapshot
 - `big_cases load-bcb1-json`: Import cases from Big Cases Bot 1's JSON file
-- `big_cases load-bcb1-db`: Import more data from Big Cases Bot 1's MySQL database
 - `big_cases search nysd 22-cv-12345`: Search for a case and add it
 - `big_cases post`: Post a message
 - `big_cases list`: List subscribed cases
@@ -87,9 +83,8 @@ BCB2 generates images of the first few pages of a document.
 
 ### Python Packages
 
-- [Flask](https://flask.palletsprojects.com/en/2.2.x/)
+- [Django](https://www.djangoproject.com/)
 - [Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/)
-- [SQLAlchemy (v1.4)](https://docs.sqlalchemy.org/en/14/index.html) & [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/)
 
 ### External Packages
 
