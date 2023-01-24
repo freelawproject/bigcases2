@@ -1,0 +1,2 @@
+class MultiDefendantCaseError(Exception):
+    pass
