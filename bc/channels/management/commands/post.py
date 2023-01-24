@@ -7,7 +7,7 @@ from bc.channels.utils.masto import get_mastodon
 
 
 class Command(BaseCommand):
-    help = " Post something manually to one or more channels."
+    help = "Post something manually to one or more channels."
 
     def handle(self, *args, **options):
         tab = PrettyTable()
