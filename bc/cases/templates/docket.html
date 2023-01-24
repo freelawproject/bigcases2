@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ docket.cl_case_title }} - Big Cases{% endblock %}
+{% block content %}
+  <h1>{{ docket.cl_case_title }}</h1>
+  <ul>
+    <li>Court: {{ court_name }} <small>({{ docket.court }})</small></li>
+    {% for judge in docket.judges.all %}
+      <li>{{ judge.name }}
+        {% if judge.portrait %}
+          <img src="{{ judge.portrait }}"/>
+        {% endif %}
+      </li>
+    {% endfor %}
+    {% if docket.beats.count > 0 %}
+      <li>Beats</li>
+      <ul>
+        {% for beat in docket.beats.all %}
+          <li>{{ beat.name }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+  </ul>
+  <p>Lorem ipsum etc. etc.</p>
+  <p><a href="{{ docket.cl_url }}">View docket on CourtListener</a></p>
+  <p><a href="{% url 'docket_details' docket.id|add:1 %}">Next case &gt;</a></p>
+{% endblock %}
