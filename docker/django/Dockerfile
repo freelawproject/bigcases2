@@ -55,4 +55,4 @@ COPY . /opt/bigcases2
 CMD python /opt/bigcases2/manage.py migrate  && \
     python /opt/bigcases2/manage.py runserver 0.0.0.0:8000
 
-
+WORKDIR /opt/bigcases2
