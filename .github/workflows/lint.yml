@@ -56,7 +56,7 @@ jobs:
           --follow-imports=skip \
           --exclude 'migrations/*' \
           -p bc.core
-   
+
       - name: Flynt f-string Formatter
         run: >
           flynt .
