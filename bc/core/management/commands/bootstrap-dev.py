@@ -5,12 +5,12 @@ from django.core.management.base import BaseCommand
 
 logger = logging.getLogger(__name__)
 
-from bc.cases.utils.courtlistener import lookup_docket_by_cl_id
-from bc.cases.services import docket_to_case
-from bc.beats.models import Beat
-from bc.channels.models import Channel
-
 from django.conf import settings
+
+from bc.beats.models import Beat
+from bc.cases.services import docket_to_case
+from bc.cases.utils.courtlistener import lookup_docket_by_cl_id
+from bc.channels.models import Channel
 
 
 class Command(BaseCommand):
