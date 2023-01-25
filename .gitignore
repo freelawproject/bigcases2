@@ -166,5 +166,6 @@ dmypy.json
 # output folder
 output/
 
-# PyCharm
+# Editors
 .idea/
+.vscode

@@ -1,5 +1,3 @@
-from bc.people.models import Judge
-
 from .models import Docket
 from .selectors import get_docket_by_case_number
 from .utils.courtlistener import (
@@ -44,9 +42,5 @@ def docket_to_case(docket):
         cl_judge = lookup_judge(docket.get("assigned_to"))
     if docket.get("referred_to"):
         cl_judge = lookup_judge(docket.get("referred_to"))
-
-    if cl_judge:
-        j = Judge.from_json(cl_judge)
-        j.cases.add(case)
 
     return case

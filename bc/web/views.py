@@ -3,11 +3,11 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 
-from .models import Docket
+from bc.cases.models import Subscription
 
 
 def view_docket(request: HttpRequest, docket_id: int) -> HttpResponse:
-    docket = get_object_or_404(Docket, pk=docket_id)
+    docket = get_object_or_404(Subscription, pk=docket_id)
 
     court_name = None
     court_results = find_court_by_id(docket.court)
@@ -22,7 +22,7 @@ def view_docket(request: HttpRequest, docket_id: int) -> HttpResponse:
 
 
 def count_dockets(request: HttpRequest) -> HttpResponse:
-    dockets = Docket.objects.count()
+    dockets = Subscription.objects.count()
 
     context = {"dockets_count": dockets}
 

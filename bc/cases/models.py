@@ -1,95 +1,89 @@
 from django.db import models
 
 from bc.core.models import AbstractDateTimeModel
-from bc.people.models import Judge
+
+APPELLATE_COURT_IDS = [
+    "ca1",
+    "ca2",
+    "ca3",
+    "ca4",
+    "ca5",
+    "ca6",
+    "ca7",
+    "ca8",
+    "ca9",
+    "ca10",
+    "ca11",
+    "cadc",
+    "cafc",
+]
 
 
-class Docket(AbstractDateTimeModel):
-    court = models.CharField(
-        help_text="The court where the upload was from",
-        max_length=100,
+class Subscription(AbstractDateTimeModel):
+    docket_name = models.TextField(
+        help_text="The name of the docket",
     )
     docket_number = models.CharField(
         help_text="The docket numbers of a case",
         max_length=100,
+        blank=True,
     )
-    bcb1_description = models.CharField(
-        help_text="Name from the list of cases used in the first version",
-        max_length=200,
+    court_name = models.CharField(
+        help_text="The court where the upload was from",
+        max_length=100,
     )
-    in_bcb1 = models.BooleanField(
-        help_text="Whether a Docket was used in the first version",
-        default=False,
-    )
-    cl_case_title = models.TextField(
-        help_text="the highest quality case name."
+    case_summary = models.CharField(
+        help_text="A few words to describe the case in social media",
+        max_length=100,
+        blank=True,
     )
     cl_docket_id = models.IntegerField(
-        help_text="The docket id from Courtlistener db.", null=True
+        help_text="The docket id from CourtListener db.",
+        null=True,
     )
-    cl_slug = models.TextField(
-        help_text="URL that the document should map to (the slug)."
+    cl_court_id = models.CharField(
+        help_text="The CL court ID, b/c it's sometimes different from PACER's",
+        max_length=100,
     )
-    cl_alerts = models.BooleanField(
-        help_text="Whether a document has alerts turn on.", default=False
+    pacer_court_id = models.CharField(
+        help_text="The ID in PACER's subdomain",
+        max_lenth=10,
     )
-    judges = models.ManyToManyField(
-        Judge,
-        help_text="The judges for the case.",
-        related_name="cases",
+    pacer_case_id = models.CharField(
+        help_text=(
+            "The cased ID provided by PACER. Noted in this case on a "
+            "per-document-level, since we've learned that some "
+            "documents from other cases can appear in curious places."
+        ),
+        max_length=100,
+        blank=True,
     )
 
     def cl_url(self):
-        return f"https://www.courtlistener.com/docket/{self.cl_docket_id}/{self.cl_slug}/"
+        return f"https://www.courtlistener.com/recap/gov.uscourts.{self.cl_court_id}.{self.pacer_case_id}"
 
+    def pacer_district_url(self, path):
+        if not self.pacer_case_id or self.cl_court_id in APPELLATE_COURT_IDS:
+            return None
+        return f"https://ecf.{self.pacer_court_id}.uscourts.gov/cgi-bin/{path}?{self.pacer_case_id}"
 
-class DocketEntry(AbstractDateTimeModel):
-    docket = models.ForeignKey(
-        Docket,
-        help_text="Foreign key as a relation to the Docket object.",
-        related_name="docket_entries",
-        on_delete=models.CASCADE,
-    )
-    cl_docket_entry_id = models.IntegerField(
-        help_text="The entry id from Courtlistener db."
-    )
-    entry_number = models.IntegerField(
-        help_text="The docket entry number for the document."
-    )
-    pacer_sequence_number = models.IntegerField(
-        help_text="A field used for ordering the docket entries on a docket."
-    )
+    def pacer_docket_url(self):
+        if not self.pacer_case_id:
+            return None
 
+        if self.cl_court_id in APPELLATE_COURT_IDS:
+            if self.court.pk in ["ca5", "ca7", "ca11"]:
+                path = "/cmecf/servlet/TransportRoom?"
+            else:
+                path = "/n/beam/servlet/TransportRoom?"
 
-class Document(AbstractDateTimeModel):
-    docket_entry = models.ForeignKey(
-        DocketEntry,
-        help_text="Foreign Key to the DocketEntry object",
-        related_name="documents",
-        on_delete=models.CASCADE,
-    )
-    docket = models.ForeignKey(
-        Docket,
-        help_text="Foreign Key to the Docket object",
-        related_name="documents",
-        on_delete=models.CASCADE,
-    )
-    attachment_number = models.IntegerField(
-        help_text=(
-            "If the file is an attachment, This field stores the attachment "
-            "number in RECAP docket."
-        ),
-    )
-
-
-class DocumentThumbnail(AbstractDateTimeModel):
-    page_number = models.IntegerField(
-        help_text="Page number of the thumbnail."
-    )
-    thumbnail = models.ImageField(help_text="URL to the file on CL storage.")
-    document = models.ForeignKey(
-        Document,
-        help_text="'Foreign Key to the Document object.",
-        related_name="thumbnails",
-        on_delete=models.CASCADE,
-    )
+            return (
+                f"https://ecf.{self.pacer_court_id}.uscourts.gov"
+                f"{path}"
+                f"servlet=CaseSummary.jsp&"
+                f"caseId={self.pacer_case_id}&"
+                f"incOrigDkt=Y&"
+                f"incDktEntries=Y"
+            )
+        else:
+            return self.pacer_district_url("DktRpt.pl")

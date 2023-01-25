@@ -9,8 +9,8 @@
 !manage.py
 
 # But no matter what, ignore these things.
-cl/assets/static
-cl/node_modules
+bc/assets/static
+bc/node_modules
 *.secrets
 *.env.dev
 *.env

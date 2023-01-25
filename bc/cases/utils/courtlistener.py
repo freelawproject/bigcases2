@@ -1,7 +1,3 @@
-"""
-CourtListener utils
-"""
-
 import json
 import logging
 import re
@@ -16,23 +12,9 @@ from .exceptions import MultiDefendantCaseError
 
 logger = logging.getLogger(__name__)
 
-ENDING_PATTERN_RE = re.compile(r"\d+(-\d+)$")
 
 API_ROOT = "https://www.courtlistener.com/api/rest/v3"
 ENDPOINT_DOCKET_ALERTS = f"{API_ROOT}/docket-alerts/"
-
-REQUIRED_FIELDS = (
-    # TODO: Validate against a schema instead.
-    "id",  # 2208776613
-    "date_filed",  # "2022-10-11"
-    "description",
-    "date_created",  # "2022-10-11T14:21:40.855097-07:00"
-    "entry_number",  # 140
-    "date_modified",  # "2022-10-18T13:03:18.466039-07:00"
-    "recap_documents",  # list of dicts
-    "pacer_sequence_number",  # 584
-    "recap_sequence_number",  # "2022-10-11.001"
-)
 
 
 def lookup_court(court: str):
@@ -57,7 +39,8 @@ def trim_docket_ending_number(s: str) -> str:
     Trims weird numeric endings from BCB1 case numbers, like
     "-12" from "1:18-cr-00215-12"
     """
-    match = ENDING_PATTERN_RE.search(s)
+    ending_pattern = re.compile(r"\d+(-\d+)$")
+    match = ending_pattern.search(s)
     if match:
         ending = match.groups()[0]
         length = len(ending)
@@ -85,13 +68,10 @@ def court_url_to_key(url: str) -> str:
     return key
 
 
-def lookup_docket_by_cl_id(cl_id: int, save=False):
+def lookup_docket_by_cl_id(cl_id: int):
     url = f"{API_ROOT}/dockets/{cl_id}/"
     response = requests.get(url, headers=auth_header())
     data = response.json()
-    if save:
-        with open(f"output/cl-{cl_id}.json", "w") as fp:
-            json.dump(data, fp)
     return data
 
 

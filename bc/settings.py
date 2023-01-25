@@ -32,9 +32,9 @@ INSTALLED_APPS = [
     "bc.core",
     "bc.users",
     "bc.channels",
-    "bc.people",
     "bc.cases",
     "bc.beats",
+    "bc.web",
 ]
 
 MIDDLEWARE = [
