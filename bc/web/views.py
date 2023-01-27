@@ -3,7 +3,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.response import TemplateResponse
 
-from bc.cases.models import Subscription
+from bc.subscription.models import Subscription
 
 
 def view_docket(request: HttpRequest, docket_id: int) -> HttpResponse:
