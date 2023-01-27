@@ -2,7 +2,7 @@ import click
 from django.core.management.base import BaseCommand
 from mastodon import MastodonNotFoundError
 
-from bc.channels.utils.masto import get_mastodon, subscribe
+from bc.channel.utils.masto import get_mastodon, subscribe
 
 
 class Command(BaseCommand):

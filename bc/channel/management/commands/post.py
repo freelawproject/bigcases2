@@ -2,8 +2,8 @@ import click
 from django.core.management.base import BaseCommand
 from prettytable import PrettyTable
 
-from bc.channels.models import Channel
-from bc.channels.utils.masto import get_mastodon
+from bc.channel.models import Channel
+from bc.channel.utils.masto import get_mastodon
 
 
 class Command(BaseCommand):

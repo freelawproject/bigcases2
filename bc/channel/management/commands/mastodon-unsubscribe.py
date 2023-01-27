@@ -1,7 +1,7 @@
 import click
 from django.core.management.base import BaseCommand
 
-from bc.channels.utils.masto import get_mastodon
+from bc.channel.utils.masto import get_mastodon
 
 
 class Command(BaseCommand):
