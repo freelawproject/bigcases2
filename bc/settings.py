@@ -31,8 +31,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "bc.core",
     "bc.users",
-    "bc.channels",
-    "bc.cases",
+    "bc.channel",
+    "bc.subscription",
     "bc.web",
 ]
 
