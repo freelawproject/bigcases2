@@ -1,4 +1,4 @@
-from .models import Docket
+from .models import Subscription
 from .selectors import get_docket_by_case_number
 from .utils.courtlistener import (
     court_url_to_key,
@@ -29,7 +29,7 @@ def docket_to_case(docket):
     if case_result:
         return case_result
 
-    case = Docket.objects.create(
+    subscription = Subscription.objects.create(
         court=court_key,
         docket_number=docket_number,
         cl_case_title=cl_case_name,
@@ -37,10 +37,4 @@ def docket_to_case(docket):
         cl_slug=docket["slug"],
     )
 
-    cl_judge = None
-    if docket.get("assigned_to"):
-        cl_judge = lookup_judge(docket.get("assigned_to"))
-    if docket.get("referred_to"):
-        cl_judge = lookup_judge(docket.get("referred_to"))
-
-    return case
+    return subscription
