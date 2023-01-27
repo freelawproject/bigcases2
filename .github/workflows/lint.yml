@@ -41,11 +41,6 @@ jobs:
           echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
           echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
 
-      - name: Debug paths
-        run: |
-          pwd
-          ls -al
-
       - name: mypy Static Type Checker
         run: |
           mypy \
