@@ -1,6 +1,6 @@
 ARG BUILD_ENV=prod
 
-FROM python:3.10-slim as build-base
+FROM python:3.11-slim as build-base
 
 RUN apt-get update --option "Acquire::Retries=3" --quiet=2 && \
     apt-get install \
@@ -12,9 +12,7 @@ RUN apt-get update --option "Acquire::Retries=3" --quiet=2 && \
         # So postgres can compile and users can use dbshell
         libpq-dev postgresql-client \
         # For installing poetry and git-based deps
-        curl git \
-        # Other dependencies
-        libffi-dev libxml2-dev libxslt-dev procps vim cmake
+        curl git
 
 # poetry
 # https://python-poetry.org/docs/configuration/#using-environment-variables
