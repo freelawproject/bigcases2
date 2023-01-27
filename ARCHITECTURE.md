@@ -16,6 +16,24 @@ BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mas
 
 - `hey @big_cases, follow nysd 22-cv-12345`
 
+### Developer Installation
+
+To set up a development machine, do the following:
+
+1. Clone the [bigcases2](https://github.com/freelawproject/bigcases2) repository.
+
+1. Create a personal settings file. To do that, copy-paste the `.env.example` file to `.env.dev`.
+
+1. Next, create the bridge network that docker relies on:
+
+    `docker network create -d bridge --attachable bc2_net_overlay`
+
+    This is important so that each service in the compose file can have a hostname.
+
+1. `cd` into bigcases2/docker/bigcasesbot, then launch the server by running:
+
+    `docker-compose up -d`
+
 ## Command Line Interface
 
 1. Generate some dummy data for your database:
@@ -24,12 +42,30 @@ BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mas
 
 1. Lookup specific data from CourtListener:
 
-        docker exec -it bc2-django python python manage.py lookup 64983976
+        docker exec -it bc2-django python manage.py lookup 64983976
 
     This will use CL API to lookup the Docket `64983976`and output its data in the console. This command also accepts the following command line options:
 
-   - `--add`: saves the case in the database
-   - `--subscribe`: creates a CourtListener docket alert subscription
+      - `--add`: saves the case in the database
+      - `--subscribe`: creates a CourtListener docket alert subscription
+
+1. Post something manually in the registered channels:
+
+        docker exec -it bc2-django python manage.py post
+
+1. Create mastodon subscription to push notifications:
+
+        docker exec -it bc2-django python manage.py mastodon-subscribe
+
+    This command requires that the following variables are set in the .env file: `MASTODON_SHARED_KEY`, `MASTODON_PUBLIC_KEY`, `MASTODON_PRIVATE_KEY`and `PROJECT_BASE_URL`. We added a script to generate the first three variables. Execute the following command to use the script and paste the result in your .env file:
+
+        docker exec -it bc2-django python /opt/bigcases2/scripts/get_mastodon_keys.py 
+
+    Make sure that the `MASTODON_TOKEN` and `MASTODON_SERVER` are set before using the previous command.
+
+1. Delete mastodon subscription to push notifications:
+
+        docker exec -it bc2-django python manage.py mastodon-unsubscribe
 
 ## Server
 
