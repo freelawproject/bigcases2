@@ -1,4 +1,3 @@
-import click
 from django.core.management.base import BaseCommand
 from prettytable import PrettyTable
 
@@ -25,12 +24,12 @@ class Command(BaseCommand):
                 ]
             )
             channel_mapping[channel.id] = channel
-        click.echo(tab)
+        self.stdout.write(self.style.SUCCESS(tab))
 
-        channel_input = click.prompt(
+        channel_input = input(
             "Which channels? Input ID, comma-separate for multiple, or 'all' for all of them.\n"
         )
-        click.echo(channel_input)
+        self.stdout.write(self.style.SUCCESS(channel_input))
 
         channel_ids = None
         if channel_input == "all":
@@ -39,9 +38,12 @@ class Command(BaseCommand):
             channel_ids = list(
                 map(int, [s.strip() for s in channel_input.split(",")])
             )
-        click.echo(f"Posting to channels: {channel_ids}")
 
-        post_text = click.prompt("What do you want to say?")
+        self.stdout.write(
+            self.style.SUCCESS(f"Posting to channels: {channel_ids}")
+        )
+
+        post_text = input("What do you want to say? ")
 
         for chid in channel_ids:
             channel = channel_mapping.get(chid)
@@ -50,16 +52,17 @@ class Command(BaseCommand):
 
             if channel.service == "mastodon":
 
-                # TODO: Look up the actual credentials for *this* account and whatnot
+                self.stdout.write(
+                    self.style.SUCCESS(f"Let's toot from {channel.account}!")
+                )
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"Here's what we're going to say:\n\t{post_text}"
+                    )
+                )
 
-                click.echo(f"Let's toot from {channel.account}!")
-                click.echo(f"Here's what we're going to say:\n\t{post_text}")
-                ready = click.confirm("Ready?")
-                if ready:
-                    m = get_mastodon()
-                    m.status_post(post_text)
-                else:
-                    click.echo("OK, then!")
+                m = get_mastodon()
+                m.status_post(post_text)
             else:
                 raise NotImplementedError(
                     f"Not posting to {channel.service} yet"
