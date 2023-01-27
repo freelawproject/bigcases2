@@ -1,6 +1,5 @@
 from django.db import models
 
-from bc.cases.models import Docket, DocketEntry
 from bc.core.models import AbstractDateTimeModel
 from bc.users.models import User
 
@@ -49,27 +48,3 @@ class Channel(AbstractDateTimeModel):
             raise NotImplementedError(
                 f"Channel.self_url() not yet implemented for service {self.service}"
             )
-
-
-class Post(AbstractDateTimeModel):
-    docket = models.ForeignKey(
-        Docket,
-        help_text="Foreign Key to the Docket object.",
-        related_name="docket",
-        on_delete=models.CASCADE,
-    )
-    docket_entry = models.ForeignKey(
-        DocketEntry,
-        help_text="Foreign Key to the DocketEntry object.",
-        related_name="docket_entries",
-        on_delete=models.CASCADE,
-    )
-    channel = models.ForeignKey(
-        Channel,
-        help_text="Foreign Key to the Channel object.",
-        related_name="posts",
-        on_delete=models.CASCADE,
-    )
-    text = models.TextField(
-        help_text="The main body of each status update posted.",
-    )
