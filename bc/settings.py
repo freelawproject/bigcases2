@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     "bc.users",
     "bc.channels",
     "bc.cases",
-    "bc.beats",
     "bc.web",
 ]
 
