@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from bc.cases.utils.courtlistener import (
+from bc.subscription.utils.courtlistener import (
     add_case,
     lookup_docket_by_cl_id,
 )
