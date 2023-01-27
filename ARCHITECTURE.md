@@ -18,12 +18,18 @@ BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mas
 
 ## Command Line Interface
 
-- `big_cases empty-db`: Delete all rows in database, but leave structure intact
-- `big_cases restore-db`: Restore database from a saved snapshot
-- `big_cases load-bcb1-json`: Import cases from Big Cases Bot 1's JSON file
-- `big_cases search nysd 22-cv-12345`: Search for a case and add it
-- `big_cases post`: Post a message
-- `big_cases list`: List subscribed cases
+1. Generate some dummy data for your database:
+
+        docker exec -it bc2-django python manage.py bootstrap-dev
+
+1. Lookup specific data from CourtListener:
+
+        docker exec -it bc2-django python python manage.py lookup 64983976
+
+    This will use CL API to lookup the Docket `64983976`and output its data in the console. This command also accepts the following command line options:
+
+   - `--add`: saves the case in the database
+   - `--subscribe`: creates a CourtListener docket alert subscription
 
 ## Server
 
