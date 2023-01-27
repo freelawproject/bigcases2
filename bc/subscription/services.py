@@ -23,7 +23,7 @@ def create_subscription_from_docket(docket):
     pacer_court_id = docket["court_id"]
 
     court = find_court_by_id(cl_court_id)
-    court_name = court[0]["name"] if len(court) == 1 else ''
+    court_name = court[0]["name"] if len(court) == 1 else ""
 
     subscription = Subscription.objects.create(
         docket_name=docket_name,
@@ -32,7 +32,7 @@ def create_subscription_from_docket(docket):
         cl_court_id=cl_court_id,
         pacer_court_id=pacer_court_id,
         pacer_case_id=pacer_case_id,
-        court_name=court_name
+        court_name=court_name,
     )
 
     return subscription
