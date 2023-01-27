@@ -47,7 +47,7 @@ class Subscription(AbstractDateTimeModel):
     )
     pacer_court_id = models.CharField(
         help_text="The ID in PACER's subdomain",
-        max_lenth=10,
+        max_length=10,
     )
     pacer_case_id = models.CharField(
         help_text=(
