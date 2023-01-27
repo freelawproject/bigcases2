@@ -46,17 +46,12 @@ jobs:
           pwd
           ls -al
 
-      - name: mypy Static Type Checker (packages)
+      - name: mypy Static Type Checker
         run: |
           mypy \
           --follow-imports=skip \
           --exclude 'migrations/*' \
-          -p bc.core \
-          -p bc.users \
-          -p bc.people \
-          -p bc.cases \
-          -p bc.channels \
-          -p bc.beats
+          .
 
       - name: Flynt f-string Formatter
         run: >
