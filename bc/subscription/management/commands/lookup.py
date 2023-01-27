@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
 
+from bc.subscription.services import create_subscription_from_docket
 from bc.subscription.utils.courtlistener import (
-    add_case,
     lookup_docket_by_cl_id,
+    subscribe_to_docket_alert,
 )
 
 
@@ -17,23 +18,37 @@ class Command(BaseCommand):
         parser.add_argument(
             "--add",
             action="store_true",
-            help="Store case found",
+            help="Save the case found using the CL API",
+        )
+        parser.add_argument(
+            "--subscribe",
+            action="store_true",
+            help="Subscribe to the case using the CL API",
         )
 
     def handle(self, *args, **options):
         result = lookup_docket_by_cl_id(options["cl-id"])
-        court_url = result["court"]
-        court = court_url_to_key(court_url)
-        case_name = result["case_name"]
-        docket_number = result["docket_number"]
-        uri = result["absolute_url"]
-        cl_url = f"https://www.courtlistener.com{uri}"
-        self.stdout.write(self.style.SUCCESS(f"Name: {case_name}"))
-        self.stdout.write(self.style.SUCCESS(f"Case no.: {docket_number}"))
-        self.stdout.write(self.style.SUCCESS(f"Court: {court}"))
-        self.stdout.write(self.style.SUCCESS(f"Link: {cl_url}"))
+        if result:
+            court = result["court_id"]
+            case_name = result["case_name"]
+            docket_number = result["docket_number"]
+            uri = result["absolute_url"]
+            cl_url = f"https://www.courtlistener.com{uri}"
+            self.stdout.write(self.style.SUCCESS(f"Name: {case_name}"))
+            self.stdout.write(self.style.SUCCESS(f"Case no.: {docket_number}"))
+            self.stdout.write(self.style.SUCCESS(f"Court: {court}"))
+            self.stdout.write(self.style.SUCCESS(f"Link: {cl_url}"))
 
-        if options["add"]:
-            self.stdout.write(self.style.NOTICE("We'll try to add this case to the DB."))
-            add_case(court, docket_number, case_name, options["cl-id"])
-            self.stdout.write(self.style.SUCCESS("Added!"))
+            if options["add"]:
+                self.stdout.write(
+                    self.style.WARNING("We'll try to add this case to the DB.")
+                )
+                create_subscription_from_docket(result)
+                self.stdout.write(self.style.SUCCESS("Added!"))
+
+            if options["subscribe"]:
+                cl_subscription = subscribe_to_docket_alert(options["cl-id"])
+                if cl_subscription:
+                    self.stdout.write(self.style.SUCCESS("Subscribed!"))
+        else:
+            self.stdout.write(self.style.ERROR("Case not found"))
