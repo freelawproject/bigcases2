@@ -1,4 +1,3 @@
-import click
 from django.core.management.base import BaseCommand
 from mastodon import MastodonNotFoundError
 
@@ -15,15 +14,23 @@ class Command(BaseCommand):
         # Check if there's a subscription already
         try:
             sub = m.push_subscription()
-            click.echo(f"Got an existing subscription: {sub}")
+            self.stdout.write(
+                self.style.SUCCESS(f"Got an existing subscription: {sub}")
+            )
         except MastodonNotFoundError as e:
-            click.echo(e)
+            self.stdout.write(self.style.NOTICE(e))
 
             # Add subscription
             sub = subscribe()
 
         sub_id = sub["id"]
         sub_key = sub["server_key"]
-        click.echo(f"Push subscription ID: {sub_id}. Key: {sub_key}")
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Push subscription ID: {sub_id}. Key: {sub_key}"
+            )
+        )
 
-        click.echo("mastodon_subscribe_command() done.")
+        self.stdout.write(
+            self.style.SUCCESS("mastodon_subscribe_command() done.")
+        )

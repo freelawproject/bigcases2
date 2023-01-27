@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 from django.conf import settings
 
 from bc.channel.models import Channel
-from bc.subscription.services import docket_to_case
+from bc.subscription.services import create_subscription_from_docket
 from bc.subscription.utils.courtlistener import lookup_docket_by_cl_id
 
 
@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         docket = lookup_docket_by_cl_id(65748821)
-        case = docket_to_case(docket)
+        subscription = create_subscription_from_docket(docket)
 
         ch = Channel.objects.create(
             service="mastodon",
@@ -25,5 +25,5 @@ class Command(BaseCommand):
             enabled=True,
         )
 
-        self.stdout.write(self.style.SUCCESS(f"Case: {case}"))
+        self.stdout.write(self.style.SUCCESS(f"Subscription: {subscription}"))
         self.stdout.write(self.style.SUCCESS(f"Channel: {ch}"))

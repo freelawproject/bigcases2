@@ -1,4 +1,3 @@
-import click
 from django.core.management.base import BaseCommand
 
 from bc.channel.utils.masto import get_mastodon
@@ -10,4 +9,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         m = get_mastodon()
         m.push_subscription_delete()
-        click.echo("Deleted push subscription.")
+        self.stdout.write(self.style.SUCCESS("Deleted push subscription."))
