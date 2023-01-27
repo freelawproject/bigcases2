@@ -7,9 +7,9 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 
+from bc.channel.models import Channel
 from bc.subscription.services import docket_to_case
 from bc.subscription.utils.courtlistener import lookup_docket_by_cl_id
-from bc.channel.models import Channel
 
 
 class Command(BaseCommand):
@@ -30,6 +30,6 @@ class Command(BaseCommand):
         )
 
         beat.channels.add(ch)
-        
+
         click.echo(f"Case: {case}")
         click.echo(f"Channel: {ch}")
