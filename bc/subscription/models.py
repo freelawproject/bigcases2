@@ -87,3 +87,9 @@ class Subscription(AbstractDateTimeModel):
             )
         else:
             return self.pacer_district_url("DktRpt.pl")
+
+    def __str__(self):
+        if self.docket_name:
+            return f"{self.pk}: {self.docket_name}"
+        else:
+            return f"{self.pk}"
