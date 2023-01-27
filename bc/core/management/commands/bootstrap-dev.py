@@ -15,8 +15,12 @@ class Command(BaseCommand):
     help = "Add some minimal information for development"
 
     def handle(self, *args, **options):
-        docket = lookup_docket_by_cl_id(65748821)
-        subscription = create_subscription_from_docket(docket)
+        for cl_id in [65748821, 64983976, 66624578]:
+            docket = lookup_docket_by_cl_id(cl_id)
+            subscription = create_subscription_from_docket(docket)
+            self.stdout.write(
+                self.style.SUCCESS(f"Subscription: {subscription}")
+            )
 
         ch = Channel.objects.create(
             service="mastodon",
@@ -25,5 +29,4 @@ class Command(BaseCommand):
             enabled=True,
         )
 
-        self.stdout.write(self.style.SUCCESS(f"Subscription: {subscription}"))
         self.stdout.write(self.style.SUCCESS(f"Channel: {ch}"))
