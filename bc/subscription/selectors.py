@@ -5,7 +5,5 @@ from django.conf import settings
 from .models import Subscription
 
 
-def get_docket_by_case_number(docket_number, court_key) -> Subscription:
-    return Subscription.objects.filter(
-        docket_number=docket_number, court=court_key
-    ).first()
+def get_subscription_by_case_id(case_id) -> Subscription:
+    return Subscription.objects.filter(pacer_case_id=case_id).first()

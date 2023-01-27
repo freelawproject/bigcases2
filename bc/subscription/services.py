@@ -1,40 +1,33 @@
 from .models import Subscription
-from .selectors import get_docket_by_case_number
-from .utils.courtlistener import (
-    court_url_to_key,
-    lookup_judge,
-    trim_docket_ending_number,
-)
+from .selectors import get_subscription_by_case_id
 
 
-def docket_to_case(docket):
+def create_subscription_from_docket(docket):
     """
-    Creates a new Docket record for a given Docket from the CL API.
+    Creates a new Subscription record for a given Docket from the CL API.
     Call get_case_from_cl() to get a Docket first.
     """
-    cl_docket_id = docket["id"]
-    cl_court_uri = docket["court"]
-    cl_case_name = docket["case_name"]
-    court_key = court_url_to_key(cl_court_uri)  # Transform to courts-db format
+    docket_name = docket["case_name"]
     docket_number = docket["docket_number"]
 
-    # Trim unless it's a bankruptcy case; they don't have a "-cv-" part
-    if not court_key.endswith("b"):
-        docket_number = trim_docket_ending_number(docket_number)
+    cl_docket_id = docket["id"]
+    cl_court_id = docket["court_id"]
 
-    case_result = get_docket_by_case_number(
-        docket_number=docket_number, court_key=court_key
-    )
+    pacer_court_id = docket["court_id"]
+    pacer_case_id = docket["pacer_case_id"]
+
+    case_result = get_subscription_by_case_id(case_id=pacer_case_id)
 
     if case_result:
         return case_result
 
     subscription = Subscription.objects.create(
-        court=court_key,
+        docket_name=docket_name,
         docket_number=docket_number,
-        cl_case_title=cl_case_name,
         cl_docket_id=cl_docket_id,
-        cl_slug=docket["slug"],
+        cl_court_id=cl_court_id,
+        pacer_court_id=pacer_court_id,
+        pacer_case_id=pacer_case_id,
     )
 
     return subscription
