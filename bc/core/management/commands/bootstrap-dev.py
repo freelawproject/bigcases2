@@ -1,6 +1,5 @@
 import logging
 
-import click
 from django.core.management.base import BaseCommand
 
 logger = logging.getLogger(__name__)
@@ -19,9 +18,6 @@ class Command(BaseCommand):
         docket = lookup_docket_by_cl_id(65748821)
         case = docket_to_case(docket)
 
-        beat = Beat.objects.create(name="FTX")
-        beat.docket.add(case)
-
         ch = Channel.objects.create(
             service="mastodon",
             account=settings.MASTODON_ACCOUNT,
@@ -29,7 +25,5 @@ class Command(BaseCommand):
             enabled=True,
         )
 
-        beat.channels.add(ch)
-
-        click.echo(f"Case: {case}")
-        click.echo(f"Channel: {ch}")
+        self.stdout.write(self.style.SUCCESS(f"Case: {case}"))
+        self.stdout.write(self.style.SUCCESS(f"Channel: {ch}"))

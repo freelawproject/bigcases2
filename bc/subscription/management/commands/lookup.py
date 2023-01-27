@@ -28,12 +28,12 @@ class Command(BaseCommand):
         docket_number = result["docket_number"]
         uri = result["absolute_url"]
         cl_url = f"https://www.courtlistener.com{uri}"
-        click.echo(f"Name: {case_name}")
-        click.echo(f"Case no.: {docket_number}")
-        click.echo(f"Court: {court}")
-        click.echo(f"Link: {cl_url}")
+        self.stdout.write(self.style.SUCCESS(f"Name: {case_name}"))
+        self.stdout.write(self.style.SUCCESS(f"Case no.: {docket_number}"))
+        self.stdout.write(self.style.SUCCESS(f"Court: {court}"))
+        self.stdout.write(self.style.SUCCESS(f"Link: {cl_url}"))
 
         if options["add"]:
-            click.echo("We'll try to add this case to the DB.")
+            self.stdout.write(self.style.NOTICE("We'll try to add this case to the DB."))
             add_case(court, docket_number, case_name, options["cl-id"])
-            click.echo("Added!")
+            self.stdout.write(self.style.SUCCESS("Added!"))
