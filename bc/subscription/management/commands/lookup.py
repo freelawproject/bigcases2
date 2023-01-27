@@ -1,9 +1,7 @@
-import click
 from django.core.management.base import BaseCommand
 
 from bc.cases.utils.courtlistener import (
     add_case,
-    court_url_to_key,
     lookup_docket_by_cl_id,
 )
 

@@ -1,7 +1,6 @@
-import click
 from django.core.management.base import BaseCommand
 
-from bc.cases.utils.courtlistener import subscribe_to_docket_alert
+from bc.subscription.utils.courtlistener import subscribe_to_docket_alert
 
 
 class Command(BaseCommand):
@@ -14,4 +13,3 @@ class Command(BaseCommand):
         cl_id = options.get("cl_id", None)
         if cl_id:
             result = subscribe_to_docket_alert(cl_id)
-            click.echo(result)
