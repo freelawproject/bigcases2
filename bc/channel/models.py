@@ -48,3 +48,8 @@ class Channel(AbstractDateTimeModel):
             raise NotImplementedError(
                 f"Channel.self_url() not yet implemented for service {self.service}"
             )
+
+    def __str__(self) -> str:
+        if self.account:
+            return f"{self.pk}: {self.account}"
+        return f"{self.pk}"
