@@ -322,7 +322,7 @@ files = [
 name = "click"
 version = "8.1.3"
 description = "Composable command line interface toolkit"
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -353,7 +353,7 @@ Pillow = "*"
 name = "colorama"
 version = "0.4.6"
 description = "Cross-platform colored terminal text."
-category = "main"
+category = "dev"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
 files = [
@@ -1835,4 +1835,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ec286debb092c82161bd4814de3f965de405eef57cee30443c1adee4641c42ca"
+content-hash = "700065e78b1f2c7dd332379f165ccdf506d85212ba36194ab840bcf03cf8078b"
