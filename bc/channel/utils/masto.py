@@ -1,3 +1,4 @@
+import base64
 import logging
 import re
 
@@ -17,12 +18,32 @@ def get_mastodon():
     return mastodon
 
 
+def get_keys():
+    if (
+        settings.MASTODON_SHARED_KEY
+        and settings.MASTODON_PUBLIC_KEY
+        and settings.MASTODON_PRIVATE_KEY
+    ):
+        shared_key = base64.b64decode(settings.MASTODON_SHARED_KEY)
+        priv_dict = {
+            "auth": shared_key,
+            "privkey": settings.MASTODON_PRIVATE_KEY,
+        }
+        pub_dict = {
+            "auth": shared_key,
+            "pubkey": base64.b64decode(settings.MASTODON_PUBLIC_KEY),
+        }
+        return priv_dict, pub_dict
+    else:
+        raise Exception("Mastodon key are not provided")
+
+
 def subscribe(force=False):
     m = get_mastodon()
-    priv_dict, pub_dict = m.push_subscription_generate_keys()
+    priv_dict, pub_dict = get_keys()
 
     # Send subscribe request
-    self_url = "localhost:8000"
+    self_url = settings.PROJECT_BASE_URL
     endpoint = f"{self_url}/webhooks/mastodon"
     response = m.push_subscription_set(
         endpoint=endpoint,
@@ -30,10 +51,4 @@ def subscribe(force=False):
         mention_events=True,
     )
 
-    logger.debug("Subscribed.")
-    logger.debug(response)
     return response
-
-
-def get_keys():
-    pass
