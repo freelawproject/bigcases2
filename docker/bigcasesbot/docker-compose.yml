@@ -28,7 +28,7 @@ services:
 
   bc2-django:
     container_name: bc2-django
-    image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bitcasesbot2:latest-web-dev}
+    image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bigcases2:latest-web-dev}
     build:
       dockerfile: docker/django/Dockerfile
       context: ../../
