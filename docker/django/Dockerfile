@@ -78,7 +78,7 @@ WORKDIR /opt
 # We log to stdout by default, but we have a config for logging here. Even if
 # we don't use this logger, we need to have the file or else Python is unhappy.
 RUN mkdir /var/log/bigcases2 \
-  && chown -R www-data:www-data /var/log/bigcases2 
+  && chown -R www-data:www-data /var/log/bigcases2
 
 WORKDIR /opt/bigcases2
 

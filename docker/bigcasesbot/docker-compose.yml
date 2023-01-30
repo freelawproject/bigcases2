@@ -34,7 +34,7 @@ services:
       context: ../../
       target: web-dev
       args:
-        - BUILD_ENV=dev        
+        - BUILD_ENV=dev
     depends_on:
       - bc2-postgresql
       - bc2-doctor
