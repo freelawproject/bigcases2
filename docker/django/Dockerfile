@@ -50,7 +50,60 @@ RUN poetry install
 
 COPY . /opt/bigcases2
 
+
+FROM build-base as build-prod
+
+WORKDIR $PYSETUP_PATH
+
+# copy project requirement files here to ensure they will be cached.
+ADD https://raw.githubusercontent.com/freelawproject/bigcases2/main/poetry.lock /opt/poetry.lock
+ADD https://raw.githubusercontent.com/freelawproject/bigcases2/main/pyproject.toml /opt/pyproject.toml
+
+# install runtime deps
+RUN poetry install --no-root
+
+
+ADD https://github.com/freelawproject/bigcases2/archive/main.tar.gz /opt/bigcases2.tar.gz
+WORKDIR /opt
+RUN tar xvfz bigcases2.tar.gz && \
+    mv /opt/bigcases2-main /opt/bigcases2 && \
+    rm -r /opt/bigcases2.tar.gz
+
+
+# `python-base` sets up all our shared environment variables
+FROM build-${BUILD_ENV} as python-base
+
+WORKDIR /opt
+
+# We log to stdout by default, but we have a config for logging here. Even if
+# we don't use this logger, we need to have the file or else Python is unhappy.
+RUN mkdir /var/log/bigcases2 \
+  && chown -R www-data:www-data /var/log/bigcases2 
+
+WORKDIR /opt/bigcases2
+
+#freelawproject/bigcases2:latest-web-dev
+FROM python-base as web-dev
+
 CMD python /opt/bigcases2/manage.py migrate  && \
     python /opt/bigcases2/manage.py runserver 0.0.0.0:8000
 
 WORKDIR /opt/bigcases2
+
+#freelawproject/bigcases2:latest-web-prod
+FROM python-base as web-prod
+
+CMD python /opt/bigcases2/manage.py migrate  && \
+    gunicorn bc2_wsgi:application \
+    --chdir /opt/bigcases2/docker/django/wsgi-configs/ \
+    --user www-data \
+    --group www-data \
+    # Set high number of workers. Docs recommend 2-4× core count`
+    --workers ${NUM_WORKERS:-48} \
+    # Allow longer queries to solr.
+    --limit-request-line 6000 \
+    # Reset each worker once in a while
+    --max-requests 10000 \
+    --max-requests-jitter 100 \
+    --timeout 180 \
+    --bind 0.0.0.0:8000
