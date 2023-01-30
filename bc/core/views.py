@@ -1,3 +1,5 @@
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse
 
-# Create your views here.
+
+def sentry_fail(request: HttpRequest) -> HttpResponse:
+    division_by_zero = 1 / 0
