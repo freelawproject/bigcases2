@@ -28,10 +28,13 @@ services:
 
   bc2-django:
     container_name: bc2-django
-    image: freelawproject/bitcasesbot2:latest
+    image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bitcasesbot2:latest-web-dev}
     build:
       dockerfile: docker/django/Dockerfile
       context: ../../
+      target: web-dev
+      args:
+        - BUILD_ENV=dev        
     depends_on:
       - bc2-postgresql
       - bc2-doctor
