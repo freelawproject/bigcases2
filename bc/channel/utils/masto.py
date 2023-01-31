@@ -3,8 +3,8 @@ import logging
 import re
 
 from django.conf import settings
-from mastodon import Mastodon
 from django.urls import reverse
+from mastodon import Mastodon
 
 masto_regex = re.compile(r"@(.+)@(.+)")
 logger = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ def subscribe(force=False):
     m = get_mastodon()
     priv_dict, pub_dict = get_keys()
 
-    endpoint = reverse('mastodon_push_handler')
+    endpoint = reverse("mastodon_push_handler")
     response = m.push_subscription_set(
         endpoint=endpoint,
         encrypt_params=pub_dict,

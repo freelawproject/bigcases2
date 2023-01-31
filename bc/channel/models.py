@@ -19,7 +19,9 @@ class Channel(AbstractDateTimeModel):
         (MASTODON, "Mastodon"),
     )
     service = models.CharField(
-        help_text="Name of the service", max_length=100, choices=CHANNELS
+        help_text="Name of the service",
+        max_length=100,
+        choices=CHANNELS,
     )
     account = models.CharField(
         help_text="Name of the account",
