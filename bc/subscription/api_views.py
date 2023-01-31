@@ -1,23 +1,21 @@
 import logging
+from http import HTTPStatus
 from pprint import pformat
 
-from django.http import HttpRequest, HttpResponse
-from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.request import Request
 from rest_framework.response import Response
-
-from .api_serializers import WebhookSerializer
 
 logger = logging.getLogger(__name__)
 
 
 @api_view(["POST"])
-def handle_cl_webhook(request: HttpRequest) -> HttpResponse:
+def handle_cl_webhook(request: Request) -> Response:
     """
     Receives a docket alert webhook from CourtListener.
     """
     logger.debug("CL webhook hit")
-    data = request.json
+    data = request.data
 
     # Check headers
     logger.debug(f"Request headers: {pformat(request.headers)}")
@@ -27,7 +25,6 @@ def handle_cl_webhook(request: HttpRequest) -> HttpResponse:
     assert request.headers.get("Content-Type") == "application/json"
 
     # Idempotency key
-    # 'Idempotency-Key: 59f1be59-e428-427a-a346-9cacded5c1d4'
     idempotency_key = request.headers.get("Idempotency-Key")
     assert idempotency_key is not None
     # TODO: Actually check that we haven't recevied this key before
@@ -47,21 +44,15 @@ def handle_cl_webhook(request: HttpRequest) -> HttpResponse:
     results = data["results"]
 
     for result in results:
-        # Check the result
-        serializer = WebhookSerializer(data=result)
-        if serializer.is_valid():
-            serialized_data = serializer.data
-        else:
-            logger.debug(f"Validation errors: {pformat(serializer.errors)}")
-            continue
+
         # TODO: Store docket entry in DB
 
         # Handle any documents attached
-        for doc in serialized_data["recap_documents"]:
+        for doc in result["recap_documents"]:
             pass
 
         # TODO: Actually do something with this docket entry
 
     # TODO: Send 201 Created HTTP status
     # TODO: Return real data, like an our ID of a created record
-    return Response(status=status.HTTP_201_CREATED)
+    return Response(status=HTTPStatus.OK)

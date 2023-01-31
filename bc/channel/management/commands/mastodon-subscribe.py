@@ -32,14 +32,11 @@ class Command(BaseCommand):
             self.style.SUCCESS("mastodon_subscribe_command() done.")
         )
 
-        existing_channel = Channel.objects.filter(
+        channel = Channel.objects.get_or_create(
             account=settings.MASTODON_ACCOUNT,
             account_id=settings.MASTODON_EMAIL,
-        ).first()
-        if not existing_channel:
-            ch = Channel.objects.create(
-                service="mastodon",
-                account=settings.MASTODON_ACCOUNT,
-                account_id=settings.MASTODON_EMAIL,
-                enabled=True,
-            )
+            defaults={
+                "service": "mastodon",
+                "enabled": True,
+            },
+        )

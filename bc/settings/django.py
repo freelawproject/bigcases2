@@ -125,4 +125,4 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 COURTLISTENER_API_KEY = env("COURTLISTENER_API_KEY", default="")
 
-PROJECT_BASE_URL = env("PROJECT_BASE_URL", default="")
+HOSTNAME = env("HOSTNAME", default="")
