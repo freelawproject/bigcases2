@@ -50,7 +50,7 @@ class Command(BaseCommand):
             if channel is None:
                 raise ValueError(f"No channel {channel_id}")
 
-            if channel.service == "mastodon":
+            if channel.service == Channel.MASTODON:
 
                 self.stdout.write(
                     self.style.SUCCESS(f"Let's toot from {channel.account}!")

@@ -36,7 +36,7 @@ class Command(BaseCommand):
             account=settings.MASTODON_ACCOUNT,
             account_id=settings.MASTODON_EMAIL,
             defaults={
-                "service": "mastodon",
+                "service": Channel.MASTODON,
                 "enabled": True,
             },
         )
