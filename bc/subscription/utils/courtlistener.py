@@ -9,8 +9,8 @@ from .exceptions import MultiDefendantCaseError
 logger = logging.getLogger(__name__)
 
 CL_API = {
-    'docket': "https://www.courtlistener.com/api/rest/v3/dockets/",
-    'docket-alerts': "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
+    "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
+    "docket-alerts": "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
 }
 
 
@@ -56,9 +56,9 @@ def lookup_docket_by_case_number(court: str, docket_number: str):
     using the court_id and docket_number to get a
     Docket.
     """
-    
+
     response = requests.get(
-        CL_API['docket'],
+        CL_API["docket"],
         params={"court_id": court, "docket_number": docket_number},
         headers=auth_header(),
         timeout=5,
