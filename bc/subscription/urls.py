@@ -4,7 +4,7 @@ from .api_views import handle_cl_webhook
 
 urlpatterns = [
     path(
-        "/webhooks/docket/",
+        "webhooks/docket/",
         handle_cl_webhook,
         name="cl_webhook_handler",
     ),

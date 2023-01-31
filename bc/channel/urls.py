@@ -4,7 +4,7 @@ from .api_views import receive_mastodon_push
 
 urlpatterns = [
     path(
-        "/webhooks/mastodon/",
+        "webhooks/mastodon/",
         receive_mastodon_push,
         name="mastodon_push_handler",
     ),
