@@ -4,6 +4,7 @@ import re
 
 from django.conf import settings
 from mastodon import Mastodon
+from django.urls import reverse
 
 masto_regex = re.compile(r"@(.+)@(.+)")
 logger = logging.getLogger(__name__)
@@ -42,9 +43,7 @@ def subscribe(force=False):
     m = get_mastodon()
     priv_dict, pub_dict = get_keys()
 
-    # Send subscribe request
-    self_url = settings.PROJECT_BASE_URL
-    endpoint = f"{self_url}/webhooks/mastodon"
+    endpoint = reverse('mastodon_push_handler')
     response = m.push_subscription_set(
         endpoint=endpoint,
         encrypt_params=pub_dict,
