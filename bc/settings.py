@@ -125,7 +125,7 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 COURTLISTENER_API_KEY = env("COURTLISTENER_API_KEY", default="")
 
-HOSTNAME = env("HOSTNAME", default="")
+HOSTNAME = env("HOSTNAME", default="localhost:8888")
 
 MASTODON_ACCOUNT = env("MASTODON_ACCOUNT", default="")
 MASTODON_EMAIL = env("MASTODON_EMAIL", default="")
