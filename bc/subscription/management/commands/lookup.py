@@ -41,7 +41,6 @@ class Command(BaseCommand):
                 create_subscription_from_docket(result)
                 self.stdout.write(self.style.SUCCESS("Added!"))
 
-            
                 cl_subscription = subscribe_to_docket_alert(options["cl-id"])
                 if cl_subscription:
                     self.stdout.write(self.style.SUCCESS("Subscribed!"))
