@@ -39,12 +39,13 @@ def get_keys():
         raise Exception(
             "Mastodon key are not provided. Please check your env file and make sure you set "
             "MASTODON_SHARED_KEY, MASTODON_PUBLIC_KEY, MASTODON_PRIVATE_KEY. You can use the "
-            "get_mastodon_keys.py file to get the values required for these keys")
+            "get_mastodon_keys.py file to get the values required for these keys"
+        )
 
 
 def subscribe(force=False):
     m = get_mastodon()
-    _ , pub_dict = get_keys()
+    _, pub_dict = get_keys()
 
     endpoint = reverse("mastodon_push_handler")
     response = m.push_subscription_set(
