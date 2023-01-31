@@ -18,12 +18,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--add",
             action="store_true",
-            help="Save the case found using the CL API",
-        )
-        parser.add_argument(
-            "--subscribe",
-            action="store_true",
-            help="Subscribe to the case using the CL API",
+            help="Save and Subscribe to the case found using the CL API",
         )
 
     def handle(self, *args, **options):
@@ -46,7 +41,7 @@ class Command(BaseCommand):
                 create_subscription_from_docket(result)
                 self.stdout.write(self.style.SUCCESS("Added!"))
 
-            if options["subscribe"]:
+            
                 cl_subscription = subscribe_to_docket_alert(options["cl-id"])
                 if cl_subscription:
                     self.stdout.write(self.style.SUCCESS("Subscribed!"))
