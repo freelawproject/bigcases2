@@ -116,7 +116,7 @@ def subscribe_to_docket_alert(cl_id: int) -> bool:
         timeout=5,
     )
 
-    try: 
+    try:
         response.raise_for_status()
         return True
     except requests.exceptions.HTTPError as http_error:  # Treats all 400 or 500 HTTP status codes as HTTPError Exceptions
