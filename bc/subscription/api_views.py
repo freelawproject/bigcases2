@@ -1,9 +1,9 @@
 import logging
+from http import HTTPStatus
 from pprint import pformat
 
-from django.http import HttpRequest, HttpResponse
-from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from .api_serializers import WebhookSerializer
@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 @api_view(["POST"])
-def handle_cl_webhook(request: HttpRequest) -> HttpResponse:
+def handle_cl_webhook(request: Request) -> Response:
     """
     Receives a docket alert webhook from CourtListener.
     """
     logger.debug("CL webhook hit")
-    data = request.json
+    data = request.data
 
     # Check headers
     logger.debug(f"Request headers: {pformat(request.headers)}")
@@ -64,4 +64,4 @@ def handle_cl_webhook(request: HttpRequest) -> HttpResponse:
 
     # TODO: Send 201 Created HTTP status
     # TODO: Return real data, like an our ID of a created record
-    return Response(status=status.HTTP_201_CREATED)
+    return Response(status=HTTPStatus.OK)
