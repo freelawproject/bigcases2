@@ -1,127 +1,62 @@
 # Big Cases Bot 2
 
-Big Cases Bot 2 is the sequel to Brad Heath's excellent Big Cases Bot
-for Twitter.
+Big Cases Bot 2 is a bot that sends messages about important federal cases as 
+they happen. Currently, Big Cases Bot 2 sends to the following channels:
+
+ - Twitter: @big_cases
+ - Mastodon: @big_cases@law.builders
+
+Big Cases Bot 2 is developed and maintained by [Free Law Project's][flp], a 
+501(c)(3) that uses software and advocacy to enhance the legal system. It 
+builds on the original [Big Cases Bot][bcb1] developed by Brad Heath for 
+Twitter.
 
 The goals of Big Cases Bot 2 are:
 
 - First and foremost, to bring the bot back!
-- Expand the bot to Mastodon
+- Expand the bot to Mastodon [and][discord] [other][slack] [platforms][teams]
+- Really invest in the bot to make it great
 
-Further development is intended, and all contributors, corrections and additions are welcome.
-
-## Background
-
-Free Law Project built this ...  This project represents ...  
-We believe to be the ....
-
-## What does it need to do?
-
-- Store cases, documents, and posting criteria in a database (Postgres)
-- Process incoming new-document webhooks from CourtListener (`/webhooks/docket`)
-  - Look up case
-  - Save to DB
-  - Decide if it's worth posting
-  - Construct a message
-  - Construct any media attachments
-  - Post
-    - To Mastodon
-    - To Twitter
-- Process incoming messages from Mastodon or Twitter
-  - Mastodon: check notifications ([Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/#reading-data-notifications) - webhook at `/webhooks/mastodon`
-  - Twitter: check notifications/stream
-  - Is the user authorized to instruct the bot?
-  - Parse message
-    - Read up-thread if necessary to find what case is being discussed
-  - Respond
-    - Follow a case
-      - POST to CL API?
-      - Send reply message confirming case followed
-    - Send a RECAP docket link (construct from case ID)
-    - Send a RECAP document link
-  - Check dockets for updates
-    - Original bot did this via polling court RSS feeds
-    - Decide if a new entry looks like it's worth downloading
-    - If yes, download the new document. (Webhook will fire at that point, so this is as far as the bot's checking needs to go.)
-
-## Dependencies
-
-- Flask
-- Free Law Project's [`courts-db`](https://github.com/freelawproject/courts-db)
-
-## Quickstart
-
-You can feed in a X as ... .. ...
-
-```
-IMPORTS
-
-CALL EXAMPLE
-
-returns:
-  ""EXAMPLE OUTPUT
-```
+Further development is intended, and all contributors, corrections and additions 
+are welcome.
 
 
+## We Need Curators!
 
-## Some Notes ...
-Somethings to keep in mind as ....
-
-1. ...
-2. ...
-
-
-## Fields
-
-1. `id` ==> string; Courtlistener Court Identifier
-2. `court_url` ==> string; url for court website
-3. `regex` ==>  array; regexes patterns to find courts
+Keeping up with the most important cases takes a lot of work, and we can't do
+it alone. We are contemplating a small team of curators that tell the bots
+which cases to follow. If you might be interested, please [get in touch][c].
 
 
-## Installation
+## More bots?
 
-Installing Big Cases Bot 2 is easy.
+Following the most important cases is great, but why stop there? We aim to 
+create many bots for different topics. Want a bot for something specific? [Let
+us know][c]. The first one [will be hard][little], but after that, it should be
+easy.
 
-```sh
-pip install bigcases2
-```
+
+## Contributions
+
+We're going to need a lot of help to make this a robust and great project. If
+you're interested in helping, check out ARCHITECTURE.md to get started. Feel
+free to find bugs to work on in our issues list, or if you don't know where to
+begin, feel free to [send us an email][c], and include your resume if you've 
+got one.
 
 
-Or install the latest dev version from GitHub
+## Support FLP
 
-```sh
-pip install git+https://github.com/freelawproject/bigcases2.git@master
-```
+If you like the bot, [please support Free Law Project with a donation][flpd]. 
 
-## Future
+It costs a lot to build and maintain this system and we need your support.
 
-1) Continue to improve ...
-2) Future updates
 
-## Deployment
-
-If you wish to create a new version manually, the process is:
-
-1. Update version info in `setup.py`
-
-2. Install the requirements using `poetry install`
-
-3. Set up a config file at `~/.pypirc`
-
-4. Generate a universal distribution that works in py2 and py3 (see setup.cfg)
-
-```sh
-python setup.py sdist bdist_wheel
-```
-
-5. Upload the distributions
-
-```sh
-twine upload dist/* -r pypi (or pypitest)
-```
-
-## License
-
-This repository is available under the permissive BSD license, making it easy and safe to incorporate in your own libraries.
-
-Pull and feature requests welcome. Online editing in GitHub is possible (and easy!)
+[discord]: https://github.com/freelawproject/bigcases2/issues/11
+[slack]: https://github.com/freelawproject/bigcases2/issues/10
+[teams]: https://github.com/freelawproject/bigcases2/issues/41
+[flp]: https://free.law/
+[flpd]: https://free.law/donate/
+[bcb1]: https://github.com/bdheath/Big-Cases
+[c]: https://free.law/contact/
+[litte]: https://github.com/freelawproject/bigcases2/issues/8
