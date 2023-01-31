@@ -16,8 +16,8 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 description = "Big Cases Bot 2"
-keywords = ["legal", "courts"]
-license = "BSD-2-Clause"
+keywords = ["legal", "courts", "bots", "twitter", "mastodon"]
+license = "AGPL-3.0-or-later"
 maintainers = ["Free Law Project <info@free.law>"]
 name = "Big Cases Bot 2"
 readme = "README.md"
