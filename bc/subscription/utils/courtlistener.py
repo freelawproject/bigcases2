@@ -119,9 +119,9 @@ def subscribe_to_docket_alert(cl_id: int) -> bool:
     try:
         response.raise_for_status()
         return True
-    except requests.exceptions.HTTPError as http_error:  # Treats all 400 or 500 HTTP status codes as HTTPError Exceptions
+    except requests.exceptions.HTTPError as err:
         print(
-            f"Error subscribing to case {cl_id}: got HTTP response {http_error.status_code}"
+            f"Error subscribing to case {cl_id}: got HTTP response {err.response.status_code}"
         )
         return False
 
