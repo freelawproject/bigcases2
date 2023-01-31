@@ -13,9 +13,7 @@ class Command(BaseCommand):
         m.push_subscription_delete()
         self.stdout.write(self.style.SUCCESS("Deleted push subscription."))
 
-        existing_channel = Channel.objects.filter(
+        Channel.objects.filter(
             account=settings.MASTODON_ACCOUNT,
             account_id=settings.MASTODON_EMAIL,
-        ).first()
-        if existing_channel:
-            existing_channel.delete()
+        ).delete()
