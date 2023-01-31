@@ -12,9 +12,14 @@ class Channel(AbstractDateTimeModel):
     BCB to broadcast or to issue commands to BCB.
     """
 
+    TWITTER = "t"
+    MASTODON = "m"
+    CHANNELS = (
+        (TWITTER, "Twitter"),
+        (MASTODON, "Mastodon"),
+    )
     service = models.CharField(
-        help_text="Name of the service",
-        max_length=100,
+        help_text="Name of the service", max_length=100, choices=CHANNELS
     )
     account = models.CharField(
         help_text="Name of the account",
