@@ -99,9 +99,7 @@ CMD python /opt/bigcases2/manage.py migrate  && \
     --user www-data \
     --group www-data \
     # Set high number of workers. Docs recommend 2-4× core count`
-    --workers ${NUM_WORKERS:-48} \
-    # Allow longer queries to solr.
-    --limit-request-line 6000 \
+    --workers ${NUM_WORKERS:-16} \
     # Reset each worker once in a while
     --max-requests 10000 \
     --max-requests-jitter 100 \
