@@ -106,4 +106,4 @@ CMD python /opt/bigcases2/manage.py migrate  && \
     --max-requests 10000 \
     --max-requests-jitter 100 \
     --timeout 180 \
-    --bind 0.0.0.0:8000
+    --bind 0.0.0.0:8888
