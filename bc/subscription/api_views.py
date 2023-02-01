@@ -44,7 +44,6 @@ def handle_cl_webhook(request: Request) -> Response:
     results = data["results"]
 
     for result in results:
-
         # TODO: Store docket entry in DB
 
         # Handle any documents attached
