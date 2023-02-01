@@ -26,3 +26,38 @@ development:
 
 image:
 	docker build --target web-prod -t $(REPO):$(DOCKER_TAG_PROD) -t $(REPO):$(WEB_PROD) --file docker/django/Dockerfile .
+
+push: image
+	$(info Checking if valid architecture)
+	@if [ $(UNAME) = "x86_64" ]; then \
+	    echo "Architecture is OK. Pushing.";\
+	    docker push $(REPO):$(DOCKER_TAG_PROD);\
+	else \
+		echo "Only x86_64 machines can push single-architecture builds. If you want to \
+push a build, try 'make multiarch_push', which builds for both arm64 and amd64. This \
+protects against arm64 builds being accidentally deployed to the server (which uses x86_64).";\
+	fi
+
+multiarch_image:
+	export DOCKER_CLI_EXPERIMENTAL=enabled
+	docker buildx rm
+	docker buildx create --use --name flp-builder
+	docker buildx build --platform linux/amd64,linux/arm64 -t $(REPO):$(WEB_PROD) -t $(REPO):$(DOCKER_TAG_PROD) --file docker/django/Dockerfile .
+
+multiarch_push:
+	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO):$(WEB_PROD) -t $(REPO):$(DOCKER_TAG_PROD) --file docker/django/Dockerfile .
+
+x86_push:
+	export DOCKER_CLI_EXPERIMENTAL=enabled
+	docker buildx rm
+	docker buildx create --use --name flp-builder
+	docker buildx build --push --platform linux/amd64 -t $(REPO):$(WEB_PROD) -t $(REPO):$(DOCKER_TAG_PROD) --file docker/django/Dockerfile .
+
+multiarch_push_development:
+	export DOCKER_CLI_EXPERIMENTAL=enabled
+	# Fix for #2116 as per https://github.com/docker/buildx/issues/495#issuecomment-761562905
+	docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+	docker buildx create --name flp-builder --driver docker-container --use
+	# Wait for the builder to boot
+	docker buildx inspect --bootstrap
+	docker buildx build --target web-dev --push --platform linux/amd64,linux/arm64 -t $(REPO):$(WEB_DEV) --build-arg BUILD_ENV=dev --file docker/django/Dockerfile .
