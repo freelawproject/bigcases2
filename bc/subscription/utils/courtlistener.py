@@ -44,10 +44,8 @@ def lookup_docket_by_cl_id(cl_id: int):
     """
     url = f"{CL_API['docket']}{cl_id}/"
     response = requests.get(url, headers=auth_header(), timeout=5)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+    response.raise_for_status()
+    return response.json()
 
 
 def lookup_docket_by_case_number(court: str, docket_number: str):
@@ -118,11 +116,12 @@ def subscribe_to_docket_alert(cl_id: int) -> bool:
         timeout=5,
     )
 
-    if response.status_code == 201:
+    try:
+        response.raise_for_status()
         return True
-    else:
+    except requests.exceptions.HTTPError as err:
         print(
-            f"Error subscribing to case {cl_id}: got HTTP response {response.status_code}"
+            f"Error subscribing to case {cl_id}: got HTTP response {err.response.status_code}"
         )
         return False
 
