@@ -137,6 +137,7 @@ celerybeat.pid
 
 # Environments
 .env
+.env.dev
 .venv
 env/
 venv/
@@ -164,3 +165,7 @@ dmypy.json
 
 # output folder
 output/
+
+# Editors
+.idea/
+.vscode

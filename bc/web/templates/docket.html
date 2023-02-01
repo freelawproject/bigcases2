@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ subscription.docket_name }} - Big Cases{% endblock %}
+{% block content %}
+  <h1>{{ subscription.docket_name }}</h1>
+  <ul>
+    <li>Court: {{ subscription.court_name }} <small>({{ subscription.cl_court_id }})</small></li>
+  </ul>
+  <p><a href="{{ docket.cl_url }}">View docket on CourtListener</a></p>
+  <p><a href="{% url 'docket_details' subscription.id|add:1 %}">Next case &gt;</a></p>
+{% endblock %}

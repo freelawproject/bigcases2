@@ -1,0 +1,45 @@
+# Run using `docker-compose up`
+version: "3.7"
+
+networks:
+  bc2_net_overlay:
+    driver: bridge
+    external: true
+
+services:
+
+  bc2-doctor:
+    image: freelawproject/doctor:latest
+    container_name: "bc2-doctor"
+    networks:
+      - bc2_net_overlay
+
+  bc2-postgresql:
+    container_name: bc2-postgresql
+    ports:
+      - "5433:5432"
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "bigcases2"
+    networks:
+      - bc2_net_overlay
+
+  bc2-django:
+    container_name: bc2-django
+    image: freelawproject/bitcasesbot2:latest
+    build:
+      dockerfile: docker/django/Dockerfile
+      context: ../../
+    depends_on:
+      - bc2-postgresql
+      - bc2-doctor
+    volumes:
+      - ../..:/opt/bigcases2
+    ports:
+      - "8888:8000"
+    networks:
+      - bc2_net_overlay
+    env_file:
+      - ../../.env.dev

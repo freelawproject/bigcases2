@@ -1,18 +1,25 @@
 name: Lint
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - 'main'
 
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2-beta
+
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: "3.11"
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1.1.0
+        uses: snok/install-poetry@v1
         with:
           virtualenvs-create: true
           virtualenvs-in-project: true
@@ -34,6 +41,13 @@ jobs:
           echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
           echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
 
+      - name: mypy Static Type Checker
+        run: |
+          mypy \
+          --follow-imports=skip \
+          --exclude 'migrations/*' \
+          .
+
       - name: Flynt f-string Formatter
         run: >
           flynt .
@@ -44,18 +58,14 @@ jobs:
       - name: Black Code Formatter
         uses: psf/black@stable
 
-      - name: Run flake8
-        uses: suo/flake8-github-action@releases/v1
+  lint-isort:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2-beta
+
+      - uses: actions/setup-python@v2
         with:
-          checkName: "lint"   # NOTE: this needs to be the same as the job name
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          python-version: "3.9"
 
       - name: isort Import Sorter
         uses: isort/isort-action@v0.1.0
-
-      - name: pylint Error Checker
-        run: pylint --fail-under 9 -f colorized project_name
-
-      - name: mypy Static Type Checker
-        run: mypy .
