@@ -5,7 +5,7 @@ import environ
 env = environ.FileAwareEnv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -126,12 +126,3 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 COURTLISTENER_API_KEY = env("COURTLISTENER_API_KEY", default="")
 
 HOSTNAME = env("HOSTNAME", default="localhost:8888")
-
-MASTODON_ACCOUNT = env("MASTODON_ACCOUNT", default="")
-MASTODON_EMAIL = env("MASTODON_EMAIL", default="")
-MASTODON_SERVER = env("MASTODON_SERVER", default="")
-MASTODON_TOKEN = env("MASTODON_TOKEN", default="")
-
-MASTODON_SHARED_KEY = env("MASTODON_SHARED_KEY", default="")
-MASTODON_PUBLIC_KEY = env("MASTODON_PUBLIC_KEY", default="")
-MASTODON_PRIVATE_KEY = env("MASTODON_PRIVATE_KEY", default="")
