@@ -41,7 +41,7 @@ services:
     volumes:
       - ../..:/opt/bigcases2
     ports:
-      - "8000:8000"
+      - "8888:8000"
     networks:
       - bc2_net_overlay
     env_file:

@@ -12,9 +12,15 @@ class Channel(AbstractDateTimeModel):
     BCB to broadcast or to issue commands to BCB.
     """
 
-    service = models.CharField(
-        help_text="Name of the service",
-        max_length=100,
+    TWITTER = 1
+    MASTODON = 2
+    CHANNELS = (
+        (TWITTER, "Twitter"),
+        (MASTODON, "Mastodon"),
+    )
+    service = models.PositiveSmallIntegerField(
+        help_text="Type of the service",
+        choices=CHANNELS,
     )
     account = models.CharField(
         help_text="Name of the account",
@@ -37,9 +43,9 @@ class Channel(AbstractDateTimeModel):
     )
 
     def self_url(self):
-        if self.service == "twitter":
+        if self.service == self.TWITTER:
             return f"https://twitter.com/{self.account}"
-        elif self.service == "mastodon":
+        elif self.service == self.MASTODON:
             result = masto_regex.search(self.account)
             assert len(result.groups()) == 2
             account_part, instance_part = result.groups()

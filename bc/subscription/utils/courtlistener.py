@@ -8,8 +8,10 @@ from .exceptions import MultiDefendantCaseError
 
 logger = logging.getLogger(__name__)
 
-API_ROOT = "https://www.courtlistener.com/api/rest/v3"
-ENDPOINT_DOCKET_ALERTS = f"{API_ROOT}/docket-alerts/"
+CL_API = {
+    "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
+    "docket-alerts": "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
+}
 
 
 def lookup_court(court: str):
@@ -40,12 +42,10 @@ def lookup_docket_by_cl_id(cl_id: int):
     Performs a GET query on /api/rest/v3/dockets/
     to get a Docket using the CourtListener ID
     """
-    url = f"{API_ROOT}/dockets/{cl_id}/"
+    url = f"{CL_API['docket']}{cl_id}/"
     response = requests.get(url, headers=auth_header(), timeout=5)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+    response.raise_for_status()
+    return response.json()
 
 
 def lookup_docket_by_case_number(court: str, docket_number: str):
@@ -55,9 +55,8 @@ def lookup_docket_by_case_number(court: str, docket_number: str):
     Docket.
     """
 
-    url = f"{API_ROOT}/dockets/"
     response = requests.get(
-        url,
+        CL_API["docket"],
         params={"court_id": court, "docket_number": docket_number},
         headers=auth_header(),
         timeout=5,
@@ -109,7 +108,7 @@ def subscribe_to_docket_alert(cl_id: int) -> bool:
     to subscribe to docket alerts for a given CourtListener docket ID.
     """
     response = requests.post(
-        ENDPOINT_DOCKET_ALERTS,
+        CL_API["docket-alerts"],
         headers=auth_header(),
         data={
             "docket": cl_id,
@@ -117,11 +116,12 @@ def subscribe_to_docket_alert(cl_id: int) -> bool:
         timeout=5,
     )
 
-    if response.status_code == 201:
+    try:
+        response.raise_for_status()
         return True
-    else:
+    except requests.exceptions.HTTPError as err:
         print(
-            f"Error subscribing to case {cl_id}: got HTTP response {response.status_code}"
+            f"Error subscribing to case {cl_id}: got HTTP response {err.response.status_code}"
         )
         return False
 

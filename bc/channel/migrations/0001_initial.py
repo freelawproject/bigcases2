@@ -43,8 +43,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "service",
-                    models.CharField(
-                        help_text="Name of the service", max_length=100
+                    models.PositiveSmallIntegerField(
+                        choices=[(1, "Twitter"), (2, "Mastodon")],
+                        help_text="Type of the service",
                     ),
                 ),
                 (

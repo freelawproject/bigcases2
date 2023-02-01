@@ -10,10 +10,3 @@ class User(AbstractDateTimeModel, AbstractUser):
         unique=True,
     )
     affiliation = models.TextField()
-    enabled = models.BooleanField(
-        help_text=(
-            "Overall enable switch. Disable to shut out account entirely."
-            "Disabled by default; must enable manually"
-        ),
-        default=False,
-    )

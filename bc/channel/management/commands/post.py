@@ -27,11 +27,11 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(tab))
 
         channel_input = input(
-            "Which channels? Input ID, comma-separate for multiple, or 'all' for all of them.\n"
+            "Which channels? Input ID, comma-separate for multiple, "
+            "or 'all' for all of them.\n"
         )
         self.stdout.write(self.style.SUCCESS(channel_input))
 
-        channel_ids = None
         if channel_input == "all":
             channel_ids = list(channel_mapping.keys())
         else:
@@ -45,12 +45,12 @@ class Command(BaseCommand):
 
         post_text = input("What do you want to say? ")
 
-        for chid in channel_ids:
-            channel = channel_mapping.get(chid)
+        for channel_id in channel_ids:
+            channel = channel_mapping.get(channel_id)
             if channel is None:
-                raise ValueError(f"No channel {chid}")
+                raise ValueError(f"No channel {channel_id}")
 
-            if channel.service == "mastodon":
+            if channel.service == Channel.MASTODON:
 
                 self.stdout.write(
                     self.style.SUCCESS(f"Let's toot from {channel.account}!")

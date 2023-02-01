@@ -123,14 +123,14 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-COURTLISTENER_API_KEY = env("COURTLISTENER_API_KEY")
+COURTLISTENER_API_KEY = env("COURTLISTENER_API_KEY", default="")
 
-PROJECT_BASE_URL = env("PROJECT_BASE_URL", default="")
+HOSTNAME = env("HOSTNAME", default="localhost:8888")
 
-MASTODON_ACCOUNT = env("MASTODON_ACCOUNT")
-MASTODON_EMAIL = env("MASTODON_EMAIL")
-MASTODON_SERVER = env("MASTODON_SERVER")
-MASTODON_TOKEN = env("MASTODON_TOKEN")
+MASTODON_ACCOUNT = env("MASTODON_ACCOUNT", default="")
+MASTODON_EMAIL = env("MASTODON_EMAIL", default="")
+MASTODON_SERVER = env("MASTODON_SERVER", default="")
+MASTODON_TOKEN = env("MASTODON_TOKEN", default="")
 
 MASTODON_SHARED_KEY = env("MASTODON_SHARED_KEY", default="")
 MASTODON_PUBLIC_KEY = env("MASTODON_PUBLIC_KEY", default="")

@@ -121,13 +121,6 @@ class Migration(migrations.Migration):
                 ),
                 ("affiliation", models.TextField()),
                 (
-                    "enabled",
-                    models.BooleanField(
-                        default=False,
-                        help_text="Overall enable switch. Disable to shut out account entirely.Disabled by default; must enable manually",
-                    ),
-                ),
-                (
                     "groups",
                     models.ManyToManyField(
                         blank=True,

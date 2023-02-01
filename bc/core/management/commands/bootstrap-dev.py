@@ -23,7 +23,7 @@ class Command(BaseCommand):
             )
 
         ch = Channel.objects.create(
-            service="mastodon",
+            service=Channel.MASTODON,
             account=settings.MASTODON_ACCOUNT,
             account_id=settings.MASTODON_EMAIL,
             enabled=True,
