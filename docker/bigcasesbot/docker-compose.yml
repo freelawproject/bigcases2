@@ -28,7 +28,7 @@ services:
 
   bc2-redis:
     container_name: bc2-redis
-    image: redis
+    image: redis:7-alpine
     ports:
       - "6379:6379"
     networks:
