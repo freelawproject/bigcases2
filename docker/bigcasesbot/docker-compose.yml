@@ -26,6 +26,32 @@ services:
     networks:
       - bc2_net_overlay
 
+  bc2-redis:
+    container_name: bc2-redis
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - bc2_net_overlay
+
+
+  bc2-rq:
+    container_name: bc2-rq
+    image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bigcases2:latest-rq-dev}
+    build:
+      dockerfile: docker/django/Dockerfile
+      context: ../../
+      target: rq
+      args:
+        - BUILD_ENV=dev
+    depends_on:
+      - bc2-postgresql
+      - bc2-doctor
+      - bc2-redis
+    networks:
+      - bc2_net_overlay
+
+
   bc2-django:
     container_name: bc2-django
     image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bigcases2:latest-web-dev}
@@ -38,6 +64,7 @@ services:
     depends_on:
       - bc2-postgresql
       - bc2-doctor
+      - bc2-redis
     volumes:
       - ../..:/opt/bigcases2
     ports:

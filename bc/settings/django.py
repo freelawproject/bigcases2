@@ -2,6 +2,8 @@ from pathlib import Path
 
 import environ
 
+from .third_party.redis import REDIS_DATABASES, REDIS_HOST, REDIS_PORT
+
 env = environ.FileAwareEnv()
 
 DEVELOPMENT = env.bool("DEVELOPMENT", default=True)
@@ -30,6 +32,8 @@ INSTALLED_APPS = [
     "bc.channel",
     "bc.subscription",
     "bc.web",
+    # other apps
+    "django_rq",
 ]
 
 MIDDLEWARE = [
@@ -82,6 +86,18 @@ DATABASES = {
     },
 }
 
+####################
+# Cache & Sessions #
+####################
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": f"{REDIS_HOST}:{REDIS_PORT}",
+        "OPTIONS": {"db": REDIS_DATABASES["CACHE"]},
+    },
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

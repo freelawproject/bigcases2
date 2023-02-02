@@ -7,4 +7,5 @@ urlpatterns = [
     path("", include("bc.core.urls")),
     path("", include("bc.channel.urls")),
     path("", include("bc.subscription.urls")),
+    path("django-rq/", include("django_rq.urls")),
 ]

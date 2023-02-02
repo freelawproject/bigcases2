@@ -13,6 +13,9 @@ REPO ?= freelawproject/bigcases2
 DOCKER_TAG_PROD = $(VERSION)-web-prod
 WEB_PROD ?= latest-web-prod
 WEB_DEV ?= latest-web-dev
+RQ_TAG = $(VERSION)-rq
+RQ_LATEST ?= latest-rq
+RQ_DEV ?= latest-rq-dev
 
 
 .PHONY: all image push multiarch_image multiarch_push x86_image x86_push
@@ -23,9 +26,11 @@ all: image
 
 development:
 	docker build --target web-dev -t $(REPO):$(WEB_DEV) --build-arg BUILD_ENV=dev --file docker/django/Dockerfile .
+	docker build --target rq -t $(REPO):$(RQ_DEV) --build-arg BUILD_ENV=dev --file docker/django/Dockerfile .
 
 image:
 	docker build --target web-prod -t $(REPO):$(DOCKER_TAG_PROD) -t $(REPO):$(WEB_PROD) --file docker/django/Dockerfile .
+	docker build --target rq -t $(REPO):$(RQ_TAG) -t $(REPO):$(RQ_LATEST) --file docker/django/Dockerfile .
 
 push: image
 	$(info Checking if valid architecture)

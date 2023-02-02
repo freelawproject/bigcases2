@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
+from .tasks import fail_task
 from .utils import check_postgresql
 
 
@@ -25,3 +26,8 @@ def health_check(request: HttpRequest) -> JsonResponse:
         },
         status=status,
     )
+
+
+def rq_fail(request: HttpRequest) -> HttpResponse:
+    fail_task.delay()
+    return HttpResponse("Successfully failed RQ.")

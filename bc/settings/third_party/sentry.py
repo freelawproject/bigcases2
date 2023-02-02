@@ -1,7 +1,7 @@
 import environ
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.logging import ignore_logger
+from sentry_sdk.integrations.rq import RqIntegration
 
 env = environ.FileAwareEnv()
 SENTRY_DSN = env("SENTRY_DSN", default="")
@@ -13,6 +13,7 @@ if SENTRY_DSN:
         dsn=SENTRY_DSN,
         integrations=[
             DjangoIntegration(),
+            RqIntegration(),
         ],
         ignore_errors=[KeyboardInterrupt],
         traces_sample_rate=SENTRY_SAMPLE_TRACE,
