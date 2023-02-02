@@ -94,7 +94,7 @@ WORKDIR /opt/bigcases2
 FROM python-base as web-prod
 
 CMD python /opt/bigcases2/manage.py migrate  && \
-    gunicorn bc2_wsgi:application \
+    gunicorn wsgi:application \
     --chdir /opt/bigcases2/docker/django/wsgi-configs/ \
     --user www-data \
     --group www-data \
