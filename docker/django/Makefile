@@ -30,7 +30,7 @@ development:
 
 image:
 	docker build --target web-prod -t $(REPO):$(DOCKER_TAG_PROD) -t $(REPO):$(WEB_PROD) --file docker/django/Dockerfile .
-	docker build --target celery -t $(REPO):$(RQ_TAG) -t $(REPO):$(RQ_LATEST) --file docker/django/Dockerfile .
+	docker build --target rq -t $(REPO):$(RQ_TAG) -t $(REPO):$(RQ_LATEST) --file docker/django/Dockerfile .
 
 push: image
 	$(info Checking if valid architecture)
