@@ -93,7 +93,7 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": f"{REDIS_HOST}:{REDIS_PORT}",
-        "OPTIONS": {"DB": REDIS_DATABASES["CACHE"], "MAX_ENTRIES": 1e5},
+        "OPTIONS": {"db": REDIS_DATABASES["CACHE"]},
     },
 }
 
