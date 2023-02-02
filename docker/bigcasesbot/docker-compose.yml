@@ -22,7 +22,7 @@ services:
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: "bigcases2"
+      POSTGRES_DB: "bots"
     networks:
       - bc2_net_overlay
 
