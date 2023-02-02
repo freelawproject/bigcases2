@@ -66,7 +66,7 @@ TEMPLATES = [
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DB_NAME", default="bigcases2"),
+        "NAME": env("DB_NAME", default="bots"),
         "USER": env("DB_USER", default="postgres"),
         "PASSWORD": env("DB_PASSWORD", default="postgres"),
         "CONN_MAX_AGE": env("DB_CONN_MAX_AGE", default=0),
