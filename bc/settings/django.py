@@ -116,6 +116,4 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-COURTLISTENER_API_KEY = env("COURTLISTENER_API_KEY", default="")
-
 HOSTNAME = env("HOSTNAME", default="localhost:8888")
