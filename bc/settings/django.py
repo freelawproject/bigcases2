@@ -4,6 +4,10 @@ import environ
 
 env = environ.FileAwareEnv()
 
+DEVELOPMENT = env.bool("DEVELOPMENT", default=True)
+
+HOSTNAME = env("HOSTNAME", default="localhost:8888")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parents[2]
 
@@ -116,4 +120,3 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-HOSTNAME = env("HOSTNAME", default="localhost:8888")
