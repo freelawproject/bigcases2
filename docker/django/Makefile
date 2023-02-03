@@ -37,6 +37,8 @@ push: image
 	@if [ $(UNAME) = "x86_64" ]; then \
 	    echo "Architecture is OK. Pushing.";\
 	    docker push $(REPO):$(DOCKER_TAG_PROD);\
+		docker push $(REPO):$(RQ_TAG);\
+		docker push $(REPO):$(RQ_LATEST);\
 	else \
 		echo "Only x86_64 machines can push single-architecture builds. If you want to \
 push a build, try 'make multiarch_push', which builds for both arm64 and amd64. This \
@@ -48,15 +50,18 @@ multiarch_image:
 	docker buildx rm
 	docker buildx create --use --name flp-builder
 	docker buildx build --platform linux/amd64,linux/arm64 -t $(REPO):$(WEB_PROD) -t $(REPO):$(DOCKER_TAG_PROD) --file docker/django/Dockerfile .
+	docker buildx build --platform linux/amd64,linux/arm64 -t $(REPO):$(RQ_LATEST) -t $(REPO):$(RQ_TAG) --file docker/django/Dockerfile .
 
 multiarch_push:
 	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO):$(WEB_PROD) -t $(REPO):$(DOCKER_TAG_PROD) --file docker/django/Dockerfile .
+	docker buildx build --push --platform linux/amd64,linux/arm64 -t $(REPO):$(RQ_LATEST) -t $(REPO):$(RQ_TAG) --file docker/django/Dockerfile .
 
 x86_push:
 	export DOCKER_CLI_EXPERIMENTAL=enabled
 	docker buildx rm
 	docker buildx create --use --name flp-builder
 	docker buildx build --push --platform linux/amd64 -t $(REPO):$(WEB_PROD) -t $(REPO):$(DOCKER_TAG_PROD) --file docker/django/Dockerfile .
+	docker buildx build --push --platform linux/amd64 -t $(REPO):$(RQ_LATEST) -t $(REPO):$(RQ_TAG) --file docker/django/Dockerfile .
 
 multiarch_push_development:
 	export DOCKER_CLI_EXPERIMENTAL=enabled
@@ -66,3 +71,4 @@ multiarch_push_development:
 	# Wait for the builder to boot
 	docker buildx inspect --bootstrap
 	docker buildx build --target web-dev --push --platform linux/amd64,linux/arm64 -t $(REPO):$(WEB_DEV) --build-arg BUILD_ENV=dev --file docker/django/Dockerfile .
+	docker buildx build --target celery --push --platform linux/amd64,linux/arm64 -t $(REPO):$(RQ_DEV) --build-arg BUILD_ENV=dev --file docker/django/Dockerfile .
