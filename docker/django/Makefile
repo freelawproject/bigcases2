@@ -38,6 +38,7 @@ push: image
 	    echo "Architecture is OK. Pushing.";\
 	    docker push $(REPO):$(DOCKER_TAG_PROD);\
 		docker push $(REPO):$(RQ_TAG);\
+		docker push $(REPO):$(RQ_LATEST);\
 	else \
 		echo "Only x86_64 machines can push single-architecture builds. If you want to \
 push a build, try 'make multiarch_push', which builds for both arm64 and amd64. This \
