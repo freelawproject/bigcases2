@@ -71,4 +71,4 @@ multiarch_push_development:
 	# Wait for the builder to boot
 	docker buildx inspect --bootstrap
 	docker buildx build --target web-dev --push --platform linux/amd64,linux/arm64 -t $(REPO):$(WEB_DEV) --build-arg BUILD_ENV=dev --file docker/django/Dockerfile .
-	docker buildx build --target celery --push --platform linux/amd64,linux/arm64 -t $(REPO):$(RQ_DEV) --build-arg BUILD_ENV=dev --file docker/django/Dockerfile .
+	docker buildx build --target rq --push --platform linux/amd64,linux/arm64 -t $(REPO):$(RQ_DEV) --build-arg BUILD_ENV=dev --file docker/django/Dockerfile .
