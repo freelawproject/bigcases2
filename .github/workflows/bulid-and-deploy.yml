@@ -77,14 +77,14 @@ jobs:
     - name: Check migration exit code from previous step
       if: failure()
       run: |
-        echo "Found unapplied migrations. A pod named deploy-${{ steps.vars.outputs.sha_short }} has been created for you."
+        echo "Found unapplied migrations. A pod named bots-deploy-${{ steps.vars.outputs.sha_short }} has been created for you."
         echo "Shell into that pod, do a manual migration, delete the pod, and re-run this Github Action job."
-        kubectl run deploy-${{ steps.vars.outputs.sha_short }} -n ${{ env.EKS_NAMESPACE }} --image freelawproject/bigcases2:${{ steps.vars.outputs.sha_short }}-web-prod --restart Never --overrides='
+        kubectl run bots-deploy-${{ steps.vars.outputs.sha_short }} -n ${{ env.EKS_NAMESPACE }} --image freelawproject/bigcases2:${{ steps.vars.outputs.sha_short }}-web-prod --restart Never --overrides='
           {
             "spec": {
               "containers": [
                 {
-                  "name": "deploy-${{ steps.vars.outputs.sha_short }}",
+                  "name": "bots-deploy-${{ steps.vars.outputs.sha_short }}",
                   "image": "freelawproject/bigcases2:${{ steps.vars.outputs.sha_short }}-web-prod",
                   "command": [
                       "/bin/sh",
@@ -111,6 +111,6 @@ jobs:
     - name: Watch bots-python rollout status
       run: kubectl rollout status -n ${{ env.EKS_NAMESPACE }} deployment/bots-python
     - name: Rollout bots-rq
-      run: kubectl set image -n ${{ env.EKS_NAMESPACE }} deployment/bots-rq web=freelawproject/bigcases2:${{ steps.vars.outputs.sha_short }}-rq
+      run: kubectl set image -n ${{ env.EKS_NAMESPACE }} deployment/bots-rq bots-rq=freelawproject/bigcases2:${{ steps.vars.outputs.sha_short }}-rq
     - name: Watch bots-rq rollout status
       run: kubectl rollout status -n ${{ env.EKS_NAMESPACE }} deployment/bots-rq
