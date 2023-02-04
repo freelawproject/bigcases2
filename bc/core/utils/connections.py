@@ -1,4 +1,7 @@
+import redis
 from django.db import OperationalError, connections
+
+from .redis import make_redis_interface
 
 
 def check_postgresql() -> bool:
@@ -9,5 +12,14 @@ def check_postgresql() -> bool:
                 c.execute("SELECT 1")
                 c.fetchone()
     except OperationalError:
+        return False
+    return True
+
+
+def check_redis() -> bool:
+    r = make_redis_interface("QUEUE")
+    try:
+        r.ping()
+    except (redis.exceptions.ConnectionError, ConnectionRefusedError):
         return False
     return True
