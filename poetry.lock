@@ -1377,6 +1377,21 @@ files = [
 ]
 
 [[package]]
+name = "types-pyopenssl"
+version = "23.0.0.2"
+description = "Typing stubs for pyOpenSSL"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-pyOpenSSL-23.0.0.2.tar.gz", hash = "sha256:2e95f9a667d5eeb0af699196f857f7d23d5b4d642437bd37355bc13a87e9f4ae"},
+    {file = "types_pyOpenSSL-23.0.0.2-py3-none-any.whl", hash = "sha256:ea7e5d06f9190a1cb013ad4b13d48896e5cd1e785c04491f38b206d1bc4b8dc1"},
+]
+
+[package.dependencies]
+cryptography = ">=35.0.0"
+
+[[package]]
 name = "types-pytz"
 version = "2022.7.1.0"
 description = "Typing stubs for pytz"
@@ -1399,6 +1414,22 @@ files = [
     {file = "types-PyYAML-6.0.12.3.tar.gz", hash = "sha256:17ce17b3ead8f06e416a3b1d5b8ddc6cb82a422bb200254dd8b469434b045ffc"},
     {file = "types_PyYAML-6.0.12.3-py3-none-any.whl", hash = "sha256:879700e9f215afb20ab5f849590418ab500989f83a57e635689e1d50ccc63f0c"},
 ]
+
+[[package]]
+name = "types-redis"
+version = "4.4.0.6"
+description = "Typing stubs for redis"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-redis-4.4.0.6.tar.gz", hash = "sha256:57f8b3706afe47ef36496d70a97a3783560e6cb19e157be12985dbb31de1d853"},
+    {file = "types_redis-4.4.0.6-py3-none-any.whl", hash = "sha256:8b40d6bf3a54352d4cb2aa7d01294c572a39d40a9d289b96bdf490b51d3a42d2"},
+]
+
+[package.dependencies]
+cryptography = ">=35.0.0"
+types-pyOpenSSL = "*"
 
 [[package]]
 name = "types-requests"
@@ -1593,4 +1624,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "d29e9b4f49576ea2d942f3363f74f479f65244a5c067af9c2b24eebe1ba54f9d"
+content-hash = "f0721511444403cc7f1fd0dc203c2e72e3e2ce54bc77039ff868d341ba5b6d0b"
