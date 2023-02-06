@@ -3,7 +3,7 @@ from http import HTTPStatus
 from django.http import HttpRequest, HttpResponse, JsonResponse
 
 from .tasks import fail_task
-from .utils import check_postgresql
+from .utils.connections import check_postgresql, check_redis
 
 
 def sentry_fail(request: HttpRequest) -> HttpResponse:
@@ -13,15 +13,16 @@ def sentry_fail(request: HttpRequest) -> HttpResponse:
 
 def health_check(request: HttpRequest) -> JsonResponse:
     """Check if we can connect to various services."""
-
+    is_redis_up = check_redis()
     is_postgresql_up = check_postgresql()
 
     status = HTTPStatus.OK
-    if not is_postgresql_up:
+    if not all([is_postgresql_up, is_redis_up]):
         status = HTTPStatus.INTERNAL_SERVER_ERROR
 
     return JsonResponse(
         {
+            "is_redis_up": is_redis_up,
             "is_postgresql_up": is_postgresql_up,
         },
         status=status,
