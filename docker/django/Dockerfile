@@ -85,7 +85,7 @@ WORKDIR /opt/bigcases2
 # freelawproject/bigcases2:latest-rq
 FROM python-base as rq
 
-CMD python /opt/bigcases2/manage.py rqworker default --with-scheduler
+CMD python manage.py rqworker --with-scheduler
 
 #freelawproject/bigcases2:latest-web-dev
 FROM python-base as web-dev
