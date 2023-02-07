@@ -525,14 +525,14 @@ testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
 name = "django-rq"
-version = "2.6.0"
+version = "2.7.0"
 description = "An app that provides django integration for RQ (Redis Queue)"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-rq-2.6.0.tar.gz", hash = "sha256:f03b1eb68afe218175989c14b1266c7b446d5152f629888a078d0022059b255e"},
-    {file = "django_rq-2.6.0-py2.py3-none-any.whl", hash = "sha256:b1964ad656ae103d8b4714f8745e739586917b126f02c844791d9059940b01a0"},
+    {file = "django-rq-2.7.0.tar.gz", hash = "sha256:50440be33c23427f3b34d206ff72025740b721b54b42976e7b18a0474174802b"},
+    {file = "django_rq-2.7.0-py2.py3-none-any.whl", hash = "sha256:5b09798a3d0b03d4c7b55dbba50409c16dcbb09d42c2839511b52c29744be8c8"},
 ]
 
 [package.dependencies]
@@ -1274,14 +1274,14 @@ redis = ">=3.5.0"
 
 [[package]]
 name = "sentry-sdk"
-version = "1.14.0"
+version = "1.15.0"
 description = "Python client for Sentry (https://sentry.io)"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "sentry-sdk-1.14.0.tar.gz", hash = "sha256:273fe05adf052b40fd19f6d4b9a5556316807246bd817e5e3482930730726bb0"},
-    {file = "sentry_sdk-1.14.0-py2.py3-none-any.whl", hash = "sha256:72c00322217d813cf493fe76590b23a757e063ff62fec59299f4af7201dd4448"},
+    {file = "sentry-sdk-1.15.0.tar.gz", hash = "sha256:69ecbb2e1ff4db02a06c4f20f6f69cb5dfe3ebfbc06d023e40d77cf78e9c37e7"},
+    {file = "sentry_sdk-1.15.0-py2.py3-none-any.whl", hash = "sha256:7ad4d37dd093f4a7cb5ad804c6efe9e8fab8873f7ffc06042dc3f3fd700a93ec"},
 ]
 
 [package.dependencies]
@@ -1299,6 +1299,7 @@ falcon = ["falcon (>=1.4)"]
 fastapi = ["fastapi (>=0.79.0)"]
 flask = ["blinker (>=1.1)", "flask (>=0.11)"]
 httpx = ["httpx (>=0.16.0)"]
+huey = ["huey (>=2)"]
 opentelemetry = ["opentelemetry-distro (>=0.35b0)"]
 pure-eval = ["asttokens", "executing", "pure-eval"]
 pymongo = ["pymongo (>=3.1)"]
@@ -1380,7 +1381,7 @@ files = [
 name = "types-pyopenssl"
 version = "23.0.0.2"
 description = "Typing stubs for pyOpenSSL"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 files = [
@@ -1419,7 +1420,7 @@ files = [
 name = "types-redis"
 version = "4.4.0.6"
 description = "Typing stubs for redis"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 files = [
@@ -1624,4 +1625,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "d818476ffca885f68d4c004de69ee20d965d6b0fd4fd9e59b05f515366056203"
+content-hash = "4fef4088522f4da2fa83ee74318fa02f5b7f19c16fe997cd0258204cedc715af"
