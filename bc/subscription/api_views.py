@@ -52,7 +52,7 @@ def handle_cl_webhook(request: Request) -> Response:
                 filing.pk,
             )
 
-    """ Save the idempotency key for 13 minutes after the webhook is handled """
-    cache.set(idempotency_key, True, 780)
+    """ Save the idempotency key for two days after the webhook is handled """
+    cache.set(idempotency_key, True, 60 * 60 * 24 * 2)
 
     return Response(request.data, status=HTTPStatus.CREATED)
