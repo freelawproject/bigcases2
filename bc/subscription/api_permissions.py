@@ -11,5 +11,5 @@ class WhitelistPermission(permissions.BasePermission):
         ip_addr = request.META["REMOTE_ADDR"]
         if settings.DEVELOPMENT:
             return True
-        if ip_addr not in settings.CL_ALLOW_IPS:
-            raise exceptions.PermissionDenied()
+        if ip_addr not in settings.COURTLISTENER_ALLOW_IPS:
+            raise exceptions.PermissionDenied('Ip not allowed')
