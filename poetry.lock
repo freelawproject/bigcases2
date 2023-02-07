@@ -525,14 +525,14 @@ testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
 name = "django-rq"
-version = "2.6.0"
+version = "2.7.0"
 description = "An app that provides django integration for RQ (Redis Queue)"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-rq-2.6.0.tar.gz", hash = "sha256:f03b1eb68afe218175989c14b1266c7b446d5152f629888a078d0022059b255e"},
-    {file = "django_rq-2.6.0-py2.py3-none-any.whl", hash = "sha256:b1964ad656ae103d8b4714f8745e739586917b126f02c844791d9059940b01a0"},
+    {file = "django-rq-2.7.0.tar.gz", hash = "sha256:50440be33c23427f3b34d206ff72025740b721b54b42976e7b18a0474174802b"},
+    {file = "django_rq-2.7.0-py2.py3-none-any.whl", hash = "sha256:5b09798a3d0b03d4c7b55dbba50409c16dcbb09d42c2839511b52c29744be8c8"},
 ]
 
 [package.dependencies]
@@ -1625,4 +1625,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "b73787fa12b68987f1cd4d15774a10ea6eac951c5442ba9bb9d2ef6a214abe6f"
+content-hash = "4fef4088522f4da2fa83ee74318fa02f5b7f19c16fe997cd0258204cedc715af"
