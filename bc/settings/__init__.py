@@ -1,4 +1,5 @@
 from .django import *
+from .misc import *
 from .project.security import *
 from .project.testing import *
 from .third_party.courtlistener import *
