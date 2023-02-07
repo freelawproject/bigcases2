@@ -2,9 +2,9 @@ from django.conf import settings
 from rest_framework import exceptions, permissions
 
 
-class WhitelistPermission(permissions.BasePermission):
+class AllowListPermission(permissions.BasePermission):
     """
-    Permission check for whitelisted IP.
+    Permission check for trusted IP addresses.
     """
 
     def has_permission(self, request, view):
