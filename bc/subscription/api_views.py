@@ -43,7 +43,7 @@ def handle_cl_webhook(request: Request) -> Response:
                 document_number=doc["document_number"],
                 attachment_number=doc["attachment_number"]
                 if doc["attachment_number"]
-                else 0,
+                else None,
             )
 
             queue.enqueue_in(
