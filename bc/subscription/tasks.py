@@ -1,13 +1,13 @@
 from .models import FilingUpdate, Subscription
 
 
-def process_filing_update(pk):
+def process_filing_update(fwe_pk):
     """Process an event from a CL webhook.
 
     :param pk: The PK of the item you want to work on.
     :return: A FilingUpdate object that was updated.
     """
-    filing_update = FilingUpdate.objects.get(pk=pk)
+    filing_update = FilingUpdate.objects.get(pk=fwe_pk)
     try:
         if filing_update.docket_id:
             subscription = Subscription.objects.get(
