@@ -95,7 +95,7 @@ class Subscription(AbstractDateTimeModel):
             return f"{self.pk}"
 
 
-class FilingUpdate(AbstractDateTimeModel):
+class FilingWebhookEvent(AbstractDateTimeModel):
     SCHEDULED = 1
     SUCCESSFUL = 2
     FAILED = 3
@@ -107,17 +107,14 @@ class FilingUpdate(AbstractDateTimeModel):
         (IN_PROGRESS, "Item is currently being processed."),
     )
 
-    docket_id = models.CharField(
+    docket_id = models.IntegerField(
         help_text="The docket id from CL.",
-        max_length=100,
-        db_index=True,
-        blank=True,
+        null=True,
     )
     pacer_doc_id = models.CharField(
         help_text="The ID of the document in PACER.",
-        max_length=32,  # Same as in RECAP
+        max_length=32,  
         blank=True,
-        db_index=True,
     )
     document_number = models.BigIntegerField(
         help_text="The docket entry number for the document.",
@@ -146,3 +143,9 @@ class FilingUpdate(AbstractDateTimeModel):
         null=True,
         on_delete=models.SET_NULL,
     )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['docket_id']),
+            models.Index(fields=['pacer_doc_id'])
+        ]
