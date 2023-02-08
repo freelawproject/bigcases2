@@ -8,6 +8,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from bc.subscription.exceptions import (
+    IdempotencyKeyMissing,
+    WebhookNotSupported,
+)
+
 from .api_permissions import AllowListPermission
 from .models import FilingWebhookEvent
 from .tasks import process_filing_update
@@ -23,12 +28,12 @@ def handle_cl_webhook(request: Request) -> Response:
     """
 
     idempotency_key = request.headers.get("Idempotency-Key")
-    assert (
-        idempotency_key is not None
-    ), "Idempotency key has not been specified"
+    if not idempotency_key:
+        raise IdempotencyKeyMissing()
 
     data = request.data
-    assert data["webhook"]["event_type"] == 1, "Webhook type not supported"
+    if data["webhook"]["event_type"] != 1:
+        raise WebhookNotSupported()
 
     cache_idempotency_key = cache.get(idempotency_key)
     if cache_idempotency_key:
