@@ -1,22 +1,22 @@
 from .models import FilingWebhookEvent, Subscription
 
 
-def process_filing_update(fwe_pk):
+def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     """Process an event from a CL webhook.
 
-    :param pk: The PK of the item you want to work on.
-    :return: A FilingUpdate object that was updated.
+    :param fwe_pk: The PK of the item you want to work on.
+    :return: A FilingWebhookEvent object that was updated.
     """
-    filing_update = FilingWebhookEvent.objects.get(pk=fwe_pk)
+    filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
     try:
-        if filing_update.docket_id:
+        if filing_webhook_event.docket_id:
             subscription = Subscription.objects.get(
-                cl_docket_id=filing_update.docket_id
+                cl_docket_id=filing_webhook_event.docket_id
             )
-            filing_update.subscription = subscription
-            filing_update.save()
+            filing_webhook_event.subscription = subscription
+            filing_webhook_event.save()
     except Subscription.DoesNotExist:
-        filing_update.status = FilingUpdate.FAILED
-        filing_update.save()
+        filing_webhook_event.status = FilingWebhookEvent.FAILED
+        filing_webhook_event.save()
 
-    return filing_update
+    return filing_webhook_event
