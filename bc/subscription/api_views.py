@@ -8,15 +8,15 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from .api_permissions import WhitelistPermission
-from .models import FilingUpdate
+from .api_permissions import AllowListPermission
+from .models import FilingWebhookEvent
 from .tasks import process_filing_update
 
 queue = get_queue("default")
 
 
 @api_view(["POST"])
-@permission_classes([WhitelistPermission])
+@permission_classes([AllowListPermission])
 def handle_cl_webhook(request: Request) -> Response:
     """
     Receives a docket alert webhook from CourtListener.
@@ -37,7 +37,7 @@ def handle_cl_webhook(request: Request) -> Response:
     for result in data["payload"]["results"]:
         cl_docket_id = result["docket"]
         for doc in result["recap_documents"]:
-            filing = FilingUpdate.objects.create(
+            filing = FilingWebhookEvent.objects.create(
                 docket_id=cl_docket_id,
                 pacer_doc_id=doc["pacer_doc_id"],
                 document_number=doc["document_number"],
