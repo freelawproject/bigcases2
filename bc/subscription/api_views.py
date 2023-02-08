@@ -15,7 +15,7 @@ from bc.subscription.exceptions import (
 
 from .api_permissions import AllowListPermission
 from .models import FilingWebhookEvent
-from .tasks import process_filing_update
+from .tasks import process_filing_webhook_event
 
 queue = get_queue("default")
 
@@ -46,18 +46,16 @@ def handle_cl_webhook(request: Request) -> Response:
                 docket_id=cl_docket_id,
                 pacer_doc_id=doc["pacer_doc_id"],
                 document_number=doc["document_number"],
-                attachment_number=doc["attachment_number"]
-                if doc["attachment_number"]
-                else None,
+                attachment_number=doc.get("attachment_number"),
             )
 
             queue.enqueue_in(
                 timedelta(seconds=settings.WEBHOOK_DELAY_TIME),
-                process_filing_update,
+                process_filing_webhook_event,
                 filing.pk,
             )
 
-    """ Save the idempotency key for two days after the webhook is handled """
+    # Save the idempotency key for two days after the webhook is handled
     cache.set(idempotency_key, True, 60 * 60 * 24 * 2)
 
     return Response(request.data, status=HTTPStatus.CREATED)
