@@ -93,3 +93,59 @@ class Subscription(AbstractDateTimeModel):
             return f"{self.pk}: {self.docket_name}"
         else:
             return f"{self.pk}"
+
+
+class FilingWebhookEvent(AbstractDateTimeModel):
+    SCHEDULED = 1
+    SUCCESSFUL = 2
+    FAILED = 3
+    IN_PROGRESS = 4
+    CHOICES = (
+        (SCHEDULED, "Awaiting processing in queue."),
+        (SUCCESSFUL, "Item processed successfully."),
+        (FAILED, "Item encountered an error while processing."),
+        (IN_PROGRESS, "Item is currently being processed."),
+    )
+
+    docket_id = models.IntegerField(
+        help_text="The docket id from CL.",
+        null=True,
+    )
+    pacer_doc_id = models.CharField(
+        help_text="The ID of the document in PACER.",
+        max_length=32,
+        blank=True,
+    )
+    document_number = models.BigIntegerField(
+        help_text="The docket entry number for the document.",
+        blank=True,
+        null=True,
+    )
+    attachment_number = models.SmallIntegerField(
+        help_text=(
+            "If the file is an attachment, the number is the attachment "
+            "number on the docket."
+        ),
+        blank=True,
+        null=True,
+    )
+    status = models.SmallIntegerField(
+        help_text="The current status of this upload. Possible values "
+        "are: %s" % ", ".join(["(%s): %s" % (t[0], t[1]) for t in CHOICES]),
+        default=SCHEDULED,
+        choices=CHOICES,
+    )
+
+    # Post process fields
+    subscription = models.ForeignKey(
+        Subscription,
+        help_text="The subscription that was updated by this request.",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["docket_id"]),
+            models.Index(fields=["pacer_doc_id"]),
+        ]

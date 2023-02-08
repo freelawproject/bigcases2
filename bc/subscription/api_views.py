@@ -1,57 +1,61 @@
-import logging
+from datetime import timedelta
 from http import HTTPStatus
-from pprint import pformat
 
-from rest_framework.decorators import api_view
+from django.conf import settings
+from django.core.cache import cache
+from django_rq.queues import get_queue
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-logger = logging.getLogger(__name__)
+from bc.subscription.exceptions import (
+    IdempotencyKeyMissing,
+    WebhookNotSupported,
+)
+
+from .api_permissions import AllowListPermission
+from .models import FilingWebhookEvent
+from .tasks import process_filing_webhook_event
+
+queue = get_queue("default")
 
 
 @api_view(["POST"])
+@permission_classes([AllowListPermission])
 def handle_cl_webhook(request: Request) -> Response:
     """
     Receives a docket alert webhook from CourtListener.
     """
-    logger.debug("CL webhook hit")
-    data = request.data
 
-    # Check headers
-    logger.debug(f"Request headers: {pformat(request.headers)}")
-
-    # 'Content-Type: application/json'
-    assert "Content-Type" in request.headers
-    assert request.headers.get("Content-Type") == "application/json"
-
-    # Idempotency key
     idempotency_key = request.headers.get("Idempotency-Key")
-    assert idempotency_key is not None
-    # TODO: Actually check that we haven't recevied this key before
+    if not idempotency_key:
+        raise IdempotencyKeyMissing()
 
-    # Check request body
-    assert "webhook" in data
-    assert "version" in data["webhook"]
-    assert (
-        data["webhook"]["version"] == 1
-    )  # Handle other versions when they come into existence
-    assert "event_type" in data["webhook"]
-    assert (
-        data["webhook"]["event_type"] == 1
-    )  # Just docket alerts for this endpoint
-    assert "results" in data
+    data = request.data
+    if data["webhook"]["event_type"] != 1:
+        raise WebhookNotSupported()
 
-    results = data["results"]
+    cache_idempotency_key = cache.get(idempotency_key)
+    if cache_idempotency_key:
+        return Response(status=HTTPStatus.OK)
 
-    for result in results:
-        # TODO: Store docket entry in DB
-
-        # Handle any documents attached
+    for result in data["payload"]["results"]:
+        cl_docket_id = result["docket"]
         for doc in result["recap_documents"]:
-            pass
+            filing = FilingWebhookEvent.objects.create(
+                docket_id=cl_docket_id,
+                pacer_doc_id=doc["pacer_doc_id"],
+                document_number=doc["document_number"],
+                attachment_number=doc.get("attachment_number"),
+            )
 
-        # TODO: Actually do something with this docket entry
+            queue.enqueue_in(
+                timedelta(seconds=settings.WEBHOOK_DELAY_TIME),
+                process_filing_webhook_event,
+                filing.pk,
+            )
 
-    # TODO: Send 201 Created HTTP status
-    # TODO: Return real data, like an our ID of a created record
-    return Response(status=HTTPStatus.OK)
+    # Save the idempotency key for two days after the webhook is handled
+    cache.set(idempotency_key, True, 60 * 60 * 24 * 2)
+
+    return Response(request.data, status=HTTPStatus.CREATED)
