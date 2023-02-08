@@ -113,7 +113,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
     )
     pacer_doc_id = models.CharField(
         help_text="The ID of the document in PACER.",
-        max_length=32,  
+        max_length=32,
         blank=True,
     )
     document_number = models.BigIntegerField(
@@ -146,6 +146,6 @@ class FilingWebhookEvent(AbstractDateTimeModel):
 
     class Meta:
         indexes = [
-            models.Index(fields=['docket_id']),
-            models.Index(fields=['pacer_doc_id'])
+            models.Index(fields=["docket_id"]),
+            models.Index(fields=["pacer_doc_id"]),
         ]
