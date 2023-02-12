@@ -48,6 +48,8 @@ services:
       - bc2-postgresql
       - bc2-doctor
       - bc2-redis
+    volumes:
+      - ../..:/opt/bigcases2
     networks:
       - bc2_net_overlay
     env_file:
