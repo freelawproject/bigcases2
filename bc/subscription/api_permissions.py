@@ -10,7 +10,7 @@ class AllowListPermission(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        viewer_address = request.META["HTTP_CLOUDFRONT_VIEWER_ADDRESS"]
+        viewer_address = request.META.get("HTTP_CLOUDFRONT_VIEWER_ADDRESS")
         ip_addr = (
             strip_port_to_make_ip_key(viewer_address)
             or request.META["REMOTE_ADDR"]
