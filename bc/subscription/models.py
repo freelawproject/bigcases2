@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db import models
 
 from bc.core.models import AbstractDateTimeModel
@@ -45,6 +47,11 @@ class Subscription(AbstractDateTimeModel):
         help_text="The CL court ID, b/c it's sometimes different from PACER's",
         max_length=100,
     )
+    cl_slug = models.SlugField(
+        help_text="URL that the document should map to (the slug)",
+        max_length=75,
+        blank=True,
+    )
     pacer_court_id = models.CharField(
         help_text="The ID in PACER's subdomain",
         max_length=10,
@@ -59,20 +66,20 @@ class Subscription(AbstractDateTimeModel):
         blank=True,
     )
 
-    def cl_url(self):
+    def cl_url(self) -> str:
         return f"https://www.courtlistener.com/recap/gov.uscourts.{self.cl_court_id}.{self.pacer_case_id}"
 
-    def pacer_district_url(self, path):
+    def pacer_district_url(self, path) -> Optional[str]:
         if not self.pacer_case_id or self.cl_court_id in APPELLATE_COURT_IDS:
             return None
         return f"https://ecf.{self.pacer_court_id}.uscourts.gov/cgi-bin/{path}?{self.pacer_case_id}"
 
-    def pacer_docket_url(self):
+    def pacer_docket_url(self) -> Optional[str]:
         if not self.pacer_case_id:
             return None
 
         if self.cl_court_id in APPELLATE_COURT_IDS:
-            if self.court.pk in ["ca5", "ca7", "ca11"]:
+            if self.cl_court_id in ["ca5", "ca7", "ca11"]:
                 path = "/cmecf/servlet/TransportRoom?"
             else:
                 path = "/n/beam/servlet/TransportRoom?"
@@ -88,7 +95,7 @@ class Subscription(AbstractDateTimeModel):
         else:
             return self.pacer_district_url("DktRpt.pl")
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.docket_name:
             return f"{self.pk}: {self.docket_name}"
         else:
@@ -121,6 +128,10 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         blank=True,
         null=True,
     )
+    description = models.TextField(
+        help_text="The document description",
+        blank=True,
+    )
     attachment_number = models.SmallIntegerField(
         help_text=(
             "If the file is an attachment, the number is the attachment "
@@ -143,9 +154,61 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         null=True,
         on_delete=models.SET_NULL,
     )
+    post = models.ManyToManyField(
+        "channel.Channel",
+        help_text="The posts generated after the event is handled",
+        related_name="filing_webhook_events",
+        through="Post",
+        blank=True,
+    )
 
     class Meta:
         indexes = [
             models.Index(fields=["docket_id"]),
             models.Index(fields=["pacer_doc_id"]),
         ]
+
+    def document_link(self) -> Optional[str]:
+        if not self.subscription:
+            return None
+        if not self.attachment_number:
+            return (
+                f"https://www.courtlistener.com/docket/"
+                f"{self.docket_id}/"
+                f"{self.document_number}/"
+                f"{self.subscription.cl_slug}/"
+            )
+        else:
+            return (
+                f"https://www.courtlistener.com/docket/"
+                f"{self.docket_id}/"
+                f"{self.document_number}/"
+                f"{self.attachment_number}/"
+                f"{self.subscription.cl_slug}/"
+            )
+
+    def __str__(self) -> str:
+        if self.attachment_number:
+            return (
+                f"Doc {self.document_number}-{self.attachment_number} "
+                f"from {self.description}"
+            )
+
+        return f"Doc {self.document_number} " f"from {self.description}"
+
+
+class Post(AbstractDateTimeModel):
+    filing_webhook_event = models.ForeignKey(
+        "FilingWebhookEvent", related_name="posts", on_delete=models.CASCADE
+    )
+    channel = models.ForeignKey(
+        "channel.Channel", related_name="posts", on_delete=models.CASCADE
+    )
+    object_id = models.PositiveBigIntegerField(
+        help_text="The object's id returned by the channel API",
+    )
+
+    def __str__(self) -> str:
+        return (
+            f"{self.filing_webhook_event.__str__()} on {self.channel.service}"
+        )
