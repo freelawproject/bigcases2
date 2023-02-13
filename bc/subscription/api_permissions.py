@@ -20,3 +20,4 @@ class AllowListPermission(permissions.BasePermission):
             return True
         if ip_addr not in settings.COURTLISTENER_ALLOW_IPS:
             raise exceptions.PermissionDenied("Ip not allowed")
+        return True
