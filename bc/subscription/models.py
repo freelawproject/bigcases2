@@ -69,12 +69,12 @@ class Subscription(AbstractDateTimeModel):
     def cl_url(self) -> str:
         return f"https://www.courtlistener.com/recap/gov.uscourts.{self.cl_court_id}.{self.pacer_case_id}"
 
-    def pacer_district_url(self, path) -> Optional[str]:
+    def pacer_district_url(self, path) -> str | None:
         if not self.pacer_case_id or self.cl_court_id in APPELLATE_COURT_IDS:
             return None
         return f"https://ecf.{self.pacer_court_id}.uscourts.gov/cgi-bin/{path}?{self.pacer_case_id}"
 
-    def pacer_docket_url(self) -> Optional[str]:
+    def pacer_docket_url(self) -> str | None:
         if not self.pacer_case_id:
             return None
 
@@ -142,7 +142,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
     )
     status = models.SmallIntegerField(
         help_text="The current status of this upload. Possible values "
-        "are: %s" % ", ".join(["(%s): %s" % (t[0], t[1]) for t in CHOICES]),
+        "are: %s" % ", ".join(["({}): {}".format(t[0], t[1]) for t in CHOICES]),
         default=SCHEDULED,
         choices=CHOICES,
     )
@@ -168,7 +168,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
             models.Index(fields=["pacer_doc_id"]),
         ]
 
-    def document_link(self) -> Optional[str]:
+    def document_link(self) -> str | None:
         if not self.subscription:
             return None
         if not self.attachment_number:
