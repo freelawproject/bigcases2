@@ -142,7 +142,8 @@ class FilingWebhookEvent(AbstractDateTimeModel):
     )
     status = models.SmallIntegerField(
         help_text="The current status of this upload. Possible values "
-        "are: %s" % ", ".join(["({}): {}".format(t[0], t[1]) for t in CHOICES]),
+        "are: %s"
+        % ", ".join([f"({t[0]}): {t[1]}" for t in CHOICES]),
         default=SCHEDULED,
         choices=CHOICES,
     )
