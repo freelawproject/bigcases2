@@ -9,7 +9,11 @@
 </head>
 
 <body>
-    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="content">
+      {# rel=me is needed to make the link verified on Mastodon #}
+        <a rel="me" href="https://law.builders/@bigcases">Mastodon</a>
+      {% block content %}{% endblock %}
+    </div>
     <div id="footer">
         {% block footer %}
         <span>&copy; Copyright {% now "Y" %} <a href="https://free.law/">Free Law Project</a>.</span>
