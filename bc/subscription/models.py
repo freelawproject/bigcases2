@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.db import models
 
 from bc.core.models import AbstractDateTimeModel
@@ -158,7 +156,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         "channel.Channel",
         help_text="The posts generated after the event is handled",
         related_name="filing_webhook_events",
-        through="Post",
+        through="channel.Post",
         blank=True,
     )
 
@@ -168,7 +166,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
             models.Index(fields=["pacer_doc_id"]),
         ]
 
-    def document_link(self) -> str | None:
+    def cl_document_url(self) -> str | None:
         if not self.subscription:
             return None
         if not self.attachment_number:
@@ -187,6 +185,14 @@ class FilingWebhookEvent(AbstractDateTimeModel):
                 f"{self.subscription.cl_slug}/"
             )
 
+    @property
+    def cl_pdf_or_pacer_url(self) -> str:
+        return f"{self.cl_document_url}?redirect_to_download=True"
+
+    @property
+    def cl_docket_url(self) -> str | None:
+        return self.subscription.cl_url
+
     def __str__(self) -> str:
         if self.attachment_number:
             return (
@@ -195,20 +201,3 @@ class FilingWebhookEvent(AbstractDateTimeModel):
             )
 
         return f"Doc {self.document_number} " f"from {self.description}"
-
-
-class Post(AbstractDateTimeModel):
-    filing_webhook_event = models.ForeignKey(
-        "FilingWebhookEvent", related_name="posts", on_delete=models.CASCADE
-    )
-    channel = models.ForeignKey(
-        "channel.Channel", related_name="posts", on_delete=models.CASCADE
-    )
-    object_id = models.PositiveBigIntegerField(
-        help_text="The object's id returned by the channel API",
-    )
-
-    def __str__(self) -> str:
-        return (
-            f"{self.filing_webhook_event.__str__()} on {self.channel.service}"
-        )
