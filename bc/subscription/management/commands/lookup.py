@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from bc.subscription.services import create_subscription_from_docket
+from bc.subscription.services import create_or_update_subscription_from_docket
 from bc.subscription.utils.courtlistener import (
     lookup_docket_by_cl_id,
     subscribe_to_docket_alert,
@@ -38,11 +38,15 @@ class Command(BaseCommand):
                 self.stdout.write(
                     self.style.WARNING("We'll try to add this case to the DB.")
                 )
-                create_subscription_from_docket(result)
-                self.stdout.write(self.style.SUCCESS("Added!"))
+                _, created = create_or_update_subscription_from_docket(result)
+                message = "Added!" if created else "Updated!"
+                self.stdout.write(self.style.SUCCESS(message))
 
-                cl_subscription = subscribe_to_docket_alert(options["cl-id"])
-                if cl_subscription:
-                    self.stdout.write(self.style.SUCCESS("Subscribed!"))
+                if created:
+                    cl_subscription = subscribe_to_docket_alert(
+                        options["cl-id"]
+                    )
+                    if cl_subscription:
+                        self.stdout.write(self.style.SUCCESS("Subscribed!"))
         else:
             self.stdout.write(self.style.ERROR("Case not found"))
