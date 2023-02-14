@@ -63,7 +63,9 @@ class Channel(AbstractDateTimeModel):
 
 class Post(AbstractDateTimeModel):
     filing_webhook_event = models.ForeignKey(
-        "subscription.FilingWebhookEvent", related_name="posts", on_delete=models.CASCADE
+        "subscription.FilingWebhookEvent",
+        related_name="posts",
+        on_delete=models.CASCADE,
     )
     channel = models.ForeignKey(
         "Channel", related_name="posts", on_delete=models.CASCADE
@@ -71,12 +73,16 @@ class Post(AbstractDateTimeModel):
     object_id = models.PositiveBigIntegerField(
         help_text="The object's id returned by Twitter/Mastodon/etc's API",
     )
+    text = models.TextField(
+        help_text="The post content",
+        blank=True,
+    )
 
     def __str__(self) -> str:
         return (
             f"{self.filing_webhook_event.__str__()} on {self.channel.service}"
         )
-        
+
     @property
     def post_url(self) -> str:
         service = self.channel.service
@@ -84,6 +90,8 @@ class Post(AbstractDateTimeModel):
             case Channel.MASTODON:
                 return f"https://law.builders/@bigcases/{ self.object_id }"
             case Channel.TWITTER:
-                return f"https://twitter.com/big_cases/status/{ self.object_id }"
+                return (
+                    f"https://twitter.com/big_cases/status/{ self.object_id }"
+                )
             case _:
                 raise NotImplemented(f"Unknown service: '{ service }'.")
