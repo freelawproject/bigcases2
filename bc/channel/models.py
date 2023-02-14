@@ -94,4 +94,4 @@ class Post(AbstractDateTimeModel):
                     f"https://twitter.com/big_cases/status/{ self.object_id }"
                 )
             case _:
-                raise NotImplemented(f"Unknown service: '{ service }'.")
+                raise NotImplementedError(f"Unknown service: '{ service }'.")
