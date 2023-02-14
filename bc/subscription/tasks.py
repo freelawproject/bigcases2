@@ -19,6 +19,7 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
                 cl_docket_id=filing_webhook_event.docket_id
             )
         except Subscription.DoesNotExist:
+            # We don't know why we got this webhook event. Ignore it.
             filing_webhook_event.status = FilingWebhookEvent.FAILED
             filing_webhook_event.save()
             return filing_webhook_event
