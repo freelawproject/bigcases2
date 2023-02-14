@@ -1,3 +1,5 @@
+from django.db import transaction
+
 from bc.channel.models import Post
 from bc.channel.selectors import get_mastodon_channel
 from bc.channel.utils.masto import post_status as mastodon_post
@@ -6,6 +8,7 @@ from bc.core.utils.messages import MASTODON_POST_TEMPLATE
 from .models import FilingWebhookEvent, Subscription
 
 
+@transaction.atomic
 def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     """Process an event from a CL webhook.
 
@@ -18,15 +21,17 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
         return filing_webhook_event
 
     try:
-        subscription = Subscription.objects.get(
-            cl_docket_id=filing_webhook_event.docket_id
-        )
+        with transaction.atomic():
+            subscription = Subscription.objects.get(
+                cl_docket_id=filing_webhook_event.docket_id
+            )
     except Subscription.DoesNotExist:
         # We don't know why we got this webhook event. Ignore it.
         filing_webhook_event.status = FilingWebhookEvent.FAILED
         filing_webhook_event.save()
         return filing_webhook_event
 
+    filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
     filing_webhook_event.subscription = subscription
     filing_webhook_event.save()
 
