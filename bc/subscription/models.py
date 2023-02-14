@@ -191,6 +191,8 @@ class FilingWebhookEvent(AbstractDateTimeModel):
 
     @property
     def cl_docket_url(self) -> str | None:
+        if not self.subscription:
+            return None
         return self.subscription.cl_url()
 
     def __str__(self) -> str:
