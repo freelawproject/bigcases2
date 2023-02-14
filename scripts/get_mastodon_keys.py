@@ -10,6 +10,12 @@ MASTODON_TOKEN = env("MASTODON_TOKEN")
 
 
 def main():
+    
+    if not MASTODON_SERVER or not MASTODON_TOKEN:
+        raise Exception(
+            "Please check your env file and make sure MASTODON_SERVER and MASTODON_TOKEN are set"
+        )    
+    
     mastodon = Mastodon(
         api_base_url=MASTODON_SERVER,
         access_token=MASTODON_TOKEN,
