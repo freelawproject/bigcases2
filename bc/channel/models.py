@@ -59,3 +59,20 @@ class Channel(AbstractDateTimeModel):
         if self.account:
             return f"{self.pk}: {self.account}"
         return f"{self.pk}"
+
+
+class Post(AbstractDateTimeModel):
+    filing_webhook_event = models.ForeignKey(
+        "subscription.FilingWebhookEvent", related_name="posts", on_delete=models.CASCADE
+    )
+    channel = models.ForeignKey(
+        "Channel", related_name="posts", on_delete=models.CASCADE
+    )
+    object_id = models.PositiveBigIntegerField(
+        help_text="The object's id returned by Twitter/Mastodon/etc's API",
+    )
+
+    def __str__(self) -> str:
+        return (
+            f"{self.filing_webhook_event.__str__()} on {self.channel.service}"
+        )
