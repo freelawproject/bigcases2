@@ -2,6 +2,8 @@ from django.db import models
 
 from bc.core.models import AbstractDateTimeModel
 
+from .utils.courtlistener import map_cl_to_pacer_id
+
 APPELLATE_COURT_IDS = [
     "ca1",
     "ca2",
@@ -50,10 +52,6 @@ class Subscription(AbstractDateTimeModel):
         max_length=75,
         blank=True,
     )
-    pacer_court_id = models.CharField(
-        help_text="The ID in PACER's subdomain",
-        max_length=10,
-    )
     pacer_case_id = models.CharField(
         help_text=(
             "The cased ID provided by PACER. Noted in this case on a "
@@ -63,6 +61,10 @@ class Subscription(AbstractDateTimeModel):
         max_length=100,
         blank=True,
     )
+
+    @property
+    def pacer_court_id(self) -> str:
+        return map_cl_to_pacer_id(self.cl_court_id)
 
     def cl_url(self) -> str:
         return f"https://www.courtlistener.com/recap/gov.uscourts.{self.cl_court_id}.{self.pacer_case_id}"
