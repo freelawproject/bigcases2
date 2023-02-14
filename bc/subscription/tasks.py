@@ -13,34 +13,36 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     :return: A FilingWebhookEvent object that was updated.
     """
     filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
-    if filing_webhook_event.docket_id:
-        try:
-            subscription = Subscription.objects.get(
-                cl_docket_id=filing_webhook_event.docket_id
-            )
-        except Subscription.DoesNotExist:
-            filing_webhook_event.status = FilingWebhookEvent.FAILED
-            filing_webhook_event.save()
-            return filing_webhook_event
-
-        filing_webhook_event.subscription = subscription
+    
+    if not filing_webhook_event.docket_id:
+        return filing_webhook_event
+    
+    try:
+        subscription = Subscription.objects.get(
+            cl_docket_id=filing_webhook_event.docket_id
+        )
+    except Subscription.DoesNotExist:
+        filing_webhook_event.status = FilingWebhookEvent.FAILED
         filing_webhook_event.save()
+        return filing_webhook_event
 
-        message = MASTODON_POST_TEMPLATE.format(
-            docket=subscription.docket_name,
-            desc=filing_webhook_event.description,
-            pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
-            docket_link=filing_webhook_event.cl_docket_url,
-        )
+    filing_webhook_event.subscription = subscription
+    filing_webhook_event.save()
 
-        api_post_id = mastodon_post(message)
+    message = MASTODON_POST_TEMPLATE.format(
+        docket=subscription.docket_name,
+        desc=filing_webhook_event.description,
+        pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
+        docket_link=filing_webhook_event.cl_docket_url,
+    )
 
-        channel = get_mastodon_channel()
-        Post.objects.create(
-            filing_webhook_event=filing_webhook_event,
-            channel=channel,
-            object_id=api_post_id,
-            text=message,
-        )
+    api_post_id = mastodon_post(message)
 
-    return filing_webhook_event
+    channel = get_mastodon_channel()
+    Post.objects.create(
+        filing_webhook_event=filing_webhook_event,
+        channel=channel,
+        object_id=api_post_id,
+        text=message,
+    )
+
