@@ -19,8 +19,7 @@ def create_subscription_from_docket(docket):
 
     cl_docket_id = docket["id"]
     cl_court_id = docket["court_id"]
-
-    pacer_court_id = docket["court_id"]
+    cl_slug = docket["slug"]
 
     court = find_court_by_id(cl_court_id)
     court_name = court[0]["name"] if len(court) == 1 else ""
@@ -30,9 +29,9 @@ def create_subscription_from_docket(docket):
         docket_number=docket_number,
         cl_docket_id=cl_docket_id,
         cl_court_id=cl_court_id,
-        pacer_court_id=pacer_court_id,
         pacer_case_id=pacer_case_id,
         court_name=court_name,
+        cl_slug=cl_slug,
     )
 
     return subscription

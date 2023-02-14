@@ -1,7 +1,7 @@
 from typing import Optional
 
 
-def strip_port_to_make_ip_key(ip_str: Optional[str]) -> Optional[str]:
+def strip_port_to_make_ip_key(ip_str: str | None) -> str | None:
     """Make a good key to use for caching the request's IP
 
     CloudFront provides a header that returns the user's IP and port,

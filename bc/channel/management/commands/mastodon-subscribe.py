@@ -17,7 +17,7 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.SUCCESS(f"Got an existing subscription: {sub}")
             )
-        except MastodonNotFoundError as e:
+        except MastodonNotFoundError:
             sub = subscribe()
 
         sub_id = sub["id"]
@@ -32,7 +32,7 @@ class Command(BaseCommand):
             self.style.SUCCESS("mastodon_subscribe_command() done.")
         )
 
-        channel = Channel.objects.get_or_create(
+        Channel.objects.get_or_create(
             account=settings.MASTODON_ACCOUNT,
             account_id=settings.MASTODON_EMAIL,
             defaults={

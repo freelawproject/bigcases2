@@ -2,6 +2,8 @@ from django.db import models
 
 from bc.core.models import AbstractDateTimeModel
 
+from .utils.courtlistener import map_cl_to_pacer_id
+
 APPELLATE_COURT_IDS = [
     "ca1",
     "ca2",
@@ -45,9 +47,10 @@ class Subscription(AbstractDateTimeModel):
         help_text="The CL court ID, b/c it's sometimes different from PACER's",
         max_length=100,
     )
-    pacer_court_id = models.CharField(
-        help_text="The ID in PACER's subdomain",
-        max_length=10,
+    cl_slug = models.SlugField(
+        help_text="URL that the document should map to (the slug)",
+        max_length=75,
+        blank=True,
     )
     pacer_case_id = models.CharField(
         help_text=(
@@ -59,20 +62,25 @@ class Subscription(AbstractDateTimeModel):
         blank=True,
     )
 
-    def cl_url(self):
+    @property
+    def pacer_court_id(self) -> str:
+        return map_cl_to_pacer_id(self.cl_court_id)
+
+    @property
+    def cl_url(self) -> str:
         return f"https://www.courtlistener.com/recap/gov.uscourts.{self.cl_court_id}.{self.pacer_case_id}"
 
-    def pacer_district_url(self, path):
+    def pacer_district_url(self, path) -> str | None:
         if not self.pacer_case_id or self.cl_court_id in APPELLATE_COURT_IDS:
             return None
         return f"https://ecf.{self.pacer_court_id}.uscourts.gov/cgi-bin/{path}?{self.pacer_case_id}"
 
-    def pacer_docket_url(self):
+    def pacer_docket_url(self) -> str | None:
         if not self.pacer_case_id:
             return None
 
         if self.cl_court_id in APPELLATE_COURT_IDS:
-            if self.court.pk in ["ca5", "ca7", "ca11"]:
+            if self.cl_court_id in ["ca5", "ca7", "ca11"]:
                 path = "/cmecf/servlet/TransportRoom?"
             else:
                 path = "/n/beam/servlet/TransportRoom?"
@@ -88,7 +96,7 @@ class Subscription(AbstractDateTimeModel):
         else:
             return self.pacer_district_url("DktRpt.pl")
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.docket_name:
             return f"{self.pk}: {self.docket_name}"
         else:
@@ -121,6 +129,10 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         blank=True,
         null=True,
     )
+    description = models.TextField(
+        help_text="The document description",
+        blank=True,
+    )
     attachment_number = models.SmallIntegerField(
         help_text=(
             "If the file is an attachment, the number is the attachment "
@@ -131,7 +143,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
     )
     status = models.SmallIntegerField(
         help_text="The current status of this upload. Possible values "
-        "are: %s" % ", ".join(["(%s): %s" % (t[0], t[1]) for t in CHOICES]),
+        "are: %s" % ", ".join([f"({t[0]}): {t[1]}" for t in CHOICES]),
         default=SCHEDULED,
         choices=CHOICES,
     )
@@ -143,9 +155,55 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         null=True,
         on_delete=models.SET_NULL,
     )
+    post = models.ManyToManyField(
+        "channel.Channel",
+        help_text="The posts generated after the event is handled",
+        related_name="filing_webhook_events",
+        through="channel.Post",
+        blank=True,
+    )
 
     class Meta:
         indexes = [
             models.Index(fields=["docket_id"]),
             models.Index(fields=["pacer_doc_id"]),
         ]
+
+    @property
+    def cl_document_url(self) -> str | None:
+        if not self.subscription:
+            return None
+        if not self.attachment_number:
+            return (
+                f"https://www.courtlistener.com/docket/"
+                f"{self.docket_id}/"
+                f"{self.document_number}/"
+                f"{self.subscription.cl_slug}/"
+            )
+        else:
+            return (
+                f"https://www.courtlistener.com/docket/"
+                f"{self.docket_id}/"
+                f"{self.document_number}/"
+                f"{self.attachment_number}/"
+                f"{self.subscription.cl_slug}/"
+            )
+
+    @property
+    def cl_pdf_or_pacer_url(self) -> str:
+        return f"{self.cl_document_url}?redirect_to_download=True"
+
+    @property
+    def cl_docket_url(self) -> str | None:
+        if not self.subscription:
+            return None
+        return self.subscription.cl_url
+
+    def __str__(self) -> str:
+        if self.attachment_number:
+            return (
+                f"Doc {self.document_number}-{self.attachment_number} "
+                f"from {self.description}"
+            )
+
+        return f"Doc {self.document_number} " f"from {self.description}"

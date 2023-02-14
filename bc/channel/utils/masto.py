@@ -55,3 +55,10 @@ def subscribe(force=False):
     )
 
     return response
+
+
+def post_status(message: str) -> int:
+    m = get_mastodon()
+    api_response = m.status_post(message)
+
+    return api_response["id"]

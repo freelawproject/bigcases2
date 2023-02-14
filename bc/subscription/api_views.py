@@ -47,6 +47,7 @@ def handle_cl_webhook(request: Request) -> Response:
                 pacer_doc_id=doc["pacer_doc_id"],
                 document_number=doc["document_number"],
                 attachment_number=doc.get("attachment_number"),
+                description=doc["description"],
             )
 
             queue.enqueue_in(
