@@ -205,7 +205,7 @@ class Post(AbstractDateTimeModel):
         "channel.Channel", related_name="posts", on_delete=models.CASCADE
     )
     object_id = models.PositiveBigIntegerField(
-        help_text="The object's id returned by the channel API",
+        help_text="The object's id returned by Twitter/Mastodon/etc's API",
     )
 
     def __str__(self) -> str:
