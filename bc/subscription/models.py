@@ -66,6 +66,7 @@ class Subscription(AbstractDateTimeModel):
     def pacer_court_id(self) -> str:
         return map_cl_to_pacer_id(self.cl_court_id)
 
+    @property
     def cl_url(self) -> str:
         return f"https://www.courtlistener.com/recap/gov.uscourts.{self.cl_court_id}.{self.pacer_case_id}"
 
@@ -168,6 +169,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
             models.Index(fields=["pacer_doc_id"]),
         ]
 
+    @property
     def cl_document_url(self) -> str | None:
         if not self.subscription:
             return None
@@ -189,13 +191,13 @@ class FilingWebhookEvent(AbstractDateTimeModel):
 
     @property
     def cl_pdf_or_pacer_url(self) -> str:
-        return f"{self.cl_document_url()}?redirect_to_download=True"
+        return f"{self.cl_document_url}?redirect_to_download=True"
 
     @property
     def cl_docket_url(self) -> str | None:
         if not self.subscription:
             return None
-        return self.subscription.cl_url()
+        return self.subscription.cl_url
 
     def __str__(self) -> str:
         if self.attachment_number:
