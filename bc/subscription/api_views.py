@@ -45,11 +45,12 @@ def handle_cl_webhook(request: Request) -> Response:
     for result in sorted_results:
         cl_docket_id = result["docket"]
         long_description = result["description"]
+        document_number = result.get("entry_number")
         for doc in result["recap_documents"]:
             filing = FilingWebhookEvent.objects.create(
                 docket_id=cl_docket_id,
                 pacer_doc_id=doc["pacer_doc_id"],
-                document_number=doc["document_number"],
+                document_number=document_number,
                 attachment_number=doc.get("attachment_number"),
                 short_description=doc["description"],
                 long_description=long_description,

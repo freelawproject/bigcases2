@@ -3,7 +3,7 @@ from django.db import transaction
 from bc.channel.models import Post
 from bc.channel.selectors import get_mastodon_channel
 from bc.channel.utils.masto import post_status as mastodon_post
-from bc.core.utils.messages import POST_TEMPLATE
+from bc.core.utils.messages import MINUTE_TEMPLATE, POST_TEMPLATE
 
 from .models import FilingWebhookEvent, Subscription
 
@@ -35,7 +35,13 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     filing_webhook_event.subscription = subscription
     filing_webhook_event.save()
 
-    message = POST_TEMPLATE.format(
+    template = (
+        POST_TEMPLATE
+        if filing_webhook_event.document_number
+        else MINUTE_TEMPLATE
+    )
+
+    message = template.format(
         docket=subscription.docket_name,
         description=filing_webhook_event.description,
         doc_num=filing_webhook_event.document_number,
