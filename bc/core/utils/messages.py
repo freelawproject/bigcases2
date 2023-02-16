@@ -52,3 +52,10 @@ Doc #{doc_num}: {description}
 PDF: {pdf_link}
 Docket: {docket_link}""",
 )
+
+
+MINUTE_TEMPLATE = MastodonTemplate(
+    character_count=22,
+    link_placeholders=[],
+    str_template="""New minute entry in {docket}: {description}""",
+)
