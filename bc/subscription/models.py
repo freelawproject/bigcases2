@@ -129,7 +129,11 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         blank=True,
         null=True,
     )
-    description = models.TextField(
+    long_description = models.TextField(
+        help_text="The docket entry's description",
+        blank=True,
+    )
+    short_description = models.TextField(
         help_text="The document description",
         blank=True,
     )
@@ -200,10 +204,11 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         return self.subscription.cl_url
 
     def __str__(self) -> str:
+        description = f"Doc {self.document_number}"
         if self.attachment_number:
-            return (
-                f"Doc {self.document_number}-{self.attachment_number} "
-                f"from {self.description}"
-            )
+            description += f"-{self.attachment_number}"
 
-        return f"Doc {self.document_number} " f"from {self.description}"
+        if self.subscription:
+            description += f" from {self.subscription.docket_name}"
+
+        return description
