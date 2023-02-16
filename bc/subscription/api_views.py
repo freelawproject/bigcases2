@@ -39,7 +39,10 @@ def handle_cl_webhook(request: Request) -> Response:
     if cache_idempotency_key:
         return Response(status=HTTPStatus.OK)
 
-    for result in data["payload"]["results"]:
+    sorted_results = sorted(
+        data["payload"]["results"], key=lambda d: d["recap_sequence_number"]
+    )
+    for result in sorted_results:
         cl_docket_id = result["docket"]
         for doc in result["recap_documents"]:
             filing = FilingWebhookEvent.objects.create(
