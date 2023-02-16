@@ -20,9 +20,9 @@ class MastodonTemplate:
 
     def _available_space(self, *args, **kwargs) -> int:
         """Returns the number of available characters
-        
+
         this methods ignores all the links in the str_template because Mastodon
-        uses a fixed length for them. 
+        uses a fixed length for them.
         """
         excluded = self.link_placeholders.copy()
         excluded.append("description")
