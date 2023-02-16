@@ -27,7 +27,7 @@ class MastodonTemplate:
     def count_fixed_characters(self):
         """Returns the number of fixed characters
 
-        this method removes all the placerholders of the template
+        this method removes all the placerholders in the str_template
         using a dictionary that returns a blank string for each key
         and then computes the len of the new string.
         """
