@@ -3,9 +3,15 @@ from dataclasses import dataclass
 from bc.core.utils.string_utils import trunc
 
 
+class AlwaysBlankValueDict(dict):
+    """Just return blank, regardless of the key"""
+
+    def __getitem__(self, key):
+        return ""
+
+
 @dataclass
 class MastodonTemplate:
-    character_count: int
     str_template: str
     link_placeholders: list[str]
     max_characters: int = 500
@@ -16,7 +22,17 @@ class MastodonTemplate:
         All links count as 23 characters in mastodon no matter how long
         they really are.
         """
-        return 23 * len(self.link_placeholders) + self.character_count
+        return 23 * len(self.link_placeholders) + self.count_fixed_characters()
+
+    def count_fixed_characters(self):
+        """Returns the number of fixed characters
+
+        this method removes all the placerholders of the template
+        using a dictionary that returns a blank string for each key
+        and then computes the len of the new string.
+        """
+        clean_template = self.str_template.format_map(AlwaysBlankValueDict())
+        return len(clean_template)
 
     def _available_space(self, *args, **kwargs) -> int:
         """Returns the number of available characters
@@ -49,7 +65,6 @@ class MastodonTemplate:
 
 
 POST_TEMPLATE = MastodonTemplate(
-    character_count=38,
     link_placeholders=["pdf_link", "docket_link"],
     str_template="""New filing in {docket}
 Doc #{doc_num}: {description}
@@ -60,7 +75,6 @@ Docket: {docket_link}""",
 
 
 MINUTE_TEMPLATE = MastodonTemplate(
-    character_count=22,
     link_placeholders=[],
     str_template="""New minute entry in {docket}: {description}""",
 )
