@@ -194,6 +194,12 @@ class FilingWebhookEvent(AbstractDateTimeModel):
             )
 
     @property
+    def description(self) -> str:
+        if self.short_description:
+            return self.short_description
+        return self.long_description
+
+    @property
     def cl_pdf_or_pacer_url(self) -> str:
         return f"{self.cl_document_url}?redirect_to_download=True"
 
