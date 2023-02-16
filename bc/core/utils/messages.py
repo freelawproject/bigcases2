@@ -18,8 +18,9 @@ class MastodonTemplate:
 
 POST_TEMPLATE = MastodonTemplate(
     number_of_links=2,
-    character_count=32,
-    str_template="""New filing in {docket}: {desc}
+    character_count=38,
+    str_template="""New filing in {docket}
+Doc {doc_num}: {desc}
 
 PDF: {pdf_link}
 Docket: {docket_link}""",
