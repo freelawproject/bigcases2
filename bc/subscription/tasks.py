@@ -41,9 +41,12 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     else:
         docket_length = len(subscription.docket_name)
         available_space = 500 - len(POST_TEMPLATE) - docket_length
-        description = trunc(
-            filing_webhook_event.long_description, available_space, "...👇"
-        )
+        if len(filing_webhook_event.long_description) > available_space:
+            description = trunc(
+                filing_webhook_event.long_description, available_space, "...👇"
+            )
+        else:
+            description = filing_webhook_event.long_description
 
     message = POST_TEMPLATE.str_template.format(
         docket=subscription.docket_name,
