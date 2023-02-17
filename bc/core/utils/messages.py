@@ -3,7 +3,11 @@ from dataclasses import dataclass
 
 from bc.core.utils.string_utils import trunc
 
-DO_NOT_POST = re.compile('(pro hac vice|notice of appearance|certificate of disclosure|corporate disclosure|add and terminate attorneys)', re.IGNORECASE)
+DO_NOT_POST = re.compile(
+    "(pro hac vice|notice of appearance|certificate of disclosure|corporate disclosure|add and terminate attorneys)",
+    re.IGNORECASE,
+)
+
 
 class AlwaysBlankValueDict(dict):
     """Just return blank, regardless of the key"""
