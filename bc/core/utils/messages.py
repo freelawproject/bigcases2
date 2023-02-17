@@ -87,6 +87,8 @@ Docket: {docket_link}""",
 
 
 MINUTE_TEMPLATE = MastodonTemplate(
-    link_placeholders=[],
-    str_template="""New minute entry in {docket}: {description}""",
+    link_placeholders=["docket_link"],
+    str_template="""New minute entry in {docket}: {description}
+
+Docket: {docket_link}""",
 )
