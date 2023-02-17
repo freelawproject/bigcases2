@@ -4,8 +4,14 @@ from dataclasses import dataclass
 from bc.core.utils.string_utils import trunc
 
 DO_NOT_POST = re.compile(
-    "(pro hac vice|notice of appearance|certificate of disclosure|corporate disclosure|add and terminate attorneys)",
-    re.IGNORECASE,
+    r"""(
+    pro\shac\svice|                 #pro hac vice
+    notice\sof\sappearance|         #notice of appearance
+    certificate\sof\sdisclosure|    #certificate of disclosure
+    corporate\sdisclosure|          #corporate disclosure
+    add\sand\sterminate\sattorneys  #add and terminate attorneys
+    )""",
+    re.VERBOSE | re.IGNORECASE,
 )
 
 
