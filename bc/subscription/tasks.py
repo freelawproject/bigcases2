@@ -35,30 +35,31 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     filing_webhook_event.subscription = subscription
     filing_webhook_event.save()
 
-    if not DO_NOT_POST.search(filing_webhook_event.description):
-
-        template = (
-            POST_TEMPLATE
-            if filing_webhook_event.document_number
-            else MINUTE_TEMPLATE
-        )
-
-        message = template.format(
-            docket=subscription.docket_name,
-            description=filing_webhook_event.description,
-            doc_num=filing_webhook_event.document_number,
-            pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
-            docket_link=filing_webhook_event.cl_docket_url,
-        )
-
-        api_post_id = mastodon_post(message)
-
-        channel = get_mastodon_channel()
-        Post.objects.create(
-            filing_webhook_event=filing_webhook_event,
-            channel=channel,
-            object_id=api_post_id,
-            text=message,
-        )
-
+    if DO_NOT_POST.search(filing_webhook_event.description):
         return filing_webhook_event
+
+    template = (
+        POST_TEMPLATE
+        if filing_webhook_event.document_number
+        else MINUTE_TEMPLATE
+    )
+
+    message = template.format(
+        docket=subscription.docket_name,
+        description=filing_webhook_event.description,
+        doc_num=filing_webhook_event.document_number,
+        pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
+        docket_link=filing_webhook_event.cl_docket_url,
+    )
+
+    api_post_id = mastodon_post(message)
+
+    channel = get_mastodon_channel()
+    Post.objects.create(
+        filing_webhook_event=filing_webhook_event,
+        channel=channel,
+        object_id=api_post_id,
+        text=message,
+    )
+
+    return filing_webhook_event
