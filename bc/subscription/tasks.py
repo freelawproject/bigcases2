@@ -36,7 +36,6 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     filing_webhook_event.save()
 
     if not DO_NOT_POST.search(filing_webhook_event.description):
-
         template = (
             POST_TEMPLATE
             if filing_webhook_event.document_number
