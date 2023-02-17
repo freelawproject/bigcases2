@@ -16,12 +16,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("cl-id", type=str)
         parser.add_argument(
-            "--name",
-            type=str,
-            help="Custom name for the case. This argument overwrites the name from CL",
-            required=False,
-        )
-        parser.add_argument(
             "--add",
             action="store_true",
             help="Save and Subscribe to the case found using the CL API",
@@ -49,9 +43,15 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.WARNING("We'll try to add this case to the DB.")
         )
-        custom_name = options.get("name")
+
+        name = result["case_name"]
+        custom_name = input(
+            "Enter a name for this case or press enter to use the default:\n\n"
+            f"Default: {name}\n"
+            "name: "
+        )
         if custom_name:
-            result["case_name"] = custom_name
+            result["case_name"] = custom_name or name
             self.stdout.write(
                 self.style.WARNING(
                     f"We'll rename the case to: '{custom_name}'."
