@@ -21,7 +21,7 @@ class TextImage:
         STATIC_GLOBAL_ROOT / "fonts" / "CooperHewitt-Light.otf"
     )
     font_size: int = 24
-    font_spacing: int = 16
+    line_spacing: int = 16
     padding: float = 10.0
     format: str = "png"
     line_height: int = field(init=False)
@@ -35,7 +35,7 @@ class TextImage:
         self.desc_font = ImageFont.truetype(
             str(self.desc_font_path), size=self.font_size
         )
-        self.line_height = self.font_size + self.font_spacing
+        self.line_height = self.font_size + self.line_spacing
 
     def get_text_length(self, str: str) -> int:
         """
@@ -172,18 +172,18 @@ class TextImage:
         """
 
         title_bbox = canvas.multiline_textbbox(
-            (0, 0), title, self.title_font, spacing=self.font_spacing
+            (0, 0), title, self.title_font, spacing=self.line_spacing
         )
 
         desc_bbox = canvas.multiline_textbbox(
-            (0, 0), desc, self.desc_font, spacing=self.font_spacing
+            (0, 0), desc, self.desc_font, spacing=self.line_spacing
         )
 
         *_, height = canvas.multiline_textbbox(
             (0, 0),
             f"{title}\n\n{desc}",
             self.desc_font,
-            spacing=self.font_spacing,
+            spacing=self.line_spacing,
         )
 
         width = title_bbox[2] if title_bbox[2] > desc_bbox[2] else desc_bbox[2]
@@ -241,14 +241,14 @@ class TextImage:
             multi_line_title,
             fill="black",
             font=self.title_font,
-            spacing=self.font_spacing,
+            spacing=self.line_spacing,
         )
 
         *_, title_height = draw.multiline_textbbox(
             (0, 0),
             multi_line_title,
             self.title_font,
-            spacing=self.font_spacing,
+            spacing=self.line_spacing,
         )
 
         # Draw the description of the image
@@ -257,7 +257,7 @@ class TextImage:
             multi_line_desc,
             fill=(0, 0, 0),
             font=self.desc_font,
-            spacing=self.font_spacing,
+            spacing=self.line_spacing,
         )
 
         return self.img
