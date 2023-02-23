@@ -44,7 +44,7 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
         else MINUTE_TEMPLATE
     )
 
-    message = template.format(
+    message, image = template.format(
         docket=subscription.docket_name,
         description=filing_webhook_event.description,
         doc_num=filing_webhook_event.document_number,
@@ -52,7 +52,7 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
         docket_link=filing_webhook_event.cl_docket_url,
     )
 
-    api_post_id = mastodon_post(message)
+    api_post_id = mastodon_post(message, image)
 
     channel = get_mastodon_channel()
     Post.objects.create(
