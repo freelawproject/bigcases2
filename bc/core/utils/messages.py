@@ -73,7 +73,7 @@ class MastodonTemplate:
         if "description" in kwargs:
             available_space = self._available_space("description", **kwargs)
             if len(kwargs["description"]) > available_space:
-                docket = kwargs["docket"]
+                docket = kwargs.get("docket")
                 image = TextImage(
                     f"Case: {docket}", kwargs["description"]
                 ).to_bytes()
