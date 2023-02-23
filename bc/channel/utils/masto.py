@@ -57,8 +57,13 @@ def subscribe(force=False):
     return response
 
 
-def post_status(message: str) -> int:
+def post_status(message: str, text_image: bytes) -> int:
     m = get_mastodon()
-    api_response = m.status_post(message)
+    media_ids = None
+    if text_image:
+        media_dict = m.media_post(text_image, mime_type="image/png")
+        media_ids = [media_dict["id"]]
+
+    api_response = m.status_post(message, media_ids=media_ids)
 
     return api_response["id"]
