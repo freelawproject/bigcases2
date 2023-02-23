@@ -67,16 +67,14 @@ class MastodonTemplate:
 
         return self.max_characters - len(self) - placeholder_characters
 
-    def format(self, *args, **kwargs) -> tuple[str, bytes | None]:
+    def format(self, *args, **kwargs) -> tuple[str, TextImage | None]:
         image = None
 
         if "description" in kwargs:
             available_space = self._available_space("description", **kwargs)
             if len(kwargs["description"]) > available_space:
                 docket = kwargs.get("docket")
-                image = TextImage(
-                    f"Case: {docket}", kwargs["description"]
-                ).to_bytes()
+                image = TextImage(f"Case: {docket}", kwargs["description"])
                 kwargs["description"] = trunc(
                     kwargs["description"], available_space, "…👇"
                 )
