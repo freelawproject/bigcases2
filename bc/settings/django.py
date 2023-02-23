@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=True)
-
+STATIC_GLOBAL_ROOT = BASE_DIR / "bc/assets/static-global/"
 TEMPLATE_ROOT = BASE_DIR / "bc/assets/templates/"
 
 # Application definition
