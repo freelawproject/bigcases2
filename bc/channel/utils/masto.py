@@ -57,7 +57,7 @@ def subscribe(force=False):
     return response
 
 
-def post_status(message: str, text_image: bytes) -> int:
+def post_status(message: str, text_image: bytes | None) -> int:
     m = get_mastodon()
     media_ids = None
     if text_image:
