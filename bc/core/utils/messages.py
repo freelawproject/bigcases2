@@ -3,6 +3,8 @@ from dataclasses import dataclass
 
 from bc.core.utils.string_utils import trunc
 
+from .images import TextImage
+
 DO_NOT_POST = re.compile(
     r"""(
     pro\shac\svice|                 #pro hac vice
@@ -65,15 +67,21 @@ class MastodonTemplate:
 
         return self.max_characters - len(self) - placeholder_characters
 
-    def format(self, *args, **kwargs) -> str:
+    def format(self, *args, **kwargs) -> tuple[str, bytes | None]:
+        image = None
+
         if "description" in kwargs:
             available_space = self._available_space("description", **kwargs)
             if len(kwargs["description"]) > available_space:
+                docket = kwargs["docket"]
+                image = TextImage(
+                    f"Case: {docket}", kwargs["description"]
+                ).to_bytes()
                 kwargs["description"] = trunc(
-                    kwargs["description"], available_space, "…"
+                    kwargs["description"], available_space, "…👇"
                 )
 
-        return self.str_template.format(**kwargs)
+        return self.str_template.format(**kwargs), image
 
 
 POST_TEMPLATE = MastodonTemplate(
