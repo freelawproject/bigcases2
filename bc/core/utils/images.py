@@ -1,21 +1,19 @@
 import io
 from dataclasses import dataclass, field
 from math import ceil, sqrt
-from pathlib import Path
 from textwrap import fill, wrap
 
+from django.contrib.staticfiles import finders
 from PIL import Image, ImageFont
 from PIL.ImageDraw import Draw
-
-from bc.settings import STATIC_ROOT
 
 
 @dataclass
 class TextImage:
     title: str
     description: str
-    title_font_path: Path = STATIC_ROOT / "fonts" / "CooperHewitt-Bold.otf"
-    desc_font_path: Path = STATIC_ROOT / "fonts" / "CooperHewitt-Light.otf"
+    title_font_path: str | None = finders.find("fonts/CooperHewitt-Bold.otf")
+    desc_font_path: str | None = finders.find("fonts/CooperHewitt-Light.otf")
     font_size: int = 24
     line_spacing: int = 16
     padding: float = 10.0
@@ -27,10 +25,10 @@ class TextImage:
 
     def __post_init__(self):
         self.title_font = ImageFont.truetype(
-            str(self.title_font_path), size=self.font_size
+            self.title_font_path, size=self.font_size
         )
         self.desc_font = ImageFont.truetype(
-            str(self.desc_font_path), size=self.font_size
+            self.desc_font_path, size=self.font_size
         )
         self.line_height = self.font_size + self.line_spacing
 
@@ -68,6 +66,9 @@ class TextImage:
         Returns a rough approximation of the minimum height required to render the given
         number of pixels in a 16:9 image. This method does not include padding in the
         equation to keep it simple.
+
+        A detailed explanation with all the math involved to get this approximation can be
+        found in https://github.com/freelawproject/bigcases2/pull/91#discussion_r1116395882
 
         Args:
             length (int): Number of the pixels of the text when rendered.
