@@ -91,7 +91,7 @@ class MastodonTemplateTest(TestCase):
             {"title": "short title", "description": 200 * "short"},
         )
         for test in tests:
-            result = template.format(**test)
+            result, _ = template.format(**test)
             self.assertTrue(
                 len(result) <= template.max_characters,
                 msg="Failed with dict: %s.\n"

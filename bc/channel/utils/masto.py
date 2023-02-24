@@ -1,10 +1,13 @@
 import base64
 import logging
 import re
+from textwrap import shorten
 
 from django.conf import settings
 from django.urls import reverse
 from mastodon import Mastodon
+
+from bc.core.utils.images import TextImage
 
 masto_regex = re.compile(r"@(.+)@(.+)")
 logger = logging.getLogger(__name__)
@@ -57,8 +60,22 @@ def subscribe(force=False):
     return response
 
 
-def post_status(message: str) -> int:
+def post_status(message: str, text_image: TextImage | None) -> int:
     m = get_mastodon()
-    api_response = m.status_post(message)
+    media_ids = None
+    if text_image:
+        media_dict = m.media_post(
+            text_image.to_bytes(),
+            mime_type="image/png",
+            focus=(0, 1),
+            description=shorten(
+                f"An image of the entry's full text: {text_image.description}",
+                width=1500,
+                placeholder="…",
+            ),
+        )
+        media_ids = [media_dict["id"]]
+
+    api_response = m.status_post(message, media_ids=media_ids)
 
     return api_response["id"]
