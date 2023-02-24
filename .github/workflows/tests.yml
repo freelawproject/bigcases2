@@ -39,8 +39,5 @@ jobs:
           echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
           echo "$GITHUB_WORKSPACE/.venv/bin" >> $GITHUB_PATH
 
-      - name: Collect static assets
-        run: python manage.py collectstatic --noinput
-
       - name: Run tests
-        run: python -m unittest discover -s bc -p 'test*.py'
+        run: python manage.py test
