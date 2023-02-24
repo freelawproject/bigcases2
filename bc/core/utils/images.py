@@ -20,6 +20,7 @@ class TextImage:
     line_spacing: int = 16
     padding: float = 10.0
     format: str = "png"
+    max_width: int = 700
     line_height: int = field(init=False)
     width: int = field(init=False)
     height: int = field(init=False)
@@ -90,9 +91,15 @@ class TextImage:
         approx_desc_height = self.get_height_approximation(desc_length)
         approx_title_height = self.get_height_approximation(title_length)
 
-        height = approx_desc_height + approx_title_height
+        height = ceil(approx_desc_height + approx_title_height)
 
-        return ceil((16 / 9) * height), ceil(height)
+        width = (
+            ceil((16 / 9) * height)
+            if height < (9 / 16) * self.max_width
+            else self.max_width
+        )
+
+        return width, height
 
     def get_max_character_count(self) -> int:
         """
@@ -148,6 +155,9 @@ class TextImage:
 
         width = (1 + (self.padding / 100)) * self.width
         height = (9 / 16) * width
+
+        if height < self.line_height * len(wrapped):
+            height = self.line_height * len(wrapped)
 
         return ceil(width), ceil(height)
 
