@@ -169,3 +169,6 @@ output/
 # Editors
 .idea/
 .vscode
+
+# Generated assets
+bc/assets/static/
