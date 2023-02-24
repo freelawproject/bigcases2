@@ -7,19 +7,15 @@ from textwrap import fill, wrap
 from PIL import Image, ImageFont
 from PIL.ImageDraw import Draw
 
-from bc.settings import STATIC_GLOBAL_ROOT
+from bc.settings import STATIC_ROOT
 
 
 @dataclass
 class TextImage:
     title: str
     description: str
-    title_font_path: Path = (
-        STATIC_GLOBAL_ROOT / "fonts" / "CooperHewitt-Bold.otf"
-    )
-    desc_font_path: Path = (
-        STATIC_GLOBAL_ROOT / "fonts" / "CooperHewitt-Light.otf"
-    )
+    title_font_path: Path = STATIC_ROOT / "fonts" / "CooperHewitt-Bold.otf"
+    desc_font_path: Path = STATIC_ROOT / "fonts" / "CooperHewitt-Light.otf"
     font_size: int = 24
     line_spacing: int = 16
     padding: float = 10.0
