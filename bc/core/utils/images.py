@@ -78,7 +78,7 @@ class TextImage:
         Returns:
             int: height (in pixels)
         """
-        return ceil(sqrt((9 / 16) * (self.line_height) * length))
+        return ceil(sqrt((9 / 16) * self.line_height * length))
 
     def get_initial_dimensions(self) -> tuple[int, int]:
         """
