@@ -28,7 +28,7 @@ class AlwaysBlankValueDict(dict):
 class MastodonTemplate:
     str_template: str
     link_placeholders: list[str]
-    max_characters: int = 400
+    max_characters: int = 300
 
     def __len__(self):
         """Returns the length of the template without the placeholders
