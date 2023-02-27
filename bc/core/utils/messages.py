@@ -76,7 +76,7 @@ class MastodonTemplate:
                 docket = kwargs.get("docket")
                 image = TextImage(f"Case: {docket}", kwargs["description"])
                 kwargs["description"] = trunc(
-                    kwargs["description"], available_space, "…👇"
+                    kwargs["description"], available_space, "…full entry below 👇"
                 )
 
         return self.str_template.format(**kwargs), image
