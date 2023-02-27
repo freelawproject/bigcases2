@@ -28,7 +28,7 @@ class AlwaysBlankValueDict(dict):
 class MastodonTemplate:
     str_template: str
     link_placeholders: list[str]
-    max_characters: int = 500
+    max_characters: int = 400
 
     def __len__(self):
         """Returns the length of the template without the placeholders
@@ -76,7 +76,9 @@ class MastodonTemplate:
                 docket = kwargs.get("docket")
                 image = TextImage(f"Case: {docket}", kwargs["description"])
                 kwargs["description"] = trunc(
-                    kwargs["description"], available_space, "…full entry below 👇"
+                    kwargs["description"],
+                    available_space,
+                    "…full entry below 👇",
                 )
 
         return self.str_template.format(**kwargs), image
