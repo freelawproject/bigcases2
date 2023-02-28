@@ -44,6 +44,7 @@ django-rq = "^2.7.0"
 gunicorn = "^20.1.0"
 ipython = "^8.10.0"
 pillow = "^9.4.0"
+tweepy = "^4.12.1"
 
 [tool.poetry.dev-dependencies]
 black = "^23.1.0"
