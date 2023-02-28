@@ -1,6 +1,7 @@
 import environ
 
 from ..django import DEVELOPMENT
+from ..third_party.aws import AWS_S3_CUSTOM_DOMAIN
 
 env = environ.FileAwareEnv()
 
@@ -24,7 +25,7 @@ if DEVELOPMENT:
     # For debug_toolbar
     # INSTALLED_APPS.append('debug_toolbar')
     INTERNAL_IPS = ("127.0.0.1",)
-
+    CSP_DEFAULT_SRC = ("'self'", AWS_S3_CUSTOM_DOMAIN)
 else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
