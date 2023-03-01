@@ -91,11 +91,16 @@ FROM python-base as rq
 
 CMD python manage.py rqworker --with-scheduler
 
+# freelawproject/bigcases2:latest-tailwind-reload-dev
+FROM python-base as tailwind-reload-dev
+
+CMD python /opt/bigcases2/manage.py tailwind install --no-input  && \
+    python /opt/bigcases2/manage.py tailwind start --no-input
+
 #freelawproject/bigcases2:latest-web-dev
 FROM python-base as web-dev
 
 CMD python /opt/bigcases2/manage.py migrate  && \
-    python /opt/bigcases2/manage.py tailwind install --no-input  && \
     python /opt/bigcases2/manage.py runserver 0.0.0.0:8000
 
 WORKDIR /opt/bigcases2
