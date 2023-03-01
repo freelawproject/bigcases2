@@ -70,7 +70,7 @@ services:
       - bc2_net_overlay
     env_file:
       - ../../.env.dev
-    tty: true 
+    tty: true
 
   bc2-django:
     container_name: bc2-django
