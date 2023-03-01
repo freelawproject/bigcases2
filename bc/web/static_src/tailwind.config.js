@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
+
 /**
  * This is a minimal config.
  *
@@ -42,7 +44,11 @@ module.exports = {
         // '../../**/*.py'
     ],
     theme: {
-        extend: {},
+      extend: {
+        fontFamily: {
+          'sans': ['CooperHewitt', ...defaultTheme.fontFamily.sans],
+        },
+      }
     },
     plugins: [
         /**
