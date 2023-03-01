@@ -7,7 +7,13 @@
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}: Big Cases Bot</title>
     {% endblock %}
+    {% tailwind_preload_css %}
     {% tailwind_css %}
+
+    <link rel="icon" href="{% static "ico/favicon.ico" %}" sizes="any">
+    <link rel="icon" href="{% static "svg/icon.svg" %}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{% static "png/apple-touch-icon.png" %}">
+
 </head>
 
 <body>
