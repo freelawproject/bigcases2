@@ -572,6 +572,21 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-browser-reload"
+version = "1.7.0"
+description = "Automatically reload your browser in development."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django_browser_reload-1.7.0-py3-none-any.whl", hash = "sha256:0d7cc4308ebbdf9b5637e28ee7b41ae28d4fcdf350d55ce007515b44cd10291b"},
+    {file = "django_browser_reload-1.7.0.tar.gz", hash = "sha256:712d0a4d6caa6833c8c205d4ce177b474feb45583cd6ee684c9ea7b71dd921b6"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[[package]]
 name = "django-csp"
 version = "3.7"
 description = "Django Content Security Policy support."
@@ -690,6 +705,22 @@ files = [
 [package.dependencies]
 django = "*"
 typing-extensions = "*"
+
+[[package]]
+name = "django-tailwind"
+version = "3.5.0"
+description = "Tailwind CSS Framework for Django projects"
+category = "main"
+optional = false
+python-versions = ">=3.8.1,<4.0.0"
+files = [
+    {file = "django_tailwind-3.5.0-py3-none-any.whl", hash = "sha256:dcc3b29463fff48a0e8ccd15c87fd467f0e746a7987bde0fdde6253dbb7861be"},
+    {file = "django_tailwind-3.5.0.tar.gz", hash = "sha256:c089b05b47d0e9d19567a81a74949fde16cbbfd8e4264c1f8eb4216a644065b2"},
+]
+
+[package.dependencies]
+django = ">=3.2.14"
+django-browser-reload = ">=1.6.0,<2.0.0"
 
 [[package]]
 name = "djangorestframework"
@@ -2078,4 +2109,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "7c6f3c234eedda49270be12bc3f9d194dcd4cdfb5f80b165e7d63d54d5bb29c4"
+content-hash = "0ec60faf6b83ab6b012fa3beffdad088b7f4dad7515bf58da75a09074376b00f"
