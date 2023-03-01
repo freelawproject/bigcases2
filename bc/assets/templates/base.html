@@ -1,3 +1,4 @@
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,17 +7,18 @@
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}: Big Cases Bot</title>
     {% endblock %}
+    {% tailwind_css %}
 </head>
 
 <body>
-    <div id="content">
+    <div id="content" class="container m-1">
       {# rel=me is needed to make the link verified on Mastodon #}
-        <a rel="me" href="https://law.builders/@bigcases">Mastodon</a>
+        <a rel="me" href="https://law.builders/@bigcases" class="font-serif text-base text-blue-500 underline visited:text-purple-900 tracking-tight">Mastodon</a>
       {% block content %}{% endblock %}
     </div>
-    <div id="footer">
+    <div id="footer" class="font-serif text-sm m-1 py-2">
         {% block footer %}
-        <span>&copy; Copyright {% now "Y" %} <a href="https://free.law/">Free Law Project</a>.</span>
+        <span>&copy; Copyright {% now "Y" %} <a href="https://free.law/" class="font-serif text-blue-500 underline visited:text-purple-900">Free Law Project</a>.</span>
         {% endblock %}
     </div>
 </body>
