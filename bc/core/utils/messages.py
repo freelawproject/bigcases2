@@ -11,7 +11,8 @@ DO_NOT_POST = re.compile(
     notice\sof\sappearance|         #notice of appearance
     certificate\sof\sdisclosure|    #certificate of disclosure
     corporate\sdisclosure|          #corporate disclosure
-    add\sand\sterminate\sattorneys  #add and terminate attorneys
+    add\sand\sterminate\sattorneys| #add and terminate attorneys
+    none                            #entries with bad data
     )""",
     re.VERBOSE | re.IGNORECASE,
 )
