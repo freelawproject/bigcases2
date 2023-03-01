@@ -35,6 +35,13 @@ INSTALLED_APPS = [
     "bc.web",
     # other apps
     "django_rq",
+    "tailwind",
+]
+
+TAILWIND_APP_NAME = "bc.web"
+
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 MIDDLEWARE = [
