@@ -2,6 +2,7 @@ from pathlib import Path
 
 import environ
 
+from .project.testing import TESTING
 from .third_party.redis import REDIS_DATABASES, REDIS_HOST, REDIS_PORT
 
 env = environ.FileAwareEnv()
@@ -15,9 +16,7 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=True)
-STATIC_URL = env.str("STATIC_URL", default="static/")
-STATICFILES_DIRS = (BASE_DIR / "bc/assets/static-global/",)
-STATIC_ROOT = BASE_DIR / "bc/assets/static/"
+
 TEMPLATE_ROOT = BASE_DIR / "bc/assets/templates/"
 
 # Application definition
@@ -114,8 +113,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
+STATIC_URL = env.str("STATIC_URL", default="static/")
+STATICFILES_DIRS = (BASE_DIR / "bc/assets/static-global/",)
+STATIC_ROOT = BASE_DIR / "bc/assets/static/"
 
-STATIC_URL = "static/"
+if not any([TESTING, DEBUG]):
+    STATICFILES_STORAGE = (
+        "bc.core.utils.storage.SubDirectoryS3ManifestStaticStorage"
+    )
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
