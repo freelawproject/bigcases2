@@ -109,8 +109,6 @@ WORKDIR /opt/bigcases2
 FROM python-base as web-prod
 
 CMD python /opt/bigcases2/manage.py migrate && \
-    python /opt/bigcases2/manage.py tailwind install --no-input && \
-    python /opt/bigcases2/manage.py tailwind build --no-input && \
     gunicorn wsgi:application \
     --chdir /opt/bigcases2/docker/django/wsgi-configs/ \
     --user www-data \
