@@ -45,8 +45,12 @@ module.exports = {
     ],
     theme: {
       extend: {
+        screens: {
+          'xs': '420px',
+        },
         fontFamily: {
           'sans': ['CooperHewitt', ...defaultTheme.fontFamily.sans],
+          'montserrat': ['Montserrat', 'sans-serif']
         },
       }
     },
