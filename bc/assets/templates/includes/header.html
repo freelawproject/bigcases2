@@ -1,0 +1,51 @@
+ {% load static %}
+
+<div class="relative bg-gray-200 border-b-2 border-gray-400">
+    <div class="flex justify-between mx-auto px-4 sm:px-6">
+        <div class="flex w-full justify-between items-center py-6 md:space-x-6 lg:space-x-10">
+            <div class="absolute top-6">
+                <img src="{% static "svg/icon.svg" %}"  layout="responsive" class="rounded-lg border-4 border-black h-20 lg:h-24 bg-color-white"/>
+            </div>
+    
+            <div class="w-full md:hidden flex justify-end mx-auto ">
+                <button class="navbar-burger flex items-center text-amber-500 p-3">
+                    <svg class="block h-5 w-5 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <title>Mobile menu</title>
+                        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
+                    </svg>
+                </button>
+            </div>
+    
+            <div class="hidden w-full md:flex md:justify-center gap-6 lg:gap-10"> 
+                <button class="flex text-normal font-medium uppercase hover:text-gray-700">
+                    big cases
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        viewBox="0 0 20 20" 
+                        fill="currentColor" 
+                        class="w-5 h-5">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>  
+                </button>
+                <button class="text-normal font-medium uppercase hover:text-gray-700">
+                    little cases
+                </button>
+                <button class="text-normal font-medium uppercase hover:text-gray-700">
+                    colaboration suites
+                </button>
+            </div>
+    
+            <div class="hidden md:flex justify-end">
+                <div class="flex items-center gap-2">
+                    <a href="https://free.law/donate/" class=" uppercase text-center whitespace-nowrap border border-transparent rounded-md shadow-sm text-base font-medium text-black text-sm no-underline bg-amber-300 hover:bg-amber-400 inline-flex px-6 py-2 sm:text-md">
+                        &nbsp;Donate
+                    </a>
+                    <a href='https://www.courtlistener.com/sign-in/' class="text-center whitespace-nowrap border border-transparent rounded-md shadow-sm text-base font-medium text-white text-sm no-underline border-gray-700 hover:border-gray-900 bg-neutral-800 hidden lg:inline-flex px-6 py-2 sm:text-md" href="/recap/">
+                        Sign In
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div> 
+</div> 
