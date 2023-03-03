@@ -16,6 +16,7 @@ SECURE_HSTS_PRELOAD = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "same-origin"
+CSP_DEFAULT_SRC = ("'self'", AWS_S3_CUSTOM_DOMAIN)
 
 
 if DEVELOPMENT:
@@ -25,7 +26,6 @@ if DEVELOPMENT:
     # For debug_toolbar
     # INSTALLED_APPS.append('debug_toolbar')
     INTERNAL_IPS = ("127.0.0.1",)
-    CSP_DEFAULT_SRC = ("'self'", AWS_S3_CUSTOM_DOMAIN)
 else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
