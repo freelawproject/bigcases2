@@ -51,6 +51,22 @@ module.exports = {
         fontFamily: {
           'sans': ['CooperHewitt', ...defaultTheme.fontFamily.sans],
         },
+        colors: {
+          'black': '#1A1A1A',
+          // The yellow of the buttons is number 400!
+          'saffron': {
+            '50': '#fefaec',
+            '100': '#fcf3c9',
+            '200': '#f8e48f',
+            '300': '#f5d154',
+            '400': '#f3c33e',
+            '500': '#eb9e15',
+            '600': '#d0790f',
+            '700': '#ad5610',
+            '800': '#8c4314',
+            '900': '#743713',
+          }, 
+        }
       }
     },
     plugins: [
