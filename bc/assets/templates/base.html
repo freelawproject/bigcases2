@@ -17,18 +17,17 @@
 </head>
 
 <body class="font-sans">
-    <div id="content" class="container m-1">
-      {# rel=me is needed to make the link verified on Mastodon #}
-      <p><a rel="me" href="https://law.builders/@bigcases" class="text-base text-blue-500 underline visited:text-purple-900 tracking-tight">Follow Me on Mastodon</a></p>
-      <p><a rel="me" href="https://law.builders/@flp" class="text-base text-blue-500 underline visited:text-purple-900 tracking-tight">Follow Free Law Project on Mastodon</a></p>
+    {% include "includes/under_construction.html" %}
 
-      {% block content %}{% endblock %}
+    {% include "includes/header.html" %}
+
+    <main id="content">
+        {% block content %}{% endblock %}
     </div>
-    <div id="footer" class="text-sm m-1 py-2">
-        {% block footer %}
-        <span>&copy; Copyright {% now "Y" %} <a href="https://free.law/" class="font-serif text-blue-500 underline visited:text-purple-900">Free Law Project</a>.</span>
-        {% endblock %}
-    </div>
+
+    {% include "includes/footer.html" %}
+
+
 </body>
 
 </html>

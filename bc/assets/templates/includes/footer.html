@@ -1,0 +1,96 @@
+{% load static %}
+
+<section class="mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+        <section id="footer"class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-8 md:gap-10 lg:gap-12 w-full py-8 justify-start">
+          <div class="w-full hidden md:block row-span-1">
+            <img src="{% static "svg/icon.svg" %}"  layout="responsive" class="rounded-lg border-4 border-gray-700 h-36 bg-white"/>
+          </div>
+
+          <div class="w-full">
+            <div class="pb-3">
+              <H5>Big Cases</H5>
+              {% include "./footer_link.html" with href="#" text="Sponsorship" %}
+              {% include "./footer_link.html" with href="#" text="Cases Followed" %}
+              {% include "./footer_link.html" with href="#" text="History" %}
+              {% include "./footer_link.html" with href="#" text="My Curators" %}
+            </div>
+
+            <div class="pb-3">
+              <H5>Inside Me</H5>
+              {% include "./footer_link.html" with href="https://github.com/freelawproject/bigcases2" text="My Code" %}
+              {% include "./footer_link.html" with href="https://www.courtlistener.com/help/api/webhooks/" text="Legal Webhooks" %}
+              {% include "./footer_link.html" with href="https://www.courtlistener.com/help/api/" text="CourtListener API" %}
+              {% include "./footer_link.html" with href="https://github.com/freelawproject/doctor" text="Doctor" %}
+            </div>
+          </div>
+
+          <div class="w-full">
+            <div class="pb-3">
+              <H5>Colaboration</H5>
+              {% include "./footer_link.html" with href="#" text="Slack" %}
+              {% include "./footer_link.html" with href="#" text="Discord" %}
+              {% include "./footer_link.html" with href="#" text="MS Teams" %}
+              {% include "./footer_link.html" with href="#" text="Google Chat" %}
+            </div>
+            <div class="pb-3">
+              <H5>Other work</H5>
+              {% include "./footer_link.html" with href="https://www.courtlistener.com/" text="CourtListener" %}
+              {% include "./footer_link.html" with href="https://free.law/recap/" text="Recap Project" %}
+              {% include "./footer_link.html" with href="https://free.law/data-consulting" text="Data Services and Consulting" %}
+              {% include "./footer_link.html" with href="https://github.com/freelawproject" text="Other Projects on Github" %}
+            </div>
+          </div>
+
+          <div class="w-full">
+            <div class="pb-3">
+              <H5>little cases</H5>
+              {% include "./footer_link.html" with href="#" text="Build your own bot" %}
+            </div>
+            <div class="pb-3">
+              <H5>More about flp</H5>
+              {% include "./footer_link.html" with href="https://free.law/donate/" text="Donate Now" %}
+              {% include "./footer_link.html" with href="#" text="Follow the FLP Blog" %}
+              {% include "./footer_link.html" with href="https://free.law/vulnerability-disclosure-policy" text="Vulnerability Disclosure Policy" %}
+              {% include "./footer_link.html" with href="https://free.law/contact/" text="Contact Us" %}
+            </div>
+          </div>
+      </section>
+    </div>
+</section>
+
+<section class="border-t border-gray-300 mt-0 sm:mt-8 md:mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+        <div class="py-12 flex flex-wrap justify-between" id="colophon">
+            <div class="w-full sm:w-3/5 md:w-1/2 lg:w-2/5 text-gray-400 content-center">
+                <p class="text-sm">
+                © {% now "Y" %} Free Law Project. Content licensed under a Creative Commons
+                BY-ND international 4.0, license, except where indicated.
+                </p>
+            </div>
+            <div class="w-full sm:w-2/5 md:w-1/2 ">
+                <div class="flex flex-row justify-center pt-6 sm:pt-0 md:justify-end sm:justify-end gap-1">
+                  <div class="hidden md:flex items-center mr-4">
+                    <p class="text-gray-400"> Follow us: </p>
+                  </div>
+                  <!-- Social media icons were downloaded from www.svgrepo.com -->
+                  <a rel="me" href="https://law.builders/@flp" class="rounded-full bg-gray-500 p-3">
+                    <img src="{% static "svg/mastodon.svg" %}" alt="mastodon" class="h-5 w-5">
+                  </a>
+
+                  <a href="https://twitter.com/freelawproject" class="rounded-full bg-gray-500 p-3">
+                    <img src="{% static "svg/twitter.svg" %}" alt="twitter" class="h-5 w-5">
+                  </a>
+
+                  <a href="https://free.law/newsletter/" class="rounded-full bg-gray-500 p-3">
+                   <img src="{% static "svg/newspaper.svg" %}" alt="newsletter" class="h-5 w-5">
+                  </a>
+
+                  <a href="https://github.com/freelawproject/" class="rounded-full bg-gray-500 p-3">
+                    <img src="{% static "svg/github.svg" %}" alt="github" class="h-5 w-5">
+                  </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
