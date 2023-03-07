@@ -37,36 +37,13 @@
                 </div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-24 pt-20">
-                <div class="flex flex-col pt-5">
-                    <h4 class="font-bold lg:text-2xl">
-                        Big Cases
-                    </h4>
-                    <p class="text-sm pt-3 font-light lg:text-base">
-                        Originally hosted by USA Today, my Twitter and Mastodon bots post updates about the most important cases in the country.
-                        <br><br>
-                        <a href="#">Learn More</a>
-                    </p>
-                </div>
-                <div class="flex flex-col pt-5">
-                    <h4 class="font-bold lg:text-2xl">
-                        Little Cases
-                    </h4>
-                    <p class="text-sm pt-3 font-light lg:text-base">
-                        Want to make a custom bot that follows cases you think are important? My creators are making a system for that.
-                    <br><br>
-                    <a href="#">Learn More</a>
-                    </p>
-                </div>
-                <div class="flex flex-col pt-5">
-                    <h4 class="font-bold lg:text-2xl">
-                        Free, Searchable Documents
-                    </h4>
-                    <p class="text-sm pt-3 font-light lg:text-base">
-                        My links are powered by the crowd. This means that when one person donates a document to me, everybody else gets it for free.
-                        <br><br>
-                        <a href="#">Learn More</a>
-                    </p>
-                </div>
+
+                {% include "includes/grid_list_item.html" with heading="Big Cases" content='Originally hosted by USA Today, my <a class="underline" href="https://twitter.com/freelawproject">Twitter</a> and <a class="underline" rel="me" href="https://law.builders/@flp">Mastodon</a> bots post updates about the most important cases in the country.' href="#" %}
+
+                {% include "includes/grid_list_item.html" with heading='Little Cases' content='Want to make a custom bot that follows cases you think are important? My creators are making a system for that.' href="#" %}
+
+                {% include "includes/grid_list_item.html" with heading='Free, Searchable Documents' content='My links are powered by the crowd. This means that when one person donates a document to me, everybody else gets it for free.' href="#" %}
+
             </div>
         </div>
     </div>
