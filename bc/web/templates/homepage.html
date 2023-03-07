@@ -6,7 +6,7 @@
 <section>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
         <div class="flex gap-2 lg:gap-6 items-center justify-center sm:justify-between py-16">
-            <h1 class="max-w-sm md:max-w-md xl:max-w-xl font-[800] text-5xl md:text-6xl lg:text-6xl xl:text-7xl text-center sm:text-left">
+            <h1 class="md:max-w-md xl:max-w-xl font-[800] text-5xl md:text-6xl lg:text-6xl xl:text-7xl text-left">
                 Hi! I’m the bot that keeps you updated about court cases!
             </h1>
             <img src="{% static "svg/full-body-left-hand.svg" %}" class="hidden sm:block w-32 sm:w-56 md:w-80 lg:w-96 xl:w-[500px]">
@@ -18,25 +18,30 @@
 <section class="bg-bcb-black">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
         <div class="py-8 md:py-16 text-white">
-            <div class="grid grid-cols-1 sm:grid-cols-2 flex flex-col justify-center gap-10">
-                <div class="flex justify-center sm:justify-start">
-                    <img src="{% static "svg/chat-app-logos-combined.svg" %}" class="w-56 object-contain sm:w-64 md:w-72 lg:w-80 xl:w-[490px] xl:h-[440px]">
+            <div class="grid grid-cols-2 flex flex-col justify-center gap-10 pt-6">
+                <div class="flex justify-start self-start">
+                    <img src="{% static "svg/chat-app-logos-combined.svg" %}" class="w-48 object-contain sm:w-64 md:w-72 lg:w-80 xl:w-[490px] xl:h-[440px]">
                 </div>
                 <div class="flex w-full justify-center">
-                    <div class="pt-6 max-w-xs md:max-w-sm lg:max-w-lg flex flex-col">
-                        <h1 class="font-[400] text-6xl md:text-7xl lg:text-8xl">
+                    <div class="md:max-w-sm lg:max-w-lg flex flex-col">
+                        <h1 class="font-[400] text-4xl md:text-7xl lg:text-8xl">
                             I go where you go.
                         </h1>
                         <p class="pt-5 xl:pt-12 text-md md:text-xl lg:text-2xl xl:text-3xl font-light">
                             Getting updates about cases is important, so I’ll keep you posted on Slack, Discord, MS Teams and more.
                         </p>
-                        <a class="bg-saffron-400 hover:bg-saffron-500 text-center whitespace-nowrap border border-transparent mt-8 px-12 py-3 rounded-md md:w-2/3 lg:w-1/2 text-bcb-black">
+                        <a class="hidden sm:block text-base bg-saffron-400 hover:bg-saffron-500 text-center whitespace-nowrap border border-transparent mt-8 px-12 py-3 rounded-md md:w-2/3 lg:w-1/2 text-bcb-black">
                             Join the Waitlist
                         </a>
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-24 pt-20">
+            <div class="flex w-full">
+                <a href="#" class="w-full text-sm sm:hidden bg-saffron-400 hover:bg-saffron-500 text-center whitespace-nowrap border border-transparent mt-8 px-12 py-3 rounded-md text-bcb-black">
+                    Join the Waitlist
+                </a>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-24 pt-10 md:pt-20">
 
                 {% include "includes/grid_list_item.html" with heading="Big Cases" content='Originally hosted by USA Today, my <a class="underline" href="https://twitter.com/freelawproject">Twitter</a> and <a class="underline" rel="me" href="https://law.builders/@flp">Mastodon</a> bots post updates about the most important cases in the country.' href="#" %}
 
@@ -51,29 +56,35 @@
 
 <section class="bg-gradient-to-b from-gray-300 via-white to-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
-        <section class="grid grid-cols-1 md:grid-cols-2 py-16">
-          <div class="w-full flex justify-center md:hidden row-span-1">
-            <img src="{% static "svg/free-law-icon.svg" %}"  layout="responsive" class="h-40"/>
-          </div>
+        <section class="grid grid-cols-2 pt-16 md:py-16">
+            <div class="flex flex-col md:px-6 xl:px-10">
+                <h1 class="text-center text-3xl sm:text-4xl md:text-5xl lg:text-7xl">My Life Force</h2>
+                <p class="pt-5 lg:pt-12 text-md md:text-lg lg:text-2xl font-light">
+                    My updates are powered by <a href="https://free.law/" class="underline">Free Law Project</a>, the 501﻿(c)﻿(3) that hosts <a href="https://www.courtlistener.com/" class="underline">CourtListener</a>
+                    and <a href="https://free.law/recap" class="underline">RECAP</a>. Free Law Project makes tools like me and uses political advocacy to make the legal sector more accessible, equitable and competitive.
+                </p>
+                <div class="hidden pt-4 md:flex flex-col text-md md:text-lg lg:text-2xl font-light">
+                    <p> If you like what I do, please support Free Law Project with a donation. </p>
+                    <a class="text-base bg-saffron-400 hover:bg-saffron-500 text-center whitespace-nowrap border border-transparent text-bcb-black mt-8 p-3 rounded-md md:w-2/3 lg:w-2/5" href="https://free.law/donate/">
+                        Donate Now
+                    </a>
+                </div>
+            </div>
 
-          <div class="flex flex-col pt-10 px-10 md:px-6 xl:px-10"> <!-- flex justify-center flex-col pt-10 md:pt-0 mx-9 -->
-            <h1 class="text-center text-5xl lg:text-6xl">My Life Force</h2>
-            <p class="pt-10 text-lg lg:text-2xl font-light">
-                My updates are powered by <a href="https://free.law/" class="underline">Free Law Project</a>, the 501﻿(c)﻿(3) that hosts <a href="https://www.courtlistener.com/" class="underline">CourtListener</a>
-                and <a href="https://free.law/recap" class="underline">RECAP</a>. Free Law Project makes tools like me and uses political advocacy to make the legal sector more accessible, equitable and competitive.
-                <br><br>
-                If you like what I do, please support Free Law Project with a donation.
-            </p>
-            <a class="bg-saffron-400 hover:bg-saffron-500 text-center whitespace-nowrap border border-transparent text-bcb-black mt-8 p-3 rounded-md md:w-2/3 lg:w-2/5" href="https://free.law/donate/">
+            <div class="w-full hidden md:flex mx-auto justify-center items-center">
+                <img src="{% static "png/flp-banner-w400.png" %}"  layout="responsive" class="w-68 object-contain hidden md:block md:w-15"/>
+            </div>
+
+            <div class="w-full flex justify-center md:hidden row-span-1 align-center items-center">
+                <img src="{% static "svg/free-law-icon.svg" %}"  layout="responsive" class="h-40"/>
+            </div>
+        </section>
+        <div class="flex md:hidden w-full pt-4 flex-col text-md md:text-lg lg:text-2xl font-light">
+            <p> If you like what I do, please support Free Law Project with a donation. </p>
+            <a class="text-sm bg-saffron-400 hover:bg-saffron-500 text-center whitespace-nowrap border border-transparent text-bcb-black mt-8 p-3 rounded-md md:w-2/3 lg:w-2/5" href="https://free.law/donate/">
                 Donate Now
             </a>
-          </div>
-
-          <div class="w-full hidden md:flex mx-auto justify-center items-center">
-            <img src="{% static "png/flp-banner-w400.png" %}"  layout="responsive" class="w-68 object-contain hidden md:block md:w-15"/>
-          </div>
-
-      </section>
+        </div>
     </div>
 </section>
 {% endblock %}
