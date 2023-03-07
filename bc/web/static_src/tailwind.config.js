@@ -52,7 +52,7 @@ module.exports = {
           'sans': ['CooperHewitt', ...defaultTheme.fontFamily.sans],
         },
         colors: {
-          'black': '#1A1A1A',
+          'bcb-black': '#1A1A1A',
           // The yellow of the buttons is number 400!
           'saffron': {
             '50': '#fefaec',
