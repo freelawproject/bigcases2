@@ -57,7 +57,7 @@ jobs:
                 "command": [
                     "/bin/sh",
                     "-c",
-                    "./manage.py tailwind install --noinput && ./manage.py tailwind build --noinput && ./manage.py collectstatic --noinput && ./manage.py migrate --check"
+                    "./manage.py tailwind install --no-input && ./manage.py tailwind build --no-input && ./manage.py collectstatic --noinput && ./manage.py migrate --check"
                 ],
                 "envFrom": [
                   {
