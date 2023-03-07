@@ -44,8 +44,7 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-/dist/*
-!css/dist/*
+dist/
 downloads/
 eggs/
 .eggs/
