@@ -1,10 +1,10 @@
 {% load static %}
 
 <section class="mt-16">
-    <div class="mx-auto px-4 sm:px-6 md:px-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
         <section id="footer"class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 md:gap-10 lg:gap-12 w-full py-8 justify-start">
           <div class="w-full hidden md:block row-span-1">
-            <img src="{% static "svg/icon.svg" %}"  layout="responsive" class="rounded-lg border-4 border-black h-36"/>
+            <img src="{% static "svg/icon.svg" %}"  layout="responsive" class="rounded-lg border-4 border-gray-700 h-36"/>
           </div>
 
           <div class="w-full">
@@ -60,7 +60,7 @@
 </section>
 
 <section class="border-t border-gray-300 mt-0 sm:mt-8 md:mt-16">
-    <div class="mx-auto px-4 sm:px-6 md:px-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
         <div class="py-12 flex flex-wrap justify-between" id="colophon">
             <div class="w-full sm:w-3/5 md:w-1/2 lg:w-2/5 text-gray-400 content-center">
                 <p class="text-sm">
@@ -73,6 +73,15 @@
                   <div class="hidden md:flex items-center mr-4">
                     <p class="text-gray-400"> Follow us: </p>
                   </div>
+                  <a rel="me" href="https://law.builders/@flp" class="rounded-full bg-gray-500 p-3">
+                      <svg
+                        viewBox="0 0 1000 1000"
+                        class="h-5 w-5"
+                        fill="white"
+                        xmlns="http://www.w3.org/2000/svg">
+                      <path d=" M 502 18C 623 19 740 32 808 64C 808 64 942 124 942 330C 942 330 944 482 924 587C 911 654 807 727 688 741C 626 749 565 756 500 753C 394 748 310 727 310 727C 310 738 310 747 312 757C 326 862 416 868 501 871C 588 874 665 850 665 850C 665 850 668 928 668 928C 668 928 608 960 500 966C 441 969 367 965 281 942C 95 893 63 694 58 493C 57 433 58 377 58 330C 58 124 193 64 193 64C 261 32 377 19 499 18C 499 18 502 18 502 18M 256 224C 230 254 217 295 217 346C 217 346 217 595 217 595C 217 595 315 595 315 595C 315 595 315 353 315 353C 315 302 337 276 380 276C 427 276 451 307 451 368C 451 368 451 500 451 500C 451 500 549 500 549 500C 549 500 549 368 549 368C 549 307 573 276 620 276C 663 276 685 302 685 353C 685 353 685 595 685 595C 685 595 783 595 783 595C 783 595 783 346 783 346C 783 295 770 254 744 224C 717 194 682 179 639 179C 588 179 550 199 525 237C 525 237 500 279 500 279C 500 279 475 237 475 237C 450 199 412 179 361 179C 318 179 283 194 256 224C 256 224 256 224 256 224"/>
+                    </svg>
+                  </a>
                   <a href="https://twitter.com/freelawproject" class="rounded-full bg-gray-500 p-3">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -83,17 +92,8 @@
                         d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
                     </svg>
                   </a>
-                  <a rel="me" href="https://law.builders/@flp" class="rounded-full bg-gray-500 p-3">
-                      <svg
-                        viewBox="0 0 1000 1000"
-                        class="h-5 w-5"
-                        fill="white"
-                        xmlns="http://www.w3.org/2000/svg">
-                      <path d=" M 502 18C 623 19 740 32 808 64C 808 64 942 124 942 330C 942 330 944 482 924 587C 911 654 807 727 688 741C 626 749 565 756 500 753C 394 748 310 727 310 727C 310 738 310 747 312 757C 326 862 416 868 501 871C 588 874 665 850 665 850C 665 850 668 928 668 928C 668 928 608 960 500 966C 441 969 367 965 281 942C 95 893 63 694 58 493C 57 433 58 377 58 330C 58 124 193 64 193 64C 261 32 377 19 499 18C 499 18 502 18 502 18M 256 224C 230 254 217 295 217 346C 217 346 217 595 217 595C 217 595 315 595 315 595C 315 595 315 353 315 353C 315 302 337 276 380 276C 427 276 451 307 451 368C 451 368 451 500 451 500C 451 500 549 500 549 500C 549 500 549 368 549 368C 549 307 573 276 620 276C 663 276 685 302 685 353C 685 353 685 595 685 595C 685 595 783 595 783 595C 783 595 783 346 783 346C 783 295 770 254 744 224C 717 194 682 179 639 179C 588 179 550 199 525 237C 525 237 500 279 500 279C 500 279 475 237 475 237C 450 199 412 179 361 179C 318 179 283 194 256 224C 256 224 256 224 256 224"/>
-                    </svg>
-                  </a>
 
-                  <a href="/newsletter/" class="rounded-full bg-gray-500 p-3">
+                  <a href="https://free.law/newsletter/" class="rounded-full bg-gray-500 p-3">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
