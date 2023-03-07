@@ -114,3 +114,7 @@ jobs:
       run: kubectl set image -n ${{ env.EKS_NAMESPACE }} deployment/bots-rq bots-rq=freelawproject/bigcases2:${{ steps.vars.outputs.sha_short }}-rq
     - name: Watch bots-rq rollout status
       run: kubectl rollout status -n ${{ env.EKS_NAMESPACE }} deployment/bots-rq
+
+    # Bust the CloudFront cache site-wide
+    - name: Invalidate CDN
+      run: aws cloudfront create-invalidation --distribution-id=E1ENXLZB55ZLXE --paths /*
