@@ -3,77 +3,80 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 
-<section class="mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 flex gap-10 items-center justify-center md:justify-between">
-        <h1 class="font-montserrat max-w-md lg:max-w-full font-[800] text-4xl xs:text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
-            Hi! I’m the bot that keeps you updated about court cases!
-        </h1>
-        <img src="{% static "png/full-body-left-hand.png" %}" class="hidden xs:block w-32 sm:w-52 md:w-72 lg:w-80 xl:w-[500px]">
+<section>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+        <div class="flex gap-2 lg:gap-6 items-center justify-center sm:justify-between py-16">
+            <h1 class="max-w-sm md:max-w-md xl:max-w-xl font-[800] text-5xl md:text-6xl lg:text-6xl xl:text-7xl text-center sm:text-left">
+                Hi! I’m the bot that keeps you updated about court cases!
+            </h1>
+            <img src="{% static "svg/full-body-left-hand.svg" %}" class="hidden sm:block w-32 sm:w-56 md:w-80 lg:w-96 xl:w-[500px]">
+        </div>
+
     </div>
 </section>
 
-<section class="mt-16 bg-black">
-    <div class="mx-auto px-4 sm:px-6 md:px-10 flex flex-col justify-center py-8 md:py-16 text-white">
-        <div class="grid grid-cols-1 sm:grid-cols-2 flex flex-col justify-center gap-10">
-            <div class="flex justify-center">
-                <img src="{% static "png/chat-app-logos-combined.png" %}" class="w-56 object-contain sm:w-64 md:w-72 lg:w-80 xl:w-[500px]">
+<section class="bg-black">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+        <div class="py-8 md:py-16 text-white">
+            <div class="grid grid-cols-1 sm:grid-cols-2 flex flex-col justify-center gap-10">
+                <div class="flex justify-center sm:justify-start">
+                    <img src="{% static "svg/chat-app-logos-combined.svg" %}" class="w-56 object-contain sm:w-64 md:w-72 lg:w-80 xl:w-[490px] xl:h-[440px]">
+                </div>
+                <div class="flex w-full justify-center">
+                    <div class="pt-6 max-w-xs md:max-w-sm lg:max-w-lg flex flex-col">
+                        <h1 class="font-[400] text-6xl md:text-7xl lg:text-8xl">
+                            I go where you go.
+                        </h1>
+                        <p class="pt-5 xl:pt-12 text-md md:text-xl lg:text-2xl xl:text-3xl font-light">
+                            Getting updates about cases is important, so I’ll keep you posted on Slack, Discord, MS Teams and more.
+                        </p>
+                        <button class="bg-amber-300 mt-8 px-12 py-4 rounded-md md:w-2/3 lg:w-1/2 text-black md:text-xl">
+                            Join the Waitlist
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="flex w-full justify-center">
-                <div class="pt-6 max-w-xs md:max-w-sm lg:max-w-lg flex flex-col">
-                    <h1 class="font-montserrat font-[400] text-4xl sm:text-6xl md:text-6xl lg:text-7xl">
-                        I go where you go.
-                    </h1>
-                    <p class="pt-5 xl:pt-12 text-md md:text-xl lg:text-2xl xl:text-3xl font-light">
-                        Getting updates about cases is important, so I’ll keep you posted on Slack, Discord, MS Teams and more.
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-24 pt-20">
+                <div class="flex flex-col pt-5">
+                    <h4 class="font-bold lg:text-2xl">
+                        Big Cases
+                    </h4>
+                    <p class="text-sm pt-3 font-light lg:text-base">
+                        Originally hosted by USA Today, my Twitter and Mastodon bots post updates about the most important cases in the country.
+                        <br><br>
+                        <a href="#">Learn More</a>
                     </p>
-                    <button class="bg-amber-300 text-black mt-8 p-3 rounded-md md:w-2/3 lg:w-2/5">
-                        Join the Waitlist
-                    </button>
+                </div>
+                <div class="flex flex-col pt-5">
+                    <h4 class="font-bold lg:text-2xl">
+                        Little Cases
+                    </h4>
+                    <p class="text-sm pt-3 font-light lg:text-base">
+                        Want to make a custom bot that follows cases you think are important? My creators are making a system for that.
+                    <br><br>
+                    <a href="#">Learn More</a>
+                    </p>
+                </div>
+                <div class="flex flex-col pt-5">
+                    <h4 class="font-bold lg:text-2xl">
+                        Free, Searchable Documents
+                    </h4>
+                    <p class="text-sm pt-3 font-light lg:text-base">
+                        My links are powered by the crowd. This means that when one person donates a document to me, everybody else gets it for free.
+                        <br><br>
+                        <a href="#">Learn More</a>
+                    </p>
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-x-52 pt-10">
-            <div class="flex flex-col pt-5">
-                <h4 class="font-bold lg:text-2xl">
-                    Big Cases
-                </h4>
-                <p class="text-sm pt-3 font-light lg:text-base">
-                    Originally hosted by USA Today, my Twitter and Mastodon bots post updates about the most important cases in the country.
-                    <br><br>
-                    <a href="#">Learn More</a>
-                </p>
-            </div>
-            <div class="flex flex-col pt-5">
-                <h4 class="font-bold lg:text-2xl">
-                    Little Cases
-                </h4>
-                <p class="text-sm pt-3 font-light lg:text-base">
-                    Want to make a custom bot that follows cases you think are important? My creators are making a system for that.
-                <br><br>
-                <a href="#">Learn More</a>
-                </p>
-            </div>
-            <div class="flex flex-col pt-5">
-                <h4 class="font-bold lg:text-2xl">
-                    Free, Searchable Documents
-                </h4>
-                <p class="text-sm pt-3 font-light lg:text-base">
-                    My links are powered by the crowd. This means that when one person donates a document to me, everybody else gets it for free.
-                    <br><br>
-                    <a href="#">Learn More</a>
-                </p>
-            </div>
-        </div>
-
     </div>
-
 </section>
 
-<section class="pt-16 bg-gradient-to-b from-gray-300 via-white to-white">
-    <div class="mx-auto px-16">
-        <section class="grid grid-cols-1 md:grid-cols-2">
+<section class="bg-gradient-to-b from-gray-300 via-white to-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+        <section class="grid grid-cols-1 md:grid-cols-2 py-16">
           <div class="w-full flex justify-center md:hidden row-span-1">
-            <img src="{% static "svg/free_law_icon.svg" %}"  layout="responsive" class="h-40"/>
+            <img src="{% static "svg/free-law-icon.svg" %}"  layout="responsive" class="h-40"/>
           </div>
 
           <div class="flex flex-col pt-10 px-10 md:px-6 xl:px-10"> <!-- flex justify-center flex-col pt-10 md:pt-0 mx-9 -->
@@ -97,4 +100,3 @@
     </div>
 </section>
 {% endblock %}
-
