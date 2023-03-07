@@ -1,6 +1,5 @@
 @tailwind base;
 @tailwind components;
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
 
 @layer base {
   h1 {
@@ -13,7 +12,7 @@
     @apply text-lg md:text-xl lg:text-2xl md:leading-relaxed tracking-wide
   }
   h5 {
-    @apply uppercase font-bold text-black tracking-wider pb-3
+    @apply uppercase font-bold tracking-wider pb-3
   }
 }
 

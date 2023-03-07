@@ -50,7 +50,6 @@ module.exports = {
         },
         fontFamily: {
           'sans': ['CooperHewitt', ...defaultTheme.fontFamily.sans],
-          'montserrat': ['Montserrat', 'sans-serif']
         },
       }
     },
