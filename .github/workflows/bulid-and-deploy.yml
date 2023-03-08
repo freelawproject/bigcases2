@@ -117,4 +117,4 @@ jobs:
 
     # Bust the CloudFront cache site-wide
     - name: Invalidate CDN
-      run: aws cloudfront create-invalidation --distribution-id=E1ENXLZB55ZLXE --paths /*
+      run: aws cloudfront create-invalidation --distribution-id=E1ENXLZB55ZLXE --paths '/*'
