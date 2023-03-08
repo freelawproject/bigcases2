@@ -1,4 +1,4 @@
-{% load static %}{% load tailwind_tags %}{% load extras %}
+{% load static %}{% load tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -27,16 +27,11 @@
 
     {% include "includes/footer.html" %}
 
-    {# Record stats 1/5 times to save money #}
-    {% random_int 0 4 as rand %}
-    {% if rand == 0 %}
     <script
         defer
         data-domain="bots.law"
         src="https://plausible.io/js/script.js"></script>
-    {% endif %}
 
-    <script defer data-domain="bots.law" src="https://plausible.io/js/script.js"></script>
 </body>
 
 </html>
