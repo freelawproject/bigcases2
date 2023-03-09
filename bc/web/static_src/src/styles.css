@@ -17,6 +17,7 @@
 }
 
 @font-face {
+    font-display: swap;
     font-family: 'CooperHewitt';
     src: url(/static/fonts/CooperHewitt-Light.woff) format('woff'),
          url(/static/fonts/CooperHewitt-Light.eot) format('embedded-opentype'),
@@ -25,6 +26,7 @@
 }
 
 @font-face {
+    font-display: swap;
     font-family: 'CooperHewitt';
     src: url(/static/fonts/CooperHewitt-Book.woff) format('woff'),
          url(/static/fonts/CooperHewitt-Book.eot) format('embedded-opentype'),
@@ -33,6 +35,7 @@
 }
 
 @font-face {
+    font-display: swap;
     font-family: "CooperHewitt";
     src: url(/static/fonts/CooperHewitt-Bold.woff) format('woff'),
          url(/static/fonts/CooperHewitt-Bold.eot) format('embedded-opentype'),
