@@ -10,9 +10,11 @@
           <div class="w-full">
             <div class="pb-3">
               <H5>Big Cases</H5>
-              {% include "./footer_link.html" with href="#" text="Sponsorship" %}
+              {% url 'sponsors' as sponsor_page %}
+              {% include "./footer_link.html" with href=sponsor_page text="Sponsorship" %}
               {% include "./footer_link.html" with href="#" text="Cases Followed" %}
-              {% include "./footer_link.html" with href="#" text="History" %}
+              {% url 'about' as about_page %}
+              {% include "./footer_link.html" with href=about_page text="History" %}
               {% include "./footer_link.html" with href="#" text="My Curators" %}
             </div>
 
