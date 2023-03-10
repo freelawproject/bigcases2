@@ -76,12 +76,16 @@
                     <p> Follow us: </p>
                   </div>
                   <!-- Social media icons were downloaded from www.svgrepo.com -->
-                  <a rel="me" href="https://law.builders/@flp" class="rounded-full bg-gray-500 p-3">
-                    <img alt='Mastodon logo' src="{% static "svg/mastodon.svg" %}" alt="mastodon" class="h-5 w-5">
+                  <a rel="me" href="https://law.builders/@flp" class="rounded-full bg-gray-500 p-3" aria-label="Mastodon Link">
+                    <div class="h-5 w-5 text-white">
+                      {% include './inlines/mastodon_svg.html' %}
+                    </div>
                   </a>
 
-                  <a href="https://twitter.com/freelawproject" class="rounded-full bg-gray-500 p-3">
-                    <img alt='Twitter logo' src="{% static "svg/twitter.svg" %}" alt="twitter" class="h-5 w-5">
+                  <a href="https://twitter.com/freelawproject" class="rounded-full bg-gray-500 p-3" aria-label="Twitter Link">
+                    <div class="h-5 w-5 text-white">
+                      {% include './inlines/twitter_svg.html' %}
+                    </div>
                   </a>
 
                   <a href="https://free.law/newsletter/" class="rounded-full bg-gray-500 p-3">
