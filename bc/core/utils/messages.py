@@ -87,7 +87,7 @@ class MastodonTemplate:
 
 POST_TEMPLATE = MastodonTemplate(
     link_placeholders=["pdf_link", "docket_link"],
-    str_template="""New filing in {docket}
+    str_template="""New filing: "{docket}"
 Doc #{doc_num}: {description}
 
 PDF: {pdf_link}
