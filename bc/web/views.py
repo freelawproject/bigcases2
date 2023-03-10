@@ -12,6 +12,16 @@ def view_docket(request: HttpRequest, subscription_id: int) -> HttpResponse:
     )
 
 
+def about(request: HttpRequest) -> HttpResponse:
+    """Loads the about page"""
+    return TemplateResponse(request, "about.html")
+
+
+def sponsor(request: HttpRequest) -> HttpResponse:
+    """Loads the sponsors page"""
+    return TemplateResponse(request, "sponsors.html")
+
+
 def count_dockets(request: HttpRequest) -> HttpResponse:
     subscription_count = Subscription.objects.count()
 
