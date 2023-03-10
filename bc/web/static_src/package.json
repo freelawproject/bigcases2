@@ -6,8 +6,8 @@
     "start": "npm run dev",
     "build": "npm run build:clean && npm run build:tailwind",
     "build:clean": "rimraf ../static/css/dist",
-    "build:tailwind": "cross-env NODE_ENV=production tailwindcss --postcss -i ./src/styles.css -o ../static/css/dist/styles.css --minify",
-    "dev": "cross-env NODE_ENV=development tailwindcss --postcss -i ./src/styles.css -o ../static/css/dist/styles.css -w --minify",
+    "build:tailwind": "mkdir -p ../static/js/dist && cp ./node_modules/flowbite/dist/flowbite.min.js ../static/js/dist/ && cross-env NODE_ENV=production tailwindcss --postcss -i ./src/styles.css -o ../static/css/dist/styles.css --minify",
+    "dev": "mkdir -p ../static/js/dist && cp ./node_modules/flowbite/dist/flowbite.min.js ../static/js/dist/ && cross-env NODE_ENV=production tailwindcss --postcss -i ./src/styles.css -o ../static/css/dist/styles.css -w --minify",
     "tailwindcss": "node ./node_modules/tailwindcss/lib/cli.js"
   },
   "keywords": [],
