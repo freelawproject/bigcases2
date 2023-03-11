@@ -11,10 +11,9 @@
 
             <div class="w-full md:hidden flex justify-end mx-auto ">
                 <button type="button" class="navbar-burger flex rounded-md items-center text-amber-400 p-3 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                    <svg class="block h-5 w-5 fill-current" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <title>Mobile menu</title>
-                        <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"></path>
-                    </svg>
+                    <div class="h-6 w-6">
+                        {% include './inlines/bars.svg'%}
+                    </div>
                 </button>
             </div>
 
@@ -23,7 +22,9 @@
                     <div class="hidden w-full md:flex md:justify-center gap-6 lg:gap-10">
                         <button data-dropdown-toggle="dropdown" class="text-sm lg:text-base flex items-center font-medium uppercase hover:text-gray-700">
                             big cases
-                            <img alt='Caret icon' src="{% static "svg/caret.svg" %}" alt="caret" class="w-5 h-5">
+                            <div class="w-5 h-5">
+                                {% include './inlines/caret.svg' %}
+                            </div>
                         </button>
                         <!-- Dropdown menu -->
                         <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-screen max-w-md dark:bg-gray-700 dark:divide-gray-600">
@@ -31,9 +32,7 @@
                               <li>
                                 <a href="{% url 'about' %}" class="flex items-start px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                     <div class="h-6 w-6 relative flex-shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-                                        </svg>
+                                        {% include './inlines/information-circle.svg' %}
                                     </div>
                                     <div class="ml-4">
                                         <p class="text-base font-medium text-gray-900">About</p>
@@ -44,9 +43,7 @@
                               <li>
                                 <a href="{% url 'sponsors' %}" class="flex items-start px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
                                     <div class="h-6 w-6 relative flex-shrink-0">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                        </svg>
+                                        {% include './inlines/sponsors.svg' %}
                                     </div>
                                     <div class="ml-4">
                                         <p class="text-base font-medium text-gray-900">Sponsors</p>
