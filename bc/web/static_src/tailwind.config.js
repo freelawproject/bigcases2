@@ -36,7 +36,6 @@ module.exports = {
         // '!../../**/node_modules',
         /* JS 2: Process all JavaScript files in the project. */
         // '../../**/*.js',
-        "./node_modules/flowbite/**/*.js",
 
         /**
          * Python: If you use Tailwind CSS classes in Python, uncomment the following line
@@ -76,7 +75,6 @@ module.exports = {
         require('@tailwindcss/forms'),
         require('@tailwindcss/typography'),
         require('@tailwindcss/line-clamp'),
-        require('@tailwindcss/aspect-ratio'),
-        require('flowbite/plugin')
+        require('@tailwindcss/aspect-ratio')
     ],
 }
