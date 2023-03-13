@@ -48,12 +48,17 @@ module.exports = {
     theme: {
       extend: {
         animation: {
-          'custom-fade': 'fadein 0.3s ease-in forwards',
+          'fade-in': 'fadein 0.3s ease-in forwards',
+          'fade-out': 'fadeout 0.2s ease-in forwards'
         },
         keyframes: {
           fadein: {
             '0%': { opacity: 0 },
             '100%': { opacity: 1 },
+          },
+          fadeout: {
+            '0%': { opacity: 1 },
+            '100%': { opacity: 0 , visibility: 'hidden'},
           },
         },
         fontFamily: {

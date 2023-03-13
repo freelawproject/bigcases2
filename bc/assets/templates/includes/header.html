@@ -31,7 +31,7 @@
                             <div class="absolute top-16 -translate-x-8 xl:-translate-x-32">
                                 <div id="dropdown" class="z-10 bg-white hidden divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden max-w-xs md:w-screen lg:max-w-md">
                                     <div class="relative grid px-5 py-6 gap-4 text-sm text-gray-700 dark:text-gray-400 md:gap-8 sm:p-8" aria-labelledby="dropdownNavbarButton">
-                                        <a href="{% url 'big_cases_about' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                        <a href="{% url 'big_cases_about' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100">
                                             <div class="h-6 w-6 relative flex-shrink-0">
                                                 {% include './inlines/information-circle.svg' %}
                                             </div>
@@ -41,7 +41,7 @@
                                             </div>
                                         </a>
 
-                                        <a href="{% url 'big_cases_sponsors' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                        <a href="{% url 'big_cases_sponsors' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100">
                                             <div class="h-6 w-6 relative flex-shrink-0">
                                                 {% include './inlines/sponsors.svg' %}
                                             </div>

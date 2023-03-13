@@ -66,16 +66,18 @@ var Dropdown =  (function () {
     };
     Dropdown.prototype.show = function () {
         this._targetEl.classList.remove('hidden');
+        this._targetEl.classList.remove('animate-fade-out');
+        // Add classes to show the dropdown
         this._targetEl.classList.add('block');
-        this._targetEl.classList.add("animate-custom-fade");
+        this._targetEl.classList.add("animate-fade-in");
         this._setupClickOutsideListener();
         // Update its position
         this._visible = true;
     };
     Dropdown.prototype.hide = function () {
-        this._targetEl.classList.remove('block');
-        this._targetEl.classList.add('hidden');
-        this._targetEl.classList.remove("animate-custom-fade");
+        this._targetEl.classList.remove('animate-fade-in');
+        // Add class to hide the dropdown
+        this._targetEl.classList.add('animate-fade-out');
         // Disable the event listeners
         this._visible = false;
         this._removeClickOutsideListener();
