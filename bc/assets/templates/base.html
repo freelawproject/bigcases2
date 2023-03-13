@@ -27,7 +27,7 @@
 
     <main id="content">
         {% block content %}{% endblock %}
-    </div>
+    </main>
 
     {% include "includes/footer.html" %}
 
@@ -35,6 +35,9 @@
         defer
         data-domain="bots.law"
         src="https://plausible.io/js/script.js"></script>
+
+
+    <script src="{% static "js/dropdown.js" %}"></script>
 
 </body>
 

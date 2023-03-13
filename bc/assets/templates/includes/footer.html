@@ -10,9 +10,11 @@
           <div class="w-full">
             <div class="pb-3">
               <H5>Big Cases</H5>
-              {% include "./footer_link.html" with href="#" text="Sponsorship" %}
+              {% url 'big_cases_sponsors' as big_cases_sponsors %}
+              {% include "./footer_link.html" with href=big_cases_sponsors text="Sponsorship" %}
               {% include "./footer_link.html" with href="#" text="Cases Followed" %}
-              {% include "./footer_link.html" with href="#" text="History" %}
+              {% url 'big_cases_about' as big_cases_about %}
+              {% include "./footer_link.html" with href=big_cases_about text="History" %}
               {% include "./footer_link.html" with href="#" text="My Curators" %}
             </div>
 
@@ -74,20 +76,28 @@
                     <p> Follow us: </p>
                   </div>
                   <!-- Social media icons were downloaded from www.svgrepo.com -->
-                  <a rel="me" href="https://law.builders/@flp" class="rounded-full bg-gray-500 p-3">
-                    <img alt='Mastodon logo' src="{% static "svg/mastodon.svg" %}" alt="mastodon" class="h-5 w-5">
+                  <a rel="me" href="https://law.builders/@flp" class="rounded-full bg-gray-500 p-3" aria-label="Mastodon Link">
+                    <div class="h-5 w-5 text-white">
+                      {% include './inlines/mastodon.svg' %}
+                    </div>
                   </a>
 
-                  <a href="https://twitter.com/freelawproject" class="rounded-full bg-gray-500 p-3">
-                    <img alt='Twitter logo' src="{% static "svg/twitter.svg" %}" alt="twitter" class="h-5 w-5">
+                  <a href="https://twitter.com/freelawproject" class="rounded-full bg-gray-500 p-3" aria-label="Twitter Link">
+                    <div class="h-5 w-5 text-white">
+                      {% include './inlines/twitter.svg' %}
+                    </div>
                   </a>
 
-                  <a href="https://free.law/newsletter/" class="rounded-full bg-gray-500 p-3">
-                   <img alt='Newspaper icon' src="{% static "svg/newspaper.svg" %}" alt="newsletter" class="h-5 w-5">
+                  <a href="https://free.law/newsletter/" class="rounded-full bg-gray-500 p-3" aria-label="Newsletter Link">
+                    <div class="w-5 h-5 stroke-white">
+                      {% include './inlines/newspaper.svg' %}
+                    </div>
                   </a>
 
                   <a href="https://github.com/freelawproject/" class="rounded-full bg-gray-500 p-3">
-                    <img alt='Github logo' src="{% static "svg/github.svg" %}" alt="github" class="h-5 w-5">
+                    <div class="h-5 w-5 text-white">
+                      {% include './inlines/github.svg' %}
+                    </div>
                   </a>
                 </div>
             </div>

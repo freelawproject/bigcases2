@@ -36,6 +36,8 @@ module.exports = {
         // '!../../**/node_modules',
         /* JS 2: Process all JavaScript files in the project. */
         // '../../**/*.js',
+        '../../**/templates/**/*.svg',
+        '../../**/static-global/**/*.js',
 
         /**
          * Python: If you use Tailwind CSS classes in Python, uncomment the following line
@@ -45,6 +47,20 @@ module.exports = {
     ],
     theme: {
       extend: {
+        animation: {
+          'fade-in': 'fadein 0.3s ease-in forwards',
+          'fade-out': 'fadeout 0.2s ease-in forwards'
+        },
+        keyframes: {
+          fadein: {
+            '0%': { opacity: 0 },
+            '100%': { opacity: 1 },
+          },
+          fadeout: {
+            '0%': { opacity: 1 },
+            '100%': { opacity: 0 , visibility: 'hidden'},
+          },
+        },
         fontFamily: {
           'sans': ['CooperHewitt', ...defaultTheme.fontFamily.sans],
         },
@@ -75,6 +91,6 @@ module.exports = {
         require('@tailwindcss/forms'),
         require('@tailwindcss/typography'),
         require('@tailwindcss/line-clamp'),
-        require('@tailwindcss/aspect-ratio'),
+        require('@tailwindcss/aspect-ratio')
     ],
 }
