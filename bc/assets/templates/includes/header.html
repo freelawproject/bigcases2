@@ -1,4 +1,4 @@
- {% load static %}
+{% load static %}
 
 <div class="relative bg-gray-200 border-b-2 border-gray-400">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
@@ -10,9 +10,10 @@
             </div>
 
             <div class="w-full md:hidden flex justify-end mx-auto ">
-                <button type="button" class="navbar-burger flex rounded-md items-center text-amber-400 p-3 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+
+                <button type="button" class="navbar-burger rounded-md items-center text-amber-400 p-1 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
                     <div class="h-6 w-6">
-                        {% include './inlines/bars.svg'%}
+                        <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 fill-current" viewBox="0 0 20 20"><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
                     </div>
                 </button>
             </div>
@@ -20,55 +21,59 @@
             <div class="hidden w-full md:flex md:justify-end lg:justify-center">
                 <div class="flex w-10/12 md:gap-2 lg:gap-10 justify-center">
                     <div class="hidden w-full md:flex md:justify-center gap-6 lg:gap-10">
-                        <button data-dropdown-toggle="dropdown" class="text-sm lg:text-base flex items-center font-medium uppercase hover:text-gray-700">
-                            big cases
-                            <div class="w-5 h-5">
-                                {% include './inlines/caret.svg' %}
-                            </div>
-                        </button>
-                        <!-- Dropdown menu -->
-                        <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-screen max-w-md dark:bg-gray-700 dark:divide-gray-600">
-                            <ul class="py-2 px-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownNavbarButton">
-                              <li>
-                                <a href="{% url 'big_cases_about' %}" class="flex items-start px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                    <div class="h-6 w-6 relative flex-shrink-0">
-                                        {% include './inlines/information-circle.svg' %}
+                        <div class="flex flex-col">
+                            <button id="bigCasesButton" data-dropdown-toggle="dropdown" class="text-sm lg:text-base flex items-center font-medium uppercase hover:text-gray-700">
+                                big cases
+                                <div class="w-5 h-5">
+                                    {% include './inlines/caret.svg' %}
+                                </div>
+                            </button>
+                            <div class="absolute top-16 -translate-x-8 xl:-translate-x-32">
+                                <div id="dropdown" class="z-10 bg-white hidden divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden max-w-xs md:w-screen lg:max-w-md">
+                                    <div class="relative grid px-5 py-6 gap-4 text-sm text-gray-700 dark:text-gray-400 md:gap-8 sm:p-8" aria-labelledby="dropdownNavbarButton">
+                                        <a href="{% url 'big_cases_about' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                            <div class="h-6 w-6 relative flex-shrink-0">
+                                                {% include './inlines/information-circle.svg' %}
+                                            </div>
+                                            <div class="ml-4">
+                                                <p class="text-sm lg:text-base font-medium text-gray-900">About</p>
+                                                <p class="mt-1 text-xs lg:text-sm text-gray-500">Learn more about how I work and why I exist.</p>
+                                            </div>
+                                        </a>
+
+                                        <a href="{% url 'big_cases_sponsors' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                            <div class="h-6 w-6 relative flex-shrink-0">
+                                                {% include './inlines/sponsors.svg' %}
+                                            </div>
+                                            <div class="ml-4">
+                                                <p class="text-sm lg:text-base font-medium text-gray-900">Sponsors</p>
+                                                <p class="mt-1 text-xs lg:text-sm text-gray-500">Help us liberate the most important documents in the country.</p>
+                                            </div>
+                                        </a>
                                     </div>
-                                    <div class="ml-4">
-                                        <p class="text-base font-medium text-gray-900">About</p>
-                                        <p class="mt-1 text-sm text-gray-500">Learn more about how I work and why I exist.</p>
+                                    <div class="px-5 py-1 bg-gray-50 flex md:py-2 md:px-8">
+                                        <div class="w-1/2">
+                                            <a rel="me" href="https://law.builders/@bigcases" class="flex p-3 items-center justify-center rounded-md hover:bg-gray-100">
+                                                <div class="h-6 w-6 text-gray-400">
+                                                    {% include './inlines/mastodon.svg' %}
+                                                </div>
+                                                <div class="ml-3">
+                                                    <p class="text-sm xl:text-base text-center font-medium">Mastodon</p>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="w-1/2">
+                                            <a href="https://twitter.com/big_cases" class="flex p-3 items-center justify-center rounded-md hover:bg-gray-100">
+                                                <div class="h-6 w-6 text-gray-400">
+                                                    {% include './inlines/twitter.svg' %}
+                                                </div>
+                                                <div class="ml-3">
+                                                    <p class="text-sm xl:text-base text-center font-medium">Twitter</p>
+                                                </div>
+                                            </a>
+                                        </div>
                                     </div>
-                                </a>
-                              </li>
-                              <li>
-                                <a href="{% url 'big_cases_sponsors' %}" class="flex items-start px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <div class="h-6 w-6 relative flex-shrink-0">
-                                        {% include './inlines/sponsors.svg' %}
-                                    </div>
-                                    <div class="ml-4">
-                                        <p class="text-base font-medium text-gray-900">Sponsors</p>
-                                        <p class="mt-1 text-sm text-gray-500">Help us liberate the most important documents in the country.</p>
-                                    </div>
-                                </a>
-                              </li>
-                            </ul>
-                            <div class="flex px-5 py-5 bg-gray-50">
-                                <a rel="me" href="https://law.builders/@bigcases" class="flex w-1/2 py-2 items-center justify-center rounded-md hover:bg-gray-100">
-                                    <div class="h-8 w-8 text-gray-400">
-                                        {% include './inlines/mastodon.svg' %}
-                                    </div>
-                                    <div class="pl-2 flex flex-col">
-                                        <p class="text-base text-center font-medium">Mastodon</p>
-                                    </div>
-                                </a>
-                                <a href="https://twitter.com/big_cases" class="flex w-1/2 py-2 items-center justify-center rounded-md hover:bg-gray-100">
-                                    <div class="h-8 w-8 text-gray-400">
-                                        {% include './inlines/twitter.svg' %}
-                                    </div>
-                                    <div class="pl-2 flex flex-col">
-                                        <p class="text-base text-center font-medium">Twitter</p>
-                                    </div>
-                                </a>
+                                </div>
                             </div>
                         </div>
                         <button class="text-sm lg:text-base font-medium uppercase hover:text-gray-700">
