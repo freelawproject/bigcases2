@@ -7,12 +7,12 @@ urlpatterns = [
     path("", count_dockets, name="homepage"),
     path(
         "big-cases/about/",
-        TemplateView.as_view(template_name="big_cases/about.html"),
+        TemplateView.as_view(template_name="big-cases/about.html"),
         name="big_cases_about",
     ),
     path(
         "big-cases/sponsors/",
-        TemplateView.as_view(template_name="big_cases/sponsors.html"),
+        TemplateView.as_view(template_name="big-cases/sponsors.html"),
         name="big_cases_sponsors",
     ),
     # Docket pages
