@@ -1,4 +1,4 @@
-{% load static %}
+{% load static web_extras %}
 
 <section class="border-t border-gray-300 mt-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
@@ -28,12 +28,13 @@
           </div>
 
           <div class="w-full">
-            <div class="pb-3">
+            <div class="pb-3 sm:h-[208px]">
               <H5>Collaboration</H5>
-              {% include "./footer_link.html" with href="#" text="Slack" %}
-              {% include "./footer_link.html" with href="#" text="Discord" %}
-              {% include "./footer_link.html" with href="#" text="MS Teams" %}
-              {% include "./footer_link.html" with href="#" text="Google Chat" %}
+              {% url 'collaboration' as collaboration_page%}
+              {% include "./footer_link.html" with href=collaboration_page text="Learn More" %}
+              {% with collaboration_page|addstr:"#join" as join_the_waitlist%}
+              {% include "./footer_link.html" with href=join_the_waitlist text="Join the Waitlist" %}
+              {% endwith %}
             </div>
             <div class="pb-3">
               <H5>Other work</H5>
@@ -45,9 +46,10 @@
           </div>
 
           <div class="w-full">
-            <div class="pb-3">
+            <div class="pb-3 sm:h-[208px]">
               <H5>little cases</H5>
-              {% include "./footer_link.html" with href="#" text="Build your own bot" %}
+              {% url 'little_cases' as little_cases%}
+              {% include "./footer_link.html" with href=little_cases text="Build your own bot" %}
             </div>
             <div class="pb-3">
               <H5>More about flp</H5>
