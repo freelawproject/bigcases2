@@ -40,8 +40,7 @@ class WaitListForm(ModelForm):
         widget=forms.CheckboxSelectMultiple(),
         choices=PLATFORMS,
     )
-    name = forms.CharField(max_length=200)
-    company_name = forms.CharField(max_length=200, required=False)
+    company_name = forms.CharField(required=False)
 
     class Meta:
         model = WaitList
