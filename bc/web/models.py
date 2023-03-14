@@ -28,4 +28,3 @@ class WaitList(AbstractDateTimeModel):
         help_text="Email of the user submitting the form",
     )
     company_name = models.TextField(blank=True)
-    
