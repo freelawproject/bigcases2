@@ -25,6 +25,11 @@ urlpatterns = [
         collaboration,
         name="collaboration",
     ),
+    path(
+        "successful-submission/",
+        TemplateView.as_view(template_name="successful_submission.html"),
+        name="successful_submission",
+    ),
     # Docket pages
     path("docket/<int:subscription_id>/", view_docket, name="docket_details"),
 ]

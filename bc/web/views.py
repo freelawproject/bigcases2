@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 
 from bc.subscription.models import Subscription
@@ -27,8 +27,7 @@ def little_cases(request: HttpRequest) -> HttpResponse:
         form = BotSuggestionForm(request.POST)
         if form.is_valid():
             form.save()
-            request.session["suggestion_submitted"] = True
-            return TemplateResponse(request, "little_cases.html")
+            return redirect("successful_submission")
     else:
         form = BotSuggestionForm()
 
@@ -40,8 +39,7 @@ def collaboration(request: HttpRequest) -> HttpResponse:
         form = WaitListForm(request.POST)
         if form.is_valid():
             form.save()
-            request.session["waitlist_submitted"] = True
-            return TemplateResponse(request, "collaboration.html")
+            return redirect("successful_submission")
     else:
         form = WaitListForm()
 

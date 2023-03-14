@@ -1,0 +1,6 @@
+{% extends "post.html" %}
+{% block title %}Successfully Submitted{% endblock %}
+
+{% block post_content %}
+    {% include "./includes/confirmation_message.html" with form=form %}
+{% endblock %}
