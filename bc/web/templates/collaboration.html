@@ -1,0 +1,10 @@
+{% extends "post.html" %}
+{% block title %}Collaboration{% endblock %}
+
+{% block post_title %}Collaborations{% endblock %}
+
+{% block post_content %}
+    <!-- The content of the post goes here -->
+
+    {% include "./includes/waitlist_form.html" with form=form %}
+{% endblock %}
