@@ -1,0 +1,52 @@
+<div id="join">
+    <h1 class="font-display font-light tracking-wide">
+        Sign up for the Waitlist
+    </h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="grid grid-cols-1 max-w-md gap-4">
+            <div class="flex flex-col">
+                <div>
+                    {{ form.name.label_tag }}
+                    <span class="text-red-500">*</span>
+                </div>
+                {{ form.name.errors }}
+                {{ form.name }}
+            </div>
+            <div class="flex flex-col">
+                <div>
+                    {{ form.email.label_tag }}
+                    <span class="text-red-500">*</span>
+                </div>
+                {{ form.email.errors }}
+                {{ form.email }}
+            </div>
+            <div class="flex flex-col">
+                <div>
+                    {{ form.company_name.label_tag }}
+                </div>
+                {{ form.company_name.errors }}
+                {{ form.company_name }}
+            </div>
+            <div>
+                <div>
+                    {{ form.platform.label_tag }}
+                    <span class="text-red-500">*</span>
+                </div>
+                {{ form.platform.errors }}
+                <div id="{{form.platform.auto_id}}" class="flex justify-between">
+                    {% for choice in form.platform %}
+                        <label for="{{ choice.id_for_label }}" class="flex items-center">
+                            {{ choice.tag }}
+                            <div class="flex ml-2">
+                                {{ choice.choice_label }}
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% include './submit_button.html'%}
+        </div>
+    </form>
+</div>
