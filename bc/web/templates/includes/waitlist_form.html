@@ -1,13 +1,7 @@
 <div id="join">
-
     <h1 class="font-display font-light tracking-wide">
         Sign up for the Waitlist
     </h1>
-
-
-    {% if request.session.waitlist_submitted %}
-        {% include './confirmation_message.html'%}
-    {% else %}
     <form action="" method="post">
         {% csrf_token %}
         <div class="grid grid-cols-1 max-w-md gap-4">
@@ -55,5 +49,4 @@
             {% include './submit_button.html'%}
         </div>
     </form>
-    {% endif %}
 </div>

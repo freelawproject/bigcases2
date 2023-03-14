@@ -2,58 +2,53 @@
     <h1 class="font-display font-light tracking-wide">
         Suggest a Bot
     </h1>
+    <form action="" method="post">
+        {% csrf_token %}
 
-    {% if request.session.suggestion_submitted %}
-        {% include './confirmation_message.html'%}
-    {% else %}
-        <form action="" method="post">
-            {% csrf_token %}
+        <div class="grid grid-cols-1 max-w-md gap-4">
 
-            <div class="grid grid-cols-1 max-w-md gap-4">
-
-                <div class="flex flex-col">
-                    <div>
-                        {{ form.name.label_tag }}
-                        <span class="text-red-500">*</span>
-                    </div>
-                    {{ form.name.errors }}
-                    {{ form.name }}
-                </div>
-
-
+            <div class="flex flex-col">
                 <div>
-                    <div>
-                        {{ form.platform.label_tag }}
-                        <span class="text-red-500">*</span>
-                    </div>
-                    {{ form.platform.errors }}
-                    <div id="{{form.platform.auto_id}}" class="flex">
-                        {% for choice in form.platform %}
-                            <label for="{{ choice.id_for_label }}" class="flex items-center {% if forloop.counter0 %} ml-3 {% endif %}">
-                                {{ choice.tag }}
-                                <div class="flex ml-2">
-                                    {{ choice.choice_label }}
-                                </div>
-                            </label>
-                        {% endfor %}
-                    </div>
+                    {{ form.name.label_tag }}
+                    <span class="text-red-500">*</span>
                 </div>
-
-                <div class="flex flex-col">
-                    <div>
-                        {{ form.use_case.label_tag }}
-                        <span class="text-red-500">*</span>
-                    </div>
-                    {{ form.use_case.errors }}
-                    {{ form.use_case }}
-                </div>
-
-
-                {% include './submit_button.html'%}
-
+                {{ form.name.errors }}
+                {{ form.name }}
             </div>
-        </form>
-    {% endif %}
+
+
+            <div>
+                <div>
+                    {{ form.platform.label_tag }}
+                    <span class="text-red-500">*</span>
+                </div>
+                {{ form.platform.errors }}
+                <div id="{{form.platform.auto_id}}" class="flex">
+                    {% for choice in form.platform %}
+                        <label for="{{ choice.id_for_label }}" class="flex items-center {% if forloop.counter0 %} ml-3 {% endif %}">
+                            {{ choice.tag }}
+                            <div class="flex ml-2">
+                                {{ choice.choice_label }}
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="flex flex-col">
+                <div>
+                    {{ form.use_case.label_tag }}
+                    <span class="text-red-500">*</span>
+                </div>
+                {{ form.use_case.errors }}
+                {{ form.use_case }}
+            </div>
+
+
+            {% include './submit_button.html'%}
+
+        </div>
+    </form>
 </div>
 
 
