@@ -1,62 +1,60 @@
 {% load static web_extras %}
 
 <section class="border-t border-gray-300 mt-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
-        <section id="footer"class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-8 md:gap-10 lg:gap-12 w-full py-8 justify-start">
-          <div class="w-full hidden md:block row-span-1">
-            <img alt='Yellow robot logo' src="{% static "svg/icon.svg" %}"  layout="responsive" class="rounded-lg border-4 border-gray-700 h-24 lg:h-32 xl:h-36 bg-white"/>
+    <div class="max-w-3xl  lg:max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+        <section id="footer" class="flex w-full py-8 justify-start lg:justify-between">
+          <div class="w-1/5 hidden lg:block">
+            <img alt='Yellow robot logo' src="{% static "svg/icon.svg" %}"  layout="responsive" class="rounded-lg border-4 border-gray-700 h-24 lg:h-28 xl:h-36 bg-white"/>
           </div>
 
-          <div class="w-full">
-            <div class="pb-3">
-              <H5>Big Cases</H5>
-              {% url 'big_cases_sponsors' as big_cases_sponsors %}
-              {% include "./footer-link.html" with href=big_cases_sponsors text="Sponsorship" %}
-              {% include "./footer-link.html" with href="#" text="Cases Followed" %}
-              {% url 'big_cases_about' as big_cases_about %}
-              {% include "./footer-link.html" with href=big_cases_about text="History" %}
-              {% include "./footer-link.html" with href="#" text="My Curators" %}
-            </div>
+          <div class="w-full xl:w-4/5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-12 lg:px-4 justify-start">
+              <div class="w-full">
+                <div class="pb-3">
+                  <H5>Big Cases</H5>
+                  {% url 'big_cases_sponsors' as big_cases_sponsors %}
+                  {% include "./footer-link.html" with href=big_cases_sponsors text="Sponsorship" %}
+                  {% url 'big_cases_about' as big_cases_about %}
+                  {% include "./footer-link.html" with href=big_cases_about text="History" %}
+                  {% url 'big_cases_my_code' as big_cases_my_code %}
+                  {% include "./footer-link.html" with href=big_cases_my_code text="My Technology" %}
+                </div>
+              </div>
 
-            <div class="pb-3">
-              <H5>Inside Me</H5>
-              {% include "./footer-link.html" with href="https://github.com/freelawproject/bigcases2" text="My Code" %}
-              {% include "./footer-link.html" with href="https://www.courtlistener.com/help/api/webhooks/" text="Legal Webhooks" %}
-              {% include "./footer-link.html" with href="https://www.courtlistener.com/help/api/" text="CourtListener API" %}
-              {% include "./footer-link.html" with href="https://github.com/freelawproject/doctor" text="Doctor" %}
-            </div>
-          </div>
+              <div class="w-full">
+                <div class="pb-3">
+                  <H5>Chat Apps</H5>
+                  {% url 'collaboration' as collaboration_page%}
+                  {% include "./footer-link.html" with href=collaboration_page text="Learn More" %}
+                  {% with collaboration_page|addstr:"#join" as join_the_waitlist%}
+                  {% include "./footer-link.html" with href=join_the_waitlist text="Join the Waitlist" %}
+                  {% endwith %}
+                </div>
+                <div class="pb-3">
+                  <H5>Build your own bot</H5>
+                  {% url 'little_cases' as little_cases%}
+                  {% include "./footer-link.html" with href=little_cases text="Learn More" %}
+                </div>
+              </div>
 
-          <div class="w-full">
-            <div class="pb-3 sm:h-[208px]">
-              <H5>Collaboration</H5>
-              {% url 'collaboration' as collaboration_page%}
-              {% include "./footer-link.html" with href=collaboration_page text="Learn More" %}
-              {% with collaboration_page|addstr:"#join" as join_the_waitlist%}
-              {% include "./footer-link.html" with href=join_the_waitlist text="Join the Waitlist" %}
-              {% endwith %}
-            </div>
-            <div class="pb-3">
-              <H5>Other work</H5>
-              {% include "./footer-link.html" with href="https://www.courtlistener.com/" text="CourtListener" %}
-              {% include "./footer-link.html" with href="https://free.law/recap/" text="Recap Project" %}
-              {% include "./footer-link.html" with href="https://free.law/data-consulting" text="Data Services and Consulting" %}
-              {% include "./footer-link.html" with href="https://github.com/freelawproject" text="Other Projects on Github" %}
-            </div>
-          </div>
+              <div class="w-full">
+                <div class="pb-3">
+                  <H5>Other work</H5>
+                  {% include "./footer-link.html" with href="https://www.courtlistener.com/" text="CourtListener" %}
+                  {% include "./footer-link.html" with href="https://free.law/recap/" text="RECAP Project" %}
+                  {% include "./footer-link.html" with href="https://github.com/freelawproject" text="More on GitHub" %}
+                </div>
+              </div>
 
-          <div class="w-full">
-            <div class="pb-3 sm:h-[208px]">
-              <H5>little cases</H5>
-              {% url 'little_cases' as little_cases%}
-              {% include "./footer-link.html" with href=little_cases text="Build your own bot" %}
-            </div>
-            <div class="pb-3">
-              <H5>More about flp</H5>
-              {% include "./footer-link.html" with href="https://free.law/donate/" text="Donate Now" %}
-              {% include "./footer-link.html" with href="#" text="Follow the FLP Blog" %}
-              {% include "./footer-link.html" with href="https://free.law/vulnerability-disclosure-policy" text="Vulnerability Disclosure Policy" %}
-              {% include "./footer-link.html" with href="https://free.law/contact/" text="Contact Us" %}
+              <div class="w-full">
+                <div class="pb-3">
+                  <H5>About FLP</H5>
+                  {% include "./footer-link.html" with href="https://free.law/donate/" text="Donate Now" %}
+                  {% include "./footer-link.html" with href="https://free.law/blog/" text="Follow the FLP Blog" %}
+                  {% include "./footer-link.html" with href="https://free.law/vulnerability-disclosure-policy" text="Vulnerability Disclosure Policy" %}
+                  {% include "./footer-link.html" with href="https://free.law/contact/" text="Contact Us" %}
+                </div>
+              </div>
             </div>
           </div>
       </section>
