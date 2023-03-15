@@ -17,7 +17,7 @@ urlpatterns = [
     ),
     path(
         "big-cases/my-code/",
-        TemplateView.as_view(template_name="big-cases/my_code.html"),
+        TemplateView.as_view(template_name="big-cases/my-code.html"),
         name="big_cases_my_code",
     ),
     path(
@@ -32,7 +32,7 @@ urlpatterns = [
     ),
     path(
         "successful-submission/",
-        TemplateView.as_view(template_name="successful_submission.html"),
+        TemplateView.as_view(template_name="successful-submission.html"),
         name="successful_submission",
     ),
     # Docket pages

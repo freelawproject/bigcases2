@@ -43,11 +43,11 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-24 pt-10 md:pt-20">
                 {% url 'big_cases_about' as big_cases_about %}
-                {% include "includes/grid_list_item.html" with heading="Big Cases" content='Originally hosted by USA Today, my <a class="underline" href="https://twitter.com/big_cases">Twitter</a> and <a class="underline" rel="me" href="https://law.builders/@bigcases">Mastodon</a> bots post updates about the most important cases in the country.' href=big_cases_about %}
+                {% include "includes/grid-list-item.html" with heading="Big Cases" content='Originally hosted by USA Today, my <a class="underline" href="https://twitter.com/big_cases">Twitter</a> and <a class="underline" rel="me" href="https://law.builders/@bigcases">Mastodon</a> bots post updates about the most important cases in the country.' href=big_cases_about %}
                 {% url 'little_cases' as little_cases%}
-                {% include "includes/grid_list_item.html" with heading='Little Cases' content='Want to make a custom bot that follows cases you think are important? My creators are making a system for that.' href=little_cases %}
+                {% include "includes/grid-list-item.html" with heading='Little Cases' content='Want to make a custom bot that follows cases you think are important? My creators are making a system for that.' href=little_cases %}
                 {% url 'big_cases_my_code' as big_cases_my_code%}
-                {% include "includes/grid_list_item.html" with heading='Free, Searchable Documents' content='My links are powered by the crowd. This means that when one person donates a document to me, everybody else gets it for free.' href=big_cases_my_code %}
+                {% include "includes/grid-list-item.html" with heading='Free, Searchable Documents' content='My links are powered by the crowd. This means that when one person donates a document to me, everybody else gets it for free.' href=big_cases_my_code %}
             </div>
         </div>
     </div>
