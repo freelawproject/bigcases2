@@ -66,7 +66,7 @@ To set up a development machine, do the following:
 
     This command requires that the following variables are set in the .env file: `MASTODON_SHARED_KEY`, `MASTODON_PUBLIC_KEY`, `MASTODON_PRIVATE_KEY`and `HOSTNAME`. We added a script to generate the first three variables. Execute the following command to use the script and paste the result in your .env file:
 
-        docker exec -it bc2-django python /opt/bigcases2/scripts/get_mastodon_keys.py
+        docker exec -it bc2-django python /opt/bigcases2/scripts/get-mastodon-keys.py
 
     Make sure that the `MASTODON_TOKEN` and `MASTODON_SERVER` are set before using the previous command.
 

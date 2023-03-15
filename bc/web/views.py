@@ -31,7 +31,7 @@ def little_cases(request: HttpRequest) -> HttpResponse:
     else:
         form = BotSuggestionForm()
 
-    return TemplateResponse(request, "little_cases.html", {"form": form})
+    return TemplateResponse(request, "little-cases.html", {"form": form})
 
 
 def collaboration(request: HttpRequest) -> HttpResponse:
