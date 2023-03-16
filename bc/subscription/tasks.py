@@ -45,7 +45,7 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     )
 
     message, image = template.format(
-        docket=subscription.docket_name,
+        docket=subscription.name_with_summary,
         description=filing_webhook_event.description,
         doc_num=filing_webhook_event.document_number,
         pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
