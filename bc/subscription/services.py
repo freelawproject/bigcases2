@@ -11,6 +11,7 @@ def create_or_update_subscription_from_docket(docket):
 
     docket_name = docket["case_name"]
     docket_number = docket["docket_number"]
+    case_summary = docket.get("case_summary", "")
 
     cl_docket_id = docket["id"]
     cl_court_id = docket["court_id"]
@@ -26,6 +27,7 @@ def create_or_update_subscription_from_docket(docket):
             "docket_number": docket_number,
             "cl_court_id": cl_court_id,
             "cl_slug": cl_slug,
+            "case_summary": case_summary,
             "pacer_case_id": pacer_case_id,
             "court_name": court_name,
         },
