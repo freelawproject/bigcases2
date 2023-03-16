@@ -63,6 +63,12 @@ class Subscription(AbstractDateTimeModel):
     )
 
     @property
+    def name_with_summary(self) -> str:
+        if self.case_summary:
+            return f"{self.docket_name} ({self.case_summary})"
+        return self.docket_name
+
+    @property
     def pacer_court_id(self) -> str:
         return map_cl_to_pacer_id(self.cl_court_id)
 

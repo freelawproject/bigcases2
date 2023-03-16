@@ -58,6 +58,13 @@ class Command(BaseCommand):
                 )
             )
 
+        case_summary = input(
+            "\nEnter a summary for this case or press enter to leave it empty:\n\n"
+            "summary: "
+        )
+        if case_summary:
+            result["case_summary"] = case_summary
+
         _, created = create_or_update_subscription_from_docket(result)
         message = "Added!" if created else "Updated!"
         self.stdout.write(self.style.SUCCESS(message))
