@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto px-4 sm:px-6 md:px-10">
+  <div class="py-12 prose">
+    <h1 class="font-display font-light tracking-wide">Sign In</h2>
+    {% if form.errors %}
+        {%  for error in form.non_field_errors %}
+        <p class="alert alert-danger">{{ error|safe }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url "sign-in" %}" method="post">
+        {% csrf_token %}
+    <div class="grid grid-cols-1 gap-4">
+        {% for field in form %}
+            <div class="flex flex-col">
+                <div>
+                    {{ field.label_tag }}
+                </div>
+                {{ field }}
+            </div>
+        {% endfor %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        {% include 'includes/submit-button.html' with value='Sign In' %}
+        </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
