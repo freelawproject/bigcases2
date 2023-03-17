@@ -623,6 +623,18 @@ docs = ["furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-
 testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
+name = "django-ratelimit"
+version = "4.0.0"
+description = "Cache-based rate-limiting for Django."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "django-ratelimit-4.0.0.tar.gz", hash = "sha256:19cba9e8101277f28c7a974c54c997067341ab30175431d3739e8ffb63cdd2b2"},
+    {file = "django_ratelimit-4.0.0-py2.py3-none-any.whl", hash = "sha256:a610b5fd052c843a589084f6934bc6d827ec6242d5965110ebd436ca5a59ef39"},
+]
+
+[[package]]
 name = "django-rq"
 version = "2.7.0"
 description = "An app that provides django integration for RQ (Redis Queue)"
@@ -2110,4 +2122,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "5504203afe367068eace7afe79d95e25d171fc4e1ca4a0fe5286fcab9404072c"
+content-hash = "2422940f1b97d169ecf732b9aa9479449ad709970a24d14b5ab594c6ceaca3a1"
