@@ -1,5 +1,6 @@
 from django.http import HttpRequest
 from django_ratelimit.core import get_header
+from django_ratelimit.decorators import ratelimit
 
 
 def strip_port_to_make_ip_key(group: str, request: HttpRequest) -> str | None:
@@ -21,3 +22,11 @@ def strip_port_to_make_ip_key(group: str, request: HttpRequest) -> str | None:
     """
     header = get_header(request, "CloudFront-Viewer-Address")
     return header.split(":")[0]
+
+
+ratelimiter_unsafe_10_per_m = ratelimit(
+    key=strip_port_to_make_ip_key,
+    rate="10/m",
+    method=ratelimit.UNSAFE,
+    block=True,
+)
