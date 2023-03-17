@@ -104,7 +104,7 @@ class Subscription(AbstractDateTimeModel):
 
     def __str__(self) -> str:
         if self.docket_name:
-            return f"{self.pk}: {self.docket_name}"
+            return f"{self.pk}: {self.name_with_summary}"
         else:
             return f"{self.pk}"
 
