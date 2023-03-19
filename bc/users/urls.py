@@ -8,12 +8,7 @@ urlpatterns = [
     path(
         "sign-in/",
         ratelimiter_unsafe_10_per_m(
-            auth_views.LoginView.as_view(
-                **{
-                    "template_name": "register/login.html",
-                    "extra_context": {"private": False},
-                }
-            )
+            auth_views.LoginView.as_view(template_name="register/login.html")
         ),
         name="sign-in",
     )
