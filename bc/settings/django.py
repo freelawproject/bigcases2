@@ -135,6 +135,9 @@ if not any([TESTING, DEBUG]):
         "bc.core.utils.storage.SubDirectoryS3ManifestStaticStorage"
     )
 
+LOGIN_URL = "/sign-in/"
+LOGIN_REDIRECT_URL = "/"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
