@@ -1,0 +1,12 @@
+{% extends "post.html" %}
+{% block title %}Little Cases bot{% endblock %}
+
+{% block post_title %}Little Cases bot{% endblock %}
+
+{% block post_content %}
+    <!-- The content of the page goes here -->
+
+    {% include "./includes/suggestion-form.html" with form=form %}
+{% endblock %}
+
+

@@ -3,12 +3,16 @@ ARG BUILD_ENV=prod
 FROM python:3.11-slim as build-base
 
 RUN apt-get update --option "Acquire::Retries=3" --quiet=2 && \
+    apt-get install -y build-essential curl &&\
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     apt-get install \
         --no-install-recommends \
         --assume-yes \
         --quiet=2 \
+        # So we can use django-tailwind
+        nodejs \
         # So we can use Python-slim
-        build-essential gcc python3-dev\
+        gcc python3-dev \
         # So postgres can compile and users can use dbshell
         libpq-dev postgresql-client \
         # For installing poetry and git-based deps
@@ -87,6 +91,12 @@ FROM python-base as rq
 
 CMD python manage.py rqworker --with-scheduler
 
+# freelawproject/bigcases2:latest-tailwind-reload-dev
+FROM python-base as tailwind-reload-dev
+
+CMD python /opt/bigcases2/manage.py tailwind install --no-input  && \
+    python /opt/bigcases2/manage.py tailwind start --no-input
+
 #freelawproject/bigcases2:latest-web-dev
 FROM python-base as web-dev
 
@@ -98,7 +108,7 @@ WORKDIR /opt/bigcases2
 #freelawproject/bigcases2:latest-web-prod
 FROM python-base as web-prod
 
-CMD python /opt/bigcases2/manage.py migrate  && \
+CMD python /opt/bigcases2/manage.py migrate && \
     gunicorn wsgi:application \
     --chdir /opt/bigcases2/docker/django/wsgi-configs/ \
     --user www-data \

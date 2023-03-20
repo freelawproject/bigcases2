@@ -2,6 +2,7 @@ from pathlib import Path
 
 import environ
 
+from .project.testing import TESTING
 from .third_party.redis import REDIS_DATABASES, REDIS_HOST, REDIS_PORT
 
 env = environ.FileAwareEnv()
@@ -15,9 +16,7 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=True)
-STATIC_URL = env.str("STATIC_URL", default="static/")
-STATICFILES_DIRS = (BASE_DIR / "bc/assets/static-global/",)
-STATIC_ROOT = BASE_DIR / "bc/assets/static/"
+
 TEMPLATE_ROOT = BASE_DIR / "bc/assets/templates/"
 
 # Application definition
@@ -36,7 +35,15 @@ INSTALLED_APPS = [
     "bc.web",
     # other apps
     "django_rq",
+    "tailwind",
 ]
+
+if DEVELOPMENT:
+    INSTALLED_APPS.append("django_browser_reload")
+
+TAILWIND_APP_NAME = "bc.web"
+
+INTERNAL_IPS = ("127.0.0.1",)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -48,6 +55,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
 ]
+
+if DEVELOPMENT:
+    MIDDLEWARE.append(
+        "django_browser_reload.middleware.BrowserReloadMiddleware"
+    )
 
 ROOT_URLCONF = "bc.urls"
 AUTH_USER_MODEL = "users.User"
@@ -114,8 +126,17 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
+STATIC_URL = env.str("STATIC_URL", default="static/")
+STATICFILES_DIRS = (BASE_DIR / "bc/assets/static-global/",)
+STATIC_ROOT = BASE_DIR / "bc/assets/static/"
 
-STATIC_URL = "static/"
+if not any([TESTING, DEBUG]):
+    STATICFILES_STORAGE = (
+        "bc.core.utils.storage.SubDirectoryS3ManifestStaticStorage"
+    )
+
+LOGIN_URL = "/sign-in/"
+LOGIN_REDIRECT_URL = "/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

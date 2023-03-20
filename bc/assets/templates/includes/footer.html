@@ -1,0 +1,106 @@
+{% load static web_extras %}
+
+<section class="border-t border-gray-300 mt-16">
+    <div class="max-w-3xl  lg:max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+        <section id="footer" class="flex w-full py-8 justify-start lg:justify-between">
+          <div class="w-1/5 hidden lg:block">
+            <img alt='Yellow robot logo' src="{% static "svg/icon.svg" %}"  layout="responsive" class="rounded-lg border-4 border-gray-700 h-24 lg:h-28 xl:h-36 bg-white"/>
+          </div>
+
+          <div class="w-full xl:w-4/5">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-12 lg:px-4 justify-start">
+              <div class="w-full">
+                <div class="pb-3">
+                  <H5>Big Cases</H5>
+                  {% url 'big_cases_sponsors' as big_cases_sponsors %}
+                  {% include "./footer-link.html" with href=big_cases_sponsors text="Sponsorship" %}
+                  {% url 'big_cases_about' as big_cases_about %}
+                  {% include "./footer-link.html" with href=big_cases_about text="History" %}
+                  {% url 'big_cases_my_code' as big_cases_my_code %}
+                  {% include "./footer-link.html" with href=big_cases_my_code text="My Technology" %}
+                </div>
+              </div>
+
+              <div class="w-full">
+                <div class="pb-3">
+                  <H5>Chat Apps</H5>
+                  {% url 'collaboration' as collaboration_page%}
+                  {% include "./footer-link.html" with href=collaboration_page text="Learn More" %}
+                  {% with collaboration_page|addstr:"#join" as join_the_waitlist%}
+                  {% include "./footer-link.html" with href=join_the_waitlist text="Join the Waitlist" %}
+                  {% endwith %}
+                </div>
+                <div class="pb-3">
+                  <H5>Build your own bot</H5>
+                  {% url 'little_cases' as little_cases%}
+                  {% include "./footer-link.html" with href=little_cases text="Learn More" %}
+                </div>
+              </div>
+
+              <div class="w-full">
+                <div class="pb-3">
+                  <H5>Other work</H5>
+                  {% include "./footer-link.html" with href="https://www.courtlistener.com/" text="CourtListener" %}
+                  {% include "./footer-link.html" with href="https://free.law/recap/" text="RECAP Project" %}
+                  {% include "./footer-link.html" with href="https://github.com/freelawproject" text="More on GitHub" %}
+                </div>
+              </div>
+
+              <div class="w-full">
+                <div class="pb-3">
+                  <H5>About FLP</H5>
+                  {% include "./footer-link.html" with href="https://free.law/donate/" text="Donate Now" %}
+                  {% include "./footer-link.html" with href="https://free.law/blog/" text="Follow the FLP Blog" %}
+                  {% include "./footer-link.html" with href="https://free.law/vulnerability-disclosure-policy" text="Vulnerability Disclosure Policy" %}
+                  {% include "./footer-link.html" with href="https://free.law/contact/" text="Contact Us" %}
+                </div>
+              </div>
+            </div>
+          </div>
+      </section>
+    </div>
+</section>
+
+<section class="border-t border-gray-300 mt-0 sm:mt-8 md:mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
+        <div class="py-12 flex flex-wrap justify-between text-gray-500" id="colophon">
+            <div class="w-full sm:w-3/5 md:w-1/2 lg:w-2/5 content-center">
+                <p class="text-sm">
+                © {% now "Y" %} Free Law Project. Content licensed under a Creative Commons
+                BY-ND international 4.0, license, except where indicated.
+                </p>
+            </div>
+            <div class="w-full sm:w-2/5 md:w-1/2 ">
+                <div class="flex flex-row justify-center pt-6 sm:pt-0 md:justify-end sm:justify-end gap-1">
+                  <div class="hidden md:flex items-center mr-4">
+                    <p> Follow us: </p>
+                  </div>
+                  <!-- Social media icons were downloaded from www.svgrepo.com -->
+                  <a rel="me" href="https://law.builders/@flp" class="rounded-full bg-gray-500 p-3" aria-label="Mastodon Link">
+                    <div class="h-5 w-5 text-white">
+                      {% include './inlines/mastodon.svg' %}
+                    </div>
+                  </a>
+
+                  <a href="https://twitter.com/freelawproject" class="rounded-full bg-gray-500 p-3" aria-label="Twitter Link">
+                    <div class="h-5 w-5 text-white">
+                      {% include './inlines/twitter.svg' %}
+                    </div>
+                  </a>
+
+                  <a href="https://free.law/newsletter/" class="rounded-full bg-gray-500 p-3" aria-label="Newsletter Link">
+                    <div class="w-5 h-5 stroke-white">
+                      {% include './inlines/newspaper.svg' %}
+                    </div>
+                  </a>
+
+                  <a href="https://github.com/freelawproject/" class="rounded-full bg-gray-500 p-3">
+                    <div class="h-5 w-5 text-white">
+                      {% include './inlines/github.svg' %}
+                    </div>
+                  </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

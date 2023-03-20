@@ -1,24 +1,45 @@
+{% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     {% block head %}
     <meta charset="utf-8">
-    <title>{% block title %}{% endblock %}: Big Cases Bot</title>
+    <meta http-equiv="Content-Language" content="en"/>
+    <meta name="language" content="en_us"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="description" content="Use Bots.law to get court alerts in Slack, Discord, MS Teams, Twitter, Mastodon, and Google Chat. Home of the Big Cases bots."/>
+
+    <title>{% block title %}{% endblock %} — Bots.law</title>
     {% endblock %}
+    {% tailwind_preload_css %}
+    {% tailwind_css %}
+
+    <link rel="icon" href="{% static "ico/favicon.ico" %}" sizes="any">
+    <link rel="icon" href="{% static "svg/icon.svg" %}" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="{% static "png/apple-touch-icon.png" %}">
+
 </head>
 
-<body>
-    <div id="content">
-      {# rel=me is needed to make the link verified on Mastodon #}
-        <a rel="me" href="https://law.builders/@bigcases">Mastodon</a>
-      {% block content %}{% endblock %}
-    </div>
-    <div id="footer">
-        {% block footer %}
-        <span>&copy; Copyright {% now "Y" %} <a href="https://free.law/">Free Law Project</a>.</span>
-        {% endblock %}
-    </div>
+<body class="font-sans text-bcb-black">
+    {% include "includes/under-construction.html" %}
+
+    {% include "includes/header.html" %}
+
+    <main id="content">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include "includes/footer.html" %}
+
+    <script
+        defer
+        data-domain="bots.law"
+        src="https://plausible.io/js/script.js"></script>
+
+
+    <script src="{% static "js/dropdown.js" %}"></script>
+
 </body>
 
 </html>

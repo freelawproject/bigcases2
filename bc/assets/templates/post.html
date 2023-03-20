@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10">
+    <article class="py-12 prose">
+        <h1 class="font-display font-light tracking-wide">{% block post_title %}{% endblock %}</h1>
+        {% block post_content %}{% endblock %}
+    </article>
+</div>
+{% endblock %}

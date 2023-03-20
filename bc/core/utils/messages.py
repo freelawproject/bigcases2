@@ -11,7 +11,8 @@ DO_NOT_POST = re.compile(
     notice\sof\sappearance|         #notice of appearance
     certificate\sof\sdisclosure|    #certificate of disclosure
     corporate\sdisclosure|          #corporate disclosure
-    add\sand\sterminate\sattorneys  #add and terminate attorneys
+    add\sand\sterminate\sattorneys| #add and terminate attorneys
+    none                            #entries with bad data
     )""",
     re.VERBOSE | re.IGNORECASE,
 )
@@ -28,7 +29,7 @@ class AlwaysBlankValueDict(dict):
 class MastodonTemplate:
     str_template: str
     link_placeholders: list[str]
-    max_characters: int = 500
+    max_characters: int = 300
 
     def __len__(self):
         """Returns the length of the template without the placeholders
@@ -76,7 +77,9 @@ class MastodonTemplate:
                 docket = kwargs.get("docket")
                 image = TextImage(f"Case: {docket}", kwargs["description"])
                 kwargs["description"] = trunc(
-                    kwargs["description"], available_space, "…👇"
+                    kwargs["description"],
+                    available_space,
+                    "…full entry below 👇",
                 )
 
         return self.str_template.format(**kwargs), image
@@ -84,7 +87,7 @@ class MastodonTemplate:
 
 POST_TEMPLATE = MastodonTemplate(
     link_placeholders=["pdf_link", "docket_link"],
-    str_template="""New filing in {docket}
+    str_template="""New filing: "{docket}"
 Doc #{doc_num}: {description}
 
 PDF: {pdf_link}

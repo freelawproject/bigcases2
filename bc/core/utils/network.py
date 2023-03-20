@@ -1,7 +1,9 @@
-from typing import Optional
+from django.http import HttpRequest
+from django_ratelimit.core import get_header
+from django_ratelimit.decorators import ratelimit
 
 
-def strip_port_to_make_ip_key(ip_str: str | None) -> str | None:
+def strip_port_to_make_ip_key(group: str, request: HttpRequest) -> str:
     """Make a good key to use for caching the request's IP
 
     CloudFront provides a header that returns the user's IP and port,
@@ -15,9 +17,17 @@ def strip_port_to_make_ip_key(ip_str: str | None) -> str | None:
 
         96.23.39.106
 
-    :param ip_str: the IP address of the viewer and the source port of the request
+    :param group: Unused: The group key from the ratelimiter
+    :param request: The HTTP request from the user
     :return: A simple key that can be used to throttle the user if needed.
     """
-    if ip_str:
-        return ip_str.split(":")[0]
-    return None
+    header = get_header(request, "CloudFront-Viewer-Address")
+    return header.split(":")[0]
+
+
+ratelimiter_unsafe_10_per_m = ratelimit(
+    key=strip_port_to_make_ip_key,
+    rate="10/m",
+    method=ratelimit.UNSAFE,
+    block=True,
+)

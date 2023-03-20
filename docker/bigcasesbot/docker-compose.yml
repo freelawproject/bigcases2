@@ -55,6 +55,22 @@ services:
     env_file:
       - ../../.env.dev
 
+  bc2-tailwind-reload:
+    container_name: bc2-tailwind-reload
+    image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bigcases2:latest-tailwind-reload}
+    build:
+      dockerfile: docker/django/Dockerfile
+      context: ../../
+      target: tailwind-reload-dev
+      args:
+        - BUILD_ENV=dev
+    volumes:
+      - ../..:/opt/bigcases2
+    networks:
+      - bc2_net_overlay
+    env_file:
+      - ../../.env.dev
+    tty: true
 
   bc2-django:
     container_name: bc2-django
@@ -66,6 +82,7 @@ services:
       args:
         - BUILD_ENV=dev
     depends_on:
+      - bc2-tailwind-reload
       - bc2-postgresql
       - bc2-doctor
       - bc2-redis
