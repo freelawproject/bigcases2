@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 from prettytable import PrettyTable
 
 from bc.channel.models import Channel
-from bc.channel.utils.masto import get_mastodon
+from bc.channel.utils.connectors.masto import MastodonConnector
 
 
 class Command(BaseCommand):
@@ -60,8 +60,8 @@ class Command(BaseCommand):
                     )
                 )
 
-                m = get_mastodon()
-                m.status_post(post_text)
+                m = MastodonConnector()
+                m.add_status(post_text)
             else:
                 raise NotImplementedError(
                     f"Not posting to {channel.service} yet"

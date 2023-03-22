@@ -3,14 +3,14 @@ from django.core.management.base import BaseCommand
 from mastodon import MastodonNotFoundError
 
 from bc.channel.models import Channel
-from bc.channel.utils.masto import get_mastodon, subscribe
+from bc.channel.utils.connectors.masto import MastodonConnector
 
 
 class Command(BaseCommand):
     help = "Subscribe to Mastodon mention push notifications."
 
     def handle(self, *args, **options):
-        m = get_mastodon()
+        m = MastodonConnector()
         # Check if there's a subscription already
         try:
             sub = m.push_subscription()
@@ -18,7 +18,7 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f"Got an existing subscription: {sub}")
             )
         except MastodonNotFoundError:
-            sub = subscribe()
+            sub = m.subscribe()
 
         sub_id = sub["id"]
         sub_key = sub["server_key"]
