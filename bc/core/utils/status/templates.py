@@ -1,7 +1,6 @@
 import re
 
-from .base import TwitterTemplate, MastodonTemplate
-
+from .base import MastodonTemplate, TwitterTemplate
 
 DO_NOT_POST = re.compile(
     r"""(

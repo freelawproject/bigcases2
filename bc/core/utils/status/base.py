@@ -72,7 +72,6 @@ class BaseTemplate:
         return self.str_template.format(**kwargs), image
 
 
-
 @dataclass
 class MastodonTemplate(BaseTemplate):
     max_characters: int = 300
