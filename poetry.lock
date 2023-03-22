@@ -1911,28 +1911,19 @@ docs = ["myst-parser", "pydata-sphinx-theme", "sphinx"]
 test = ["argcomplete (>=2.0)", "pre-commit", "pytest", "pytest-mock"]
 
 [[package]]
-name = "tweepy"
-version = "4.12.1"
-description = "Twitter library for Python"
+name = "twitterapi"
+version = "2.8.1"
+description = "Minimal wrapper for Twitter's REST and Streaming APIs"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = "*"
 files = [
-    {file = "tweepy-4.12.1-py3-none-any.whl", hash = "sha256:86d4f6738cbd5a57f86dff7ae0caf52f66004d5777626bf5da970aa8c8aa35df"},
-    {file = "tweepy-4.12.1.tar.gz", hash = "sha256:5e4c5b5d22f9e5dd9678a708fae4e40e6eeb1a860a89891a5de3040d5f3da8fe"},
+    {file = "TwitterAPI-2.8.1.tar.gz", hash = "sha256:6c0ccc8aee074ba1fd83f6e9cc4252667eae2fc1d6c8b97db15d080fb6663740"},
 ]
 
 [package.dependencies]
-oauthlib = ">=3.2.0,<4"
-requests = ">=2.27.0,<3"
-requests-oauthlib = ">=1.2.0,<2"
-
-[package.extras]
-async = ["aiohttp (>=3.7.3,<4)", "async-lru (>=1.0.3,<2)"]
-dev = ["coverage (>=4.4.2)", "coveralls (>=2.1.0)", "tox (>=3.21.0)"]
-docs = ["myst-parser (==0.15.2)", "readthedocs-sphinx-search (==0.1.1)", "sphinx (==4.2.0)", "sphinx-hoverxref (==0.7b1)", "sphinx-rtd-theme (==1.0.0)", "sphinx-tabs (==3.2.0)"]
-socks = ["requests[socks] (>=2.27.0,<3)"]
-test = ["vcrpy (>=1.10.3)"]
+requests = "*"
+requests-oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -2182,4 +2173,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2422940f1b97d169ecf732b9aa9479449ad709970a24d14b5ab594c6ceaca3a1"
+content-hash = "807814d1c915e490c235aa3b1be1e737972c6d47f8a9f986cddad67efc1e46e7"

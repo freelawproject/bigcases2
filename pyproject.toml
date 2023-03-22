@@ -48,7 +48,7 @@ django-storages = "^1.13.2"
 boto3 = "^1.26.80"
 django-tailwind = "^3.5.0"
 django-ratelimit = "^4.0.0"
-tweepy = "^4.12.1"
+twitterapi = "^2.8.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
