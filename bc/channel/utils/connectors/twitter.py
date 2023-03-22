@@ -1,9 +1,12 @@
+from typing import Any
+
 from django.conf import settings
 from TwitterAPI import TwitterAPI
 
 from bc.core.utils.images import TextImage
 
 from .base import ApiWrapper
+
 
 class TwitterConnector:
     def __init__(self) -> None:
@@ -40,25 +43,23 @@ class TwitterConnector:
         endpoints are available. They still have several items marked as [COMING SOON] and the media
         endpoints are one of them.
         """
+        media_array = []
+        payload: dict[str, Any] = {"text": message}
         if text_image:
             media_response = self.api.request(
                 "media/upload", None, {"media": text_image.to_bytes()}
             )
             media_id = media_response.json()["media_id"]
-            response = self.api_v2.request(
-                "tweets",
-                params={
-                    "text": message,
-                    "media": {"media_ids": [str(media_id)]},
-                },
-                method_override="POST",
-            )
-            data = response.json()
-        else:
-            response = self.api_v2.request(
-                "tweets", params={"text": message}, method_override="POST"
-            )
-            response.response.raise_for_status()
-            data = response.json()
+            media_array.append(str(media_id))
+
+            payload["media"] = {"media_ids": media_array}
+
+        response = self.api_v2.request(
+            "tweets",
+            params=payload,
+            method_override="POST",
+        )
+        response.response.raise_for_status()
+        data = response.json()
 
         return data["data"]["id"]
