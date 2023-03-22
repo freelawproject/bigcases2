@@ -5,7 +5,6 @@ from bc.core.utils.images import TextImage
 
 from .base import ApiWrapper
 
-
 class TwitterConnector:
     def __init__(self) -> None:
         self.api = self.get_api_object("1.1")
@@ -32,6 +31,14 @@ class TwitterConnector:
         to upload media files, but We can upload the files using the v1.1 media endpoint
         and then We can attach previously uploaded media to a Tweet using the v2 API Tweet
         endpoint.
+
+        Here's the Twitter API endpoint map:
+
+        https://developer.twitter.com/en/docs/twitter-api/migrate/twitter-api-endpoint-map
+
+        This table is supposed to help with the migration to the new v2 API. We can check which
+        endpoints are available. They still have several items marked as [COMING SOON] and the media
+        endpoints are one of them.
         """
         if text_image:
             media_response = self.api.request(
