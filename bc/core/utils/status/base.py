@@ -1,21 +1,8 @@
-import re
 from dataclasses import dataclass
 
 from bc.core.utils.string_utils import trunc
 
-from .images import TextImage
-
-DO_NOT_POST = re.compile(
-    r"""(
-    pro\shac\svice|                 #pro hac vice
-    notice\sof\sappearance|         #notice of appearance
-    certificate\sof\sdisclosure|    #certificate of disclosure
-    corporate\sdisclosure|          #corporate disclosure
-    add\sand\sterminate\sattorneys| #add and terminate attorneys
-    none                            #entries with bad data
-    )""",
-    re.VERBOSE | re.IGNORECASE,
-)
+from ..images import TextImage
 
 
 class AlwaysBlankValueDict(dict):
@@ -26,18 +13,18 @@ class AlwaysBlankValueDict(dict):
 
 
 @dataclass
-class MastodonTemplate:
+class BaseTemplate:
     str_template: str
     link_placeholders: list[str]
-    max_characters: int = 300
+    max_characters: int
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Returns the length of the template without the placeholders
 
-        All links count as 23 characters in mastodon no matter how long
-        they really are.
+        Returns:
+            int: number of characters
         """
-        return 23 * len(self.link_placeholders) + self.count_fixed_characters()
+        return self.count_fixed_characters()
 
     def count_fixed_characters(self):
         """Returns the number of fixed characters
@@ -85,19 +72,28 @@ class MastodonTemplate:
         return self.str_template.format(**kwargs), image
 
 
-POST_TEMPLATE = MastodonTemplate(
-    link_placeholders=["pdf_link", "docket_link"],
-    str_template="""New filing: "{docket}"
-Doc #{doc_num}: {description}
 
-PDF: {pdf_link}
-Docket: {docket_link}""",
-)
+@dataclass
+class MastodonTemplate(BaseTemplate):
+    max_characters: int = 300
+
+    def __len__(self) -> int:
+        """This method overrides `Template.__len__`.
+
+        All links count as 23 characters in mastodon no matter how long
+        they really are.
+        """
+        return 23 * len(self.link_placeholders) + self.count_fixed_characters()
 
 
-MINUTE_TEMPLATE = MastodonTemplate(
-    link_placeholders=["docket_link"],
-    str_template="""New minute entry in {docket}: {description}
+@dataclass
+class TwitterTemplate(BaseTemplate):
+    max_characters: int = 280
 
-Docket: {docket_link}""",
-)
+    def __len__(self) -> int:
+        """This method overrides `Template.__len__`.
+
+        All links (URLs) posted in Tweets are shortened using t.co service.
+        They count as 23 characters.
+        """
+        return 23 * len(self.link_placeholders) + self.count_fixed_characters()
