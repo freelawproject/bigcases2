@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from django.conf import settings
 
 from .models import Channel
@@ -13,3 +15,7 @@ def get_mastodon_channel() -> Channel:
         },
     )
     return obj
+
+
+def get_enabled_channels() -> Iterable[Channel]:
+    return Channel.objects.filter(enabled=True).all()
