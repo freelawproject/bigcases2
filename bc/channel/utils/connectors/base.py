@@ -9,7 +9,7 @@ ApiWrapper = Union[Mastodon, TwitterAPI]
 
 
 class BaseAPIConnector(Protocol):
-    def get_api_object(self, version: str = None) -> ApiWrapper:
+    def get_api_object(self, version: str | None = None) -> ApiWrapper:
         """
         Returns an instance of a API wrapper class.
 
