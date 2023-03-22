@@ -11,7 +11,7 @@ ApiWrapper = Union[Mastodon, TwitterAPI]
 class BaseAPIConnector(Protocol):
     def get_api_object(self, version: str = None) -> ApiWrapper:
         """
-        Returns an instance of a API wrapper object.
+        Returns an instance of a API wrapper class.
 
         Any authentication step required to create the API instance should
         be included in this method. This method uses the version parameter
