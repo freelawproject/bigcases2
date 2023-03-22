@@ -13,7 +13,7 @@ class Command(BaseCommand):
         m = MastodonConnector()
         # Check if there's a subscription already
         try:
-            sub = m.push_subscription()
+            sub = m.api.push_subscription()
             self.stdout.write(
                 self.style.SUCCESS(f"Got an existing subscription: {sub}")
             )
