@@ -32,12 +32,11 @@ Docket: {docket_link}""",
 )
 
 TWITTER_POST_TEMPLATE = TwitterTemplate(
-    link_placeholders=["pdf_link", "docket_link"],
+    link_placeholders=["pdf_link"],
     str_template="""New filing: "{docket}"
 Doc #{doc_num}: {description}
 
-PDF: {pdf_link}
-Docket: {docket_link}""",
+PDF: {pdf_link}""",
 )
 
 TWITTER_MINUTE_TEMPLATE = TwitterTemplate(
