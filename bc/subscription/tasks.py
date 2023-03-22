@@ -2,7 +2,7 @@ from django.db import transaction
 
 from bc.channel.models import Post
 from bc.channel.selectors import get_enabled_channels
-from bc.core.utils.status.dispatcher import post_template_dispatcher
+from bc.core.utils.status.selectors import get_template_for_channel
 from bc.core.utils.status.templates import DO_NOT_POST
 
 from .models import FilingWebhookEvent, Subscription
@@ -39,7 +39,7 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
         return filing_webhook_event
 
     for channel in get_enabled_channels():
-        template = post_template_dispatcher(
+        template = get_template_for_channel(
             channel.service, filing_webhook_event.document_number
         )
 

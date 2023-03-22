@@ -8,7 +8,7 @@ from .templates import (
 )
 
 
-def post_template_dispatcher(service, document_number):
+def get_template_for_channel(service, document_number):
     match service:
         case Channel.TWITTER:
             return (
