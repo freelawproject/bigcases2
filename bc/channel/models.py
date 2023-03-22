@@ -39,6 +39,7 @@ class Channel(AbstractDateTimeModel):
         User,
         help_text="Users that belong to the channel",
         related_name="channels",
+        blank=True,
     )
     enabled = models.BooleanField(
         help_text="Disabled by default; must enable manually", default=False
