@@ -26,7 +26,9 @@ class TwitterConnector:
         )
         return api
 
-    def add_status(self, message: str, text_image: TextImage | None) -> int:
+    def add_status(
+        self, message: str, text_image: TextImage | None = None
+    ) -> int:
         """
         Creates a new status update using the Twitter API.
 

@@ -29,7 +29,9 @@ class MastodonConnector:
 
         return mastodon
 
-    def add_status(self, message: str, text_image: TextImage | None) -> int:
+    def add_status(
+        self, message: str, text_image: TextImage | None = None
+    ) -> int:
         media_ids = None
         if text_image:
             media_dict = self.api.media_post(
