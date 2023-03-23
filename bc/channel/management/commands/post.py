@@ -2,7 +2,8 @@ from django.core.management.base import BaseCommand
 from prettytable import PrettyTable
 
 from bc.channel.models import Channel
-from bc.channel.utils.masto import get_mastodon
+from bc.channel.utils.connectors.masto import MastodonConnector
+from bc.channel.utils.connectors.twitter import TwitterConnector
 
 
 class Command(BaseCommand):
@@ -45,24 +46,37 @@ class Command(BaseCommand):
 
         post_text = input("What do you want to say? ")
 
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Here's what we're going to say:\n\t{post_text}"
+            )
+        )
+
         for channel_id in channel_ids:
             channel = channel_mapping.get(channel_id)
             if channel is None:
                 raise ValueError(f"No channel {channel_id}")
 
-            if channel.service == Channel.MASTODON:
-                self.stdout.write(
-                    self.style.SUCCESS(f"Let's toot from {channel.account}!")
-                )
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"Here's what we're going to say:\n\t{post_text}"
+            match channel.service:
+                case Channel.MASTODON:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"Let's toot from {channel.account}!"
+                        )
                     )
-                )
 
-                m = get_mastodon()
-                m.status_post(post_text)
-            else:
-                raise NotImplementedError(
-                    f"Not posting to {channel.service} yet"
-                )
+                    m = MastodonConnector()
+                    m.add_status(post_text)
+                case Channel.TWITTER:
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"Let's tweet from {channel.account}!"
+                        )
+                    )
+
+                    api = TwitterConnector()
+                    api.add_status(post_text)
+                case _:
+                    raise NotImplementedError(
+                        f"Not posting to {channel.service} yet"
+                    )

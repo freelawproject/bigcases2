@@ -4,7 +4,7 @@ from math import ceil, sqrt
 from textwrap import fill, wrap
 
 from django.contrib.staticfiles import finders
-from PIL import Image, ImageFont
+from PIL import Image, ImageFont, ImageOps
 from PIL.ImageDraw import Draw
 
 
@@ -267,7 +267,7 @@ class TextImage:
             spacing=self.line_spacing,
         )
 
-        return self.img
+        return ImageOps.expand(self.img, border=10, fill=(243, 195, 62))
 
     def to_bytes(self) -> bytes:
         buffer = io.BytesIO()

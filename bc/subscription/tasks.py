@@ -1,9 +1,9 @@
 from django.db import transaction
 
 from bc.channel.models import Post
-from bc.channel.selectors import get_mastodon_channel
-from bc.channel.utils.masto import post_status as mastodon_post
-from bc.core.utils.messages import DO_NOT_POST, MINUTE_TEMPLATE, POST_TEMPLATE
+from bc.channel.selectors import get_enabled_channels
+from bc.core.utils.status.selectors import get_template_for_channel
+from bc.core.utils.status.templates import DO_NOT_POST
 
 from .models import FilingWebhookEvent, Subscription
 
@@ -38,28 +38,27 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     if DO_NOT_POST.search(filing_webhook_event.description):
         return filing_webhook_event
 
-    template = (
-        POST_TEMPLATE
-        if filing_webhook_event.document_number
-        else MINUTE_TEMPLATE
-    )
+    for channel in get_enabled_channels():
+        template = get_template_for_channel(
+            channel.service, filing_webhook_event.document_number
+        )
 
-    message, image = template.format(
-        docket=subscription.name_with_summary,
-        description=filing_webhook_event.description,
-        doc_num=filing_webhook_event.document_number,
-        pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
-        docket_link=filing_webhook_event.cl_docket_url,
-    )
+        message, image = template.format(
+            docket=subscription.name_with_summary,
+            description=filing_webhook_event.description,
+            doc_num=filing_webhook_event.document_number,
+            pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
+            docket_link=filing_webhook_event.cl_docket_url,
+        )
 
-    api_post_id = mastodon_post(message, image)
+        api = channel.get_api_wrapper()
+        api_post_id = api.add_status(message, image)
 
-    channel = get_mastodon_channel()
-    Post.objects.create(
-        filing_webhook_event=filing_webhook_event,
-        channel=channel,
-        object_id=api_post_id,
-        text=message,
-    )
+        Post.objects.create(
+            filing_webhook_event=filing_webhook_event,
+            channel=channel,
+            object_id=api_post_id,
+            text=message,
+        )
 
     return filing_webhook_event

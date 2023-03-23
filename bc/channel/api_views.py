@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from .utils.masto import get_keys, get_mastodon
+from .utils.connectors.masto import MastodonConnector
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +17,9 @@ def receive_mastodon_push(request: Request) -> Response:
     logger.debug(f"Request headers: {request.headers}")
     logger.debug(f"Request data: {request.data}")
 
-    m = get_mastodon()
-    priv_dict, _ = get_keys()
-    push = m.push_subscription_decrypt_push(
+    m = MastodonConnector()
+    priv_dict, _ = m.get_keys()
+    push = m.api.push_subscription_decrypt_push(
         data=request.data,
         decrypt_params=priv_dict,
         encryption_header=request.headers.get("Encryption"),

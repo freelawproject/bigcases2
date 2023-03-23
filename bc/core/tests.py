@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from bc.core.utils.messages import MastodonTemplate
+from bc.core.utils.status.templates import MastodonTemplate
 
 
 class MastodonTemplateTest(TestCase):

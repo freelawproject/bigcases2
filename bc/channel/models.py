@@ -3,7 +3,9 @@ from django.db import models
 from bc.core.models import AbstractDateTimeModel
 from bc.users.models import User
 
-from .utils.masto import masto_regex
+from .utils.connectors.base import BaseAPIConnector
+from .utils.connectors.masto import MastodonConnector, masto_regex
+from .utils.connectors.twitter import TwitterConnector
 
 
 class Channel(AbstractDateTimeModel):
@@ -35,12 +37,24 @@ class Channel(AbstractDateTimeModel):
     )
     user = models.ManyToManyField(
         User,
-        help_text="Users that belong to the channel",
+        help_text="Users that can send commands to the bot through the channel",
         related_name="channels",
+        blank=True,
     )
     enabled = models.BooleanField(
         help_text="Disabled by default; must enable manually", default=False
     )
+
+    def get_api_wrapper(self) -> BaseAPIConnector:
+        match self.service:
+            case self.TWITTER:
+                return TwitterConnector()
+            case self.MASTODON:
+                return MastodonConnector()
+            case _:
+                raise NotImplementedError(
+                    f"No wrapper implemented for service: '{self.service}'."
+                )
 
     def self_url(self):
         if self.service == self.TWITTER:
