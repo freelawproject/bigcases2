@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name="user",
             field=models.ManyToManyField(
                 blank=True,
-                help_text="Users that belong to the channel",
+                help_text="Users that can send commands to the bot through the channel",
                 related_name="channels",
                 to=settings.AUTH_USER_MODEL,
             ),

@@ -37,7 +37,7 @@ class Channel(AbstractDateTimeModel):
     )
     user = models.ManyToManyField(
         User,
-        help_text="Users that belong to the channel",
+        help_text="Users that can send commands to the bot through the channel",
         related_name="channels",
         blank=True,
     )
