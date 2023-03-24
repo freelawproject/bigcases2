@@ -12,10 +12,10 @@
               <div class="w-full">
                 <div class="pb-3">
                   <H5>Big Cases</H5>
-                  {% url 'big_cases_sponsors' as big_cases_sponsors %}
-                  {% include "./footer-link.html" with href=big_cases_sponsors text="Sponsorship" %}
                   {% url 'big_cases_about' as big_cases_about %}
-                  {% include "./footer-link.html" with href=big_cases_about text="History" %}
+                  {% include "./footer-link.html" with href=big_cases_about text="About Me" %}
+                  {% url 'big_cases_sponsors' as big_cases_sponsors %}
+                  {% include "./footer-link.html" with href=big_cases_sponsors text="Sponsor Me" %}
                   {% url 'big_cases_my_code' as big_cases_my_code %}
                   {% include "./footer-link.html" with href=big_cases_my_code text="My Technology" %}
                 </div>
@@ -31,7 +31,7 @@
                   {% endwith %}
                 </div>
                 <div class="pb-3">
-                  <H5>Build your own bot</H5>
+                  <H5>Build your own&nbsp;bot</H5>
                   {% url 'little_cases' as little_cases%}
                   {% include "./footer-link.html" with href=little_cases text="Learn More" %}
                 </div>
