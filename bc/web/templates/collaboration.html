@@ -1,10 +1,12 @@
 {% extends "post.html" %}
-{% block title %}Collaboration{% endblock %}
+{% block title %}Chat Apps{% endblock %}
 
-{% block post_title %}Collaborations{% endblock %}
+{% block post_title %}Chat Apps{% endblock %}
 
 {% block post_content %}
-    <!-- The content of the post goes here -->
+  <p class="lead">To keep you updated where you work, we are building bots for Slack, Discord, Google Chat, and Microsoft Teams. You will tell these bots which cases to follow, and you'll get updates for those cases right in your chat app.</p>
+  <p>We will also be building features so you can search for and analyze cases in your chat app, making research easier than ever.</p>
+  <p>If you are interested in the best way to get updates about your cases, join our waitlist below.</p>
 
-    {% include "./includes/waitlist-form.html" with form=form %}
+  {% include "./includes/waitlist-form.html" with form=form %}
 {% endblock %}
