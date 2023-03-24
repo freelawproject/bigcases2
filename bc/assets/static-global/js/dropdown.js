@@ -88,6 +88,10 @@ var Dropdown =  (function () {
         // Disable the event listeners
         this._visible = false;
         this._removeClickOutsideListener();
+        setTimeout(() => {
+          this._targetEl.classList.remove("block");
+          this._targetEl.classList.add("hidden");
+        }, 200);
     };
     return Dropdown;
 }());
