@@ -1,9 +1,21 @@
 {% extends "post.html" %}
-{% block title %}My Code{% endblock %}
+{% block title %}How the Big Cases Bot Works{% endblock %}
 
-{% block post_title %}My Code{% endblock %}
+{% block post_title %}How the Big Cases Bot Works{% endblock %}
 
 
 {% block post_content %}
-    <!-- The content of the post goes here -->
+  <p class="lead">Big Cases Bot is built on the <a href="https://free.law/recap/">RECAP Suite</a>, a collection of tools that anybody can use to enhance the legal system.
+  </p>
+  <p>A goal of the Big Cases Bot is to demonstrate what can be done using these systems and to encourage others to build things too.</p>
+  <p>These are the tools that work behind the scenes whenever the Big Cases Bot posts an update:</p>
+  <ol>
+    <li><p><a href="https://www.courtlistener.com/help/alerts/"><strong>Docket Alerts</strong></a> — CourtListener maintains <a href="https://www.courtlistener.com/recap/">a database of federal cases</a> and can send alerts whenever cases are updated. The Big Cases Bot uses the <a href="https://www.courtlistener.com/help/api/rest/">CourtListener API</a> to subscribe to these alerts for important cases.</p></li>
+    <li><p><a href="https://free.law/recap/"><strong>RECAP Extensions</strong></a> — Users of the RECAP Extension and <a href="https://www.courtlistener.com/help/coverage/">CourtListener's system of crawlers</a> add data to the CourtListener database.</p></li>
+    <li><p><a href="https://www.courtlistener.com/help/api/webhooks/"><strong>Webhooks</strong></a> — When a subscribed case is updated, CourtListener uses its webhook system to send an event to bots.law.</p></li>
+    <li><p><a href="https://www.courtlistener.com/help/api/rest/#pacer-fetch"><strong>PACER Fetch API</strong></a> — To purchase PACER documents and get the metadata it needs, bots.law uses CourtListener's Fetch API to crawl PACER and buy documents.</p></li>
+    <li><p><a href="https://free.law/projects/doctor/"><strong>Doctor</strong></a> — PDF thumbnails are made using Doctor, Free Law Project's tool for converting documents.</p></li>
+  </ol>
+  <p>We're now ready to make an update. The <a href="https://github.com/freelawproject/bigcases2/">Big Cases code</a> generates a post for twitter and for Mastodon and sends updates into the ether.
+  </p>
 {% endblock %}

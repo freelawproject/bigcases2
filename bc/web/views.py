@@ -44,3 +44,14 @@ def collaboration(request: HttpRequest) -> HttpResponse:
         form = WaitListForm()
 
     return TemplateResponse(request, "collaboration.html", {"form": form})
+
+
+def big_cases_about(request: HttpRequest) -> HttpResponse:
+    """The BCB about page"""
+    return TemplateResponse(
+        request,
+        "big-cases/about.html",
+        {
+            "subscriptions": Subscription.objects.all(),
+        },
+    )
