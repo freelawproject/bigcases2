@@ -1,12 +1,14 @@
 {% extends "post.html" %}
-{% block title %}Little Cases bot{% endblock %}
+{% block title %}Little Cases Bots{% endblock %}
 
-{% block post_title %}Little Cases bot{% endblock %}
+{% block post_title %}Little Cases Bots{% endblock %}
 
 {% block post_content %}
-    <!-- The content of the page goes here -->
-
-    {% include "./includes/suggestion-form.html" with form=form %}
+  <p class="lead">We are developing a system where you can create and maintain your own bots for Twitter or Mastodon.</p>
+  <p>You'll give us permission to post on your behalf and we'll send updates for cases you subscribe to on CourtListener.</p>
+  <p>Imagine a bot that keeps you and the public updated about important topics like intellectual property, immigration, or online privacy.</p>
+  <p>If there's a legal topic you follow and if you want to curate a bot for that topic, let us know with the form below. We'll get back to you as soon as possible with a plan for action.</p>
+  {% include "./includes/suggestion-form.html" with form=form %}
 {% endblock %}
 
 

@@ -4,5 +4,55 @@
 {% block post_title %}About The Big Cases Bot{% endblock %}
 
 {% block post_content %}
-    <!-- The content of the post goes here -->
+  <p class="lead">The Big Cases Bot was created by Brad Heath at USA Today and is maintained by Free Law Project, a 501﻿(c)﻿(3) that uses software and political advocacy to make the legal sector more equitable and competitive.</p>
+
+  <div class="flex items-center justify-center">
+    <div class="w-1/3">
+      <a href="https://twitter.com/big_cases"
+         class="tracking-[.8px] flex items-center justify-center text-center whitespace-nowrap border border-transparent rounded-md shadow-sm text-base font-medium no-underline px-0.5 sm:text-md cursor bg-saffron-400 hover:bg-saffron-500">
+        <div class="h-6 w-6">
+          {% include 'includes/inlines/twitter.svg' %}
+        </div>
+        <div class="ml-3">
+          <p class="text-sm xl:text-base text-center font-medium">Follow on Twitter</p>
+        </div>
+      </a>
+    </div>
+    <div class="w-1/3 ml-4">
+      <a href="https://law.builders/@bigcases"
+         class="tracking-[.8px] flex items-center justify-center text-center whitespace-nowrap border border-transparent rounded-md shadow-sm text-base font-medium no-underline px-0.5 sm:text-md cursor bg-saffron-400 hover:bg-saffron-500">
+        <div class="h-6 w-6 text-gray-400">
+          {% include 'includes/inlines/mastodon.svg' %}
+        </div>
+        <div class="ml-3">
+          <p class="text-sm xl:text-base text-center font-medium">Follow on Mastodon</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <h2>I'm Following These Cases</h2>
+  <p>Big Cases Bot follows the most important federal cases in the world. Right now, the bot is following:</p>
+  <table>
+    <thead>
+      <tr>
+        <td>Case Name</td>
+        <td>Case Summary</td>
+        <td>Case Number</td>
+        <td>Court</td>
+      </tr>
+    </thead>
+    <tbody>
+    {% for sub in subscriptions %}
+      <tr>
+        <td><a href="{{ sub.cl_url }}">{{ sub.docket_name }}</a></td>
+        <td>{{ sub.case_summary|default:"-" }}</td>
+        <td>{{ sub.docket_number }}</td>
+        <td>{{ sub.court_name }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+
 {% endblock %}
