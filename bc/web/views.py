@@ -7,13 +7,6 @@ from bc.subscription.models import Subscription
 from .forms import BotSuggestionForm, WaitListForm
 
 
-def view_docket(request: HttpRequest, subscription_id: int) -> HttpResponse:
-    subscription = get_object_or_404(Subscription, pk=subscription_id)
-    return TemplateResponse(
-        request, "docket.html", {"subscription": subscription}
-    )
-
-
 def count_dockets(request: HttpRequest) -> HttpResponse:
     subscription_count = Subscription.objects.count()
 

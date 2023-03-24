@@ -1,13 +1,7 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from .views import (
-    big_cases_about,
-    collaboration,
-    count_dockets,
-    little_cases,
-    view_docket,
-)
+from .views import big_cases_about, collaboration, count_dockets, little_cases
 
 urlpatterns = [
     path("", count_dockets, name="homepage"),
@@ -41,6 +35,4 @@ urlpatterns = [
         TemplateView.as_view(template_name="successful-submission.html"),
         name="successful_submission",
     ),
-    # Docket pages
-    path("docket/<int:subscription_id>/", view_docket, name="docket_details"),
 ]
