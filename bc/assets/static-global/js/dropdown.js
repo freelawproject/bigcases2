@@ -3,12 +3,14 @@ var Default = {
 };
 
 var Dropdown =  (function () {
-    function Dropdown(targetElement, triggerElement, options) {
+    function Dropdown(targetElement, triggerElement, closeButton,options) {
         if (targetElement === void 0) { targetElement = null; }
         if (triggerElement === void 0) { triggerElement = null; }
+        if (closeButton === void 0) { closeButton = null; }
         if (options === void 0) { options = Default; }
         this._targetEl = targetElement;
         this._triggerEl = triggerElement;
+        this._closeButton = closeButton;
         this._visible = false;
         this._init();
     }
@@ -31,6 +33,11 @@ var Dropdown =  (function () {
             _this._triggerEl.addEventListener(ev, function () {
                 _this.toggle();
             });
+            if (_this._closeButton){
+              _this._closeButton.addEventListener(ev, function () {
+                _this.toggle();
+            });
+            }
         });
 
     };
@@ -81,6 +88,10 @@ var Dropdown =  (function () {
         // Disable the event listeners
         this._visible = false;
         this._removeClickOutsideListener();
+        setTimeout(() => {
+          this._targetEl.classList.remove("block");
+          this._targetEl.classList.add("hidden");
+        }, 200);
     };
     return Dropdown;
 }());
@@ -90,9 +101,11 @@ function initDropdowns() {
         .querySelectorAll('[data-dropdown-toggle]')
         .forEach(function ($triggerEl) {
         var dropdownId = $triggerEl.getAttribute('data-dropdown-toggle');
+        var closeButtonId = $triggerEl.getAttribute('data-dropdown-close-button');
         var $dropdownEl = document.getElementById(dropdownId);
+        var $closeButton = document.getElementById(closeButtonId)
         if ($dropdownEl) {
-            new Dropdown($dropdownEl, $triggerEl);
+            new Dropdown($dropdownEl, $triggerEl, $closeButton);
         }
         else {
             console.error("The dropdown element with id \"".concat(dropdownId, "\" does not exist. Please check the data-dropdown-toggle attribute."));
