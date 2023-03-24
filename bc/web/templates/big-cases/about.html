@@ -4,7 +4,8 @@
 {% block post_title %}About The Big Cases Bot{% endblock %}
 
 {% block post_content %}
-  <p class="lead">The Big Cases Bot was created by Brad Heath at USA Today and is maintained by Free Law Project, a 501﻿(c)﻿(3) that uses software and political advocacy to make the legal sector more equitable and competitive.</p>
+  <p class="lead">The Big Cases Bot was created by Brad Heath at USA Today. It is maintained by Free Law Project, a 501﻿(c)﻿(3) that uses software and political advocacy to make the legal sector more equitable and competitive.</p>
+  <p>To stay up to date with the biggest federal cases in the country, follow the Big Cases Bot on Twitter or Mastodon</p>
 
   <div class="flex items-center justify-center">
     <div class="w-1/3">
@@ -37,7 +38,6 @@
     <thead>
       <tr>
         <td>Case Name</td>
-        <td>Case Summary</td>
         <td>Case Number</td>
         <td>Court</td>
       </tr>
@@ -45,9 +45,8 @@
     <tbody>
     {% for sub in subscriptions %}
       <tr>
-        <td><a href="{{ sub.cl_url }}">{{ sub.docket_name }}</a></td>
-        <td>{{ sub.case_summary|default:"-" }}</td>
-        <td>{{ sub.docket_number }}</td>
+        <td><a href="{{ sub.cl_url }}">{{ sub.name_with_summary }}</a></td>
+        <td><nobr>{{ sub.docket_number }}</nobr></td>
         <td>{{ sub.court_name }}</td>
       </tr>
     {% endfor %}
