@@ -10,12 +10,57 @@
             </div>
 
             <div class="w-full md:hidden flex justify-end mx-auto ">
-
-                <button type="button" class="navbar-burger rounded-md items-center text-amber-400 p-1 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                <button type="button" data-dropdown-toggle="dropdown-mobile" data-dropdown-close-button="close-dropdown-mobile" class="navbar-burger rounded-md items-center text-amber-400 p-1 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
                     <div class="h-6 w-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 fill-current" viewBox="0 0 20 20"><path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/></svg>
+                      {% include './inlines/bars.svg' %}
                     </div>
                 </button>
+                <div class="absolute w-full pl-8 sm:pl-12">
+
+                  <div id="dropdown-mobile" class="z-10 bg-white hidden divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden w-full">
+                    <div class="pt-5 pb-6 px-5">
+                      <div class="flex items-start justify-between">
+                        <img alt='Yellow robot with white background logo' src="{% static "svg/icon.svg" %}"  layout="responsive" class="rounded-lg h-16 w-16 bg-white"/>
+                        <button type="button" id="close-dropdown-mobile" class="navbar-burger rounded-md items-center text-amber-400 p-1 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                            <div class="h-6 w-6">
+                              {% include './inlines/x-mark.svg' %}
+                            </div>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="py-6 px-5 space-y-6">
+                      <div class="grid grid-cols-2 gap-x-6 sm:gap-x-8">
+                        <div class="grid grid-cols-1 gap-y-4">
+                          <a href="{% url 'big_cases_about' %}" class="text-base font-medium text-gray-900 hover:text-gray-700">About Me</a>
+                          <a href="{% url 'big_cases_sponsors' %}" class="text-base font-medium text-gray-900 hover:text-gray-700">Sponsors Me</a>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-y-4">
+                          <a href="{% url 'little_cases' %}" class="text-base font-medium text-gray-900 hover:text-gray-700">Little Cases bots</a>
+                          <a href="{% url 'collaboration' %}" class="text-base font-medium text-gray-900 hover:text-gray-700">Chat Apps</a>
+                        </div>
+                      </div>
+                      <div class="grid grid-cols-1 gap-2">
+                        <a href="https://free.law/donate/" class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm font-medium text-sm no-underline text-bcb-black  bg-saffron-400 hover:bg-saffron-500">
+                            &nbsp;Donate
+                        </a>
+                        <a rel="me" href="https://law.builders/@bigcases" class="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium border-gray-500">
+                            <div class="h-6 w-6 text-gray-400">
+                                {% include './inlines/mastodon.svg' %}
+                            </div>
+                            Follow on Mastodon
+                        </a>
+                        <a href="https://twitter.com/big_cases" class="w-full flex p-3 items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium border-gray-500">
+                            <div class="h-6 w-6 text-gray-400">
+                                {% include './inlines/twitter.svg' %}
+                            </div>
+                            Follow on Twitter
+                        </a>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
             </div>
 
             <div class="hidden w-full md:flex md:justify-end lg:justify-center">
