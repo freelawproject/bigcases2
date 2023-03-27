@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
 
+from bc.channel.selectors import get_enabled_channels
+from bc.core.utils.status.templates import FOLLOW_A_NEW_CASE_TEMPLATE
 from bc.subscription.services import create_or_update_subscription_from_docket
 from bc.subscription.utils.courtlistener import (
     lookup_docket_by_cl_id,
@@ -65,7 +67,9 @@ class Command(BaseCommand):
         if case_summary:
             result["case_summary"] = case_summary
 
-        _, created = create_or_update_subscription_from_docket(result)
+        subscription, created = create_or_update_subscription_from_docket(
+            result
+        )
         message = "Added!" if created else "Updated!"
         self.stdout.write(self.style.SUCCESS(message))
 
@@ -75,3 +79,12 @@ class Command(BaseCommand):
         cl_subscription = subscribe_to_docket_alert(options["cl-id"])
         if cl_subscription:
             self.stdout.write(self.style.SUCCESS("Subscribed!"))
+
+        for channel in get_enabled_channels():
+            message, _ = FOLLOW_A_NEW_CASE_TEMPLATE.format(
+                docket=subscription.name_with_summary,
+                docket_link=subscription.cl_url,
+            )
+
+            api = channel.get_api_wrapper()
+            api.add_status(message, None)
