@@ -1,6 +1,6 @@
 import re
 
-from .base import MastodonTemplate, TwitterTemplate
+from .base import BaseTemplate, MastodonTemplate, TwitterTemplate
 
 DO_NOT_POST = re.compile(
     r"""(
@@ -44,4 +44,13 @@ TWITTER_MINUTE_TEMPLATE = TwitterTemplate(
     str_template="""New minute entry in {docket}: {description}
 
 Docket: {docket_link}""",
+)
+
+
+FOLLOW_A_NEW_CASE_TEMPLATE = BaseTemplate(
+    link_placeholders=[],
+    max_characters=280,
+    str_template="""I'm now following {docket}:
+
+{docket_link}""",
 )
