@@ -125,6 +125,10 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         help_text="The docket id from CL.",
         null=True,
     )
+    cl_doc_id = models.IntegerField(
+        help_text="The document id from CL.",
+        null=True,
+    )
     pacer_doc_id = models.CharField(
         help_text="The ID of the document in PACER.",
         max_length=32,
