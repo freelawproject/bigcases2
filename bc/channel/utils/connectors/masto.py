@@ -49,23 +49,20 @@ class MastodonConnector:
         text_image: TextImage | None = None,
         thumbnails: list[IO[bytes]] | None = None,
     ) -> int:
-        media_ids = None
+        media_ids = []
         if text_image:
             media_id = self.upload_media(
                 text_image.to_bytes(),
                 f"An image of the entry's full text: {text_image.description}",
             )
-            media_ids = [media_id]
+            media_ids.append(media_id)
 
         if thumbnails:
             for idx, thumbnail in enumerate(thumbnails):
                 media_id = self.upload_media(
                     thumbnail, f"Thumbnail of page {idx + 1}"
                 )
-                if media_ids:
-                    media_ids.append(media_id)
-                else:
-                    media_ids = [media_id]
+                media_ids.append(media_id)
 
         api_response = self.api.status_post(message, media_ids=media_ids)
 
