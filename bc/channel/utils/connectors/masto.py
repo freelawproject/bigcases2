@@ -60,7 +60,7 @@ class MastodonConnector:
         if thumbnails:
             for idx, thumbnail in enumerate(thumbnails):
                 media_id = self.upload_media(
-                    thumbnail, f"Thumbnail of page {idx + 1}"
+                    thumbnail, f"Thumbnail of page {idx + 1} of the PDF"
                 )
                 media_ids.append(media_id)
 
