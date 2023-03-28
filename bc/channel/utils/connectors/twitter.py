@@ -82,7 +82,7 @@ class TwitterConnector:
         if thumbnails:
             for idx, thumbnail in enumerate(thumbnails):
                 media_id = self.upload_media(
-                    thumbnail, f"thumbnail of page {idx+1}"
+                    thumbnail, f"Thumbnail of page {idx + 1}"
                 )
                 media_array.append(str(media_id))
             payload["media"] = {"media_ids": media_array}
