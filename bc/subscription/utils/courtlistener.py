@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 CL_API = {
     "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
     "docket-alerts": "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
+    "recap-documents": "https://www.courtlistener.com/api/rest/v3/recap-documents/",
 }
 
 pacer_to_cl_ids = {
@@ -63,6 +64,20 @@ def lookup_docket_by_cl_id(cl_id: int):
     """
     url = f"{CL_API['docket']}{cl_id}/"
     response = requests.get(url, headers=auth_header(), timeout=5)
+    response.raise_for_status()
+    return response.json()
+
+
+def lookup_document_by_doc_id(cl_doc_id: int | None):
+    """
+    Performs a GET query on /api/rest/v3/recap-documents/
+    using the document_id to get a recap document
+    """
+    response = requests.get(
+        f"{CL_API['recap-documents']}{cl_doc_id}/",
+        headers=auth_header(),
+        timeout=5,
+    )
     response.raise_for_status()
     return response.json()
 
