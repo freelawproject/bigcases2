@@ -1912,13 +1912,13 @@ test = ["argcomplete (>=2.0)", "pre-commit", "pytest", "pytest-mock"]
 
 [[package]]
 name = "twitterapi"
-version = "2.8.1"
+version = "2.8.2"
 description = "Minimal wrapper for Twitter's REST and Streaming APIs"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "TwitterAPI-2.8.1.tar.gz", hash = "sha256:6c0ccc8aee074ba1fd83f6e9cc4252667eae2fc1d6c8b97db15d080fb6663740"},
+    {file = "TwitterAPI-2.8.2.tar.gz", hash = "sha256:78429482810de69713da6ce906a83c2895b0334d4f0e489fec32cbbca62f184b"},
 ]
 
 [package.dependencies]
@@ -2173,4 +2173,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "807814d1c915e490c235aa3b1be1e737972c6d47f8a9f986cddad67efc1e46e7"
+content-hash = "13bc7f90c4b4d2e02e81507e43076d093da1d39b690bf61f3f45e4d9f9de0a68"
