@@ -66,7 +66,7 @@ class BaseTemplate:
                 kwargs["description"] = trunc(
                     kwargs["description"],
                     available_space,
-                    "…full entry below 👇",
+                    "…\n\n[full entry below 👇]",
                 )
 
         return self.str_template.format(**kwargs), image
