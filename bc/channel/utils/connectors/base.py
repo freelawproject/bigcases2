@@ -25,12 +25,31 @@ class BaseAPIConnector(Protocol):
         """
         ...
 
-    def add_status(self, message: str, text_image: TextImage | None) -> int:
+    def upload_media(self, media: bytes, alt_text: str) -> int:
+        """
+        creates a media attachment to be used with a new status.
+
+        This method should handle extra step if needed to provide additional
+        information about the uploaded file.
+
+        Args:
+            media (bytes): The file to be attached.
+            alt_text (str): A plain-text description of the media, for accessibility
+            purposes.
+
+        Returns:
+            int: the unique identifier of the upload.
+        """
+        ...
+
+    def add_status(
+        self, message: str, text_image: TextImage | None, thumbnails
+    ) -> int:
         """
         Creates a new status using the API wrapper object and returns the integer
         representation of the identifier for the new status.
 
-        This method should handle any extra step need to attach/upload images before
+        This method should handle any extra step needed to attach/upload images before
         creating an status update using the API object.
 
         Args:
