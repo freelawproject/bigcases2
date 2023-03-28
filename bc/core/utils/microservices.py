@@ -24,7 +24,7 @@ def get_thumbnails_from_range(
         f"{settings.DOCTOR_HOST}/convert/pdf/thumbnails/",
         data={"pages": page_range, "max_dimension": "1920"},
         files={"file": (f"dummy.pdf", document)},
-        timeout=4 * 60,
+        timeout=60,
     )
 
     zipfile = ZipFile(BytesIO(thumbnails.content))

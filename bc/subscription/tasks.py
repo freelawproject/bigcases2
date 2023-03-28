@@ -50,7 +50,7 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
 
     document = None
     if document_url:
-        document_request = requests.get(document_url, timeout=60)
+        document_request = requests.get(document_url, timeout=3)
         document_request.raise_for_status()
         document = document_request.content
 
