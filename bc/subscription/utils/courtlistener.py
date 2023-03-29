@@ -68,13 +68,14 @@ def lookup_docket_by_cl_id(cl_id: int):
     return response.json()
 
 
-def lookup_document_by_doc_id(cl_doc_id: int | None):
+def lookup_document_by_doc_id(doc_id: int | None) -> dict[str, str | None]:
     """
     Performs a GET query on /api/rest/v3/recap-documents/
     using the document_id to get a recap document
     """
     response = requests.get(
-        f"{CL_API['recap-documents']}{cl_doc_id}/",
+        f"{CL_API['recap-documents']}{doc_id}/",
+        params={"fields": "filepath_local"},
         headers=auth_header(),
         timeout=5,
     )

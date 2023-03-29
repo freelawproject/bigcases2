@@ -125,7 +125,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         help_text="The docket id from CL.",
         null=True,
     )
-    cl_doc_id = models.IntegerField(
+    doc_id = models.IntegerField(
         help_text="The document id from CL.",
         null=True,
     )

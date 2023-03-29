@@ -41,7 +41,7 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     if DO_NOT_POST.search(filing_webhook_event.description):
         return filing_webhook_event
 
-    cl_document = lookup_document_by_doc_id(filing_webhook_event.cl_doc_id)
+    cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
     document_url = (
         f"https://storage.courtlistener.com/{cl_document['filepath_local']}"
         if cl_document["filepath_local"]
