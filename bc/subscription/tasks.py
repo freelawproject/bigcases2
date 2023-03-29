@@ -1,7 +1,10 @@
 import requests
+from django.conf import settings
 from django.db import transaction
+from django_rq.queues import get_queue
+from rq import Retry
 
-from bc.channel.models import Post
+from bc.channel.models import Channel, Post
 from bc.channel.selectors import get_enabled_channels
 from bc.core.utils.microservices import get_thumbnails_from_range
 from bc.core.utils.status.selectors import get_template_for_channel
@@ -10,12 +13,21 @@ from bc.subscription.utils.courtlistener import lookup_document_by_doc_id
 
 from .models import FilingWebhookEvent, Subscription
 
+queue = get_queue("default")
+
 
 @transaction.atomic
-def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
+def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
     """Process an event from a CL webhook.
 
-    :param fwe_pk: The PK of the item you want to work on.
+    This function links a webhook event to one of the records in the
+    subscription table(or ignores it if the bot is not following the
+    case), checks the description of the event to filter junk docket
+    entries, and also checks if the document associated with the webhook
+    is available in the RECAP archive to retrieve it and use it to
+    create a post in the channels that are enabled.
+
+    :param fwe_pk: The PK of the FilingWebhookEvent record.
     :return: A FilingWebhookEvent object that was updated.
     """
     filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
@@ -55,31 +67,65 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
         document = document_request.content
 
     for channel in get_enabled_channels():
-        template = get_template_for_channel(
-            channel.service, filing_webhook_event.document_number
-        )
-
-        message, image = template.format(
-            docket=subscription.name_with_summary,
-            description=filing_webhook_event.description,
-            doc_num=filing_webhook_event.document_number,
-            pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
-            docket_link=filing_webhook_event.cl_docket_url,
-        )
-
-        files = None
-        if document:
-            thumbnail_range = "[1,2,3]" if image else "[1,2,3,4]"
-            files = get_thumbnails_from_range(document, thumbnail_range)
-
-        api = channel.get_api_wrapper()
-        api_post_id = api.add_status(message, image, files)
-
-        Post.objects.create(
-            filing_webhook_event=filing_webhook_event,
-            channel=channel,
-            object_id=api_post_id,
-            text=message,
+        queue.enqueue(
+            make_post_for_webhook_event,
+            channel.pk,
+            subscription.pk,
+            filing_webhook_event.pk,
+            document,
+            retry=Retry(
+                max=settings.RQ_MAX_NUMBER_OF_RETRIES,
+                interval=settings.RQ_RETRY_INTERVAL,
+            ),
         )
 
     return filing_webhook_event
+
+
+@transaction.atomic
+def make_post_for_webhook_event(
+    channel_pk: int, subscription_pk: int, fwe_pk: int, document: bytes | None
+) -> Post:
+    """Post a new status in the given channel using the data of the given webhook
+    event and subscription.
+
+    Args:
+        channel_pk (int): The pk of the channel where the post will be created.
+        subscription_pk (int): The pk of the subscription related to the webhook event.
+        fwe_pk (int): The PK of the FilingWebhookEvent record.
+        document (bytes | None): document content(if available) as bytes.
+
+    Returns:
+        Post: A post object with the data of the new status that was created
+    """
+
+    channel = Channel.objects.get(pk=channel_pk)
+    subscription = Subscription.objects.get(pk=subscription_pk)
+    filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
+
+    template = get_template_for_channel(
+        channel.service, filing_webhook_event.document_number
+    )
+
+    message, image = template.format(
+        docket=subscription.name_with_summary,
+        description=filing_webhook_event.description,
+        doc_num=filing_webhook_event.document_number,
+        pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
+        docket_link=filing_webhook_event.cl_docket_url,
+    )
+
+    files = None
+    if document:
+        thumbnail_range = "[1,2,3]" if image else "[1,2,3,4]"
+        files = get_thumbnails_from_range(document, thumbnail_range)
+
+    api = channel.get_api_wrapper()
+    api_post_id = api.add_status(message, image, files)
+
+    return Post.objects.create(
+        filing_webhook_event=filing_webhook_event,
+        channel=channel,
+        object_id=api_post_id,
+        text=message,
+    )
