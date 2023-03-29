@@ -2,6 +2,7 @@ import base64
 import logging
 import re
 from textwrap import shorten
+from typing import IO
 
 from django.conf import settings
 from django.urls import reverse
@@ -29,22 +30,39 @@ class MastodonConnector:
 
         return mastodon
 
+    def upload_media(self, media, alt_text) -> int:
+        media_dict = self.api.media_post(
+            media,
+            mime_type="image/png",
+            focus=(0, 1),
+            description=shorten(
+                alt_text,
+                width=1500,
+                placeholder="…",
+            ),
+        )
+        return media_dict["id"]
+
     def add_status(
-        self, message: str, text_image: TextImage | None = None
+        self,
+        message: str,
+        text_image: TextImage | None = None,
+        thumbnails: list[IO[bytes]] | None = None,
     ) -> int:
-        media_ids = None
+        media_ids = []
         if text_image:
-            media_dict = self.api.media_post(
+            media_id = self.upload_media(
                 text_image.to_bytes(),
-                mime_type="image/png",
-                focus=(0, 1),
-                description=shorten(
-                    f"An image of the entry's full text: {text_image.description}",
-                    width=1500,
-                    placeholder="…",
-                ),
+                f"An image of the entry's full text: {text_image.description}",
             )
-            media_ids = [media_dict["id"]]
+            media_ids.append(media_id)
+
+        if thumbnails:
+            for idx, thumbnail in enumerate(thumbnails):
+                media_id = self.upload_media(
+                    thumbnail, f"Thumbnail of page {idx + 1} of the PDF"
+                )
+                media_ids.append(media_id)
 
         api_response = self.api.status_post(message, media_ids=media_ids)
 

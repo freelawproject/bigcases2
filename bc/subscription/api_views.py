@@ -51,6 +51,7 @@ def handle_cl_webhook(request: Request) -> Response:
             filing = FilingWebhookEvent.objects.create(
                 docket_id=cl_docket_id,
                 pacer_doc_id=doc["pacer_doc_id"],
+                doc_id=doc["id"],
                 document_number=document_number,
                 attachment_number=doc.get("attachment_number"),
                 short_description=doc["description"],

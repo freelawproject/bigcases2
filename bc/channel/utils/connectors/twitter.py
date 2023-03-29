@@ -1,4 +1,5 @@
-from typing import Any
+from textwrap import shorten
+from typing import IO, Any
 
 from django.conf import settings
 from TwitterAPI import TwitterAPI
@@ -26,8 +27,31 @@ class TwitterConnector:
         )
         return api
 
+    def upload_media(self, media, alt_text) -> int:
+        media_response = self.api.request(
+            "media/upload", None, {"media": media}
+        )
+        media_id = media_response.json()["media_id"]
+        self.api.request(
+            "media/metadata/create",
+            params={
+                "media_id": media_id,
+                "alt_text": {
+                    "text": shorten(
+                        alt_text,
+                        width=1000,
+                        placeholder="…",
+                    )
+                },
+            },
+        )
+        return media_id
+
     def add_status(
-        self, message: str, text_image: TextImage | None = None
+        self,
+        message: str,
+        text_image: TextImage | None = None,
+        thumbnails: list[IO[bytes]] | None = None,
     ) -> int:
         """
         Creates a new status update using the Twitter API.
@@ -48,12 +72,19 @@ class TwitterConnector:
         media_array = []
         payload: dict[str, Any] = {"text": message}
         if text_image:
-            media_response = self.api.request(
-                "media/upload", None, {"media": text_image.to_bytes()}
+            media_id = self.upload_media(
+                text_image.to_bytes(),
+                f"An image of the entry's full text: {text_image.description}",
             )
-            media_id = media_response.json()["media_id"]
             media_array.append(str(media_id))
+            payload["media"] = {"media_ids": media_array}
 
+        if thumbnails:
+            for idx, thumbnail in enumerate(thumbnails):
+                media_id = self.upload_media(
+                    thumbnail, f"Thumbnail of page {idx + 1} of the PDF"
+                )
+                media_array.append(str(media_id))
             payload["media"] = {"media_ids": media_array}
 
         response = self.api_v2.request(
