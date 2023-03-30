@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "bc.core",
     "bc.users",
     "bc.channel",
+    "bc.sponsorship",
     "bc.subscription",
     "bc.web",
     # other apps
