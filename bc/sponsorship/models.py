@@ -1,8 +1,8 @@
 from django.db import models
 
 from bc.core.models import AbstractDateTimeModel
-
 from bc.users.models import User
+
 
 class Sponsorship(AbstractDateTimeModel):
     user = models.ForeignKey(
@@ -20,14 +20,14 @@ class Sponsorship(AbstractDateTimeModel):
         help_text="Amount of money that's left to buy documents",
         max_digits=10,
         decimal_places=2,
-        default=0
+        default=0,
     )
 
     class Meta:
-        ordering = ['date_created']
+        ordering = ["date_created"]
 
     def __str__(self) -> str:
-       return f"{self.pk}: {self.user.username} - {self.original_amount}"
+        return f"{self.pk}: {self.user.username} - {self.original_amount}"
 
 
 class Transaction(AbstractDateTimeModel):
@@ -37,20 +37,20 @@ class Transaction(AbstractDateTimeModel):
     CHOICES = (
         (SPONSORSHIP, "Sponsorship"),
         (DOCUMENT_PURCHASE, "Document Purchase"),
-        (ADJUSTMENT, "Adjustment")
+        (ADJUSTMENT, "Adjustment"),
     )
 
     user = models.ForeignKey(
         User,
         help_text="User associated with the transaction",
-        related_name='transactions',
+        related_name="transactions",
         on_delete=models.CASCADE,
     )
     sponsorship = models.ForeignKey(
         Sponsorship,
         help_text="Sponsorship record related to the transaction",
-        related_name='transactions',
-        on_delete=models.CASCADE
+        related_name="transactions",
+        on_delete=models.CASCADE,
     )
     type = models.SmallIntegerField(
         help_text="The type of the transaction. Possible values "
