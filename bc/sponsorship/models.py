@@ -9,7 +9,7 @@ class Sponsorship(AbstractDateTimeModel):
         User,
         help_text="The user sponsoring the Bot",
         related_name="sponsorships",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
     )
     original_amount = models.DecimalField(
         help_text="Initial amount of money given by the sponsor",
@@ -44,13 +44,14 @@ class Transaction(AbstractDateTimeModel):
         User,
         help_text="User associated with the transaction",
         related_name="transactions",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
     )
     sponsorship = models.ForeignKey(
         Sponsorship,
         help_text="Sponsorship record related to the transaction",
         related_name="transactions",
-        on_delete=models.CASCADE,
+        null=True,
+        on_delete=models.PROTECT,
     )
     type = models.SmallIntegerField(
         help_text="The type of the transaction. Possible values "
