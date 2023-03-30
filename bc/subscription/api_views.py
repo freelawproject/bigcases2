@@ -7,6 +7,7 @@ from django_rq.queues import get_queue
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rq import Retry
 
 from bc.subscription.exceptions import (
     IdempotencyKeyMissing,
@@ -61,6 +62,10 @@ def handle_cl_webhook(request: Request) -> Response:
                 timedelta(seconds=settings.WEBHOOK_DELAY_TIME),
                 process_filing_webhook_event,
                 filing.pk,
+                retry=Retry(
+                    max=settings.RQ_MAX_NUMBER_OF_RETRIES,
+                    interval=settings.RQ_RETRY_INTERVAL,
+                ),
             )
 
     # Save the idempotency key for two days after the webhook is handled
