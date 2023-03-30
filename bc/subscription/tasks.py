@@ -1,9 +1,12 @@
+import requests
 from django.db import transaction
 
 from bc.channel.models import Post
 from bc.channel.selectors import get_enabled_channels
+from bc.core.utils.microservices import get_thumbnails_from_range
 from bc.core.utils.status.selectors import get_template_for_channel
 from bc.core.utils.status.templates import DO_NOT_POST
+from bc.subscription.utils.courtlistener import lookup_document_by_doc_id
 
 from .models import FilingWebhookEvent, Subscription
 
@@ -38,6 +41,19 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
     if DO_NOT_POST.search(filing_webhook_event.description):
         return filing_webhook_event
 
+    cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
+    document_url = (
+        f"https://storage.courtlistener.com/{cl_document['filepath_local']}"
+        if cl_document["filepath_local"]
+        else None
+    )
+
+    document = None
+    if document_url:
+        document_request = requests.get(document_url, timeout=3)
+        document_request.raise_for_status()
+        document = document_request.content
+
     for channel in get_enabled_channels():
         template = get_template_for_channel(
             channel.service, filing_webhook_event.document_number
@@ -51,8 +67,13 @@ def process_filing_webhook_event(fwe_pk) -> FilingWebhookEvent:
             docket_link=filing_webhook_event.cl_docket_url,
         )
 
+        files = None
+        if document:
+            thumbnail_range = "[1,2,3]" if image else "[1,2,3,4]"
+            files = get_thumbnails_from_range(document, thumbnail_range)
+
         api = channel.get_api_wrapper()
-        api_post_id = api.add_status(message, image)
+        api_post_id = api.add_status(message, image, files)
 
         Post.objects.create(
             filing_webhook_event=filing_webhook_event,
