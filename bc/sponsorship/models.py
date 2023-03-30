@@ -23,9 +23,6 @@ class Sponsorship(AbstractDateTimeModel):
         default=0,
     )
 
-    class Meta:
-        ordering = ["date_created"]
-
     def __str__(self) -> str:
         return f"{self.pk}: {self.user.username} - {self.original_amount}"
 
