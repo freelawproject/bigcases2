@@ -34,7 +34,7 @@ class Transaction(AbstractDateTimeModel):
     SPONSORSHIP = 1
     DOCUMENT_PURCHASE = 2
     ADJUSTMENT = 3
-    CHOICES = (
+    TYPES = (
         (SPONSORSHIP, "Sponsorship"),
         (DOCUMENT_PURCHASE, "Document Purchase"),
         (ADJUSTMENT, "Adjustment"),
@@ -55,9 +55,9 @@ class Transaction(AbstractDateTimeModel):
     )
     type = models.SmallIntegerField(
         help_text="The type of the transaction. Possible values "
-        "are: %s" % ", ".join([f"({t[0]}): {t[1]}" for t in CHOICES]),
+        "are: %s" % ", ".join([f"({t[0]}): {t[1]}" for t in TYPES]),
         default=SPONSORSHIP,
-        choices=CHOICES,
+        choices=TYPES,
     )
     amount = models.DecimalField(
         help_text="Amount of money spent/received in the transaction",
@@ -69,12 +69,4 @@ class Transaction(AbstractDateTimeModel):
     )
 
     def __str__(self) -> str:
-        match self.type:
-            case self.SPONSORSHIP:
-                return f"{self.pk}: New sponsorship"
-            case self.DOCUMENT_PURCHASE:
-                return f"{self.pk}: New document purchased"
-            case self.ADJUSTMENT:
-                return f"{self.pk}: Adjustment"
-            case _:
-                return f"{self.pk}"
+        return f"{self.pk}: {self.get_type_display()}"
