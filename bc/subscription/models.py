@@ -207,7 +207,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
 
     @property
     def cl_pdf_or_pacer_url(self) -> str:
-        return f"{self.cl_document_url}?redirect_to_download=True"
+        return f"{self.cl_document_url}?redirect_or_modal=True"
 
     @property
     def cl_docket_url(self) -> str | None:
