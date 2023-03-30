@@ -1,0 +1,79 @@
+from django.db import models
+
+from bc.core.models import AbstractDateTimeModel
+
+from bc.users.models import User
+
+class Sponsorship(AbstractDateTimeModel):
+    user = models.ForeignKey(
+        User,
+        help_text="The user sponsoring the Bot",
+        related_name="sponsorships",
+        on_delete=models.CASCADE,
+    )
+    original_amount = models.DecimalField(
+        help_text="Initial amount of money given by the sponsor",
+        max_digits=10,
+        decimal_places=2,
+    )
+    current_amount = models.DecimalField(
+        help_text="Amount of money that's left to buy documents",
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    class Meta:
+        ordering = ['date_created']
+
+    def __str__(self) -> str:
+       return f"{self.pk}: {self.user.username} - {self.original_amount}"
+
+
+class Transaction(AbstractDateTimeModel):
+    SPONSORSHIP = 1
+    DOCUMENT_PURCHASE = 2
+    ADJUSTMENT = 3
+    CHOICES = (
+        (SPONSORSHIP, "Sponsorship"),
+        (DOCUMENT_PURCHASE, "Document Purchase"),
+        (ADJUSTMENT, "Adjustment")
+    )
+
+    user = models.ForeignKey(
+        User,
+        help_text="User associated with the transaction",
+        related_name='transactions',
+        on_delete=models.CASCADE,
+    )
+    sponsorship = models.ForeignKey(
+        Sponsorship,
+        help_text="Sponsorship record related to the transaction",
+        related_name='transactions',
+        on_delete=models.CASCADE
+    )
+    type = models.SmallIntegerField(
+        help_text="The type of the transaction. Possible values "
+        "are: %s" % ", ".join([f"({t[0]}): {t[1]}" for t in CHOICES]),
+        default=SPONSORSHIP,
+        choices=CHOICES,
+    )
+    amount = models.DecimalField(
+        help_text="Amount of money spent/received in the transaction",
+        max_digits=10,
+        decimal_places=2,
+    )
+    note = models.TextField(
+        help_text="More information about the transaction",
+    )
+
+    def __str__(self) -> str:
+        match self.type:
+            case self.SPONSORSHIP:
+                return f"{self.pk}: New sponsorship"
+            case self.DOCUMENT_PURCHASE:
+                return f"{self.pk}: New document purchased"
+            case self.ADJUSTMENT:
+                return f"{self.pk}: Adjustment"
+            case _:
+                return f"{self.pk}"
