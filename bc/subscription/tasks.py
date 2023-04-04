@@ -11,7 +11,7 @@ from bc.core.utils.status.templates import DO_NOT_POST
 from bc.sponsorship.models import Transaction
 from bc.sponsorship.selectors import get_active_sponsorship
 from bc.subscription.utils.courtlistener import (
-    get_document_from_CL,
+    download_pdf_from_cl,
     lookup_document_by_doc_id,
     purchase_pdf_by_doc_id,
 )
@@ -61,7 +61,7 @@ def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
     document = None
     cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
     if cl_document["filepath_local"]:
-        document = get_document_from_CL(cl_document["filepath_local"])
+        document = download_pdf_from_cl(cl_document["filepath_local"])
     else:
         sponsorship = get_active_sponsorship()
         if sponsorship and filing_webhook_event.pacer_doc_id:
@@ -97,7 +97,7 @@ def process_fetch_webhook_event(fwe_pk: int):
     )
 
     cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
-    document = get_document_from_CL(cl_document["filepath_local"])
+    document = download_pdf_from_cl(cl_document["filepath_local"])
 
     sponsorship = get_active_sponsorship()
     if sponsorship:

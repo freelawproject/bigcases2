@@ -92,7 +92,7 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     return data
 
 
-def get_document_from_CL(filepath: str) -> bytes:
+def download_pdf_from_cl(filepath: str) -> bytes:
     document_url = f"{CL_API['media-storage']}{filepath}"
     document_request = requests.get(document_url, timeout=3)
     document_request.raise_for_status()
