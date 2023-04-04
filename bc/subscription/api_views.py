@@ -16,14 +16,14 @@ from bc.subscription.exceptions import (
 
 from .api_permissions import AllowListPermission
 from .models import FilingWebhookEvent
-from .tasks import process_filing_webhook_event
+from .tasks import process_fetch_webhook_event, process_filing_webhook_event
 
 queue = get_queue("default")
 
 
 @api_view(["POST"])
 @permission_classes([AllowListPermission])
-def handle_cl_webhook(request: Request) -> Response:
+def handle_docket_alert_webhook(request: Request) -> Response:
     """
     Receives a docket alert webhook from CourtListener.
     """
@@ -72,3 +72,40 @@ def handle_cl_webhook(request: Request) -> Response:
     cache.set(idempotency_key, True, 60 * 60 * 24 * 2)
 
     return Response(request.data, status=HTTPStatus.CREATED)
+
+
+@api_view(["POST"])
+@permission_classes([AllowListPermission])
+def handle_recap_fetch_webhook(request: Request) -> Response:
+    """
+    Receives a recap fetch webhook from CourtListener.
+    """
+    idempotency_key = request.headers.get("Idempotency-Key")
+    if not idempotency_key:
+        raise IdempotencyKeyMissing()
+
+    data = request.data
+    if data["webhook"]["event_type"] != 3:
+        raise WebhookNotSupported()
+
+    cache_idempotency_key = cache.get(idempotency_key)
+    if cache_idempotency_key:
+        return Response(status=HTTPStatus.OK)
+
+    docket_alert = FilingWebhookEvent.objects.get(
+        doc_id=data["payload"]["recap_document"]
+    )
+
+    queue.enqueue(
+        process_fetch_webhook_event,
+        docket_alert.pk,
+        retry=Retry(
+            max=settings.RQ_MAX_NUMBER_OF_RETRIES,
+            interval=settings.RQ_RETRY_INTERVAL,
+        ),
+    )
+
+    # Save the idempotency key for two days after the webhook is handled
+    cache.set(idempotency_key, True, 60 * 60 * 24 * 2)
+
+    return Response(request.data, status=HTTPStatus.OK)
