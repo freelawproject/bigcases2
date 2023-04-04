@@ -1,4 +1,4 @@
-from django.db import transaction
+from django.db import transaction as db_transaction
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -26,6 +26,6 @@ def transaction_handler(sender, instance=None, created=False, **kwargs):
         make sure We update the sponsorship's current_amount only if
         the django atomic transaction successfully commits.
         """
-        transaction.on_commit(
+        db_transaction.on_commit(
             lambda: update_sponsorships_current_amount(instance)
         )
