@@ -92,6 +92,13 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     return data
 
 
+def get_document_from_CL(filepath: str) -> bytes:
+    document_url = f"{CL_API['media-storage']}{filepath}"
+    document_request = requests.get(document_url, timeout=3)
+    document_request.raise_for_status()
+    return document_request.content
+
+
 def purchase_pdf_by_doc_id(doc_id: int | None) -> int:
     """
     Performs a POST query on /api/rest/v3/recap-fetch/
