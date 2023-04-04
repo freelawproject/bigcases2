@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rq import Retry
 
 from bc.subscription.exceptions import (
+    DocumentFetchFailure,
     IdempotencyKeyMissing,
     WebhookNotSupported,
 )
@@ -87,6 +88,9 @@ def handle_recap_fetch_webhook(request: Request) -> Response:
     data = request.data
     if data["webhook"]["event_type"] != 3:
         raise WebhookNotSupported()
+
+    if data["payload"]["status"] != 2:
+        raise DocumentFetchFailure(data["payload"]["message"])
 
     cache_idempotency_key = cache.get(idempotency_key)
     if cache_idempotency_key:
