@@ -1,4 +1,5 @@
 import logging
+from typing import TypedDict
 
 import courts_db
 import requests
@@ -12,6 +13,8 @@ CL_API = {
     "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
     "docket-alerts": "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
     "recap-documents": "https://www.courtlistener.com/api/rest/v3/recap-documents/",
+    "recap-fetch": "https://www.courtlistener.com/api/rest/v3/recap-fetch/",
+    "media-storage": "https://storage.courtlistener.com/",
 }
 
 pacer_to_cl_ids = {
@@ -68,19 +71,25 @@ def lookup_docket_by_cl_id(cl_id: int):
     return response.json()
 
 
-def lookup_document_by_doc_id(doc_id: int | None) -> dict[str, str | None]:
+class DocumentDict(TypedDict):
+    page_count: int
+    filepath_local: str
+
+
+def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     """
     Performs a GET query on /api/rest/v3/recap-documents/
     using the document_id to get a recap document
     """
     response = requests.get(
         f"{CL_API['recap-documents']}{doc_id}/",
-        params={"fields": "filepath_local"},
+        params={"fields": "filepath_local,page_count"},
         headers=auth_header(),
         timeout=5,
     )
     response.raise_for_status()
-    return response.json()
+    data: DocumentDict = response.json()
+    return data
 
 
 def lookup_docket_by_case_number(court: str, docket_number: str):
