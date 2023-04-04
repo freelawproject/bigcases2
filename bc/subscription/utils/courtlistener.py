@@ -92,6 +92,28 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     return data
 
 
+def purchase_pdf_by_doc_id(doc_id: int | None) -> int:
+    """
+    Performs a POST query on /api/rest/v3/recap-fetch/
+    using the document_id from CL and the PACER's login
+    credentials.
+    """
+    response = requests.post(
+        f"{CL_API['recap-fetch']}",
+        json={
+            "request_type": 2,
+            "pacer_username": settings.PACER_USERNAME,
+            "pacer_password": settings.PACER_PASSWORD,
+            "recap_document": doc_id,
+        },
+        headers=auth_header(),
+        timeout=5,
+    )
+    response.raise_for_status()
+    data = response.json()
+    return data["id"]
+
+
 def lookup_docket_by_case_number(court: str, docket_number: str):
     """
     Performs a GET query on /api/rest/v3/dockets/
