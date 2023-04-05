@@ -8,8 +8,8 @@ from bc.channel.selectors import get_enabled_channels
 from bc.core.utils.microservices import get_thumbnails_from_range
 from bc.core.utils.status.selectors import get_template_for_channel
 from bc.core.utils.status.templates import DO_NOT_POST
-from bc.sponsorship.models import Transaction
 from bc.sponsorship.selectors import get_active_sponsorship
+from bc.sponsorship.services import log_purchase
 from bc.subscription.utils.courtlistener import (
     download_pdf_from_cl,
     lookup_document_by_doc_id,
@@ -101,13 +101,8 @@ def process_fetch_webhook_event(fwe_pk: int):
 
     sponsorship = get_active_sponsorship()
     if sponsorship:
-        Transaction.objects.create(
-            user=sponsorship.user,
-            sponsorship=sponsorship,
-            type=Transaction.DOCUMENT_PURCHASE,
-            amount=3.0
-            if cl_document["page_count"] >= 30
-            else cl_document["page_count"] * 0.10,
+        log_purchase(
+            sponsorship, filing_webhook_event, cl_document["page_count"]
         )
 
     for channel in get_enabled_channels():
