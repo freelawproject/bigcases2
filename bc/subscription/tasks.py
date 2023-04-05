@@ -1,4 +1,3 @@
-import requests
 from django.conf import settings
 from django.db import transaction
 from django_rq.queues import get_queue
@@ -9,7 +8,13 @@ from bc.channel.selectors import get_enabled_channels
 from bc.core.utils.microservices import get_thumbnails_from_range
 from bc.core.utils.status.selectors import get_template_for_channel
 from bc.core.utils.status.templates import DO_NOT_POST
-from bc.subscription.utils.courtlistener import lookup_document_by_doc_id
+from bc.sponsorship.selectors import get_active_sponsorship
+from bc.sponsorship.services import log_purchase
+from bc.subscription.utils.courtlistener import (
+    download_pdf_from_cl,
+    lookup_document_by_doc_id,
+    purchase_pdf_by_doc_id,
+)
 
 from .models import FilingWebhookEvent, Subscription
 
@@ -53,18 +58,53 @@ def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
     if DO_NOT_POST.search(filing_webhook_event.description):
         return filing_webhook_event
 
+    document = None
     cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
-    document_url = (
-        f"https://storage.courtlistener.com/{cl_document['filepath_local']}"
-        if cl_document["filepath_local"]
-        else None
+    if cl_document["filepath_local"]:
+        document = download_pdf_from_cl(cl_document["filepath_local"])
+    else:
+        sponsorship = get_active_sponsorship()
+        if sponsorship and filing_webhook_event.pacer_doc_id:
+            purchase_pdf_by_doc_id(filing_webhook_event.doc_id)
+            return filing_webhook_event
+
+    # Got the document or no sponsorship. Tweet and toot.
+    for channel in get_enabled_channels():
+        queue.enqueue(
+            make_post_for_webhook_event,
+            channel.pk,
+            subscription.pk,
+            filing_webhook_event.pk,
+            document,
+            retry=Retry(
+                max=settings.RQ_MAX_NUMBER_OF_RETRIES,
+                interval=settings.RQ_RETRY_INTERVAL,
+            ),
+        )
+
+    return filing_webhook_event
+
+
+@transaction.atomic
+def process_fetch_webhook_event(fwe_pk: int):
+    """Process a RECAP fetch webhook event from CL.
+
+    :param fwe_pk: The PK of the FilingWebhookEvent record.
+    :return: A FilingWebhookEvent object that was updated.
+    """
+    filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
+    subscription = Subscription.objects.get(
+        cl_docket_id=filing_webhook_event.docket_id
     )
 
-    document = None
-    if document_url:
-        document_request = requests.get(document_url, timeout=3)
-        document_request.raise_for_status()
-        document = document_request.content
+    cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
+    document = download_pdf_from_cl(cl_document["filepath_local"])
+
+    sponsorship = get_active_sponsorship()
+    if sponsorship:
+        log_purchase(
+            sponsorship, filing_webhook_event, cl_document["page_count"]
+        )
 
     for channel in get_enabled_channels():
         queue.enqueue(

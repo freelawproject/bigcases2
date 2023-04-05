@@ -16,3 +16,8 @@ class IdempotencyKeyMissing(BadRequest):
 
 class WebhookNotSupported(BadRequest):
     default_detail = "Webhook type not supported"
+
+
+class DocumentFetchFailure(BadRequest):
+    def __init__(self, detail=None):
+        self.detail = detail
