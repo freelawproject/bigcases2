@@ -68,6 +68,7 @@ def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
             purchase_pdf_by_doc_id(filing_webhook_event.doc_id)
             return filing_webhook_event
 
+    # Got the document or no sponsorship. Tweet and toot.
     for channel in get_enabled_channels():
         queue.enqueue(
             make_post_for_webhook_event,
