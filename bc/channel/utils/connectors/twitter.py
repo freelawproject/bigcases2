@@ -1,5 +1,5 @@
 from textwrap import shorten
-from typing import IO, Any
+from typing import Any
 
 from django.conf import settings
 from TwitterAPI import TwitterAPI

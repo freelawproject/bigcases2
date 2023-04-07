@@ -2,7 +2,6 @@ import base64
 import logging
 import re
 from textwrap import shorten
-from typing import IO
 
 from django.conf import settings
 from django.urls import reverse

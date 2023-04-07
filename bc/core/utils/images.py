@@ -2,7 +2,6 @@ import io
 from dataclasses import dataclass, field
 from math import ceil, sqrt
 from textwrap import fill, wrap
-from typing import IO
 
 from django.contrib.staticfiles import finders
 from PIL import Image, ImageFont, ImageOps

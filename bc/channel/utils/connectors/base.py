@@ -1,4 +1,4 @@
-from typing import IO, Protocol, Union
+from typing import Protocol, Union
 
 from mastodon import Mastodon
 from TwitterAPI import TwitterAPI

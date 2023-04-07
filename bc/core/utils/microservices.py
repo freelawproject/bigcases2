@@ -1,5 +1,4 @@
 from io import BytesIO
-from typing import IO
 from zipfile import ZipFile
 
 import requests
