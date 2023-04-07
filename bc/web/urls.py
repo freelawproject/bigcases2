@@ -1,10 +1,17 @@
 from django.urls import path
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 
 from .views import big_cases_about, collaboration, count_dockets, little_cases
 
 urlpatterns = [
     path("", count_dockets, name="homepage"),
+    path(
+        "sponsors/",
+        RedirectView.as_view(
+            pattern_name="big_cases_sponsors", permanent=True
+        ),
+    ),
     path(
         "big-cases/about/",
         big_cases_about,
