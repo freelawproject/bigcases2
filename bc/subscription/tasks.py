@@ -104,7 +104,7 @@ def process_fetch_webhook_event(fwe_pk: int):
     sponsorship = get_active_sponsorship()
     sponsor_message = None
     if sponsorship:
-        sponsor_message = sponsorship.thumbnail_message
+        sponsor_message = sponsorship.watermark_message
         log_purchase(
             sponsorship, filing_webhook_event, cl_document["page_count"]
         )
