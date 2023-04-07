@@ -47,7 +47,7 @@ class MastodonConnector:
         self,
         message: str,
         text_image: TextImage | None = None,
-        thumbnails: list[IO[bytes]] | None = None,
+        thumbnails: list[bytes] | None = None,
     ) -> int:
         media_ids = []
         if text_image:

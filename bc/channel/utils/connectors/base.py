@@ -46,7 +46,7 @@ class BaseAPIConnector(Protocol):
         self,
         message: str,
         text_image: TextImage | None,
-        thumbnails: list[IO[bytes]] | None,
+        thumbnails: list[bytes] | None,
     ) -> int:
         """
         Creates a new status using the API wrapper object and returns the integer

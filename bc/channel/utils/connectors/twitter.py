@@ -51,7 +51,7 @@ class TwitterConnector:
         self,
         message: str,
         text_image: TextImage | None = None,
-        thumbnails: list[IO[bytes]] | None = None,
+        thumbnails: list[bytes] | None = None,
     ) -> int:
         """
         Creates a new status update using the Twitter API.
