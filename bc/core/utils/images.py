@@ -318,7 +318,7 @@ class SponsoredThumbnail:
         small_w, small_h = self.small_font.getbbox(self.small_text)[-2:]
 
         bbox_height = title_h + small_h
-        bbox_width = title_w if title_w >= small_w else small_w
+        bbox_width = max(title_w, small_w)
 
         return (bbox_width, bbox_height)
 
