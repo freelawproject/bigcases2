@@ -9,4 +9,10 @@ class User(AbstractDateTimeModel, AbstractUser):
         help_text="The email address of the user.",
         unique=True,
     )
-    affiliation = models.TextField()
+    affiliation = models.TextField(help_text="User's affiliations", blank=True)
+
+    @property
+    def name(self):
+        if self.get_full_name():
+            return self.get_full_name()
+        return self.username
