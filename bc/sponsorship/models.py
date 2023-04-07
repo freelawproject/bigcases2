@@ -32,7 +32,7 @@ class Sponsorship(AbstractDateTimeModel):
         return f"{self.pk}: {self.user.username} - {self.original_amount}"
 
     @property
-    def thumbnail_message(self):
+    def thumbnail_message(self) -> str:
         if self.watermark_message:
             return self.watermark_message
         return f"This document contributed by {self.user.name}"
