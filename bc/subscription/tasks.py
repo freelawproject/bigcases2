@@ -5,6 +5,7 @@ from rq import Retry
 
 from bc.channel.models import Channel, Post
 from bc.channel.selectors import get_enabled_channels
+from bc.core.utils.images import add_sponsored_text_to_thumbnails
 from bc.core.utils.microservices import get_thumbnails_from_range
 from bc.core.utils.status.selectors import get_template_for_channel
 from bc.core.utils.status.templates import DO_NOT_POST
@@ -101,7 +102,9 @@ def process_fetch_webhook_event(fwe_pk: int):
     document = download_pdf_from_cl(cl_document["filepath_local"])
 
     sponsorship = get_active_sponsorship()
+    sponsor_message = None
     if sponsorship:
+        sponsor_message = sponsorship.thumbnail_message
         log_purchase(
             sponsorship, filing_webhook_event, cl_document["page_count"]
         )
@@ -113,6 +116,7 @@ def process_fetch_webhook_event(fwe_pk: int):
             subscription.pk,
             filing_webhook_event.pk,
             document,
+            sponsor_message,
             retry=Retry(
                 max=settings.RQ_MAX_NUMBER_OF_RETRIES,
                 interval=settings.RQ_RETRY_INTERVAL,
@@ -124,7 +128,11 @@ def process_fetch_webhook_event(fwe_pk: int):
 
 @transaction.atomic
 def make_post_for_webhook_event(
-    channel_pk: int, subscription_pk: int, fwe_pk: int, document: bytes | None
+    channel_pk: int,
+    subscription_pk: int,
+    fwe_pk: int,
+    document: bytes | None,
+    sponsor_text: str | None = None,
 ) -> Post:
     """Post a new status in the given channel using the data of the given webhook
     event and subscription.
@@ -159,6 +167,9 @@ def make_post_for_webhook_event(
     if document:
         thumbnail_range = "[1,2,3]" if image else "[1,2,3,4]"
         files = get_thumbnails_from_range(document, thumbnail_range)
+
+    if sponsor_text and files:
+        files = add_sponsored_text_to_thumbnails(files, sponsor_text)
 
     api = channel.get_api_wrapper()
     api_post_id = api.add_status(message, image, files)
