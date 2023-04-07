@@ -142,6 +142,7 @@ def make_post_for_webhook_event(
         subscription_pk (int): The pk of the subscription related to the webhook event.
         fwe_pk (int): The PK of the FilingWebhookEvent record.
         document (bytes | None): document content(if available) as bytes.
+        sponsor_text (str | None): sponsor message to include in the thumbnails.
 
     Returns:
         Post: A post object with the data of the new status that was created
