@@ -31,3 +31,10 @@ ratelimiter_unsafe_10_per_m = ratelimit(
     method=ratelimit.UNSAFE,
     block=True,
 )
+
+ratelimiter_unsafe_1_per_5m = ratelimit(
+    key=strip_port_to_make_ip_key,
+    rate="1/5m",
+    method=ratelimit.UNSAFE,
+    block=True,
+)
