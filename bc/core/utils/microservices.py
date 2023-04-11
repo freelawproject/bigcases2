@@ -1,14 +1,11 @@
 from io import BytesIO
-from typing import IO
 from zipfile import ZipFile
 
 import requests
 from django.conf import settings
 
 
-def get_thumbnails_from_range(
-    document: bytes, page_range: str
-) -> list[IO[bytes]]:
+def get_thumbnails_from_range(document: bytes, page_range: str) -> list[bytes]:
     """
     Returns a list that contains a thumbnail(as a binary object) for each
     page requested.
@@ -29,5 +26,6 @@ def get_thumbnails_from_range(
 
     zipfile = ZipFile(BytesIO(thumbnails.content))
     return [
-        zipfile.open(file_name) for file_name in sorted(zipfile.namelist())
+        zipfile.open(file_name).read()
+        for file_name in sorted(zipfile.namelist())
     ]
