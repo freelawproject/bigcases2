@@ -1,11 +1,12 @@
 from textwrap import wrap
-from unittest import TestCase
+
+from django.test import SimpleTestCase
 
 from bc.core.utils.images import TextImage
 from bc.core.utils.status.templates import MastodonTemplate
 
 
-class MastodonTemplateTest(TestCase):
+class MastodonTemplateTest(SimpleTestCase):
     def test_count_fixed_characters(self):
         template_with_breaks = (
             "New filing in {docket}\n"
@@ -101,30 +102,25 @@ class MastodonTemplateTest(TestCase):
             )
 
 
-class TextImageTest(TestCase):
-    tests = (
-        # Simple case
-        {"title": "short title", "description": 10 * "short description"},
-        # Short title and long description
-        {"title": 5 * "short title", "description": 20 * "short description"},
-        # Long title and long description
-        {"title": 15 * "short title", "description": 20 * "short description"},
-        {"title": 30 * "short title", "description": 50 * "short description"},
-    )
-
-    def test_creates_canvas_smaller_than_max_width(self):
-        for test in self.tests:
-            instance = TextImage(**test)
-            width, _ = instance.get_initial_dimensions()
-            self.assertLessEqual(
-                width,
-                instance.max_width,
-                msg="Failed with dict: %s.\n%s is larger than %s"
-                % (test, width, instance.max_width),
-            )
-
+class TextImageTest(SimpleTestCase):
     def test_max_character_count_avoids_overflow(self):
-        EDGE_CASE = (
+        tests = (
+            # Simple case
+            {"title": "short title", "description": 10 * "short description"},
+            # Short title and long description
+            {
+                "title": 5 * "short title",
+                "description": 20 * "short description",
+            },
+            # Long title and long description
+            {
+                "title": 15 * "short title",
+                "description": 20 * "short description",
+            },
+            {
+                "title": 30 * "short title",
+                "description": 50 * "short description",
+            },
             {
                 "title": (
                     "Case: Braidwood Management v. Becerra (ACA prev. care"
@@ -140,9 +136,16 @@ class TextImageTest(TestCase):
             },
         )
 
-        for test in self.tests + EDGE_CASE:
+        for test in tests:
             instance = TextImage(**test)
             instance.width, _ = instance.get_initial_dimensions()
+
+            self.assertLessEqual(
+                instance.width,
+                instance.max_width,
+                msg="Failed with dict: %s.\n%s is larger than %s"
+                % (test, instance.width, instance.max_width),
+            )
 
             # compute the max number of character to render in each line
             max_character = instance.get_max_character_count()
