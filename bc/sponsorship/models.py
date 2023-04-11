@@ -25,7 +25,7 @@ class Sponsorship(AbstractDateTimeModel):
     watermark_message = models.CharField(
         help_text="Short message to include in document's thumbnails",
         max_length=100,
-        blank=True,
+        default="",
     )
 
     def __str__(self) -> str:
