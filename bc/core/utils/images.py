@@ -134,9 +134,12 @@ class TextImage:
             wrapped_desc = wrap(
                 self.description, max_character + ceil(increment)
             )
-
+            wrapped_title = wrap(self.title, max_character + ceil(increment))
             # check if the new max number of characters won't overflow the rectangle
-            if self.get_available_space(wrapped_desc) <= 0:
+            if (
+                self.get_available_space(wrapped_desc) <= 0
+                or self.get_available_space(wrapped_title) <= 0
+            ):
                 break
             max_character += ceil(increment)
 
@@ -225,11 +228,9 @@ class TextImage:
     def make_image(self) -> Image:
         self.width, _ = self.get_initial_dimensions()
         max_character_count = self.get_max_character_count()
-
         # wrap the title and the description using the max_character_count
         wrapped_title = wrap(self.description, max_character_count)
         wrapped_desc = wrap(self.title, max_character_count)
-
         self.width, self.height = self.get_dimensions_with_padding(
             wrapped_title + wrapped_desc
         )
