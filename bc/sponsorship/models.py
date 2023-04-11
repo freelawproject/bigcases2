@@ -22,6 +22,11 @@ class Sponsorship(AbstractDateTimeModel):
         decimal_places=2,
         default=0,
     )
+    watermark_message = models.CharField(
+        help_text="Short message to include in document's thumbnails",
+        max_length=100,
+        default="",
+    )
 
     def __str__(self) -> str:
         return f"{self.pk}: {self.user.username} - {self.original_amount}"
