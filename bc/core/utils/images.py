@@ -131,8 +131,14 @@ class TextImage:
             increment = (
                 self.get_available_space(wrapped_desc) / reference_length
             )
+            wrapped_desc = wrap(
+                self.description, max_character + ceil(increment)
+            )
+
+            # check if the new max number of characters won't overflow the rectangle
+            if self.get_available_space(wrapped_desc) <= 0:
+                break
             max_character += ceil(increment)
-            wrapped_desc = wrap(self.description, max_character)
 
         return max_character
 
