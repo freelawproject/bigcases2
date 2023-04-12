@@ -73,14 +73,19 @@ def check_webhook_before_posting(fwe_pk: int):
     if filing_webhook_event.status != FilingWebhookEvent.SUCCESSFUL:
         return filing_webhook_event
 
+    # check if the webhook event is linked to a subscription record
+    if not filing_webhook_event.subscription:
+        raise AssertionError(
+            "The webhook event doesn't have a relationship with a subscription record"
+        )
+
     # check the description to filter junk docket entries
     if DO_NOT_POST.search(filing_webhook_event.description):
         filing_webhook_event.status = FilingWebhookEvent.IGNORED
         filing_webhook_event.save(update_fields=["status"])
         return filing_webhook_event
 
-    # check if the document is available or theres a sponsorship to
-    # purchase it.
+    # check if the document is available or there's a sponsorship to purchase it.
     document = None
     cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
     if cl_document["filepath_local"]:
@@ -125,6 +130,13 @@ def process_fetch_webhook_event(fwe_pk: int):
     :return: A FilingWebhookEvent object that was updated.
     """
     filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
+
+    # check if the webhook event is linked to a subscription record
+    if not filing_webhook_event.subscription:
+        raise AssertionError(
+            "The webhook event doesn't have a relationship with a subscription record"
+        )
+
     filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
     filing_webhook_event.save(update_fields=["status"])
 
