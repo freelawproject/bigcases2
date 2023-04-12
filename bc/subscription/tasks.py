@@ -27,14 +27,11 @@ def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
     """Process an event from a CL webhook.
 
     This function links a webhook event to one of the records in the
-    subscription table(or ignores it if the bot is not following the
-    case), checks the description of the event to filter junk docket
-    entries, and also checks if the document associated with the webhook
-    is available in the RECAP archive to retrieve it and use it to
-    create a post in the channels that are enabled.
+    subscription table or ignores it if the bot is not following the
+    case.
 
     :param fwe_pk: The PK of the FilingWebhookEvent record.
-    :return: A FilingWebhookEvent object that was updated.
+    :return: The FilingWebhookEvent object that was updated.
     """
     filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
 
@@ -52,13 +49,38 @@ def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
         filing_webhook_event.save()
         return filing_webhook_event
 
-    filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
     filing_webhook_event.subscription = subscription
+    filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
     filing_webhook_event.save()
 
-    if DO_NOT_POST.search(filing_webhook_event.description):
+    return filing_webhook_event
+
+
+@transaction.atomic
+def check_webhook_before_posting(fwe_pk: int):
+    """Checks the webhook event before start posting
+
+    This function checks the description of the event to avoid
+    creating post for junk docket entries, also checks if the document
+    associated with the webhook is available in the RECAP archive to
+    retrieve it and use it to create a post in the enabled channels.
+
+    :param fwe_pk: The PK of the FilingWebhookEvent record.
+    :return: the FilingWebhookEvent object used to .
+    """
+    filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
+
+    if filing_webhook_event.status != FilingWebhookEvent.SUCCESSFUL:
         return filing_webhook_event
 
+    # check the description to filter junk docket entries
+    if DO_NOT_POST.search(filing_webhook_event.description):
+        filing_webhook_event.status = FilingWebhookEvent.IGNORED
+        filing_webhook_event.save(update_fields=["status"])
+        return filing_webhook_event
+
+    # check if the document is available or theres a sponsorship to
+    # purchase it.
     document = None
     cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
     if cl_document["filepath_local"]:
@@ -67,6 +89,10 @@ def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
         sponsorship = get_active_sponsorship()
         if sponsorship and filing_webhook_event.pacer_doc_id:
             purchase_pdf_by_doc_id(filing_webhook_event.doc_id)
+            filing_webhook_event.status = (
+                FilingWebhookEvent.WAITING_FOR_DOCUMENT
+            )
+            filing_webhook_event.save(update_fields=["status"])
             return filing_webhook_event
 
     # Got the document or no sponsorship. Tweet and toot.
@@ -74,7 +100,7 @@ def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
         queue.enqueue(
             make_post_for_webhook_event,
             channel.pk,
-            subscription.pk,
+            filing_webhook_event.subscription.pk,
             filing_webhook_event.pk,
             document,
             retry=Retry(
@@ -90,13 +116,17 @@ def process_filing_webhook_event(fwe_pk: int) -> FilingWebhookEvent:
 def process_fetch_webhook_event(fwe_pk: int):
     """Process a RECAP fetch webhook event from CL.
 
+    This functions retrieves the new document available in the
+    RECAP archive, creates a new entry related to the purchase
+    in the ledger and schedule the tasks to create new post in
+    the enabled channels.
+
     :param fwe_pk: The PK of the FilingWebhookEvent record.
     :return: A FilingWebhookEvent object that was updated.
     """
     filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
-    subscription = Subscription.objects.get(
-        cl_docket_id=filing_webhook_event.docket_id
-    )
+    filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
+    filing_webhook_event.save(update_fields=["status"])
 
     cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
     document = download_pdf_from_cl(cl_document["filepath_local"])
@@ -113,7 +143,7 @@ def process_fetch_webhook_event(fwe_pk: int):
         queue.enqueue(
             make_post_for_webhook_event,
             channel.pk,
-            subscription.pk,
+            filing_webhook_event.subscription.pk,
             filing_webhook_event.pk,
             document,
             sponsor_message,
