@@ -20,6 +20,7 @@ CSP_CONNECT_SRC = ("'self'", "https://plausible.io/")
 CSP_SCRIPT_SRC = ("'self'", AWS_S3_CUSTOM_DOMAIN, "https://plausible.io/")
 CSP_DEFAULT_SRC = ("'self'", AWS_S3_CUSTOM_DOMAIN)
 
+RATELIMIT_VIEW = "bc.web.views.ratelimited"
 
 if DEVELOPMENT:
     SESSION_COOKIE_SECURE = False

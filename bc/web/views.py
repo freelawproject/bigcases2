@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
@@ -47,4 +49,12 @@ def big_cases_about(request: HttpRequest) -> HttpResponse:
         {
             "subscriptions": Subscription.objects.all(),
         },
+    )
+
+
+def ratelimited(request: HttpRequest, exception: Exception) -> HttpResponse:
+    return TemplateResponse(
+        request,
+        "429.html",
+        status=HTTPStatus.TOO_MANY_REQUESTS,
     )
