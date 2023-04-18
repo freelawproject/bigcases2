@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Sorry, Too Many Requests (429){% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 prose">
+  <div class="pt-10 mt-10">
+    <div class="flex flex-col items-center">
+      <div class="h-32 w-32 sm:h-48 sm:w-48 text-saffron-400">
+        {% include 'includes/inlines/exclamation-triangle.svg'%}
+      </div>
+      <div>
+        <h1 class="text-center mb-1 font-normal sm:text-3xl">429 Too Many Requests</h1>
+        <p class="text-base">
+          It appears that you are using the site too quickly and have exceeded our allowed usage. This usually means
+          that you're a bot.
+        </p>
+        <p class="text-base">
+          If you are not a bot, we are sorry you're getting this error. Please <a href="https://free.law/contact/">get
+            in touch</a> and we will be pleased to work with you to resolve the issue.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
