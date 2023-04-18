@@ -131,8 +131,17 @@ class TextImage:
             increment = (
                 self.get_available_space(wrapped_desc) / reference_length
             )
+            wrapped_desc = wrap(
+                self.description, max_character + ceil(increment)
+            )
+            wrapped_title = wrap(self.title, max_character + ceil(increment))
+            # check if the new max number of characters won't overflow the rectangle
+            if (
+                self.get_available_space(wrapped_desc) <= 0
+                or self.get_available_space(wrapped_title) <= 0
+            ):
+                break
             max_character += ceil(increment)
-            wrapped_desc = wrap(self.description, max_character)
 
         return max_character
 
@@ -219,11 +228,9 @@ class TextImage:
     def make_image(self) -> Image:
         self.width, _ = self.get_initial_dimensions()
         max_character_count = self.get_max_character_count()
-
         # wrap the title and the description using the max_character_count
         wrapped_title = wrap(self.description, max_character_count)
         wrapped_desc = wrap(self.title, max_character_count)
-
         self.width, self.height = self.get_dimensions_with_padding(
             wrapped_title + wrapped_desc
         )
@@ -278,3 +285,163 @@ class TextImage:
 
         # Turn the BytesIO object back into a bytes object
         return buffer.getvalue()
+
+
+@dataclass
+class SponsoredThumbnail:
+    title: str
+    thumbnail: bytes
+    format: str = "png"
+    margin: int = 40
+    small_text: str | None = None
+    title_font_path: str | None = finders.find("fonts/CooperHewitt-Bold.otf")
+    small_font_path: str | None = finders.find("fonts/CooperHewitt-Medium.otf")
+    text_box: Image = field(init=False)
+    background: Image = field(init=False)
+    overlay_layer: Image = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.title_font = ImageFont.truetype(self.title_font_path, 46)
+        self.small_font = ImageFont.truetype(self.small_font_path, 22)
+        self.background = Image.open(io.BytesIO(self.thumbnail)).convert(
+            "RGBA"
+        )
+        # make a transparent image for the text
+        self.overlay_layer = Image.new(
+            "RGBA", self.background.size, (255, 255, 255, 0)
+        )
+        if not self.small_text:
+            self.small_text = "Learn more about supporting Free Law Project at https://bots.law/sponsors/"
+
+    def get_text_box_dimensions(self) -> tuple[int, int]:
+        """
+        Returns the dimensions(width and height, in pixels) of a text box to render
+        the sponsored text.
+
+        Returns:
+            tuple[int,int]: (width, height) dimensions
+        """
+        title_w, title_h = self.title_font.getbbox(self.title)[-2:]
+        small_w, small_h = self.small_font.getbbox(self.small_text)[-2:]
+
+        bbox_height = title_h + small_h
+        bbox_width = max(title_w, small_w)
+
+        return (bbox_width, bbox_height)
+
+    def _fill_text_box(self) -> Image:
+        """
+        Creates a canvas for the text box and draw the sponsored text inside it
+
+        This method computes the anchors for each line of the sponsor message so
+        the whole message looks centered in the text box.
+
+        Returns:
+            Image: text box image filled with the sponsored text.
+        """
+        text_box_width, text_box_height = self.get_text_box_dimensions()
+
+        text_box_w_padding = (
+            int(text_box_width * 1.1),
+            int(text_box_height * 1.1),
+        )
+
+        text_box = Image.new(
+            "RGBA",
+            text_box_w_padding,
+            (255, 255, 255, 0),
+        )
+        # get a drawing context
+        text_box_draw = Draw(text_box)
+
+        # Draw the title centered in the text box
+        title_w, title_h = self.title_font.getbbox(self.title)[-2:]
+        text_box_draw.text(
+            (
+                (text_box_w_padding[0] - title_w) // 2,
+                0.1 * text_box_height // 2,
+            ),
+            self.title,
+            fill=(25, 25, 25, 128),
+            font=self.title_font,
+        )
+
+        # Draw the small text centered in the text box
+        small_w, _ = self.small_font.getbbox(self.small_text)[-2:]
+        text_box_draw.text(
+            (
+                (text_box_w_padding[0] - small_w) // 2,
+                0.1 * text_box_height // 2 + title_h + 5,
+            ),
+            self.small_text,
+            fill=(25, 25, 25, 164),
+            font=self.small_font,
+        )
+
+        return text_box
+
+    def add_sponsored_text(self) -> None:
+        """
+        Adds the sponsored text to the thumbnail.
+
+        This method gets the text box and rotates it 270 degree CCW
+        to place it along the left edge of the thumbnail.
+
+        If We paste the text box directly into the thumbnail, the
+        sponsored message won't use the opacity property. The PIL docs
+        has an example to draw partial opacity text and shows that this
+        is a two-step process:
+
+        - Drawing with opacity on a blank canvas that has the same dimensions
+        as the background image.
+        - Alpha composite these two images(the blank canvas and the background)
+        together to obtain the desired result.
+
+        This function pastes the text box into a canvas called overlay_layer(the
+        blank canvas described in the first step above) and then uses the
+        alpha_composite method to get the desired result.
+        """
+        # Get the text box
+        self.text_box = self._fill_text_box()
+
+        # Rotate the text box
+        rotated_text_box = self.text_box.rotate(
+            angle=270, expand=True, fillcolor=(0, 0, 0, 0)
+        )
+        rotated_text_box_size = rotated_text_box.size
+
+        # Compute the coordinates to place the text in the overlay layer
+        overlay_size = self.overlay_layer.size
+        x = overlay_size[0] - rotated_text_box_size[0] - self.margin
+        y = (overlay_size[1] - rotated_text_box_size[1]) // 2
+
+        # Place the text in the
+        self.overlay_layer.paste(rotated_text_box, (x, y))
+
+        # Combine the overlay layer and the background
+        self.background = Image.alpha_composite(
+            self.background, self.overlay_layer
+        )
+
+    def to_bytes(self) -> bytes:
+        """
+        Returns the byte representation of the thumbnail
+
+        Returns:
+            bytes: byte representation of the thumbnail
+        """
+        buffer = io.BytesIO()
+        self.background.save(buffer, format="png")
+
+        return buffer.getvalue()
+
+
+def add_sponsored_text_to_thumbnails(
+    files: list[bytes], text: str
+) -> list[bytes]:
+    watermarked_thumbnails = []
+    for file in files:
+        thumbnail = SponsoredThumbnail(thumbnail=file, title=text)
+        thumbnail.add_sponsored_text()
+        watermarked_thumbnails.append(thumbnail.to_bytes())
+    return watermarked_thumbnails

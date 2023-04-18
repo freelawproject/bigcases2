@@ -2,7 +2,6 @@ import base64
 import logging
 import re
 from textwrap import shorten
-from typing import IO
 
 from django.conf import settings
 from django.urls import reverse
@@ -47,7 +46,7 @@ class MastodonConnector:
         self,
         message: str,
         text_image: TextImage | None = None,
-        thumbnails: list[IO[bytes]] | None = None,
+        thumbnails: list[bytes] | None = None,
     ) -> int:
         media_ids = []
         if text_image:

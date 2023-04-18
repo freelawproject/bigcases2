@@ -17,7 +17,11 @@ from bc.subscription.exceptions import (
 
 from .api_permissions import AllowListPermission
 from .models import FilingWebhookEvent
-from .tasks import process_fetch_webhook_event, process_filing_webhook_event
+from .tasks import (
+    check_webhook_before_posting,
+    process_fetch_webhook_event,
+    process_filing_webhook_event,
+)
 
 queue = get_queue("default")
 
@@ -59,10 +63,16 @@ def handle_docket_alert_webhook(request: Request) -> Response:
                 long_description=long_description,
             )
 
-            queue.enqueue_in(
+            webhook_event_handler = queue.enqueue_in(
                 timedelta(seconds=settings.WEBHOOK_DELAY_TIME),
                 process_filing_webhook_event,
                 filing.pk,
+            )
+
+            queue.enqueue(
+                check_webhook_before_posting,
+                filing.pk,
+                depends_on=webhook_event_handler,
                 retry=Retry(
                     max=settings.RQ_MAX_NUMBER_OF_RETRIES,
                     interval=settings.RQ_RETRY_INTERVAL,
