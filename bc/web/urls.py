@@ -2,7 +2,7 @@ from django.urls import path
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
-from bc.core.utils.network import ratelimiter_unsafe_1_per_5m
+from bc.core.utils.network import ratelimiter_unsafe_5_per_30m
 
 from .views import big_cases_about, collaboration, count_dockets, little_cases
 
@@ -31,12 +31,12 @@ urlpatterns = [
     ),
     path(
         "little-cases/",
-        ratelimiter_unsafe_1_per_5m(little_cases),
+        ratelimiter_unsafe_5_per_30m(little_cases),
         name="little_cases",
     ),
     path(
         "collaboration/",
-        ratelimiter_unsafe_1_per_5m(collaboration),
+        ratelimiter_unsafe_5_per_30m(collaboration),
         name="collaboration",
     ),
     path(
