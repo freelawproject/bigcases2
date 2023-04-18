@@ -12,9 +12,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2-beta
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
+        id: cp311
         with:
           python-version: "3.11"
 
@@ -29,7 +30,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: .venv
-          key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          key: venv-${{ runner.os }}-cache-${{ steps.cp311.outputs.version }}-${{ hashFiles('**/poetry.lock')}}-v20210414
 
       - name: Install dependencies
         run: poetry install
