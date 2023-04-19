@@ -8,7 +8,7 @@ from bc.channel.selectors import get_enabled_channels
 from bc.core.utils.images import add_sponsored_text_to_thumbnails
 from bc.core.utils.microservices import get_thumbnails_from_range
 from bc.core.utils.status.selectors import get_template_for_channel
-from bc.core.utils.status.templates import DO_NOT_POST
+from bc.core.utils.status.templates import DO_NOT_PAY, DO_NOT_POST
 from bc.sponsorship.selectors import get_active_sponsorship
 from bc.sponsorship.services import log_purchase
 from bc.subscription.utils.courtlistener import (
@@ -92,7 +92,11 @@ def check_webhook_before_posting(fwe_pk: int):
         document = download_pdf_from_cl(cl_document["filepath_local"])
     else:
         sponsorship = get_active_sponsorship()
-        if sponsorship and filing_webhook_event.pacer_doc_id:
+        if (
+            sponsorship
+            and filing_webhook_event.pacer_doc_id
+            and not DO_NOT_PAY.search(filing_webhook_event.description)
+        ):
             purchase_pdf_by_doc_id(filing_webhook_event.doc_id)
             filing_webhook_event.status = (
                 FilingWebhookEvent.WAITING_FOR_DOCUMENT
