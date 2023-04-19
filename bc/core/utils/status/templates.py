@@ -14,6 +14,15 @@ DO_NOT_POST = re.compile(
     re.VERBOSE | re.IGNORECASE,
 )
 
+DO_NOT_PAY = re.compile(
+    r"""(
+    withdraw\sas\sattorney|         # withdraw as attorney
+    summons\s.*\sexecuted|          # summons .* executed
+    none
+    )""",
+    re.VERBOSE | re.IGNORECASE,
+)
+
 MASTODON_POST_TEMPLATE = MastodonTemplate(
     link_placeholders=["pdf_link", "docket_link"],
     str_template="""New filing: "{docket}"
