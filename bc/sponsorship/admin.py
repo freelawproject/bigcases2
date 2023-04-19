@@ -9,4 +9,6 @@ class SponsorshipAdmin(admin.ModelAdmin):
     exclude = ("current_amount",)
 
 
-admin.site.register(Transaction)
+@admin.register(Transaction)
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ("__str__", "type", "amount")
