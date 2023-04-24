@@ -4,6 +4,7 @@ from typing import TypedDict
 import courts_db
 import requests
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 from .exceptions import MultiDefendantCaseError
 
@@ -35,6 +36,13 @@ def map_pacer_to_cl_id(pacer_id):
 
 def map_cl_to_pacer_id(cl_id):
     return cl_to_pacer_ids.get(cl_id, cl_id)
+
+
+def get_cl_id_from_query(query: str) -> str:
+    if query.isnumeric():
+        return query
+
+    raise ValidationError("The query string provided is invalid")
 
 
 def lookup_court(court: str):
