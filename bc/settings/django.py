@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     # other apps
     "django_rq",
     "tailwind",
+    "django_htmx",
 ]
 
 if DEVELOPMENT:
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_ratelimit.middleware.RatelimitMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
     "csp.middleware.CSPMiddleware",
 ]
 
