@@ -49,6 +49,7 @@ boto3 = "^1.26.80"
 django-tailwind = "^3.5.0"
 django-ratelimit = "^4.0.0"
 twitterapi = "^2.8.2"
+django-htmx = "^1.14.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
