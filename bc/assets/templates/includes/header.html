@@ -73,7 +73,7 @@
                                     {% include './inlines/caret.svg' %}
                                 </div>
                             </button>
-                            <div class="absolute top-16 -translate-x-8 xl:-translate-x-32">
+                            <div class="absolute top-16 -translate-x-8 xl:-translate-x-32 z-50">
                                 <div id="dropdown" class="z-10 bg-white hidden divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden max-w-xs md:w-screen lg:max-w-md">
                                     <div class="relative grid px-5 py-6 gap-4 text-sm text-gray-700 dark:text-gray-400 md:gap-8 sm:p-8" aria-labelledby="dropdownNavbarButton">
                                         <a href="{% url 'big_cases_about' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100" aria-label="About Me">
@@ -127,6 +127,11 @@
                         <a href="{% url 'collaboration' %}" aria-label="Chat Apps" class="text-sm lg:text-base font-medium uppercase hover:text-gray-700">
                             Chat Apps
                         </a>
+                        {% if user.is_authenticated %}
+                          <a href="{% url 'add_cases' %}" aria-label="Chat Apps" class="text-sm lg:text-base font-medium uppercase hover:text-gray-700">
+                              Add a case
+                          </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
