@@ -1,0 +1,23 @@
+{% extends "post.html" %}
+{% load static %}
+
+{% block head_script %}
+
+<script src="{% static "js/htmx.min.js" %}"></script>
+<script src="{% static "js/loading-states.js" %}"></script>
+
+{% endblock %}
+
+{% block title %}Add a new case{% endblock %}
+
+{% block post_title %}Add a new case{% endblock %}
+
+{% block post_content %}
+<p>Use the following search bar to look up a case you want to follow:</p>
+
+{% include "./includes/search_htmx/search-form.html" with form=form %}
+
+<div id="searchResults">
+
+</div>
+{% endblock %}
