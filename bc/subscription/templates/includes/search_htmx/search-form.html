@@ -1,15 +1,10 @@
-<form hx-ext="loading-states" hx-get="{% url 'search_cases' %}" hx-target="#searchResults">
+<form hx-ext="loading-states" hx-get="{% url 'search_cases' %}" hx-target="#searchResults" data-loading-states>
   <div class="flex flex-col">
     <div class="flex item-center">
       <label for="simple-search" class="sr-only">Search</label>
       <div class="relative w-full">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-          <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clip-rule="evenodd"></path>
-          </svg>
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+          {% include 'includes/inlines/magnifying-glass.svg'%}
         </div>
         <input type="text" id="simple-search" name="q"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 placeholder-gray-400"
@@ -17,15 +12,12 @@
       </div>
       <button type="submit"
         class="p-2.5 ml-2 text-sm font-medium text-white bg-saffron-400 rounded-lg border border-saffron-400 hover:bg-saffron-500 focus:ring-4 focus:outline-none focus:ring-blue-300">
-        <svg class="w-5 h-5 text-bcb-black" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" data-loading-class="hidden">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
-          </path>
-        </svg>
-        <svg data-loading class="animate-spin  h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
+        <div class="text-bcb-black" data-loading-class="hidden">
+          {% include 'includes/inlines/magnifying-glass.svg'%}
+        </div>
+        <div data-loading="flex" class="items-center justify-center animate-spin text-white w-4 h-4">
+          {% include 'includes/inlines/spinning-circle.svg'%}
+        </div>
         <span class="sr-only">Search</span>
       </button>
     </div>
