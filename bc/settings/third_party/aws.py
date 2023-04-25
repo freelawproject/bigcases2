@@ -17,6 +17,9 @@ AWS_STORAGE_BUCKET_NAME = env(
 AWS_S3_CUSTOM_DOMAIN = "storage.bots.law"
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
+AWS_CLOUDFRONT_DISTRIBUTION_ID = env(
+    "AWS_CLOUDFRONT_DISTRIBUTION_ID", default=""
+)
 
 if DEVELOPMENT:
     AWS_STORAGE_BUCKET_NAME = "dev-law-bots-storage"
