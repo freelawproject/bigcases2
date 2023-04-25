@@ -1,14 +1,20 @@
 import logging
+import re
 from typing import TypedDict
 
 import courts_db
 import requests
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 from .exceptions import MultiDefendantCaseError
 
 logger = logging.getLogger(__name__)
+
+DOCKET_URL_PATTERN = re.compile(
+    r"(?:www\.courtlistener\.com\/docket\/)(?P<docket_id>\d+)(?:\/.*)"
+)
 
 CL_API = {
     "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
@@ -38,9 +44,30 @@ def map_cl_to_pacer_id(cl_id):
     return cl_to_pacer_ids.get(cl_id, cl_id)
 
 
-def get_cl_id_from_query(query: str) -> str:
-    if query.isnumeric():
-        return query
+def get_docket_id_from_query(query: str) -> int:
+    """Returns the docket id extracted from the search query
+
+    Args:
+        query (str): the query string provided by the curators using the search bar
+
+    Raises:
+        ValidationError: if the provided string is not a number or a valid URL.
+
+    Returns:
+        int: the docket id
+    """
+    cleaned_str = query.strip()
+    if cleaned_str.isnumeric():
+        return int(cleaned_str)
+
+    # check if the query string is a valid URL
+    validator = URLValidator()
+    validator(cleaned_str)
+
+    # check if the query string is a CL docket link or a CL PDF link
+    is_docket_link = re.search(DOCKET_URL_PATTERN, cleaned_str)
+    if is_docket_link:
+        return int(is_docket_link.group("docket_id"))
 
     raise ValidationError("The query string provided is invalid")
 
