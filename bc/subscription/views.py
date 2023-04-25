@@ -31,8 +31,8 @@ def search(request: Request) -> Response:
             context["docket_id"] = docket_id
             context["case_name"] = data["case_name"]
             template = "./includes/search_htmx/case-form.html"
-        else:
-            template = "./includes/search_htmx/no-result.html"
+    except HTTPError:
+        template = "./includes/search_htmx/no-result.html"
     except ValidationError:
         template = "./includes/search_htmx/invalid-keyword.html"
 
