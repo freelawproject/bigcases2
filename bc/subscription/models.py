@@ -116,6 +116,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
     IN_PROGRESS = 4
     IGNORED = 5
     WAITING_FOR_DOCUMENT = 6
+    PURCHASE_FAILED = 7
     CHOICES = (
         (SCHEDULED, "Awaiting processing in queue."),
         (SUCCESSFUL, "Item processed successfully."),
@@ -123,6 +124,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         (IN_PROGRESS, "Item is currently being processed."),
         (IGNORED, "Item ignored"),
         (WAITING_FOR_DOCUMENT, "Awaiting for document purchase"),
+        (PURCHASE_FAILED, "Document purchase failed"),
     )
 
     docket_id = models.IntegerField(
