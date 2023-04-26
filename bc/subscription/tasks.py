@@ -208,6 +208,7 @@ def make_post_for_webhook_event(
         doc_num=filing_webhook_event.document_number,
         pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
         docket_link=filing_webhook_event.cl_docket_url,
+        docket_id=filing_webhook_event.docket_id,
     )
 
     files = None
