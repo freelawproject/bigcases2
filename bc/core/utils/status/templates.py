@@ -29,7 +29,9 @@ MASTODON_POST_TEMPLATE = MastodonTemplate(
 Doc #{doc_num}: {description}
 
 PDF: {pdf_link}
-Docket: {docket_link}""",
+Docket: {docket_link}
+
+#CL{docket_id}""",
 )
 
 
@@ -37,7 +39,9 @@ MASTODON_MINUTE_TEMPLATE = MastodonTemplate(
     link_placeholders=["docket_link"],
     str_template="""New minute entry in {docket}: {description}
 
-Docket: {docket_link}""",
+Docket: {docket_link}
+
+#CL{docket_id}""",
 )
 
 TWITTER_POST_TEMPLATE = TwitterTemplate(
