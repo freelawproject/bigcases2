@@ -205,7 +205,7 @@ def make_post_for_webhook_event(
     message, image = template.format(
         docket=subscription.name_with_summary,
         description=filing_webhook_event.description,
-        doc_num=filing_webhook_event.document_number,
+        doc_num=filing_webhook_event.document_number_with_attachment,
         pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
         docket_link=filing_webhook_event.cl_docket_url,
         docket_id=filing_webhook_event.docket_id,
