@@ -12,7 +12,26 @@
   <p>
     <a href="https://free.law/contact/" class="tracking-[.8px] text-center whitespace-nowrap border border-transparent rounded-md shadow-sm text-base font-medium no-underline py-3 px-6 sm:text-md cursor bg-saffron-400 hover:bg-saffron-500">Contact Us</a>
   </p>
+  {% if current_sponsors %}
+  <h2>Current sponsors</h2>
+  <div class="grid grid-cols-3 gap-4">
+    {% for sponsor in current_sponsors %}
+      <div class="text-center">
+        {{ sponsor.user.affiliation }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
 
+  {% if past_sponsors %}
   <h2>Past Sponsors</h2>
-  <p>None yet!</p>
+  <div class="grid grid-cols-3 gap-4">
+    {% for sponsor in past_sponsors %}
+      <div class="text-center">
+        {{ sponsor.user.affiliation }}
+      </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
 {% endblock %}

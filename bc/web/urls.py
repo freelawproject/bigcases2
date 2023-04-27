@@ -4,7 +4,13 @@ from django.views.generic.base import RedirectView
 
 from bc.core.utils.network import ratelimiter_unsafe_5_per_30m
 
-from .views import big_cases_about, collaboration, count_dockets, little_cases
+from .views import (
+    big_cases_about,
+    big_cases_sponsors,
+    collaboration,
+    count_dockets,
+    little_cases,
+)
 
 urlpatterns = [
     path("", count_dockets, name="homepage"),
@@ -21,7 +27,7 @@ urlpatterns = [
     ),
     path(
         "big-cases/sponsors/",
-        TemplateView.as_view(template_name="big-cases/sponsors.html"),
+        big_cases_sponsors,
         name="big_cases_sponsors",
     ),
     path(
