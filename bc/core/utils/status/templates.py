@@ -44,6 +44,15 @@ Docket: {docket_link}
 #CL{docket_id}""",
 )
 
+MASTODON_FOLLOW_A_NEW_CASE = MastodonTemplate(
+    link_placeholders=[],
+    str_template="""I'm now following {docket}:
+
+{docket_link}
+
+#CL{docket_id}""",
+)
+
 TWITTER_POST_TEMPLATE = TwitterTemplate(
     link_placeholders=["pdf_link"],
     str_template="""New filing: "{docket}"
@@ -60,9 +69,8 @@ Docket: {docket_link}""",
 )
 
 
-FOLLOW_A_NEW_CASE_TEMPLATE = BaseTemplate(
+TWITTER_FOLLOW_A_NEW_CASE = TwitterTemplate(
     link_placeholders=[],
-    max_characters=280,
     str_template="""I'm now following {docket}:
 
 {docket_link}""",
