@@ -6,6 +6,11 @@ from textwrap import shorten
 from django.conf import settings
 from django.urls import reverse
 from mastodon import Mastodon
+from mastodon.errors import (
+    MastodonGatewayTimeoutError,
+    MastodonNetworkError,
+    MastodonServerError,
+)
 
 from bc.core.utils.images import TextImage
 
@@ -23,6 +28,7 @@ class MastodonConnector:
         mastodon = Mastodon(
             api_base_url=settings.MASTODON_SERVER,
             access_token=settings.MASTODON_TOKEN,
+            request_timeout=60,
         )
 
         logger.debug(f"Created Mastodon instance: {mastodon}")
@@ -50,18 +56,35 @@ class MastodonConnector:
     ) -> int:
         media_ids = []
         if text_image:
-            media_id = self.upload_media(
-                text_image.to_bytes(),
-                f"An image of the entry's full text: {text_image.description}",
-            )
-            media_ids.append(media_id)
+            try:
+                media_id = self.upload_media(
+                    text_image.to_bytes(),
+                    f"An image of the entry's full text: {text_image.description}",
+                )
+                media_ids.append(media_id)
+            except (
+                MastodonServerError,
+                MastodonGatewayTimeoutError,
+                MastodonNetworkError,
+            ):
+                # clean the media array
+                media_ids = []
 
         if thumbnails:
             for idx, thumbnail in enumerate(thumbnails):
-                media_id = self.upload_media(
-                    thumbnail, f"Thumbnail of page {idx + 1} of the PDF"
-                )
-                media_ids.append(media_id)
+                try:
+                    media_id = self.upload_media(
+                        thumbnail, f"Thumbnail of page {idx + 1} of the PDF"
+                    )
+                    media_ids.append(media_id)
+                except (
+                    MastodonServerError,
+                    MastodonGatewayTimeoutError,
+                    MastodonNetworkError,
+                ):
+                    # clean the media array and break the loop
+                    media_ids = []
+                    break
 
         api_response = self.api.status_post(message, media_ids=media_ids)
 
