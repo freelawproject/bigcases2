@@ -190,6 +190,12 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         ]
 
     @property
+    def document_number_with_attachment(self) -> str:
+        if self.attachment_number:
+            return f"{self.document_number}-{self.attachment_number}"
+        return f"{self.document_number}"
+
+    @property
     def cl_document_url(self) -> str | None:
         if not self.subscription:
             return None
