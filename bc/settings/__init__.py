@@ -1,5 +1,6 @@
 from .django import *
 from .misc import *
+from .project.email import *
 from .project.security import *
 from .project.testing import *
 from .third_party.aws import *
