@@ -18,18 +18,15 @@
     message (typically something like, "This update sponsored by Acme Law, Inc.").
   </p>
   <p>To sponsor the Bot, please get in touch and we'll go over the details.</p>
-  <p>
-    {% include 'includes/yellow-button.html' with link="https://free.law/contact/" text='Contact Us'
-    class="tracking-[.8px] shadow-sm text-base font-medium no-underline py-3 px-6 sm:text-md cursor" %}
+  <p class="tracking-[.8px] font-medium max-w-[135px]">
+      {% include 'includes/yellow-button.html' with link="https://free.law/contact/" text='Contact Us' class="p-2" %}
   </p>
 
   {% if current_sponsors %}
   <h2>Current sponsors</h2>
   <div class="grid grid-cols-3 gap-4">
     {% for sponsor in current_sponsors %}
-      <div class="text-center">
-        {{ sponsor.user.affiliation }}
-      </div>
+      <div class="text-center">{{ sponsor.user.affiliation }}</div>
     {% endfor %}
   </div>
   {% endif %}
@@ -38,9 +35,7 @@
   <h2>Past Sponsors</h2>
   <div class="grid grid-cols-3 gap-4">
     {% for sponsor in past_sponsors %}
-      <div class="text-center">
-        {{ sponsor.user.affiliation }}
-      </div>
+      <div class="text-center">{{ sponsor.user.affiliation }}</div>
     {% endfor %}
   </div>
   {% endif %}

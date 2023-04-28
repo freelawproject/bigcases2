@@ -9,7 +9,7 @@
       <h1 class="md:max-w-md xl:max-w-xl font-[800] text-5xl md:text-6xl lg:text-6xl xl:text-7xl text-left">
         Hi! I’m the bot that keeps you updated about court cases!
       </h1>
-      <img alt='Full body robot holding a gavel' src="{% static " svg/full-body-left-hand.svg" %}"
+      <img alt='Full body robot holding a gavel' src="{% static "svg/full-body-left-hand.svg" %}"
         class="hidden sm:block w-32 sm:w-56 md:w-80 lg:w-96 xl:w-[500px] xl:h-[550px]">
     </div>
   </div>
@@ -21,7 +21,7 @@
       <div class="grid grid-cols-2 flex flex-col justify-center gap-10 pt-6">
         <div class="flex justify-start self-start">
           <img alt='logos for popular chat applications, including Slack, Discord, Microsoft Teams and Google Chat'
-            src="{% static " svg/chat-app-logos-combined.svg" %}"
+            src="{% static "svg/chat-app-logos-combined.svg" %}"
             class="w-48 h-[172px] object-contain sm:w-64 sm:h-[230px] md:w-72 md:h-[259px] lg:w-80 lg:h-[288px] xl:w-[490px] xl:h-[440px]">
         </div>
         <div class="flex w-full justify-center">
@@ -32,36 +32,30 @@
             <p class="pt-5 xl:pt-12 text-md md:text-xl lg:text-2xl xl:text-3xl font-light">
               Getting updates about cases is important, so I’ll keep you posted on Slack, Discord, MS Teams and more.
             </p>
-            {% url 'collaboration' as collaboration_page %}
-            {% with collaboration_page|addstr:"#join" as join_the_waitlist %}
-              {% include 'includes/yellow-button.html' with link=join_the_waitlist text="Join the Waitlist"
-              class='tracking-[.8px] text-base hidden sm:block mt-8 px-12 py-3 md:w-2/3 lg:w-1/2' %}
-            {% endwith %}
+            <div class="tracking-[.8px] hidden sm:block mt-8 md:w-2/3 lg:w-1/2">
+              {% url 'collaboration' as collaboration_page %}
+              {% with collaboration_page|addstr:"#join" as join_the_waitlist %}
+              {% include 'includes/yellow-button.html' with link=join_the_waitlist text="Join the Waitlist" class='p-3' %}
+              {% endwith %}
+            </div>
           </div>
         </div>
       </div>
-      <div class="flex w-full">
+      <div class="flex tracking-[.8px] sm:hidden w-full mt-8 flex-col">
         {% url 'collaboration' as collaboration_page %}
         {% with collaboration_page|addstr:"#join" as join_the_waitlist %}
-          {% include 'includes/yellow-button.html' with link=join_the_waitlist text="Join the Waitlist"
-          class='tracking-[.8px] w-full sm:hidden mt-8 px-12 py-3' %}
+          {% include 'includes/yellow-button.html' with link=join_the_waitlist text="Join the Waitlist" class='p-3' %}
         {% endwith %}
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-24 pt-10 md:pt-20">
         {% url 'big_cases_about' as big_cases_about %}
-        {% include "includes/grid-list-item.html" with heading="Big Cases" content='Originally hosted by USA Today, my
-        <a class="underline" href="https://twitter.com/big_cases">Twitter</a> and <a class="underline" rel="me"
-          href="https://law.builders/@bigcases">Mastodon</a> bots post updates about the most important cases in the
-        country.' href=big_cases_about %}
+        {% include "includes/grid-list-item.html" with heading="Big Cases" content='Originally hosted by USA Today, my <a class="underline" href="https://twitter.com/big_cases">Twitter</a> and <a class="underline" rel="me" href="https://law.builders/@bigcases">Mastodon</a> bots post updates about the most important cases in the country.' href=big_cases_about %}
 
         {% url 'little_cases' as little_cases%}
-        {% include "includes/grid-list-item.html" with heading='Little Cases' content='Want to make a custom bot that
-        follows cases you think are important? My creators are making a system for that.' href=little_cases %}
+        {% include "includes/grid-list-item.html" with heading='Little Cases' content='Want to make a custom bot that follows cases you think are important? My creators are making a system for that.' href=little_cases %}
 
         {% url 'big_cases_my_code' as big_cases_my_code%}
-        {% include "includes/grid-list-item.html" with heading='Free, Searchable Documents' content='My links are
-        powered by the crowd. This means that when one person donates a document to me, everybody else gets it for
-        free.' href=big_cases_my_code %}
+        {% include "includes/grid-list-item.html" with heading='Free, Searchable Documents' content='My links are powered by the crowd. This means that when one person donates a document to me, everybody else gets it for free.' href=big_cases_my_code %}
       </div>
     </div>
   </div>
@@ -80,23 +74,23 @@
             <br><br>
             If you like what I do, please support Free Law Project with a donation.
           </p>
-          {% include 'includes/yellow-button.html' with link="https://free.law/donate/" text="Donate Now"
-          class="tracking-[.8px] hidden sm:block text-base mt-8 p-3 md:w-2/3 lg:w-2/5" %}
+          <div class="tracking-[.8px] hidden sm:block text-base mt-8 md:w-2/3 lg:w-2/5">
+            {% include 'includes/yellow-button.html' with link="https://free.law/donate/" text="Donate Now" class="p-3" %}
+          </div>
       </div>
 
       <div class="w-full hidden md:flex mx-auto justify-center items-center">
-        <img alt='The FLP logo' src="{% static " svg/free-law-banner.svg" %}" layout="responsive"
+        <img alt='The FLP logo' src="{% static "svg/free-law-banner.svg" %}" layout="responsive"
           class="object-contain hidden md:block md:w-15 lg:h-[200px] lg:w-[600px]" />
       </div>
 
       <div class="w-full flex justify-center md:hidden row-span-1 align-center items-center">
-        <img alt='The FLP logo' src="{% static " svg/free-law-icon.svg" %}" layout="responsive"
+        <img alt='The FLP logo' src="{% static "svg/free-law-icon.svg" %}" layout="responsive"
           class="h-40 w-[172px]" />
       </div>
     </section>
-    <div class="flex sm:hidden w-full pt-4 flex-col text-md md:text-lg lg:text-2xl font-light">
-      {% include 'includes/yellow-button.html' with link="https://free.law/donate/" text="Donate Now"
-      class="tracking-[.8px] mt-8 p-3 md:w-2/3 lg:w-2/5" %}
+    <div class="flex tracking-[.8px] sm:hidden w-full pt-4 mt-8 flex-col text-md font-light">
+      {% include 'includes/yellow-button.html' with link="https://free.law/donate/" text="Donate Now" class="p-3" %}
     </div>
   </div>
 </section>
