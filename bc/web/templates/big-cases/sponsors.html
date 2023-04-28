@@ -4,21 +4,29 @@
 {% block post_title %}Sponsoring the Big Cases Bot{% endblock %}
 
 {% block post_content %}
-  <p class="lead">The Big Cases Bot provides updates about the most important cases in the country to an audience of more than 50,000 attorneys, journalists, and court watchers.</p>
-  <p>When the Bot is sponsored, it purchases PDFs from PACER to share in its posts as links and thumbnails. This allows the public to easily read the important documents of the moment, and ensures that those documents are contributed to RECAP and the Internet Archive for long term preservation.
+  <p class="lead">
+    The Big Cases Bot provides updates about the most important cases in the country to an audience of more
+    than 50,000 attorneys, journalists, and court watchers.
   </p>
-  <p>Sponsors of the Bot are recognized for their support in the thumbnails the bot posts, which are watermarked with your message (typically something like, "This update sponsored by Acme Law, Inc.").</p>
-  <p>To sponsor the Bot, please get in touch and we'll go over the details.</p>
   <p>
-    <a href="https://free.law/contact/" class="tracking-[.8px] text-center whitespace-nowrap border border-transparent rounded-md shadow-sm text-base font-medium no-underline py-3 px-6 sm:text-md cursor bg-saffron-400 hover:bg-saffron-500">Contact Us</a>
+    When the Bot is sponsored, it purchases PDFs from PACER to share in its posts as links and thumbnails. This allows
+    the public to easily read the important documents of the moment, and ensures that those documents are contributed to
+    RECAP and the Internet Archive for long term preservation.
   </p>
+  <p>
+    Sponsors of the Bot are recognized for their support in the thumbnails the bot posts, which are watermarked with your
+    message (typically something like, "This update sponsored by Acme Law, Inc.").
+  </p>
+  <p>To sponsor the Bot, please get in touch and we'll go over the details.</p>
+  <p class="tracking-[.8px] font-medium max-w-[135px]">
+    {% include 'includes/yellow-button.html' with link="https://free.law/contact/" text='Contact Us' size="sm" %}
+  </p>
+
   {% if current_sponsors %}
   <h2>Current sponsors</h2>
   <div class="grid grid-cols-3 gap-4">
     {% for sponsor in current_sponsors %}
-      <div class="text-center">
-        {{ sponsor.user.affiliation }}
-      </div>
+      <div class="text-center">{{ sponsor.user.affiliation }}</div>
     {% endfor %}
   </div>
   {% endif %}
@@ -27,9 +35,7 @@
   <h2>Past Sponsors</h2>
   <div class="grid grid-cols-3 gap-4">
     {% for sponsor in past_sponsors %}
-      <div class="text-center">
-        {{ sponsor.user.affiliation }}
-      </div>
+      <div class="text-center">{{ sponsor.user.affiliation }}</div>
     {% endfor %}
   </div>
   {% endif %}

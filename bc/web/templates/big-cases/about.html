@@ -55,11 +55,9 @@
 
   <h2>What next?</h2>
   <div class="grid grid-cols-2 gap-8">
-    <a href="{% url 'big_cases_my_code' %}" class="text-center whitespace-nowrap border rounded-md shadow-sm font-medium text-sm no-underline w-full inline-block border-gray-500 hover:border-gray-900 hover:text-gray-900 bg-white px-4 py-2 sm:text-md">
-      My Technology
-    </a>
-    <a href="{% url 'big_cases_sponsors' %}" class="text-center whitespace-nowrap border rounded-md shadow-sm font-medium  text-sm no-underline w-full inline-block border-gray-500 hover:border-gray-900 hover:text-gray-900 bg-white px-4 py-2 sm:text-md">
-      Sponsors Me
-    </a>
+    {% url 'big_cases_my_code' as big_cases_code %}
+    {% include 'includes/transparent-button.html' with link=big_cases_code text='My Technology'%}
+    {% url 'big_cases_my_code' as big_cases_sponsors %}
+    {% include 'includes/transparent-button.html' with link=big_cases_sponsors text='Sponsors Me'%}
   </div>
 {% endblock %}
