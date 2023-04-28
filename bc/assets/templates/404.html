@@ -8,17 +8,15 @@
     <h1 class="font-light tracking-tight text-center">
       404 Droid Not Found
     </h1>
-    <a class="no-underline hover:underline" href="https://www.youtube.com/watch?v=532j-186xEQ">Sorry, this is not the page you're looking for.</a>
+    <a class="no-underline hover:underline" href="https://www.youtube.com/watch?v=532j-186xEQ">
+      Sorry, this is not the page you're looking for.
+    </a>
     <p>Why don't you try one of the following pages instead?</p>
     <div class="grid grid-cols-2 gap-8">
-      <a href="{% url 'homepage' %}"
-        class="text-center whitespace-nowrap border rounded-md shadow-sm font-medium text-sm no-underline w-full inline-block border-gray-500 hover:border-gray-900 hover:text-gray-900 bg-white px-4 py-2 sm:text-md">
-        Homepage
-      </a>
-      <a href="{% url 'big_cases_about' %}"
-        class="text-center whitespace-nowrap border rounded-md shadow-sm font-medium  text-sm no-underline w-full inline-block border-gray-500 hover:border-gray-900 hover:text-gray-900 bg-white px-4 py-2 sm:text-md">
-        About Me
-      </a>
+      {% url 'homepage' as homepage %}
+      {% include 'includes/transparent-button.html' with link=homepage text='Homepage'%}
+      {% url 'big_cases_about' as big_cases_about %}
+      {% include 'includes/transparent-button.html' with link=big_cases_about text='About Me'%}
     </div>
     <p>If you continue having problems, please do let us know.</p>
   </div>

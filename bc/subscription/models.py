@@ -116,6 +116,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
     IN_PROGRESS = 4
     IGNORED = 5
     WAITING_FOR_DOCUMENT = 6
+    PURCHASE_FAILED = 7
     CHOICES = (
         (SCHEDULED, "Awaiting processing in queue."),
         (SUCCESSFUL, "Item processed successfully."),
@@ -123,6 +124,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
         (IN_PROGRESS, "Item is currently being processed."),
         (IGNORED, "Item ignored"),
         (WAITING_FOR_DOCUMENT, "Awaiting for document purchase"),
+        (PURCHASE_FAILED, "Document purchase failed"),
     )
 
     docket_id = models.IntegerField(
@@ -186,6 +188,12 @@ class FilingWebhookEvent(AbstractDateTimeModel):
             models.Index(fields=["docket_id"]),
             models.Index(fields=["pacer_doc_id"]),
         ]
+
+    @property
+    def document_number_with_attachment(self) -> str:
+        if self.attachment_number:
+            return f"{self.document_number}-{self.attachment_number}"
+        return f"{self.document_number}"
 
     @property
     def cl_document_url(self) -> str | None:
