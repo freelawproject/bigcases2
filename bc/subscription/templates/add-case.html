@@ -1,11 +1,9 @@
 {% extends "post.html" %}
 {% load static %}
 
-{% block head_script %}
-
-<script src="{% static "js/htmx.min.js" %}"></script>
-<script src="{% static "js/loading-states.js" %}"></script>
-
+{% block footer-scripts %}
+  <script src="{% static "js/htmx.min.js" %}"></script>
+  <script src="{% static "js/loading-states.js" %}"></script>
 {% endblock %}
 
 {% block title %}Add a new case{% endblock %}
