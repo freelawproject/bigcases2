@@ -50,8 +50,4 @@ class SearchBarTest(SimpleTestCase):
         )
         for test in test_inputs:
             result = get_docket_id_from_query(test["query"])
-            self.assertEqual(
-                result,
-                test["docket_id"],
-                msg=f"Failed with dict: {test}.",
-            )
+            self.assertEqual(result, test["docket_id"])
