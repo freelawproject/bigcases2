@@ -18,10 +18,6 @@
     <link rel="icon" href="{% static "ico/favicon.ico" %}" sizes="any">
     <link rel="icon" href="{% static "svg/icon.svg" %}" type="image/svg+xml">
     <link rel="apple-touch-icon" href="{% static "png/apple-touch-icon.png" %}">
-
-    {% block head_script %}
-    {% endblock %}
-
 </head>
 
 <body class="font-sans text-bcb-black">
@@ -41,6 +37,7 @@
 
     <script src="{% static "js/dropdown.js" %}"></script>
 
+    {% block footer-scripts %}{% endblock %}
 </body>
 
 </html>
