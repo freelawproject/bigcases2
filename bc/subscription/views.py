@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rq import Retry
 
 from bc.channel.selectors import get_enabled_channels
-from bc.core.utils.status.templates import FOLLOW_A_NEW_CASE_TEMPLATE
+from bc.core.utils.status.selectors import get_new_case_template
 
 from .services import create_or_update_subscription_from_docket
 from .utils.courtlistener import (
@@ -68,7 +68,9 @@ class AddCaseView(LoginRequiredMixin, View):
 
         if created:
             for channel in get_enabled_channels():
-                message, _ = FOLLOW_A_NEW_CASE_TEMPLATE.format(
+                template = get_new_case_template(channel.service)
+
+                message, _ = template.format(
                     docket=subscription.name_with_summary,
                     docket_link=subscription.cl_url,
                 )
