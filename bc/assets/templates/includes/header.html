@@ -136,8 +136,14 @@
                 </div>
             </div>
 
-            <div class="hidden md:flex w-28 text-sm font-medium">
-              {% include './yellow-button.html' with link="https://free.law/donate/" text="Donate" size='sm' %}
+            <div class="hidden md:flex items-center">
+              <div class="w-28 text-sm font-medium mr-1">
+                {% include './action-button.html' with link="https://free.law/donate/" text="Donate" size='sm' color='saffron' %}
+              </div>
+              <div class="w-20 text-sm font-medium sm:text-md {% if user.is_authenticated %}hidden{% endif %}">
+                {% url 'sign-in' as sign_in %}
+                {% include './action-button.html' with link=sign_in text="Sign In" size='sm' %}
+              </div>
             </div>
         </div>
     </div>

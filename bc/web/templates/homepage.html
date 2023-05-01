@@ -35,7 +35,7 @@
             <div class="tracking-[.8px] hidden sm:block mt-8 md:w-2/3 lg:w-1/2">
               {% url 'collaboration' as collaboration_page %}
               {% with collaboration_page|addstr:"#join" as join_the_waitlist %}
-              {% include 'includes/yellow-button.html' with link=join_the_waitlist text="Join the Waitlist" size="md" %}
+              {% include 'includes/action-button.html' with link=join_the_waitlist text="Join the Waitlist" size="md" color='saffron' %}
               {% endwith %}
             </div>
           </div>
@@ -44,7 +44,7 @@
       <div class="flex tracking-[.8px] sm:hidden w-full mt-8 flex-col">
         {% url 'collaboration' as collaboration_page %}
         {% with collaboration_page|addstr:"#join" as join_the_waitlist %}
-          {% include 'includes/yellow-button.html' with link=join_the_waitlist text="Join the Waitlist" size="md" %}
+          {% include 'includes/action-button.html' with link=join_the_waitlist text="Join the Waitlist" size="md" color='saffron' %}
         {% endwith %}
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-24 pt-10 md:pt-20">
@@ -75,7 +75,7 @@
             If you like what I do, please support Free Law Project with a donation.
           </p>
           <div class="tracking-[.8px] hidden sm:block text-base mt-8 md:w-2/3 lg:w-2/5">
-            {% include 'includes/yellow-button.html' with link="https://free.law/donate/" text="Donate Now" size="md" %}
+            {% include 'includes/action-button.html' with link="https://free.law/donate/" text="Donate Now" size="md" color='saffron' %}
           </div>
       </div>
 
@@ -90,7 +90,7 @@
       </div>
     </section>
     <div class="flex tracking-[.8px] sm:hidden w-full pt-4 mt-8 flex-col text-md font-light">
-      {% include 'includes/yellow-button.html' with link="https://free.law/donate/" text="Donate Now" size="md" %}
+      {% include 'includes/action-button.html' with link="https://free.law/donate/" text="Donate Now" size="md" color='saffron' %}
     </div>
   </div>
 </section>
