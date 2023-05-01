@@ -28,7 +28,7 @@ if DEVELOPMENT:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_DOMAIN = None
-    GATEWAY_IP = env("GATEWAY_IP")
+    GATEWAY_IP = env("GATEWAY_IP", default="")
     # For debug_toolbar
     # INSTALLED_APPS.append('debug_toolbar')
     # Get the list of IPv4 addresses for the interface on the same host
