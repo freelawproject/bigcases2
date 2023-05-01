@@ -2,7 +2,11 @@
 {% load static %}
 
 {% block footer-scripts %}
-  <script src="{% static "js/htmx.min.js" %}"></script>
+  {% if debug %}
+    <script src="{% static "js/htmx.js" %}"></script>
+  {% else %}
+    <script src="{% static "js/htmx.min.js" %}"></script>
+  {% endif %}
   <script src="{% static "js/loading-states.js" %}"></script>
 {% endblock %}
 
