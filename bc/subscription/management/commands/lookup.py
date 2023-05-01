@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from bc.channel.selectors import get_enabled_channels
 from bc.core.utils.status.selectors import get_new_case_template
 from bc.subscription.services import create_or_update_subscription_from_docket
+from bc.subscription.tasks import enqueue_posts_for_new_case
 from bc.subscription.utils.courtlistener import (
     lookup_docket_by_cl_id,
     subscribe_to_docket_alert,
@@ -80,14 +81,4 @@ class Command(BaseCommand):
         if cl_subscription:
             self.stdout.write(self.style.SUCCESS("Subscribed!"))
 
-        for channel in get_enabled_channels():
-            template = get_new_case_template(channel.service)
-
-            message, _ = template.format(
-                docket=subscription.name_with_summary,
-                docket_link=subscription.cl_url,
-                docket_id=subscription.cl_docket_id,
-            )
-
-            api = channel.get_api_wrapper()
-            api.add_status(message, None)
+        enqueue_posts_for_new_case(subscription)
