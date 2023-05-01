@@ -1,3 +1,5 @@
+import socket
+
 import environ
 
 from ..django import DEVELOPMENT
@@ -26,9 +28,14 @@ if DEVELOPMENT:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_DOMAIN = None
+    GATEWAY_IP = env("GATEWAY_IP")
     # For debug_toolbar
     # INSTALLED_APPS.append('debug_toolbar')
-    INTERNAL_IPS = ("127.0.0.1",)
+    # Get the list of IPv4 addresses for the interface on the same host
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip for ip in ips] + ["127.0.0.1"]
+    if GATEWAY_IP:
+        INTERNAL_IPS += [GATEWAY_IP]
 else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
