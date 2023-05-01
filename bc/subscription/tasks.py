@@ -175,7 +175,6 @@ def process_fetch_webhook_event(fwe_pk: int):
 @transaction.atomic
 def make_post_for_webhook_event(
     channel_pk: int,
-    subscription_pk: int,
     fwe_pk: int,
     document: bytes | None,
     sponsor_text: str | None = None,
@@ -185,7 +184,6 @@ def make_post_for_webhook_event(
 
     Args:
         channel_pk (int): The pk of the channel where the post will be created.
-        subscription_pk (int): The pk of the subscription related to the webhook event.
         fwe_pk (int): The PK of the FilingWebhookEvent record.
         document (bytes | None): document content(if available) as bytes.
         sponsor_text (str | None): sponsor message to include in the thumbnails.
@@ -195,15 +193,19 @@ def make_post_for_webhook_event(
     """
 
     channel = Channel.objects.get(pk=channel_pk)
-    subscription = Subscription.objects.get(pk=subscription_pk)
     filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
+
+    if not filing_webhook_event.subscription:
+        raise AssertionError(
+            "The webhook event doesn't have a relationship with a subscription record"
+        )
 
     template = get_template_for_channel(
         channel.service, filing_webhook_event.document_number
     )
 
     message, image = template.format(
-        docket=subscription.name_with_summary,
+        docket=filing_webhook_event.subscription.name_with_summary,
         description=filing_webhook_event.description,
         doc_num=filing_webhook_event.document_number_with_attachment,
         pdf_link=filing_webhook_event.cl_pdf_or_pacer_url,
