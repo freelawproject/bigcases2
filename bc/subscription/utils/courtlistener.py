@@ -12,6 +12,9 @@ from .exceptions import MultiDefendantCaseError
 
 logger = logging.getLogger(__name__)
 
+# Regex expression to match dockets and documents URL from CL. ie:
+#   https://www.courtlistener.com/docket/65745614/united-states-v-ward/
+#   https://www.courtlistener.com/docket/65364032/6/1/antonyuk-v-hochul/
 DOCKET_URL_PATTERN = re.compile(
     r"(?:www\.courtlistener\.com\/docket\/)(?P<docket_id>\d+)(?:\/.*)"
 )
