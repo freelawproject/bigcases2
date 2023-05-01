@@ -34,6 +34,12 @@ To set up a development machine, do the following:
 
     This is important so that each service in the compose file can have a hostname.
 
+1. Get the Gateway IP of the new bridge network and paste it in the settings file:
+
+    `docker network inspect bc2_net_overlay --format "{{range .IPAM.Config}}{{.Gateway}}{{end}}"`
+
+    This is important so We can use the `debug` tag in the templates.
+
 1. `cd` into bigcases2/docker/bigcasesbot, then launch the server by running:
 
     `docker-compose up -d`
