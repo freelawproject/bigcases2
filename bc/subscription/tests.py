@@ -47,6 +47,15 @@ class SearchBarTest(SimpleTestCase):
                 "query": "https://www.courtlistener.com/docket/65680829/7/cornet-v-twitter-inc/",
                 "docket_id": 65680829,
             },
+            # PDF URL
+            {
+                "query": "https://storage.courtlistener.com/recap/gov.uscourts.dcd.226485/gov.uscourts.dcd.226485.1.0_6.pdf",
+                "docket_id": 41955367,
+            },
+            {
+                "query": "https://storage.courtlistener.com/recap/gov.uscourts.ohnd.294863/gov.uscourts.ohnd.294863.15.0.pdf",
+                "docket_id": 66817224,
+            },
         )
         for test in test_inputs:
             result = get_docket_id_from_query(test["query"])

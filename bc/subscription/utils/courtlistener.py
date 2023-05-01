@@ -19,6 +19,13 @@ DOCKET_URL_PATTERN = re.compile(
     r"(?:www\.courtlistener\.com\/docket\/)(?P<docket_id>\d+)(?:\/.*)"
 )
 
+# Regex expression to match PDF URLs from CL. ie:
+#   https://storage.courtlistener.com/recap/gov.uscourts.dcd.178502/gov.uscourts.dcd.178502.1.0_48.pdf
+#   https://storage.courtlistener.com/recap/gov.uscourts.cand.373179/gov.uscourts.cand.373179.1.0.pdf
+PDF_URL_PATTERN = re.compile(
+    r"(?P<url_for_redirect>(https:\/{2}storage\.courtlistener\.com\/recap\/gov.uscourts.(?P<court>[a-z]+).(?P<pacer_case_id>\d+)))(?:\/.*)"
+)
+
 CL_API = {
     "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
     "docket-alerts": "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
@@ -66,6 +73,13 @@ def get_docket_id_from_query(query: str) -> int:
     # check if the query string is a valid URL
     validator = URLValidator()
     validator(cleaned_str)
+
+    # check if the query string is a PDF link
+    is_pdf_link = re.search(PDF_URL_PATTERN, cleaned_str)
+    if is_pdf_link:
+        r = requests.get(is_pdf_link.group("url_for_redirect"))
+        r.raise_for_status()
+        cleaned_str = r.url
 
     # check if the query string is a CL docket link or a CL PDF link
     is_docket_link = re.search(DOCKET_URL_PATTERN, cleaned_str)
