@@ -16,7 +16,10 @@ queue = get_queue("default")
 def subscription_handler(sender, instance=None, created=False, **kwargs):
     if created:
         # fires a job to create a new invalidation
-        if settings.AWS_CLOUDFRONT_DISTRIBUTION_ID:
+        if (
+            settings.AWS_CLOUDFRONT_DISTRIBUTION_ID
+            and not settings.DEVELOPMENT
+        ):
             queue.enqueue(
                 create_cache_invalidation,
                 reverse("big_cases_about"),

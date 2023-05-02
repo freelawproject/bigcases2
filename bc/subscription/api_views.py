@@ -9,7 +9,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rq import Retry
 
-from bc.channel.selectors import get_enabled_channels
 from bc.subscription.exceptions import (
     IdempotencyKeyMissing,
     WebhookNotSupported,
@@ -19,7 +18,7 @@ from .api_permissions import AllowListPermission
 from .models import FilingWebhookEvent
 from .tasks import (
     check_webhook_before_posting,
-    make_post_for_webhook_event,
+    enqueue_posts_for_docket_alert,
     process_fetch_webhook_event,
     process_filing_webhook_event,
 )
@@ -113,18 +112,7 @@ def handle_recap_fetch_webhook(request: Request) -> Response:
         docket_alert.save(update_fields=["status"])
 
         # schedule tasks to create the new posts(tweet and toot) without thumbnails.
-        for channel in get_enabled_channels():
-            queue.enqueue(
-                make_post_for_webhook_event,
-                channel.pk,
-                docket_alert.subscription.pk,  # type: ignore
-                docket_alert.pk,
-                None,
-                retry=Retry(
-                    max=settings.RQ_MAX_NUMBER_OF_RETRIES,
-                    interval=settings.RQ_RETRY_INTERVAL,
-                ),
-            )
+        enqueue_posts_for_docket_alert(docket_alert.pk)
     else:
         # schedule task to retrieve the document and create the transaction before posting.
         queue.enqueue(

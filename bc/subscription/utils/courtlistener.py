@@ -1,13 +1,30 @@
 import logging
+import re
 from typing import TypedDict
 
 import courts_db
 import requests
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
 
 from .exceptions import MultiDefendantCaseError
 
 logger = logging.getLogger(__name__)
+
+# Regex expression to match dockets and documents URL from CL. ie:
+#   https://www.courtlistener.com/docket/65745614/united-states-v-ward/
+#   https://www.courtlistener.com/docket/65364032/6/1/antonyuk-v-hochul/
+DOCKET_URL_PATTERN = re.compile(
+    r"(?:www\.courtlistener\.com\/docket\/)(?P<docket_id>\d+)(?:\/.*)"
+)
+
+# Regex expression to match PDF URLs from CL. ie:
+#   https://storage.courtlistener.com/recap/gov.uscourts.dcd.178502/gov.uscourts.dcd.178502.1.0_48.pdf
+#   https://storage.courtlistener.com/recap/gov.uscourts.cand.373179/gov.uscourts.cand.373179.1.0.pdf
+PDF_URL_PATTERN = re.compile(
+    r"(?P<url_for_redirect>(https:\/{2}storage\.courtlistener\.com\/recap\/gov.uscourts.(?P<court>[a-z]+).(?P<pacer_case_id>\d+)))(?:\/.*)"
+)
 
 CL_API = {
     "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
@@ -35,6 +52,41 @@ def map_pacer_to_cl_id(pacer_id):
 
 def map_cl_to_pacer_id(cl_id):
     return cl_to_pacer_ids.get(cl_id, cl_id)
+
+
+def get_docket_id_from_query(query: str) -> int:
+    """Returns the docket id extracted from the search query
+
+    Args:
+        query (str): the query string provided by the curators using the search bar
+
+    Raises:
+        ValidationError: if the provided string is not a number or a valid URL.
+
+    Returns:
+        int: the docket id
+    """
+    cleaned_str = query.strip()
+    if cleaned_str.isnumeric():
+        return int(cleaned_str)
+
+    # check if the query string is a valid URL
+    validator = URLValidator()
+    validator(cleaned_str)
+
+    # check if the query string is a PDF link
+    is_pdf_link = re.search(PDF_URL_PATTERN, cleaned_str)
+    if is_pdf_link:
+        r = requests.get(is_pdf_link.group("url_for_redirect"), timeout=5)
+        r.raise_for_status()
+        cleaned_str = r.url
+
+    # check if the query string is a CL docket link or a CL PDF link
+    is_docket_link = re.search(DOCKET_URL_PATTERN, cleaned_str)
+    if is_docket_link:
+        return int(is_docket_link.group("docket_id"))
+
+    raise ValidationError("The query string provided is invalid")
 
 
 def lookup_court(court: str):

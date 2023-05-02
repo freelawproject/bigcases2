@@ -1,6 +1,8 @@
+import socket
+
 import environ
 
-from ..django import DEVELOPMENT
+from ..django import DEVELOPMENT, INSTALLED_APPS
 from ..third_party.aws import AWS_S3_CUSTOM_DOMAIN
 
 env = environ.FileAwareEnv()
@@ -27,8 +29,16 @@ if DEVELOPMENT:
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_DOMAIN = None
     # For debug_toolbar
-    # INSTALLED_APPS.append('debug_toolbar')
-    INTERNAL_IPS = ("127.0.0.1",)
+    INSTALLED_APPS.append("debug_toolbar")
+
+    # Get the list of IPv4 addresses for the interface on the same host. If you want to know more
+    # about this, you can check the following links:
+    #   https://github.com/freelawproject/bigcases2/pull/210#discussion_r1182078837
+    #   https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#configure-internal-ips
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips] + [
+        "127.0.0.1"
+    ]
 else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

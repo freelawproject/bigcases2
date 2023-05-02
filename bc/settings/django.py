@@ -37,14 +37,13 @@ INSTALLED_APPS = [
     # other apps
     "django_rq",
     "tailwind",
+    "django_htmx",
 ]
 
 if DEVELOPMENT:
     INSTALLED_APPS.append("django_browser_reload")
 
 TAILWIND_APP_NAME = "bc.web"
-
-INTERNAL_IPS = ("127.0.0.1",)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -55,6 +54,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_ratelimit.middleware.RatelimitMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
     "csp.middleware.CSPMiddleware",
 ]
 
@@ -62,6 +62,7 @@ if DEVELOPMENT:
     MIDDLEWARE.append(
         "django_browser_reload.middleware.BrowserReloadMiddleware"
     )
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "bc.urls"
 AUTH_USER_MODEL = "users.User"

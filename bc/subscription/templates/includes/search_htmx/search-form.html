@@ -1,0 +1,29 @@
+<form hx-ext="loading-states" hx-get="{% url 'search_cases' %}" hx-target="#searchResults" data-loading-states>
+  <div class="flex flex-col">
+    <div class="flex item-center">
+      <label for="simple-search" class="sr-only">Search</label>
+      <div class="relative w-full">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+          {% include 'includes/inlines/magnifying-glass.svg'%}
+        </div>
+        <input type="text" id="simple-search" name="q"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 placeholder-gray-400"
+          placeholder="i.e. https://www.courtlistener.com/docket/4214664/national-veterans-legal-services-program-v-united-states/" required>
+      </div>
+      <button type="submit"
+        class="p-2.5 ml-2 text-sm font-medium text-white bg-saffron-400 rounded-lg border border-saffron-400 hover:bg-saffron-500 focus:ring-4 focus:outline-none focus:ring-blue-300">
+        <div class="text-bcb-black" data-loading-class="hidden">
+          {% include 'includes/inlines/magnifying-glass.svg'%}
+        </div>
+        <div data-loading="flex" class="items-center justify-center animate-spin text-white w-4 h-4">
+          {% include 'includes/inlines/spinning-circle.svg'%}
+        </div>
+        <span class="sr-only">Search</span>
+      </button>
+    </div>
+    <div>
+      <p id="helper-text-explanation" class="mt-2 text-sm text-gray-500">Find a case by providing the docket link, PDF
+        link or docket id from CourtListener.</p>
+    </div>
+  </div>
+</form>
