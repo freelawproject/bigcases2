@@ -22,6 +22,8 @@ APPELLATE_COURT_IDS = [
 
 
 class Subscription(AbstractDateTimeModel):
+    """The link between a channel (twitter/masto/etc) and a case."""
+
     docket_name = models.TextField(
         help_text="The name of the docket",
     )
