@@ -77,7 +77,7 @@ def get_docket_id_from_query(query: str) -> int:
     # check if the query string is a PDF link
     is_pdf_link = re.search(PDF_URL_PATTERN, cleaned_str)
     if is_pdf_link:
-        r = requests.get(is_pdf_link.group("url_for_redirect"))
+        r = requests.get(is_pdf_link.group("url_for_redirect"), timeout=5)
         r.raise_for_status()
         cleaned_str = r.url
 
