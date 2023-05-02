@@ -2,7 +2,7 @@ import socket
 
 import environ
 
-from ..django import DEVELOPMENT
+from ..django import DEVELOPMENT, INSTALLED_APPS
 from ..third_party.aws import AWS_S3_CUSTOM_DOMAIN
 
 env = environ.FileAwareEnv()
@@ -29,7 +29,7 @@ if DEVELOPMENT:
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_DOMAIN = None
     # For debug_toolbar
-    # INSTALLED_APPS.append('debug_toolbar')
+    INSTALLED_APPS.append("debug_toolbar")
 
     # Get the list of IPv4 addresses for the interface on the same host. If you want to know more
     # about this, you can check the following links:

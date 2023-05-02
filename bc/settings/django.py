@@ -62,6 +62,7 @@ if DEVELOPMENT:
     MIDDLEWARE.append(
         "django_browser_reload.middleware.BrowserReloadMiddleware"
     )
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "bc.urls"
 AUTH_USER_MODEL = "users.User"
