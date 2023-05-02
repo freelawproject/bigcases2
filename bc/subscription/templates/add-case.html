@@ -8,6 +8,20 @@
     <script src="{% static "js/htmx.min.js" %}"></script>
   {% endif %}
   <script src="{% static "js/loading-states.js" %}"></script>
+  {% if debug %}
+  <script>
+    if (typeof window.htmx !== "undefined") {
+      htmx.on("htmx:afterSettle", function(detail) {
+          if (
+              typeof window.djdt !== "undefined"
+              && detail.target instanceof HTMLBodyElement
+          ) {
+              djdt.show_toolbar();
+          }
+      });
+    }
+  </script>
+  {% endif %}
 {% endblock %}
 
 {% block title %}Add a new case{% endblock %}
