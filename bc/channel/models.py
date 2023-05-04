@@ -1,11 +1,34 @@
 from django.db import models
 
 from bc.core.models import AbstractDateTimeModel
+from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
 from .utils.connectors.base import BaseAPIConnector
 from .utils.connectors.masto import MastodonConnector, masto_regex
 from .utils.connectors.twitter import TwitterConnector
+
+
+class Alias(AbstractDateTimeModel):
+    name = models.CharField(
+        help_text="Name for a set of channels",
+        max_length=100,
+    )
+    is_big_cases = models.BooleanField(
+        help_text="Designates whether this alias should be treated as the group of big cases channels",
+        default=False,
+    )
+    sponsorships = models.ManyToManyField(
+        Sponsorship,
+        related_name="channel_groups",
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name_plural = "Aliases"
+
+    def __str__(self) -> str:
+        return f"{self.pk}: {self.name}"
 
 
 class Channel(AbstractDateTimeModel):
@@ -43,6 +66,9 @@ class Channel(AbstractDateTimeModel):
     )
     enabled = models.BooleanField(
         help_text="Disabled by default; must enable manually", default=False
+    )
+    alias = models.ForeignKey(
+        "Alias", related_name="channels", null=True, on_delete=models.SET_NULL
     )
 
     def get_api_wrapper(self) -> BaseAPIConnector:
