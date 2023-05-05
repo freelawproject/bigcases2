@@ -1,5 +1,6 @@
 from django.db import models
 
+from bc.channel.models import Channel
 from bc.core.models import AbstractDateTimeModel
 
 from .utils.courtlistener import map_cl_to_pacer_id
@@ -59,6 +60,12 @@ class Subscription(AbstractDateTimeModel):
             "documents from other cases can appear in curious places."
         ),
         max_length=100,
+        blank=True,
+    )
+    channel = models.ManyToManyField(
+        Channel,
+        help_text="Channels where a post related to this docket should be created",
+        related_name="subscriptions",
         blank=True,
     )
 
