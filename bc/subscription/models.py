@@ -64,8 +64,8 @@ class Subscription(AbstractDateTimeModel):
     )
     channel = models.ManyToManyField(
         Channel,
-        help_text="List of channels where a post related to this docket should be created",
-        related_name="Subscription",
+        help_text="Channels where a post related to this docket should be created",
+        related_name="subscriptions",
         blank=True,
     )
 
