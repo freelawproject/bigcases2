@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Alias, Channel
+from .models import Channel, Group
 
 
 class UserInline(admin.StackedInline):
@@ -26,10 +26,10 @@ class ChannelInline(admin.TabularInline):
         return False
 
 
-class AliasAdmin(admin.ModelAdmin):
+class GroupAdmin(admin.ModelAdmin):
     inlines = (ChannelInline,)
     exclude = ["sponsorships"]
 
 
 admin.site.register(Channel, ChannelAdmin)
-admin.site.register(Alias, AliasAdmin)
+admin.site.register(Group, GroupAdmin)

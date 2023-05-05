@@ -9,23 +9,20 @@ from .utils.connectors.masto import MastodonConnector, masto_regex
 from .utils.connectors.twitter import TwitterConnector
 
 
-class Alias(AbstractDateTimeModel):
+class Group(AbstractDateTimeModel):
     name = models.CharField(
         help_text="Name for a set of channels",
         max_length=100,
     )
     is_big_cases = models.BooleanField(
-        help_text="Designates whether this alias should be treated as the group of big cases channels",
+        help_text="Designates whether this group should be treated as the set of big cases channels",
         default=False,
     )
     sponsorships = models.ManyToManyField(
         Sponsorship,
-        related_name="channel_groups",
+        related_name="groups",
         blank=True,
     )
-
-    class Meta:
-        verbose_name_plural = "Aliases"
 
     def __str__(self) -> str:
         return f"{self.pk}: {self.name}"
@@ -67,8 +64,8 @@ class Channel(AbstractDateTimeModel):
     enabled = models.BooleanField(
         help_text="Disabled by default; must enable manually", default=False
     )
-    alias = models.ForeignKey(
-        "Alias", related_name="channels", null=True, on_delete=models.SET_NULL
+    group = models.ForeignKey(
+        "Group", related_name="channels", null=True, on_delete=models.SET_NULL
     )
 
     def get_api_wrapper(self) -> BaseAPIConnector:
