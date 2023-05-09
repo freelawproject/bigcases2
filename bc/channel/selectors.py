@@ -1,8 +1,9 @@
 from collections.abc import Iterable
 
 from django.conf import settings
+from django.db.models import Prefetch
 
-from .models import Channel
+from .models import Channel, Group
 
 
 def get_mastodon_channel() -> Channel:
@@ -37,3 +38,26 @@ def get_channels_per_subscription(subscription_pk: int) -> Iterable[Channel]:
     return Channel.objects.filter(
         enabled=True, subscriptions__in=[subscription_pk]
     ).all()
+
+
+def get_channel_groups_per_user(user_pk: int) -> Iterable[Group]:
+    """
+    Returns the list of groups that contains channels related to a user.
+
+    Args:
+        user_pk (int): the pk of the user record
+
+    Returns:
+        Iterable[Channel]: Set of groups
+    """
+    return (
+        Group.objects.filter(  # filter the list of groups
+            channels__user__in=[user_pk]
+        )
+        .prefetch_related(
+            Prefetch(  # retrieve only channels related to the active user
+                "channels", queryset=Channel.objects.filter(user__in=[user_pk])
+            )
+        )
+        .all()
+    )
