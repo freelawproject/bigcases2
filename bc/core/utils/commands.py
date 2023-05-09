@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 
 from bc.channel.models import Channel, Group
+from bc.channel.selectors import get_all_enabled_channels
 
 
 def show_all_channels_table() -> tuple[PrettyTable, dict[int, Channel]]:
@@ -13,8 +14,7 @@ def show_all_channels_table() -> tuple[PrettyTable, dict[int, Channel]]:
     table = PrettyTable()
     mapping = {}
     table.field_names = ["ID", "Service", "Account", "Enabled", "URL", "Group"]
-    db_channels = Channel.objects.all()
-    for channel in db_channels:
+    for channel in get_all_enabled_channels():
         table.add_row(
             [
                 channel.id,
