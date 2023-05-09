@@ -1,7 +1,5 @@
 from django.core.management.base import BaseCommand
 
-from bc.channel.selectors import get_enabled_channels
-from bc.core.utils.status.selectors import get_new_case_template
 from bc.subscription.services import create_or_update_subscription_from_docket
 from bc.subscription.tasks import enqueue_posts_for_new_case
 from bc.subscription.utils.courtlistener import (
