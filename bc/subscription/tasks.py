@@ -4,7 +4,7 @@ from django_rq.queues import get_queue
 from rq import Retry
 
 from bc.channel.models import Channel, Post
-from bc.channel.selectors import get_enabled_channels
+from bc.channel.selectors import get_channels_per_subscription
 from bc.core.utils.images import add_sponsored_text_to_thumbnails
 from bc.core.utils.microservices import get_thumbnails_from_range
 from bc.core.utils.status.selectors import (
@@ -33,7 +33,7 @@ def enqueue_posts_for_new_case(subscription: Subscription) -> None:
     Args:
         subscription (Subscription): the new subscription object.
     """
-    for channel in get_enabled_channels():
+    for channel in get_channels_per_subscription(subscription.pk):
         template = get_new_case_template(channel.service)
 
         message, _ = template.format(
@@ -56,7 +56,7 @@ def enqueue_posts_for_new_case(subscription: Subscription) -> None:
 
 
 def enqueue_posts_for_docket_alert(
-    webhook_event_pk: int,
+    webhook_event: FilingWebhookEvent,
     document: bytes | None = None,
     sponsor_message: str | None = None,
 ) -> None:
@@ -65,15 +65,20 @@ def enqueue_posts_for_docket_alert(
     handling a docket alert webhook.
 
     Args:
-        webhook_event_pk (int): The PK of the FilingWebhookEvent record.
+        webhook_event_pk (FilingWebhookEvent): The FilingWebhookEvent record.
         document (bytes | None, optional): document content(if available) as bytes.
         sponsor_message (str | None, optional): sponsor message to include in the thumbnails.
     """
-    for channel in get_enabled_channels():
+    if not webhook_event.subscription:
+        return
+
+    for channel in get_channels_per_subscription(
+        webhook_event.subscription.pk
+    ):
         queue.enqueue(
             make_post_for_webhook_event,
             channel.pk,
-            webhook_event_pk,
+            FilingWebhookEvent.pk,
             document,
             sponsor_message,
             retry=Retry(
@@ -166,7 +171,7 @@ def check_webhook_before_posting(fwe_pk: int):
             return filing_webhook_event
 
     # Got the document or no sponsorship. Tweet and toot.
-    enqueue_posts_for_docket_alert(filing_webhook_event.pk, document)
+    enqueue_posts_for_docket_alert(filing_webhook_event, document)
 
     return filing_webhook_event
 
@@ -206,7 +211,7 @@ def process_fetch_webhook_event(fwe_pk: int):
         )
 
     enqueue_posts_for_docket_alert(
-        filing_webhook_event.pk, document, sponsor_message
+        filing_webhook_event, document, sponsor_message
     )
 
     return filing_webhook_event
