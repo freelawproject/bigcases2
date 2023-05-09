@@ -15,6 +15,18 @@ queue = get_queue("default")
 def handle_post_command(
     ids: list[int], mapping: dict[int, Channel | Group], text: str
 ) -> None:
+    """
+    Enqueues a job to create a post for each channel in the list of ids provided
+    by the user.
+
+    Args:
+        ids (list[int]): list of the id from the user's input.
+        mapping (dict[int, Channel  |  Group]): Mapping of objects in the table.
+        text (str): Text to include in the posts.
+
+    Raises:
+        ValueError: if the provided input is not in the mapping variable.
+    """
     for record_id in ids:
         record = mapping.get(record_id)
 
