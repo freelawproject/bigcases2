@@ -18,9 +18,22 @@ def get_mastodon_channel() -> Channel:
 
 
 def get_all_enabled_channels() -> Iterable[Channel]:
-    """Returns the set of all enabled channels.
+    """
+    Returns the set of all enabled channels.
 
     Returns:
         Iterable[Channel]: Set of channels
     """
     return Channel.objects.filter(enabled=True).all()
+
+
+def get_channels_per_subscription(subscription_pk: int) -> Iterable[Channel]:
+    """
+    Returns the set of all enabled channels linked to a subscription
+
+    Returns:
+        Iterable[Channel]: Set of channels
+    """
+    return Channel.objects.filter(
+        enabled=True, subscriptions__in=[subscription_pk]
+    ).all()
