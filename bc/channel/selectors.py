@@ -54,6 +54,7 @@ def get_channel_groups_per_user(user_pk: int) -> Iterable[Group]:
         Group.objects.filter(  # filter the list of groups
             channels__user__in=[user_pk]
         )
+        .distinct("id")
         .prefetch_related(
             Prefetch(  # retrieve only channels related to the active user
                 "channels", queryset=Channel.objects.filter(user__in=[user_pk])
