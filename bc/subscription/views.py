@@ -69,7 +69,7 @@ class AddCaseView(LoginRequiredMixin, View):
         subscription, created = create_or_update_subscription_from_docket(
             docket
         )
-        channels = request.POST.get("channels")
+        channels = request.POST.getlist("channels")
 
         for channel_id in channels:
             subscription.channel.add(channel_id)
