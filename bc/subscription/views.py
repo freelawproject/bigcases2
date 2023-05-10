@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.views import View
+from django_htmx.http import trigger_client_event
 from requests.exceptions import HTTPError
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -28,6 +29,12 @@ def search(request: Request) -> Response:
             context["case_name"] = data["case_name"]
             context["channels"] = get_channel_groups_per_user(request.user.pk)
             template = "./includes/search_htmx/case-form.html"
+            response = render(request, template, context)
+            return trigger_client_event(
+                response,
+                "groupCheckbox",
+                after="settle",
+            )
     except HTTPError:
         template = "./includes/search_htmx/no-result.html"
     except ValidationError:
