@@ -28,6 +28,37 @@
       <small id="caseSummaryHelp" class="form-text text-gray-500">A few words to describe the case in social media.</small>
     </div>
 
+    <div class="flex flex-col">
+      <div class="my-2">
+        <label for="channeList">Channels:</label>
+        <span class="text-red-500">*</span>
+      </div>
+      {% for group in channels %}
+        <div class="flex flex-col text-base">
+          <div class="py-2 bg-gray-50">
+            <label for="id_group_{{group.pk}}" class="flex items-center mx-2">
+              <input type="checkbox" name="groups" value="{{group.pk}}" id="id_group_{{group.pk}}" checked data-cg-target="group-{{group.pk}}">
+              <div class="flex ml-2 font-medium">
+                {{ group.name }}
+              </div>
+            </label>
+          </div>
+          <div class="my-2 grid grid-cols-4 gap-4 mx-2">
+            {% for channel in group.channels.all %}
+              <div>
+                <label for="id_channel_{{channel.pk}}" class="flex items-center">
+                  <input type="checkbox" name="channels" value="{{channel.pk}}" id="id_channel_{{channel.pk}}" checked class="group-{{group.pk}}">
+                  <div class="flex ml-2 font-light">
+                    {{channel.get_service_display}}
+                  </div>
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
     <div class="flex">
       <div>
         {% include 'includes/submit-button.html' with value='Follow this case' %}
@@ -36,7 +67,6 @@
         {% include 'includes/inlines/spinning-circle.svg'%}
       </div>
     </div>
-
   </div>
 
 </form>
