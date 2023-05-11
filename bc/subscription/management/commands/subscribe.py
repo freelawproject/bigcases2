@@ -46,8 +46,8 @@ def link_channels_to_subscription(
 
 class Command(BaseCommand):
     help = (
-        "Lookup a case in the RECAP archive by its CourtListener ID, "
-        "optionally add it."
+        "Lookup a case in the RECAP archive by its CourtListener ID and "
+        "add it to the db."
     )
 
     def add_arguments(self, parser):
