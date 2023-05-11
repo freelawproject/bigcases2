@@ -53,11 +53,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("cl-id", type=str)
         parser.add_argument(
-            "--add",
-            action="store_true",
-            help="Save and Subscribe to the case found using the CL API",
-        )
-        parser.add_argument(
             "--show_groups",
             action="store_true",
             help="Shows the list of groups instead of individual channels",
@@ -79,12 +74,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"Court: {court}"))
         self.stdout.write(self.style.SUCCESS(f"Link: {cl_url}"))
 
-        if not options["add"]:
-            return
-
         name = result["case_name"]
         custom_name = input(
-            "Enter a name for this case or press enter to use the default:\n\n"
+            "\nEnter a name for this case or press enter to use the default:\n\n"
             f"Default: {name}\n"
             "name: "
         )
