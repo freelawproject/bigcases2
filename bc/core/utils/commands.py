@@ -18,7 +18,7 @@ def show_all_channels_table() -> tuple[PrettyTable, dict[int, Channel]]:
         table.add_row(
             [
                 channel.id,
-                channel.service,
+                channel.get_service_display(),
                 channel.account,
                 channel.enabled,
                 channel.self_url(),
