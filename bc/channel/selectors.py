@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from django.db.models import QuerySet
 
 from django.conf import settings
 from django.db.models import Prefetch
@@ -18,29 +18,29 @@ def get_mastodon_channel() -> Channel:
     return obj
 
 
-def get_all_enabled_channels() -> Iterable[Channel]:
+def get_all_enabled_channels() -> QuerySet[Channel]:
     """
     Returns the set of all enabled channels.
 
     Returns:
-        Iterable[Channel]: Set of channels
+        QuerySet[Channel]: Set of channels
     """
     return Channel.objects.filter(enabled=True).all()
 
 
-def get_channels_per_subscription(subscription_pk: int) -> Iterable[Channel]:
+def get_channels_per_subscription(subscription_pk: int) -> QuerySet[Channel]:
     """
     Returns the set of all enabled channels linked to a subscription
 
     Returns:
-        Iterable[Channel]: Set of channels
+        QuerySet[Channel]: Set of channels
     """
     return Channel.objects.filter(
         enabled=True, subscriptions__in=[subscription_pk]
     ).all()
 
 
-def get_channel_groups_per_user(user_pk: int) -> Iterable[Group]:
+def get_channel_groups_per_user(user_pk: int) -> QuerySet[Group]:
     """
     Returns the list of groups that contains channels related to a user.
 
@@ -48,7 +48,7 @@ def get_channel_groups_per_user(user_pk: int) -> Iterable[Group]:
         user_pk (int): the pk of the user record
 
     Returns:
-        Iterable[Channel]: Set of groups
+        QuerySet[Channel]: Set of groups
     """
     return (
         Group.objects.filter(  # filter the list of groups
