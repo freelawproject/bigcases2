@@ -63,20 +63,20 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--show_groups",
+            "--show_channels",
             action="store_true",
-            help="Shows the list of groups instead of individual channels",
+            help="Shows the list of individual channels",
         )
 
     def handle(self, *args, **options):
-        if not options["show_groups"]:
-            table, mapping = show_all_channels_table()
-        else:
+        if not options["show_channels"]:
             table, mapping = show_channel_groups_table()
+        else:
+            table, mapping = show_all_channels_table()
 
         self.stdout.write(self.style.SUCCESS(table))
 
-        instance = "group" if options["show_groups"] else "channel"
+        instance = "channel" if options["show_channels"] else "group"
 
         ch_input = input(
             f"Which {instance}? Input ID, comma-separate for multiple, "
