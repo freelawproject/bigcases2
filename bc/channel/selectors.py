@@ -1,7 +1,5 @@
-from django.db.models import QuerySet
-
 from django.conf import settings
-from django.db.models import Prefetch
+from django.db.models import Prefetch, QuerySet
 
 from .models import Channel, Group
 
