@@ -53,9 +53,9 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("cl-id", type=str)
         parser.add_argument(
-            "--show_groups",
+            "--show_channels",
             action="store_true",
-            help="Shows the list of groups instead of individual channels",
+            help="Shows the list of individual channels",
         )
 
     def handle(self, *args, **options):
@@ -95,17 +95,17 @@ class Command(BaseCommand):
         if case_summary:
             result["case_summary"] = case_summary
 
-        instance = "group" if options["show_groups"] else "channel"
+        instance = "channel" if options["show_channels"] else "group"
         self.stdout.write(
             self.style.SUCCESS(
                 f"\nPick one of more {instance}s from the following table to link to this subscription"
             )
         )
 
-        if options["show_groups"]:
-            table, mapping = show_channel_groups_table()
-        else:
+        if options["show_channels"]:
             table, mapping = show_all_channels_table()
+        else:
+            table, mapping = show_channel_groups_table()
 
         self.stdout.write(self.style.SUCCESS(table))
 
