@@ -1,15 +1,14 @@
-from django.conf import settings
 from django.core.management.base import BaseCommand
-from django_rq.queues import get_queue
-from rq import Retry
 
 from bc.channel.models import Channel, Group
+from bc.channel.tasks import (
+    enqueue_text_status_for_channel,
+    enqueue_text_status_for_group,
+)
 from bc.core.utils.commands import (
     show_all_channels_table,
     show_channel_groups_table,
 )
-
-queue = get_queue("default")
 
 
 def handle_post_command(
@@ -34,28 +33,9 @@ def handle_post_command(
             raise ValueError(f"No channel {record_id}")
 
         if isinstance(record, Group):
-            for channel in record.channels.all():
-                api = channel.get_api_wrapper()
-                queue.enqueue(
-                    api.add_status,
-                    text,
-                    None,
-                    retry=Retry(
-                        max=settings.RQ_MAX_NUMBER_OF_RETRIES,
-                        interval=settings.RQ_RETRY_INTERVAL,
-                    ),
-                )
+            enqueue_text_status_for_group(record, text)
         else:
-            api = record.get_api_wrapper()
-            queue.enqueue(
-                api.add_status,
-                text,
-                None,
-                retry=Retry(
-                    max=settings.RQ_MAX_NUMBER_OF_RETRIES,
-                    interval=settings.RQ_RETRY_INTERVAL,
-                ),
-            )
+            enqueue_text_status_for_channel(record, text)
 
 
 class Command(BaseCommand):
