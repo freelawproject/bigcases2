@@ -2,9 +2,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.views import View
+from django_htmx.http import trigger_client_event
 from requests.exceptions import HTTPError
 from rest_framework.request import Request
 from rest_framework.response import Response
+
+from bc.channel.models import Group
+from bc.channel.selectors import get_channel_groups_per_user
 
 from .services import create_or_update_subscription_from_docket
 from .tasks import enqueue_posts_for_new_case
@@ -23,7 +27,14 @@ def search(request: Request) -> Response:
         if data:
             context["docket_id"] = docket_id
             context["case_name"] = data["case_name"]
+            context["channels"] = get_channel_groups_per_user(request.user.pk)
             template = "./includes/search_htmx/case-form.html"
+            response = render(request, template, context)
+            return trigger_client_event(
+                response,
+                "groupCheckbox",
+                after="settle",
+            )
     except HTTPError:
         template = "./includes/search_htmx/no-result.html"
     except ValidationError:
@@ -58,6 +69,11 @@ class AddCaseView(LoginRequiredMixin, View):
         subscription, created = create_or_update_subscription_from_docket(
             docket
         )
+        channels = request.POST.getlist("channels")
+
+        for channel_id in channels:
+            subscription.channel.add(channel_id)
+
         if created:
             enqueue_posts_for_new_case(subscription)
 

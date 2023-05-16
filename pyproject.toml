@@ -51,6 +51,8 @@ django-ratelimit = "^4.0.0"
 twitterapi = "^2.8.2"
 django-ses = "^3.4.1"
 django-htmx = "^1.14.0"
+factory-boy = "^3.2.1"
+faker = "^18.7.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

@@ -28,6 +28,38 @@
       <small id="caseSummaryHelp" class="form-text text-gray-500">A few words to describe the case in social media.</small>
     </div>
 
+    <div class="flex flex-col">
+      <div class="my-2">
+        <label for="channeList">Channels:</label>
+        <span class="text-red-500">*</span>
+      </div>
+      {% for group in channels %}
+        <div class="flex flex-col text-base">
+          <div class="p-2 bg-gray-50 flex justify-between font-medium">
+            <div>
+              {{ group.name }}
+            </div>
+            <div class="text-sm self-end">
+              <a href="javascript:void(0)" class="underline text-blue-600 hover:text-blue-800" data-cg-target="group-{{group.pk}}" data-cg-uncheck="check-none-group-{{group.pk}}">All</a> /
+              <a href="javascript:void(0)" class="underline text-blue-600 hover:text-blue-800" id="check-none-group-{{group.pk}}">None</a>
+            </div>
+          </div>
+          <div class="my-2 grid grid-cols-4 gap-4 mx-2">
+            {% for channel in group.channels.all %}
+              <div>
+                <label for="id_channel_{{channel.pk}}" class="flex items-center">
+                  <input type="checkbox" name="channels" value="{{channel.pk}}" id="id_channel_{{channel.pk}}" checked class="group-{{group.pk}}">
+                  <div class="flex ml-2 font-normal">
+                    {{channel.get_service_display}}
+                  </div>
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
     <div class="flex">
       <div>
         {% include 'includes/submit-button.html' with value='Follow this case' %}
@@ -36,7 +68,6 @@
         {% include 'includes/inlines/spinning-circle.svg'%}
       </div>
     </div>
-
   </div>
 
 </form>

@@ -112,7 +112,7 @@ def handle_recap_fetch_webhook(request: Request) -> Response:
         docket_alert.save(update_fields=["status"])
 
         # schedule tasks to create the new posts(tweet and toot) without thumbnails.
-        enqueue_posts_for_docket_alert(docket_alert.pk)
+        enqueue_posts_for_docket_alert(docket_alert)
     else:
         # schedule task to retrieve the document and create the transaction before posting.
         queue.enqueue(

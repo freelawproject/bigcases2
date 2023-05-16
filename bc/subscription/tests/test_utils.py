@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase
 
-from .utils.courtlistener import get_docket_id_from_query
+from bc.subscription.utils.courtlistener import get_docket_id_from_query
 
 
 class SearchBarTest(SimpleTestCase):

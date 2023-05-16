@@ -9,6 +9,7 @@ from bc.sponsorship.selectors import (
     get_past_sponsor_organization,
 )
 from bc.subscription.models import Subscription
+from bc.subscription.selectors import get_subscriptions_for_big_cases
 
 from .forms import BotSuggestionForm, WaitListForm
 
@@ -51,7 +52,7 @@ def big_cases_about(request: HttpRequest) -> HttpResponse:
         request,
         "big-cases/about.html",
         {
-            "subscriptions": Subscription.objects.all(),
+            "subscriptions": get_subscriptions_for_big_cases(),
         },
     )
 

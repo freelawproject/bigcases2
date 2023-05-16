@@ -45,8 +45,8 @@ class BaseAPIConnector(Protocol):
     def add_status(
         self,
         message: str,
-        text_image: TextImage | None,
-        thumbnails: list[bytes] | None,
+        text_image: TextImage | None = None,
+        thumbnails: list[bytes] | None = None,
     ) -> int:
         """
         Creates a new status using the API wrapper object and returns the integer
