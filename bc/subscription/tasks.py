@@ -65,7 +65,7 @@ def enqueue_posts_for_docket_alert(
     handling a docket alert webhook.
 
     Args:
-        webhook_event_pk (FilingWebhookEvent): The FilingWebhookEvent record.
+        webhook_event (FilingWebhookEvent): The FilingWebhookEvent record.
         document (bytes | None, optional): document content(if available) as bytes.
         sponsor_message (str | None, optional): sponsor message to include in the thumbnails.
     """
@@ -78,7 +78,7 @@ def enqueue_posts_for_docket_alert(
         queue.enqueue(
             make_post_for_webhook_event,
             channel.pk,
-            FilingWebhookEvent.pk,
+            webhook_event.pk,
             document,
             sponsor_message,
             retry=Retry(
