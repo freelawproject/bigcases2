@@ -34,10 +34,10 @@ def log_purchase(
         note += f"({docket_number}) in {court_name}({court_id})"
 
     sponsorship_ids = [
-        group.sponsorships.first().pk for group in sponsored_groups
+        group.sponsorships.first().pk for group in sponsored_groups if group.sponsorships  # type: ignore
     ]
     sponsorships = get_sponsorships_for_subscription(
-        sponsorship_ids, filing_webhook_event.subscription.pk
+        sponsorship_ids, filing_webhook_event.subscription.pk  # type: ignore
     )
 
     for sponsorship in sponsorships:
