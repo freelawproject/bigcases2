@@ -1,8 +1,9 @@
 import factory
+from factory import SubFactory
 from factory.django import DjangoModelFactory
 
 from bc.core.utils.tests.base import faker
-from bc.subscription.models import Subscription
+from bc.subscription.models import FilingWebhookEvent, Subscription
 
 
 class SubscriptionFactory(DjangoModelFactory):
@@ -19,3 +20,10 @@ class SubscriptionFactory(DjangoModelFactory):
             return
 
         self.channel.add(*extracted)
+
+
+class FilingWebhookEventFactory(DjangoModelFactory):
+    class Meta:
+        model = FilingWebhookEvent
+
+    subscription = SubFactory(SubscriptionFactory)
