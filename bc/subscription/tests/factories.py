@@ -26,4 +26,14 @@ class FilingWebhookEventFactory(DjangoModelFactory):
     class Meta:
         model = FilingWebhookEvent
 
+    docket_id = factory.LazyAttribute(
+        lambda _: faker.random_int(100_000, 400_000)
+    )
+    pacer_doc_id = factory.LazyAttribute(
+        lambda _: faker.pystr(min_chars=10, max_chars=32)
+    )
+    long_description = factory.LazyAttribute(lambda _: faker.text())
+    short_description = factory.LazyAttribute(
+        lambda _: faker.pystr(min_chars=10, max_chars=20)
+    )
     subscription = SubFactory(SubscriptionFactory)
