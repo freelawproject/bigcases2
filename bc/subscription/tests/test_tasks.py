@@ -293,7 +293,11 @@ class MakePostForWebhookEventTest(TestCase):
 @patch("bc.subscription.tasks.Retry")
 @patch("bc.subscription.tasks.queue")
 @patch.object(Channel, "get_api_wrapper")
-class EnqueuePostsForNewCaseTest(TestCase):
+class EnqueuePostsForNewStatusTest(TestCase):
+    channel = None
+    subscription = None
+    webhook_event = None
+
     @classmethod
     def setUpTestData(cls) -> None:
         cls.channel = ChannelFactory(enabled=True, service=Channel.TWITTER)
