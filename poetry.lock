@@ -2069,18 +2069,18 @@ types-pyOpenSSL = "*"
 
 [[package]]
 name = "types-requests"
-version = "2.28.11.8"
+version = "2.31.0.0"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-requests-2.28.11.8.tar.gz", hash = "sha256:e67424525f84adfbeab7268a159d3c633862dafae15c5b19547ce1b55954f0a3"},
-    {file = "types_requests-2.28.11.8-py3-none-any.whl", hash = "sha256:61960554baca0008ae7e2db2bd3b322ca9a144d3e80ce270f5fb640817e40994"},
+    {file = "types-requests-2.31.0.0.tar.gz", hash = "sha256:c1c29d20ab8d84dff468d7febfe8e0cb0b4664543221b386605e14672b44ea25"},
+    {file = "types_requests-2.31.0.0-py3-none-any.whl", hash = "sha256:7c5cea7940f8e92ec560bbc468f65bf684aa3dcf0554a6f8c4710f5f708dc598"},
 ]
 
 [package.dependencies]
-types-urllib3 = "<1.27"
+types-urllib3 = "*"
 
 [[package]]
 name = "types-urllib3"
@@ -2260,4 +2260,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "6e9570725459850ef97a5b821df0a5d689bffb312d9d33ba211173c4f1863e7a"
+content-hash = "ce31f0e7904512d711f3fdf8b83d7d6f69e162cc1f2ef7c1c66902d212432143"
