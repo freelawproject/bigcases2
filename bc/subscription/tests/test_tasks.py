@@ -2,11 +2,14 @@ from unittest.mock import MagicMock, patch
 
 from django.test import TestCase
 
+from bc.channel.models import Channel, Post
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
+from bc.core.utils.tests.base import faker
 from bc.sponsorship.tests.factories import SponsorshipFactory
 from bc.subscription.models import FilingWebhookEvent
 from bc.subscription.tasks import (
     check_webhook_before_posting,
+    make_post_for_webhook_event,
     process_fetch_webhook_event,
     process_filing_webhook_event,
 )
@@ -127,7 +130,7 @@ class CheckWebhookBeforePostingTest(TestCase):
         mock_download.assert_not_called()
 
 
-class ProcessFetchWebhookEvent(TestCase):
+class ProcessFetchWebhookEventTest(TestCase):
     webhook_event = None
     webhook_no_subscription = None
 
@@ -167,4 +170,118 @@ class ProcessFetchWebhookEvent(TestCase):
         mock_download.assert_called_with(filepath)
         mock_enqueue.assert_called_with(
             self.webhook_event, mock_download(), True
+        )
+
+
+@patch("bc.subscription.tasks.add_sponsored_text_to_thumbnails")
+@patch("bc.subscription.tasks.get_thumbnails_from_range")
+@patch.object(Channel, "get_api_wrapper")
+class MakePostForWebhookEventTest(TestCase):
+    webhook_event = None
+    webhook_minute_entry = None
+    channel = None
+    bin_object = None
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        subscription = SubscriptionFactory()
+        cls.webhook_minute_entry = FilingWebhookEventFactory(
+            document_number=None
+        )
+        cls.webhook_event = FilingWebhookEventFactory(
+            doc_id=2974081,
+            document_number=2,
+            subscription=subscription,
+            status=FilingWebhookEvent.WAITING_FOR_DOCUMENT,
+        )
+        cls.channel = ChannelFactory()
+        cls.bin_object = b"\x68\x65\x6c\x6c\x6f"
+
+    def setUp(self) -> None:
+        self.status_id = faker.pyint(
+            min_value=100_000_000, max_value=900_000_000
+        )
+
+    def mock_api_wrapper(self, status_id):
+        wrapper = MagicMock()
+        wrapper.add_status.return_value = status_id
+
+        return wrapper
+
+    def test_can_create_full_post_no_document(
+        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+    ):
+        mock_api.return_value = self.mock_api_wrapper(self.status_id)
+
+        make_post_for_webhook_event(
+            self.channel.pk, self.webhook_event.pk, None
+        )
+        post = Post.objects.first()
+
+        self.assertEqual(post.object_id, self.status_id)
+        self.assertIn("New filing", post.text)
+        mock_add_sponsor_text.assert_not_called()
+        mock_thumbnails.assert_not_called()
+
+    def test_can_create_minute_entry_no_document(
+        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+    ):
+        mock_api.return_value = self.mock_api_wrapper(self.status_id)
+
+        make_post_for_webhook_event(
+            self.channel.pk, self.webhook_minute_entry.pk, None
+        )
+        post = Post.objects.first()
+
+        self.assertEqual(post.object_id, self.status_id)
+        self.assertIn("New minute entry", post.text)
+
+        mock_add_sponsor_text.assert_not_called()
+        mock_thumbnails.assert_not_called()
+
+    def test_get_three_thumbnails_from_documents(
+        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+    ):
+        mock_api.return_value = self.mock_api_wrapper(self.status_id)
+
+        # Remove the short description to make sure the template will use the long one
+        self.webhook_event.short_description = ""
+        self.webhook_event.save(update_fields=["short_description"])
+
+        make_post_for_webhook_event(
+            self.channel.pk, self.webhook_event.pk, self.bin_object
+        )
+
+        mock_thumbnails.assert_called_with(self.bin_object, "[1,2,3]")
+        mock_add_sponsor_text.assert_not_called()
+
+    def test_get_four_thumbnails_from_document(
+        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+    ):
+        mock_api.return_value = self.mock_api_wrapper(self.status_id)
+
+        make_post_for_webhook_event(
+            self.channel.pk, self.webhook_event.pk, self.bin_object
+        )
+
+        mock_thumbnails.assert_called_with(self.bin_object, "[1,2,3,4]")
+        mock_add_sponsor_text.assert_not_called()
+
+    def test_add_sponsor_text_to_thumbails(
+        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+    ):
+        sponsor_text = "This document contributed by Free Law Project"
+        mock_api.return_value = self.mock_api_wrapper(self.status_id)
+        mock_thumbnails.return_value = [self.bin_object for _ in range(4)]
+
+        make_post_for_webhook_event(
+            self.channel.pk,
+            self.webhook_event.pk,
+            self.bin_object,
+            sponsor_text,
+        )
+
+        mock_thumbnails.assert_called_with(self.bin_object, "[1,2,3,4]")
+        mock_add_sponsor_text.assert_called_with(
+            mock_thumbnails(), sponsor_text
         )

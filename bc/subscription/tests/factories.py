@@ -32,7 +32,9 @@ class FilingWebhookEventFactory(DjangoModelFactory):
     pacer_doc_id = factory.LazyAttribute(
         lambda _: faker.pystr(min_chars=10, max_chars=32)
     )
-    long_description = factory.LazyAttribute(lambda _: faker.text())
+    long_description = factory.LazyAttribute(
+        lambda _: faker.pystr(min_chars=300, max_chars=400)
+    )
     short_description = factory.LazyAttribute(
         lambda _: faker.pystr(min_chars=10, max_chars=20)
     )
