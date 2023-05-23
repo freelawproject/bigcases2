@@ -17,7 +17,7 @@ def receive_mastodon_push(request: Request) -> Response:
     logger.debug(f"Request headers: {request.headers}")
     logger.debug(f"Request data: {request.data}")
 
-    m = MastodonConnector()
+    m = MastodonConnector()  # type: ignore
     priv_dict, _ = m.get_keys()
     push = m.api.push_subscription_decrypt_push(
         data=request.data,

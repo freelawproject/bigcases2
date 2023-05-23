@@ -44,10 +44,6 @@ def main():
     access_token = oauth_tokens["oauth_token"]
     access_token_secret = oauth_tokens["oauth_token_secret"]
 
-    print("\nAdd the following values in your .env file:")
-    print(f"TWITTER_ACCESS_TOKEN={repr(access_token)}")
-    print(f"TWITTER_ACCESS_TOKEN_SECRET={repr(access_token_secret)}")
-
     # Make the request
     oauth = OAuth1Session(
         CONSUMER_KEY,
@@ -73,6 +69,8 @@ def main():
     print(f"Account: {data['username']}")
     print(f"Account id: {data['id']}")
     print("Enable: True")
+    print(f"Access Token: {repr(access_token)[1:-1]}")
+    print(f"Access Token secret: {repr(access_token_secret)[1:-1]}")
 
 
 if __name__ == "__main__":
