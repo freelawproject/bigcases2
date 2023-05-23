@@ -3,18 +3,18 @@ from unittest.mock import MagicMock, patch
 from django.test import TestCase
 
 from bc.channel.models import Channel, Post
-from bc.core.utils.status.templates import TWITTER_FOLLOW_A_NEW_CASE
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
+from bc.core.utils.status.templates import TWITTER_FOLLOW_A_NEW_CASE
 from bc.core.utils.tests.base import faker
 from bc.sponsorship.tests.factories import SponsorshipFactory
 from bc.subscription.models import FilingWebhookEvent
 from bc.subscription.tasks import (
     check_webhook_before_posting,
+    enqueue_posts_for_docket_alert,
+    enqueue_posts_for_new_case,
     make_post_for_webhook_event,
     process_fetch_webhook_event,
     process_filing_webhook_event,
-    enqueue_posts_for_new_case,
-    enqueue_posts_for_docket_alert
 )
 
 from .factories import FilingWebhookEventFactory, SubscriptionFactory
@@ -289,11 +289,11 @@ class MakePostForWebhookEventTest(TestCase):
             mock_thumbnails(), sponsor_text
         )
 
+
 @patch("bc.subscription.tasks.Retry")
 @patch("bc.subscription.tasks.queue")
 @patch.object(Channel, "get_api_wrapper")
 class EnqueuePostsForNewCaseTest(TestCase):
-
     @classmethod
     def setUpTestData(cls) -> None:
         cls.channel = ChannelFactory(enabled=True, service=Channel.TWITTER)
@@ -308,7 +308,9 @@ class EnqueuePostsForNewCaseTest(TestCase):
     def mock_api_wrapper(self):
         return MagicMock(name="api_wrapper")
 
-    def test_can_enqueue_new_case_status(self, mock_api, mock_queue, mock_retry):
+    def test_can_enqueue_new_case_status(
+        self, mock_api, mock_queue, mock_retry
+    ):
         api_wrapper = self.mock_api_wrapper()
         mock_api.return_value = api_wrapper
         message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
@@ -320,14 +322,12 @@ class EnqueuePostsForNewCaseTest(TestCase):
         enqueue_posts_for_new_case(self.subscription)
 
         mock_queue.enqueue.assert_called_once_with(
-            api_wrapper.add_status,
-            message,
-            None,
-            retry=mock_retry()
+            api_wrapper.add_status, message, None, retry=mock_retry()
         )
 
-
-    def test_can_enqueue_new_filing_status(self, mock_api, mock_queue, mock_retry):
+    def test_can_enqueue_new_filing_status(
+        self, mock_api, mock_queue, mock_retry
+    ):
         mock_api.return_value = self.mock_api_wrapper()
 
         enqueue_posts_for_docket_alert(self.webhook_event)
