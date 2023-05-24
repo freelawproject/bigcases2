@@ -1,0 +1,24 @@
+{% extends "post.html" %}
+{% block title %}Little Cases Bots - {{bot.name}}{% endblock %}
+
+{% block post_title %}{{bot.name}}{% endblock %}
+
+{% block post_content %}
+  <p>{{ bot.overview |safe }}</p>
+
+  <div class="flex items-center justify-center">
+    {% for channel in bot.channels.all %}
+    <div class="w-1/3 {% if forloop.counter0 %} ml-4 {% endif %}">
+      {% with service_name=channel.get_service_display channel_url=channel.self_url %}
+        {% include "includes/follow-button.html" with service_name=service_name channel_url=channel_url %}
+      {% endwith %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <h2>I'm Following These Cases</h2>
+  <p>Right now, this bot is following:</p>
+
+  {% include "includes/table-with-cases.html" with subscriptions=subscriptions %}
+
+{% endblock %}

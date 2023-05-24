@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.response import TemplateResponse
 
 from bc.channel.models import Group
@@ -26,6 +26,20 @@ def count_dockets(request: HttpRequest) -> HttpResponse:
 def little_cases(request: HttpRequest) -> HttpResponse:
     bots = Group.objects.filter(is_big_cases=False).all()
     return TemplateResponse(request, "little-cases/index.html", {"bots": bots})
+
+
+def little_cases_details(request: HttpRequest, slug: str) -> HttpResponse:
+    bot = get_object_or_404(Group, slug=slug)
+    subscriptions = (
+        Subscription.objects.filter(channel__group_id=bot.pk)
+        .distinct("cl_docket_id")
+        .all()
+    )
+    return TemplateResponse(
+        request,
+        "little-cases/details.html",
+        {"bot": bot, "subscriptions": subscriptions},
+    )
 
 
 def little_cases_suggest_form(request: HttpRequest) -> HttpResponse:
