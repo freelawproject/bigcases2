@@ -18,7 +18,7 @@
   {% if bots %}
   <div class="grid grid-cols-3 gap-4">
     {% for bot in bots %}
-      <div class="text-center text-lg">{{ bot.name }}</div>
+      <a class="text-center text-lg" href="{{bot.get_absolute_url}}">{{ bot.name }}</a>
     {% endfor %}
   </div>
   {% else %}
