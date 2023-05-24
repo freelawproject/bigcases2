@@ -29,6 +29,7 @@ class ChannelInline(admin.TabularInline):
 class GroupAdmin(admin.ModelAdmin):
     inlines = (ChannelInline,)
     exclude = ["sponsorships"]
+    prepopulated_fields = {"slug": ["name"]}
 
 
 admin.site.register(Channel, ChannelAdmin)
