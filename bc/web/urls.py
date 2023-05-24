@@ -10,6 +10,7 @@ from .views import (
     collaboration,
     count_dockets,
     little_cases,
+    little_cases_suggest_form,
 )
 
 urlpatterns = [
@@ -37,8 +38,13 @@ urlpatterns = [
     ),
     path(
         "little-cases/",
-        ratelimiter_unsafe_5_per_30m(little_cases),
+        little_cases,
         name="little_cases",
+    ),
+    path(
+        "little-cases/suggest-a-bot/",
+        ratelimiter_unsafe_5_per_30m(little_cases_suggest_form),
+        name="little_cases_suggest_bot",
     ),
     path(
         "collaboration/",
