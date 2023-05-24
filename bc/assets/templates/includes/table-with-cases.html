@@ -1,0 +1,18 @@
+<table>
+  <thead>
+    <tr>
+      <td>Case Name</td>
+      <td>Case Number</td>
+      <td>Court</td>
+    </tr>
+  </thead>
+  <tbody>
+  {% for sub in subscriptions %}
+    <tr>
+      <td><a href="{{ sub.cl_url }}">{{ sub.name_with_summary }}</a></td>
+      <td><nobr>{{ sub.docket_number }}</nobr></td>
+      <td>{{ sub.court_name }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
