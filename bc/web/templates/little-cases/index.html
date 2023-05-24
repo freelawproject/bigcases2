@@ -1,0 +1,29 @@
+{% extends "post.html" %}
+{% block title %}Little Cases Bots{% endblock %}
+
+{% block post_title %}Little Cases Bots{% endblock %}
+
+{% block post_content %}
+  <p class="lead">We are developing a system where you can create and maintain your own bots for Twitter or Mastodon.</p>
+  <p>You'll give us permission to post on your behalf and we'll send updates for cases you subscribe to on CourtListener.</p>
+  <p>Imagine a bot that keeps you and the public updated about important topics like intellectual property, immigration, or online privacy.</p>
+  <p>If there's a legal topic you follow and if you want to curate a bot for that topic, let us know using the following button. We'll get back to you as soon as possible with a plan for action.</p>
+
+  <p class="tracking-[.8px] font-medium max-w-[135px]">
+    {% url 'little_cases_suggest_bot' as suggest_a_bot %}
+    {% include 'includes/action-button.html' with link=suggest_a_bot text="Suggest a Bot" size="md" color='saffron' %}
+  </p>
+
+  <h2>Current Little Cases Bots</h2>
+  {% if bots %}
+  <div class="grid grid-cols-3 gap-4">
+    {% for bot in bots %}
+      <div class="text-center text-lg">{{ bot.name }}</div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>None yet!</p>
+  {% endif %}
+{% endblock %}
+
+
