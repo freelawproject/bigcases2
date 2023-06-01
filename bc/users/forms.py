@@ -40,3 +40,35 @@ class ConfirmedEmailAuthenticationForm(AuthenticationForm):
             raise forms.ValidationError(
                 "Please validate your email address to log in."
             )
+
+
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model = get_user_model()
+        fields = [
+            "username",
+            "email",
+            "password1",
+            "password2",
+            "first_name",
+            "last_name",
+        ]
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        _, domain_part = email.rsplit("@", 1)
+        if domain_part in blocklist:
+            raise forms.ValidationError(
+                f"{domain_part} is a blocked email provider",
+                code="bad_email_domain",
+            )
+        return email
+
+
+class OptInConsentForm(forms.Form):
+    consent = forms.BooleanField(
+        error_messages={
+            "required": "To create a new account, you must agree below.",
+        },
+        required=True,
+    )
