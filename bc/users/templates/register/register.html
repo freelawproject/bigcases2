@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Register an Account{% endblock %}
+
+{% block content %}
+<div class="flex justify-center self-center mt-16">
+  <div class="flex flex-col">
+    {% if form.errors %}
+      <div class="bg-red-100 border-l-2 border-red-500 text-red-700 p-4 mb-2" role="alert">
+        <p class="m-0">There were errors with your submission.</p>
+      </div>
+    {% endif %}
+    <h1 class="mb-[0.888em] text-4xl font-display font-light tracking-wide">
+      Register a New Account
+    </h1>
+    <div class="max-w-md">
+      <form action="" method="post" id="register-form" class="grid grid-cols-1 gap-4">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="flex flex-col">
+              <div>
+                {{ field.label_tag }}
+                {% if  field.field.required %}
+                <span class="text-red-500">*</span>
+                {% endif %}
+              </div>
+              {{ field }}
+              {% if field.errors %}
+                <div class="text-sm text-red-700 mt-1">
+                    {{field.errors}}
+                </div>
+              {% endif %}
+        </div>
+        {% endfor %}
+        <div class="flex flex-row">
+          <div>
+            {{ consent_form.consent }}
+          </div>
+          <label class="text-sm ml-3">
+             I consent to Free Law Project using information I provide for services on this website such as sending me emails and creating status. Checking this box does <strong>not</strong> sign me up for any newsletters.
+         </label>
+        </div>
+
+        {% include 'includes/submit-button.html' with value='Create Account' %}
+      </form>
+    </div>
+    <div class="mt-4 text-md">
+      {% url 'password_reset' as password_reset %}
+      {% include 'includes/regular-anchor.html' with text='Forgot username/password?' href=password_reset %}
+    </div>
+  </div>
+</div>
+{% endblock %}
