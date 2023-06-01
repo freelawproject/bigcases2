@@ -535,6 +535,21 @@ files = [
 graph = ["objgraph (>=1.7.2)"]
 
 [[package]]
+name = "disposable-email-domains"
+version = "0.0.90"
+description = "A set of disposable email domains"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "disposable-email-domains-0.0.90.tar.gz", hash = "sha256:505573f4afb902341c1c0f7c9830a0ad8c889fd88dec51de40e5822d6e12a038"},
+    {file = "disposable_email_domains-0.0.90-py2.py3-none-any.whl", hash = "sha256:50aff9fab321b561b0facc7c1124fb5c6e7c1fc3062c9117929630b7072048f4"},
+]
+
+[package.extras]
+dev = ["check-manifest"]
+
+[[package]]
 name = "distlib"
 version = "0.3.6"
 description = "Distribution utilities"
@@ -2260,4 +2275,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "6e9570725459850ef97a5b821df0a5d689bffb312d9d33ba211173c4f1863e7a"
+content-hash = "4b89d83cb9dc5ce4ea9a6f6fa57451d9bc0110666805f582e9f07fe14c471578"
