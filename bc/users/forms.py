@@ -72,3 +72,41 @@ class OptInConsentForm(forms.Form):
         },
         required=True,
     )
+
+
+class EmailConfirmationForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                "class": "form-control input-lg",
+                "placeholder": "Your Email Address",
+                "autocomplete": "email",
+                "autofocus": "on",
+            }
+        ),
+        required=True,
+    )
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    """A simple subclassing of a Django form in order to change class
+    attributes.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs) -> None:
+        """Override the usual password form to send a message if we don't find
+        any accounts
+        """
+        recipient_addr = self.cleaned_data["email"]
+        users = self.get_users(recipient_addr)
+        if not len(list(users)):
+            email: EmailType = emails["no_account_found"]
+            body = email["body"] % ("password reset", reverse("register"))
+            send_mail(
+                email["subject"], body, email["from_email"], [recipient_addr]
+            )
+        else:
+            super().save(*args, **kwargs)
