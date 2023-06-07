@@ -81,7 +81,7 @@ class Subscription(AbstractDateTimeModel):
 
     @property
     def cl_url(self) -> str:
-        return f"https://www.courtlistener.com/recap/gov.uscourts.{self.cl_court_id}.{self.pacer_case_id}"
+        return f"https://www.courtlistener.com/docket/{self.cl_docket_id}/{self.cl_slug}/?order_by=desc"
 
     def pacer_district_url(self, path) -> str | None:
         if not self.pacer_case_id or self.cl_court_id in APPELLATE_COURT_IDS:
