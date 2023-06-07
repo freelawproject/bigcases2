@@ -58,14 +58,18 @@ TWITTER_POST_TEMPLATE = TwitterTemplate(
     str_template="""New filing: "{docket}"
 Doc #{doc_num}: {description}
 
-PDF: {pdf_link}""",
+PDF: {pdf_link}
+
+#CL{docket_id}""",
 )
 
 TWITTER_MINUTE_TEMPLATE = TwitterTemplate(
     link_placeholders=["docket_link"],
     str_template="""New minute entry in {docket}: {description}
 
-Docket: {docket_link}""",
+Docket: {docket_link}
+
+#CL{docket_id}""",
 )
 
 
@@ -73,5 +77,7 @@ TWITTER_FOLLOW_A_NEW_CASE = TwitterTemplate(
     link_placeholders=[],
     str_template="""I'm now following {docket}:
 
-{docket_link}""",
+{docket_link}
+
+#CL{docket_id}""",
 )
