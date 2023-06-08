@@ -80,8 +80,9 @@ def enqueue_posts_for_docket_alert(
         webhook_event.subscription.pk
     ):
         sponsor_message = None
-        if check_sponsor_message and channel.group.sponsorships.all():  # type: ignore
-            sponsorship = channel.group.sponsorships.first()  # type: ignore
+        sponsorships_for_channel = channel.group.sponsorships.all()  # type: ignore
+        if check_sponsor_message and sponsorships_for_channel:
+            sponsorship = sponsorships_for_channel[0]
             sponsor_message = sponsorship.watermark_message
 
         queue.enqueue(
