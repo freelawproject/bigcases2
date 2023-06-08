@@ -20,7 +20,7 @@ services:
     container_name: bc2-postgresql
     ports:
       - "5433:5432"
-    image: postgres:11-alpine
+    image: postgres:15.2-alpine
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
