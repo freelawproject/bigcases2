@@ -67,6 +67,15 @@ class Channel(AbstractDateTimeModel):
     group = models.ForeignKey(
         "Group", related_name="channels", null=True, on_delete=models.SET_NULL
     )
+    access_token = models.TextField(
+        help_text="Access Tokens of the account that the bot is making the request on behalf of",
+        default="",
+    )
+    access_token_secret = models.TextField(
+        help_text="Access Tokens Secret of the account that the bot is making the request on behalf of",
+        default="",
+        blank=True,
+    )
 
     def get_api_wrapper(self) -> BaseAPIConnector:
         match self.service:
