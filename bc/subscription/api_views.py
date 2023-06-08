@@ -63,11 +63,17 @@ def handle_docket_alert_webhook(request: Request) -> Response:
                 long_description=long_description,
             )
 
-            webhook_event_handler = queue.enqueue_in(
-                timedelta(seconds=settings.WEBHOOK_DELAY_TIME),
-                process_filing_webhook_event,
-                filing.pk,
-            )
+            if doc["filepath_local"]:
+                webhook_event_handler = queue.enqueue(
+                    process_filing_webhook_event,
+                    filing.pk,
+                )
+            else:
+                webhook_event_handler = queue.enqueue_in(
+                    timedelta(seconds=settings.WEBHOOK_DELAY_TIME),
+                    process_filing_webhook_event,
+                    filing.pk,
+                )
 
             queue.enqueue(
                 check_webhook_before_posting,
