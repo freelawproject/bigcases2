@@ -36,13 +36,15 @@ def get_server_url(handle: str) -> str:
 
 
 class MastodonConnector:
-    def __init__(self) -> None:
+    def __init__(self, access_token: str, base_url: str) -> None:
+        self.access_token = access_token
+        self.base_url = base_url
         self.api = self.get_api_object()
 
     def get_api_object(self, version=None) -> ApiWrapper:
         mastodon = Mastodon(
-            api_base_url=settings.MASTODON_SERVER,
-            access_token=settings.MASTODON_TOKEN,
+            api_base_url=self.base_url,
+            access_token=self.access_token,
             request_timeout=60,
         )
 
