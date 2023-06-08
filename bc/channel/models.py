@@ -5,7 +5,7 @@ from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
 from .utils.connectors.base import BaseAPIConnector
-from .utils.connectors.masto import MastodonConnector, masto_regex
+from .utils.connectors.masto import MastodonConnector, get_server_url
 from .utils.connectors.twitter import TwitterConnector
 
 
@@ -80,9 +80,13 @@ class Channel(AbstractDateTimeModel):
     def get_api_wrapper(self) -> BaseAPIConnector:
         match self.service:
             case self.TWITTER:
-                return TwitterConnector()
+                return TwitterConnector(
+                    self.access_token, self.access_token_secret
+                )
             case self.MASTODON:
-                return MastodonConnector()
+                return MastodonConnector(
+                    self.access_token, get_server_url(self.account)
+                )
             case _:
                 raise NotImplementedError(
                     f"No wrapper implemented for service: '{self.service}'."

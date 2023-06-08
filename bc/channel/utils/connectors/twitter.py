@@ -10,7 +10,9 @@ from .base import ApiWrapper
 
 
 class TwitterConnector:
-    def __init__(self) -> None:
+    def __init__(self, access_token: str, access_token_secret: str) -> None:
+        self.access_token = access_token
+        self.access_token_secret = access_token_secret
         self.api = self.get_api_object("1.1")
         self.api_v2 = self.get_api_object("2")
 
@@ -21,8 +23,8 @@ class TwitterConnector:
         api = TwitterAPI(
             settings.TWITTER_CONSUMER_KEY,
             settings.TWITTER_CONSUMER_SECRET,
-            settings.TWITTER_ACCESS_TOKEN,
-            settings.TWITTER_ACCESS_TOKEN_SECRET,
+            self.access_token,
+            self.access_token_secret,
             api_version=version,
         )
         return api
