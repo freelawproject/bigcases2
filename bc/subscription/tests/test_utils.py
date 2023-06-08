@@ -1,3 +1,5 @@
+from unittest.mock import MagicMock, patch
+
 from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase
 
@@ -21,7 +23,8 @@ class SearchBarTest(SimpleTestCase):
             with self.assertRaises(ValidationError):
                 get_docket_id_from_query(query)
 
-    def test_extract_docket_id_from_query(self):
+    @patch("bc.subscription.utils.courtlistener.requests")
+    def test_extract_docket_id_from_query(self, mock_requests):
         test_inputs = (
             # Simple case, numeric input
             {"query": "15", "docket_id": 15},
@@ -51,12 +54,22 @@ class SearchBarTest(SimpleTestCase):
             {
                 "query": "https://storage.courtlistener.com/recap/gov.uscourts.dcd.226485/gov.uscourts.dcd.226485.1.0_6.pdf",
                 "docket_id": 41955367,
+                "mock_redirect": "https://www.courtlistener.com/docket/41955367/us-dominion-inc-v-giuliani/",
             },
             {
                 "query": "https://storage.courtlistener.com/recap/gov.uscourts.ohnd.294863/gov.uscourts.ohnd.294863.15.0.pdf",
                 "docket_id": 66817224,
+                "mock_redirect": "https://www.courtlistener.com/docket/66817224/canterbury-v-norfolk-southern-corporation/",
             },
         )
+        # Create a new Mock to imitate a Response
+        mock_response = MagicMock()
+        mock_response.status_code = 200
         for test in test_inputs:
+            if "mock_redirect" in test:
+                mock_response.url = test["mock_redirect"]
+
+            mock_requests.get.return_value = mock_response
+
             result = get_docket_id_from_query(test["query"])
             self.assertEqual(result, test["docket_id"])

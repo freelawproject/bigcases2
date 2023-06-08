@@ -4,7 +4,10 @@ from django_rq.queues import get_queue
 from rq import Retry
 
 from bc.channel.models import Channel, Post
-from bc.channel.selectors import get_channels_per_subscription
+from bc.channel.selectors import (
+    get_channels_per_subscription,
+    get_sponsored_groups_per_subscription,
+)
 from bc.core.utils.images import add_sponsored_text_to_thumbnails
 from bc.core.utils.microservices import get_thumbnails_from_range
 from bc.core.utils.status.selectors import (
@@ -12,7 +15,7 @@ from bc.core.utils.status.selectors import (
     get_template_for_channel,
 )
 from bc.core.utils.status.templates import DO_NOT_PAY, DO_NOT_POST
-from bc.sponsorship.selectors import get_active_sponsorship
+from bc.sponsorship.selectors import check_active_sponsorships
 from bc.sponsorship.services import log_purchase
 from bc.subscription.utils.courtlistener import (
     download_pdf_from_cl,
@@ -58,7 +61,7 @@ def enqueue_posts_for_new_case(subscription: Subscription) -> None:
 def enqueue_posts_for_docket_alert(
     webhook_event: FilingWebhookEvent,
     document: bytes | None = None,
-    sponsor_message: str | None = None,
+    check_sponsor_message: bool = False,
 ) -> None:
     """
     Enqueue jobs to create a post in the available channels after
@@ -67,7 +70,8 @@ def enqueue_posts_for_docket_alert(
     Args:
         webhook_event (FilingWebhookEvent): The FilingWebhookEvent record.
         document (bytes | None, optional): document content(if available) as bytes.
-        sponsor_message (str | None, optional): sponsor message to include in the thumbnails.
+        check_sponsor_message (bool, optional): designates whether this method should check
+        the sponsorships field and compute the sponsor_message for each channel. Defaults to False.
     """
     if not webhook_event.subscription:
         return
@@ -75,6 +79,12 @@ def enqueue_posts_for_docket_alert(
     for channel in get_channels_per_subscription(
         webhook_event.subscription.pk
     ):
+        sponsor_message = None
+        sponsorships_for_channel = channel.group.sponsorships.all()  # type: ignore
+        if check_sponsor_message and sponsorships_for_channel:
+            sponsorship = sponsorships_for_channel[0]
+            sponsor_message = sponsorship.watermark_message
+
         queue.enqueue(
             make_post_for_webhook_event,
             channel.pk,
@@ -157,7 +167,9 @@ def check_webhook_before_posting(fwe_pk: int):
     if cl_document["filepath_local"]:
         document = download_pdf_from_cl(cl_document["filepath_local"])
     else:
-        sponsorship = get_active_sponsorship()
+        sponsorship = check_active_sponsorships(
+            filing_webhook_event.subscription.pk
+        )
         if (
             sponsorship
             and filing_webhook_event.pacer_doc_id
@@ -202,17 +214,15 @@ def process_fetch_webhook_event(fwe_pk: int):
     cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
     document = download_pdf_from_cl(cl_document["filepath_local"])
 
-    sponsorship = get_active_sponsorship()
-    sponsor_message = None
-    if sponsorship:
-        sponsor_message = sponsorship.watermark_message
+    sponsor_groups = get_sponsored_groups_per_subscription(
+        filing_webhook_event.subscription.pk
+    )
+    if sponsor_groups:
         log_purchase(
-            sponsorship, filing_webhook_event, cl_document["page_count"]
+            sponsor_groups, filing_webhook_event, cl_document["page_count"]
         )
 
-    enqueue_posts_for_docket_alert(
-        filing_webhook_event, document, sponsor_message
-    )
+    enqueue_posts_for_docket_alert(filing_webhook_event, document, True)
 
     return filing_webhook_event
 
