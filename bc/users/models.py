@@ -9,6 +9,16 @@ class User(AbstractDateTimeModel, AbstractUser):
         help_text="The email address of the user.",
         unique=True,
     )
+    activation_key = models.CharField(max_length=40, default="")
+    key_expires = models.DateTimeField(
+        help_text="The time and date when the user's activation_key expires",
+        blank=True,
+        null=True,
+    )
+    email_confirmed = models.BooleanField(
+        help_text="The user has confirmed their email address",
+        default=False,
+    )
     affiliation = models.TextField(help_text="User's affiliations", blank=True)
 
     @property

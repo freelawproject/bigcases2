@@ -14,7 +14,7 @@ class UserChannelInline(admin.TabularInline):
 class UserAdmin(BaseUserAdmin):
     fieldsets = BaseUserAdmin.fieldsets + (  # type: ignore
         # Custom fields added on to the bottom
-        ("Extra Fields", {"fields": ["affiliation"]}),
+        ("Extra Fields", {"fields": ["affiliation", "email_confirmed"]}),
     )
     add_fieldsets = (
         (None, {"classes": ["wide"], "fields": ["email"]}),
