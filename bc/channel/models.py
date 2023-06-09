@@ -6,7 +6,11 @@ from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
 from .utils.connectors.base import BaseAPIConnector
-from .utils.connectors.masto import MastodonConnector, get_server_url
+from .utils.connectors.masto import (
+    MastodonConnector,
+    get_server_url,
+    masto_regex,
+)
 from .utils.connectors.twitter import TwitterConnector
 
 
@@ -25,10 +29,10 @@ class Group(AbstractDateTimeModel):
         blank=True,
     )
     slug = models.SlugField(
-        help_text="A generated path for this item", null=True
+        help_text="A generated path for this item", default=""
     )
     overview = models.TextField(
-        help_text="Short description of the purpose of this group", null=True
+        help_text="Short description of the purpose of this group", default=""
     )
 
     def __str__(self) -> str:
