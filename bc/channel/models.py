@@ -1,11 +1,16 @@
 from django.db import models
+from django.urls import reverse
 
 from bc.core.models import AbstractDateTimeModel
 from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
 from .utils.connectors.base import BaseAPIConnector
-from .utils.connectors.masto import MastodonConnector, get_server_url
+from .utils.connectors.masto import (
+    MastodonConnector,
+    get_server_url,
+    masto_regex,
+)
 from .utils.connectors.twitter import TwitterConnector
 
 
@@ -23,9 +28,18 @@ class Group(AbstractDateTimeModel):
         related_name="groups",
         blank=True,
     )
+    slug = models.SlugField(
+        help_text="A generated path for this item", default=""
+    )
+    overview = models.TextField(
+        help_text="Short description of the purpose of this group", default=""
+    )
 
     def __str__(self) -> str:
         return f"{self.pk}: {self.name}"
+
+    def get_absolute_url(self):
+        return reverse("little_cases_detail", args=[self.slug])
 
 
 class Channel(AbstractDateTimeModel):
