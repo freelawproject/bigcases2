@@ -17,8 +17,10 @@
   </div>
 
   <h2>I'm Following These Cases</h2>
-  <p>Right now, this bot is following:</p>
-
-  {% include "includes/table-with-cases.html" with subscriptions=subscriptions %}
-
+  {% if subscriptions %}
+    <p>Right now, this bot is following:</p>
+    {% include "includes/table-with-cases.html" with subscriptions=subscriptions %}
+  {% else %}
+    <p>None yet!</p>
+  {% endif %}
 {% endblock %}
