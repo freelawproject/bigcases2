@@ -9,7 +9,7 @@ class User(AbstractDateTimeModel, AbstractUser):
         help_text="The email address of the user.",
         unique=True,
     )
-    activation_key = models.CharField(max_length=40, default="")
+    activation_key = models.CharField(max_length=64, default="")
     key_expires = models.DateTimeField(
         help_text="The time and date when the user's activation_key expires",
         blank=True,
