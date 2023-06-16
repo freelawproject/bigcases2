@@ -2,6 +2,10 @@ from datetime import timedelta
 from email.utils import parseaddr
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordResetView
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, SignatureExpired
@@ -23,13 +27,17 @@ from bc.core.utils.network import (
 from bc.core.utils.urls import get_redirect_or_login_url
 
 from .forms import (
+    AccountDeleteForm,
     CustomPasswordResetForm,
     EmailConfirmationForm,
     OptInConsentForm,
     RegisterForm,
+    UserForm,
 )
 from .models import User
-from .utils.email import EmailType, emails
+from .services import convert_to_stub_account
+from .types import AuthenticatedHttpRequest
+from .utils.email import EmailType, emails, message_dict
 
 
 @sensitive_post_parameters("password1", "password2")
@@ -222,3 +230,136 @@ class RateLimitedPasswordResetView(PasswordResetView):
     template_name = "register/password_reset_form.html"
     email_template_name = "register/password_reset_email.html"
     form_class = CustomPasswordResetForm
+
+
+@sensitive_variables(
+    # Contains password info
+    "user_cd",
+    # Contains activation key
+    "email",
+)
+@login_required
+def profile_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
+    old_email = request.user.email
+    user = request.user
+    form = UserForm(request.POST or None, instance=user)
+    if form.is_valid():
+        user_cd = form.cleaned_data
+        new_email = user_cd["email"]
+        changed_email = old_email != new_email
+        if changed_email:
+            # Email was changed.
+            user.activation_key = sha1_activation_key(user.username)
+            user.key_expires = now() + timedelta(5)
+            user.email_confirmed = False
+
+            # Send an email to the new and old addresses. New for verification;
+            # old for notification of the change.
+            email: EmailType = emails["email_changed_successfully"]
+            send_mail(
+                email["subject"],
+                email["body"] % (user.username, user.activation_key),
+                email["from_email"],
+                [new_email],
+            )
+            email = emails["notify_old_address"]
+            send_mail(
+                email["subject"],
+                email["body"] % (user.username, old_email, new_email),
+                email["from_email"],
+                [old_email],
+            )
+            msg = message_dict["email_changed_successfully"]
+            messages.add_message(request, msg["level"], msg["message"])
+            logout(request)
+        else:
+            # if the email wasn't changed, simply inform of success.
+            msg = message_dict["settings_changed_successfully"]
+            messages.add_message(request, msg["level"], msg["message"])
+
+        form.save()
+        return HttpResponseRedirect(reverse("profile_settings"))
+
+    return render(
+        request,
+        "profile/settings.html",
+        {"form": form},
+    )
+
+
+@sensitive_post_parameters("old_password", "new_password1", "new_password2")
+@login_required
+def password_change(request: AuthenticatedHttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            msg = message_dict["pwd_changed_successfully"]
+            messages.add_message(request, msg["level"], msg["message"])
+            update_session_auth_hash(request, form.user)
+            return HttpResponseRedirect(reverse("password_change"))
+    else:
+        form = PasswordChangeForm(user=request.user)
+    return render(
+        request,
+        "profile/password_form.html",
+        {"form": form},
+    )
+
+
+@login_required
+def take_out(request: AuthenticatedHttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        email: EmailType = emails["take_out_requested"]
+        send_mail(
+            email["subject"],
+            email["body"] % (request.user, request.user.email),
+            email["from_email"],
+            email["to"],
+        )
+
+        return HttpResponseRedirect(reverse("take_out_done"))
+
+    return render(
+        request,
+        "profile/take_out.html",
+    )
+
+
+def take_out_done(request: HttpRequest) -> HttpResponse:
+    return render(
+        request,
+        "profile/take_out_done.html",
+    )
+
+
+@sensitive_post_parameters("password")
+@login_required
+def delete_account(request: AuthenticatedHttpRequest) -> HttpResponse:
+    if request.method == "POST":
+        delete_form = AccountDeleteForm(request, request.POST)
+        if delete_form.is_valid():
+            email: EmailType = emails["account_deleted"]
+            send_mail(
+                email["subject"],
+                email["body"] % request.user,
+                email["from_email"],
+                email["to"],
+            )
+            convert_to_stub_account(request.user)
+            update_session_auth_hash(request, request.user)
+            logout(request)
+            return HttpResponseRedirect(reverse("delete_profile_done"))
+    else:
+        delete_form = AccountDeleteForm(request=request)
+    return render(
+        request,
+        "profile/delete.html",
+        {
+            "form": delete_form,
+        },
+    )
+
+
+def delete_profile_done(request: HttpRequest) -> HttpResponse:
+    return render(request, "profile/deleted.html")
