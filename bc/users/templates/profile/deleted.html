@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Goodbye{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 mt-16 grid grid-cols-1 gap-y-5 text-bcb-black">
+  <div class="flex justify-center self-center mb-[0.888em] ">
+    <div class="flex self-center">
+      <h1 class="text-4xl font-display font-light tracking-wide">
+        We Are Sorry to See You Go
+      </h1>
+    </div>
+  </div>
+
+  <p>Thank you for your time with our site, and goodbye for now. While we
+    are concerned with every user that we lose, we do hope you have found
+    something else to suit your needs.</p>
+
+  <p>If you haven't had a chance to tell us about your experience, please
+    do so at your earliest convenience via our
+    {% include 'includes/regular-anchor.html' with text='contact form' href="https://free.law/contact/"%}.
+    This will allow us to improve the system.</p>
+
+  <p>Goodbye one last time, and fare thee well,</p>
+  <p><em>~~The CourtListener Team~~</em></p>
+
+</div>
+{% endblock %}
