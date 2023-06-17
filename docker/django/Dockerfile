@@ -4,7 +4,7 @@ FROM python:3.11-slim as build-base
 
 RUN apt-get update --option "Acquire::Retries=3" --quiet=2 && \
     apt-get install -y build-essential curl &&\
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install \
         --no-install-recommends \
         --assume-yes \
