@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.views import View
 from django_htmx.http import trigger_client_event
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, ReadTimeout
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -39,6 +39,8 @@ def search(request: Request) -> Response:
         template = "./includes/search_htmx/no-result.html"
     except ValidationError:
         template = "./includes/search_htmx/invalid-keyword.html"
+    except ReadTimeout:
+        template = "./includes/search_htmx/time-out.html"
 
     return render(request, template, context)
 
