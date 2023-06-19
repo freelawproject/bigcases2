@@ -5,7 +5,7 @@ from django.conf import settings
 from TwitterAPI import TwitterAPI
 
 from bc.core.utils.images import TextImage
-
+from .alt_text_utils import text_image_alt_text, thumb_num_alt_text
 from .base import ApiWrapper
 
 
@@ -59,8 +59,8 @@ class TwitterConnector:
         Creates a new status update using the Twitter API.
 
         The current implementation of the Twitter API(version 2) doesn't have an endpoint
-        to upload media files, but We can upload the files using the v1.1 media endpoint
-        and then We can attach previously uploaded media to a Tweet using the v2 API Tweet
+        to upload media files, but we can upload the files using the v1.1 media endpoint,
+        and then we can attach previously uploaded media to a Tweet using the v2 API Tweet
         endpoint.
 
         Here's the Twitter API endpoint map:
@@ -76,7 +76,7 @@ class TwitterConnector:
         if text_image:
             media_id = self.upload_media(
                 text_image.to_bytes(),
-                f"An image of the entry's full text: {text_image.description}",
+                text_image_alt_text(text_image.description),
             )
             media_array.append(str(media_id))
             payload["media"] = {"media_ids": media_array}
@@ -84,7 +84,7 @@ class TwitterConnector:
         if thumbnails:
             for idx, thumbnail in enumerate(thumbnails):
                 media_id = self.upload_media(
-                    thumbnail, f"Thumbnail of page {idx + 1} of the PDF"
+                    thumbnail, thumb_num_alt_text(idx)
                 )
                 media_array.append(str(media_id))
             payload["media"] = {"media_ids": media_array}

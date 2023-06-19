@@ -11,7 +11,7 @@ from mastodon.errors import (
     MastodonNetworkError,
     MastodonServerError,
 )
-
+from .alt_text_utils import thumb_num_alt_text, text_image_alt_text
 from bc.core.utils.images import TextImage
 
 from .base import ApiWrapper
@@ -41,7 +41,7 @@ class MastodonConnector:
         self.base_url = base_url
         self.api = self.get_api_object()
 
-    def get_api_object(self, version=None) -> ApiWrapper:
+    def get_api_object(self, _version=None) -> ApiWrapper:
         mastodon = Mastodon(
             api_base_url=self.base_url,
             access_token=self.access_token,
@@ -76,7 +76,7 @@ class MastodonConnector:
             try:
                 media_id = self.upload_media(
                     text_image.to_bytes(),
-                    f"An image of the entry's full text: {text_image.description}",
+                    text_image_alt_text(text_image.description),
                 )
                 media_ids.append(media_id)
             except (
@@ -91,7 +91,7 @@ class MastodonConnector:
             for idx, thumbnail in enumerate(thumbnails):
                 try:
                     media_id = self.upload_media(
-                        thumbnail, f"Thumbnail of page {idx + 1} of the PDF"
+                        thumbnail, thumb_num_alt_text(idx)
                     )
                     media_ids.append(media_id)
                 except (
@@ -130,7 +130,7 @@ class MastodonConnector:
                 "get_mastodon_keys.py file to get the values required for these keys"
             )
 
-    def subscribe(self, force=False):
+    def subscribe(self, _force=False):
         _, pub_dict = self.get_keys()
 
         endpoint = reverse("mastodon_push_handler")
