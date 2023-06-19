@@ -1,10 +1,10 @@
-from unittest.mock import patch, call
+from unittest.mock import call, patch
 
 from django.test import SimpleTestCase
 
-from bc.core.utils.tests.base import faker
 from bc.channel.tests.factories import fake_token
 from bc.channel.utils.connectors.twitter import TwitterConnector
+from bc.core.utils.tests.base import faker
 
 
 class UploadMediaTest(SimpleTestCase):

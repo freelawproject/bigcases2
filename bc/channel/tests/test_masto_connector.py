@@ -1,9 +1,9 @@
-from unittest.mock import patch, call
+from unittest.mock import call, patch
 
 from django.test import SimpleTestCase
 
 from bc.channel.tests.factories import fake_token
-from bc.channel.utils.connectors.masto import get_server_url, MastodonConnector
+from bc.channel.utils.connectors.masto import MastodonConnector, get_server_url
 from bc.core.utils.tests.base import faker
 
 
@@ -41,14 +41,15 @@ class UploadMediaTest(SimpleTestCase):
         mastodon_conn = MastodonConnector(fake_token(), fake_token())
         mastodon_conn.upload_media(mock_image, "image alt text")
 
-        mastodon_conn.api.media_post \
-            .assert_called_with(mock_image, mime_type='image/png',
-                                focus=(0,1),
-                                description='image alt text')
+        mastodon_conn.api.media_post.assert_called_with(
+            mock_image,
+            mime_type="image/png",
+            focus=(0, 1),
+            description="image alt text",
+        )
 
 
 class AddStatusTest(SimpleTestCase):
-
     @patch.object(MastodonConnector, "get_api_object")
     def test_no_image_no_thumbs(self, mock_get_api):
         mock_get_api().status_post.return_value = {"id": "1"}
