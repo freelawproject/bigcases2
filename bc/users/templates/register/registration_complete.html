@@ -22,7 +22,7 @@
   <p>If you do not receive the confirmation email:</p>
   <ul class="list-disc list-outside pl-10 space-y-3">
     <li>Is the email address above correct? If not, please register again.</li>
-    <li>Check your spam folder. Because we send a lot of alert emails, we sometimes get wrongly categorized as a spammer. If the email is in your spam folder, please mark the message as <strong>NOT SPAM</strong> and add <code class="bg-gray-200 px-1">{{ default_from }}</code> to your contacts.
+    <li>Check your spam folder. We sometimes get wrongly categorized as a spammer. If the email is in your spam folder, please mark the message as <strong>NOT SPAM</strong> and add <code class="bg-gray-200 px-1">{{ default_from }}</code> to your contacts.
     </li>
     <li><p>If it's not in your spam folder, you may
       {% url 'email_confirmation_request' as email_request %}
