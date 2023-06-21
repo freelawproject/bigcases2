@@ -9,6 +9,7 @@ from django.contrib.auth.forms import (
 from django.contrib.auth.models import AbstractBaseUser
 from django.core.mail import send_mail
 from django.urls import reverse
+from hcaptcha.fields import hCaptchaField
 
 from .utils.email import EmailType, emails
 
@@ -72,6 +73,7 @@ class OptInConsentForm(forms.Form):
         },
         required=True,
     )
+    hcaptcha = hCaptchaField()
 
 
 class EmailConfirmationForm(forms.Form):

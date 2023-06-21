@@ -39,6 +39,14 @@
              I consent to Free Law Project using information I provide for services on this website such as sending me emails and creating status. Checking this box does <strong>not</strong> sign me up for any newsletters.
          </label>
         </div>
+        <div class="flex flex-col">
+          {{ consent_form.hcaptcha }}
+          {% if consent_form.hcaptcha.errors %}
+            <div class="text-sm text-red-700 mt-1">
+              {{consent_form.hcaptcha.errors}}
+            </div>
+          {% endif %}
+        </div>
 
         {% include 'includes/submit-button.html' with value='Create Account' %}
       </form>
