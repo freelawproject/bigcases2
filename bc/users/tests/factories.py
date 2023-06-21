@@ -26,3 +26,8 @@ class UserFactory(DjangoModelFactory):
             return
 
         self.channels.add(*extracted)
+
+class AdminFactory(UserFactory):
+    is_staff = True
+    is_superuser = True
+    last_name = 'Admin'
