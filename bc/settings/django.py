@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "bc.web",
     # other apps
     "django_rq",
+    "hcaptcha",
     "tailwind",
     "django_htmx",
 ]
