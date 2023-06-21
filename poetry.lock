@@ -650,6 +650,18 @@ docs = ["furo (>=2021.8.17b43,<2021.9.0)", "sphinx (>=3.5.0)", "sphinx-notfound-
 testing = ["coverage[toml] (>=5.0a4)", "pytest (>=4.6.11)"]
 
 [[package]]
+name = "django-hcaptcha"
+version = "0.2.0"
+description = "Django hCaptcha provides a simple way to protect your django forms using hCaptcha"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-hCaptcha-0.2.0.tar.gz", hash = "sha256:b2519eaf0cc97865ac72f825301122c5cf61e1e4852d6895994160222acb6c1a"},
+    {file = "django_hCaptcha-0.2.0-py3-none-any.whl", hash = "sha256:18804fb38a01827b6c65d111bac31265c1b96fcf52d7a54c3e2d2cb1c62ddcde"},
+]
+
+[[package]]
 name = "django-htmx"
 version = "1.14.0"
 description = "Extensions for using Django with htmx."
@@ -2266,4 +2278,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4b89d83cb9dc5ce4ea9a6f6fa57451d9bc0110666805f582e9f07fe14c471578"
+content-hash = "9ba8d027bc69b12ea274856a873b0af67aa1190abf99826294c637bfe5f5b252"

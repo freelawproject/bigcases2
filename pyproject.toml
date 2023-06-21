@@ -54,6 +54,7 @@ django-htmx = "^1.14.0"
 factory-boy = "^3.2.1"
 faker = "^18.7.0"
 disposable-email-domains = "^0.0.90"
+django-hcaptcha = "^0.2.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
