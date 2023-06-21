@@ -40,7 +40,7 @@ urlpatterns = [
         name="register_success",
     ),
     re_path(
-        r"^email/confirm/([0-9a-f]{64})/$",
+        r"^email/confirm/(?P<signed_pk>[0-9]+/[A-Za-z0-9_=-]+/[A-Za-z0-9_=-]+)/$",
         confirm_email,
         name="email_confirm",
     ),

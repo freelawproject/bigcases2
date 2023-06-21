@@ -3,6 +3,7 @@ from email.utils import parseaddr
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.core.signing import BadSignature, SignatureExpired
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -13,7 +14,6 @@ from django.views.decorators.debug import (
     sensitive_variables,
 )
 
-from bc.core.utils.crypto import sha1_activation_key
 from bc.core.utils.urls import get_redirect_or_login_url
 
 from .forms import EmailConfirmationForm, OptInConsentForm, RegisterForm
@@ -46,14 +46,12 @@ def register(request: HttpRequest) -> HttpResponse:
             if cd["last_name"]:
                 user.last_name = cd["last_name"]
 
-            # Build and assign the activation key
-            user.activation_key = sha1_activation_key(user.username)
-            user.key_expires = now() + timedelta(days=5)
-
+            # Build and assign the
+            signed_pk = user.get_signed_pk()
             email: EmailType = emails["confirm_your_new_account"]
             send_mail(
                 email["subject"],
-                email["body"] % (user.username, user.activation_key),
+                email["body"] % (user.username, signed_pk),
                 email["from_email"],
                 [user.email],
             )
@@ -73,8 +71,6 @@ def register(request: HttpRequest) -> HttpResponse:
                 update_fields=[
                     "first_name",
                     "last_name",
-                    "activation_key",
-                    "key_expires",
                 ]
             )
             query_string = urlencode(
@@ -113,26 +109,26 @@ def register_success(request: HttpRequest) -> HttpResponse:
 
 
 @sensitive_variables("activation_key")
-def confirm_email(request, activation_key):
+def confirm_email(request, signed_pk):
     """Confirms email addresses for a user and sends an email to the admins.
 
     Checks if a hash in a confirmation link is valid, and if so sets the user's
     email address as valid.
     """
-    user = User.objects.filter(activation_key=activation_key).first()
-
-    if not user:
-        return render(
-            request,
-            "register/confirm.html",
-            {"invalid": True},
-        )
-
-    if user.key_expires < now():
+    try:
+        pk = User.signer.unsign(signed_pk, max_age=timedelta(days=5))
+        user = User.objects.get(pk=pk)
+    except SignatureExpired:
         return render(
             request,
             "register/confirm.html",
             {"expired": True},
+        )
+    except (BadSignature, User.DoesNotExist):
+        return render(
+            request,
+            "register/confirm.html",
+            {"invalid": True},
         )
 
     if user.email_confirmed:
@@ -181,17 +177,11 @@ def request_email_confirmation(request: HttpRequest) -> HttpResponse:
                     reverse("email_confirmation_request_success")
                 )
 
-            activation_key = sha1_activation_key(cd["email"])
-            key_expires = now() + timedelta(days=5)
-
-            user.activation_key = activation_key
-            user.key_expires = key_expires
-            user.save(update_fields=["activation_key", "key_expires"])
-
+            signed_pk = user.get_signed_pk()
             confirmation_email: EmailType = emails["confirm_existing_account"]
             send_mail(
                 confirmation_email["subject"],
-                confirmation_email["body"] % activation_key,
+                confirmation_email["body"] % signed_pk,
                 confirmation_email["from_email"],
                 [user.email],
             )
