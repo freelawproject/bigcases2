@@ -14,6 +14,13 @@ from bc.core.utils.crypto import sha1_activation_key
     dispatch_uid="create_superuser_object",
 )
 def superuser_creation(sender, instance, created, **kwargs):
+    """
+    Populates fields related to authentication in the user model for
+    records created using the createsuperuser command.
+
+    We need to do this to allow superuser accounts to login using the
+    custom form that implements the ConfirmedEmailAuthenticationForm class.
+    """
     if created and instance.is_superuser:
         instance.activation_key = sha1_activation_key(instance.username)
         instance.key_expires = now() + timedelta(days=5)
