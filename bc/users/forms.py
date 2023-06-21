@@ -89,15 +89,16 @@ class EmailConfirmationForm(forms.Form):
 
 
 class CustomPasswordResetForm(PasswordResetForm):
-    """A simple subclassing of a Django form in order to change class
-    attributes.
+    """
+    Tweaks the PasswordResetForm class to ensure we send a message
+    even if we don't find an account with the recipient address
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def save(self, *args, **kwargs) -> None:
-        """Override the usual password form to send a message if we don't find
+        """Override the usual save method to send a message if we don't find
         any accounts
         """
         recipient_addr = self.cleaned_data["email"]
