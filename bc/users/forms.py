@@ -78,7 +78,6 @@ class EmailConfirmationForm(forms.Form):
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
-                "class": "form-control input-lg",
                 "placeholder": "Your Email Address",
                 "autocomplete": "email",
                 "autofocus": "on",
