@@ -2,11 +2,13 @@ from datetime import timedelta
 from email.utils import parseaddr
 
 from django.conf import settings
+from django.contrib.auth.views import PasswordResetView
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, SignatureExpired
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.http import urlencode
 from django.utils.timezone import now
 from django.views.decorators.debug import (
@@ -14,15 +16,26 @@ from django.views.decorators.debug import (
     sensitive_variables,
 )
 
+from bc.core.utils.network import (
+    ratelimiter_unsafe_10_per_m,
+    ratelimiter_unsafe_2000_per_h,
+)
 from bc.core.utils.urls import get_redirect_or_login_url
 
-from .forms import EmailConfirmationForm, OptInConsentForm, RegisterForm
+from .forms import (
+    CustomPasswordResetForm,
+    EmailConfirmationForm,
+    OptInConsentForm,
+    RegisterForm,
+)
 from .models import User
 from .utils.email import EmailType, emails
 
 
 @sensitive_post_parameters("password1", "password2")
 @sensitive_variables("cd")
+@ratelimiter_unsafe_10_per_m
+@ratelimiter_unsafe_2000_per_h
 def register(request: HttpRequest) -> HttpResponse:
     """allow only an anonymous user to register"""
     if not request.user.is_anonymous:
@@ -150,6 +163,8 @@ def confirm_email(request, signed_pk):
     "cd",
     "confirmation_email",
 )
+@ratelimiter_unsafe_10_per_m
+@ratelimiter_unsafe_2000_per_h
 def request_email_confirmation(request: HttpRequest) -> HttpResponse:
     """Send an email confirmation email"""
     if request.method == "POST":
@@ -195,3 +210,15 @@ def request_email_confirmation(request: HttpRequest) -> HttpResponse:
         "register/request_email_confirmation.html",
         {"form": form},
     )
+
+
+@method_decorator(ratelimiter_unsafe_10_per_m, name="post")
+@method_decorator(ratelimiter_unsafe_2000_per_h, name="post")
+class RateLimitedPasswordResetView(PasswordResetView):
+    """
+    Custom Password reset view with rate limiting
+    """
+
+    template_name = "register/password_reset_form.html"
+    email_template_name = "register/password_reset_email.html"
+    form_class = CustomPasswordResetForm
