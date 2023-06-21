@@ -4,8 +4,9 @@ from django.views.generic import TemplateView
 
 from bc.core.utils.network import ratelimiter_unsafe_10_per_m
 
-from .forms import ConfirmedEmailAuthenticationForm, CustomPasswordResetForm
+from .forms import ConfirmedEmailAuthenticationForm
 from .views import (
+    RateLimitedPasswordResetView,
     confirm_email,
     register,
     register_success,
@@ -31,7 +32,7 @@ urlpatterns = [
     ),
     path(
         "register/",
-        ratelimiter_unsafe_10_per_m(register),
+        register,
         name="register",
     ),
     path(
@@ -46,7 +47,7 @@ urlpatterns = [
     ),
     path(
         "email-confirmation/request/",
-        ratelimiter_unsafe_10_per_m(request_email_confirmation),
+        request_email_confirmation,
         name="email_confirmation_request",
     ),
     path(
@@ -58,13 +59,7 @@ urlpatterns = [
     ),
     path(
         "reset-password/",
-        ratelimiter_unsafe_10_per_m(
-            auth_views.PasswordResetView.as_view(
-                template_name="register/password_reset_form.html",
-                email_template_name="register/password_reset_email.html",
-                form_class=CustomPasswordResetForm,
-            )
-        ),
+        RateLimitedPasswordResetView.as_view(),
         name="password_reset",
     ),
     path(
