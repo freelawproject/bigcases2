@@ -7,14 +7,13 @@ from bc.channel.selectors import (
 )
 from bc.subscription.tests.factories import SubscriptionFactory
 from bc.users.tests.factories import UserFactory
-
 from .factories import ChannelFactory, GroupFactory
 
 
 class GetAllEnabledChannels(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        # Create a few disable channels
+        # Create a few disabled channels
         ChannelFactory.create_batch(4)
 
         # Create enabled channels
