@@ -249,16 +249,14 @@ def profile_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
         changed_email = old_email != new_email
         if changed_email:
             # Email was changed.
-            user.activation_key = sha1_activation_key(user.username)
-            user.key_expires = now() + timedelta(5)
-            user.email_confirmed = False
+            activation_key = user.get_signed_pk()
 
             # Send an email to the new and old addresses. New for verification;
             # old for notification of the change.
             email: EmailType = emails["email_changed_successfully"]
             send_mail(
                 email["subject"],
-                email["body"] % (user.username, user.activation_key),
+                email["body"] % (user.username, activation_key),
                 email["from_email"],
                 [new_email],
             )
