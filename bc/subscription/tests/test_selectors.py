@@ -2,14 +2,13 @@ from django.test import TestCase
 
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
 from bc.subscription.selectors import get_subscriptions_for_big_cases
-
 from .factories import SubscriptionFactory
 
 
 class GetSubscriptionsForBigCasesTests(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        group = GroupFactory(is_big_cases=True)
+        group = GroupFactory(big_cases=True)
         big_cases_channel = ChannelFactory(group=group)
 
         SubscriptionFactory.create_batch(3)
