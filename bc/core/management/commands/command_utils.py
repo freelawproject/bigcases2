@@ -14,16 +14,16 @@ class VerboseCommand(BaseCommand):
         verbosity = options.get("verbosity")
         if not verbosity:
             logger.setLevel(logging.WARN)
-        elif verbosity == 0:
+        elif verbosity==0:
             logger.setLevel(logging.WARN)
-        elif verbosity == 1:  # default
+        elif verbosity==1:  # default
             logger.setLevel(logging.INFO)
         elif verbosity > 1:
             logger.setLevel(logging.DEBUG)
 
 
 class CommandUtils(object):
-    """A mixin to give some useful methods to sub classes."""
+    """A mixin to give some useful methods to subclasses."""
 
     @staticmethod
     def ensure_file_ok(file_path):

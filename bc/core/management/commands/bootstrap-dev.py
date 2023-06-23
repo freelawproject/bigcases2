@@ -41,11 +41,17 @@ class Command(BaseCommand):
             enabled=True,
             group=ch_group
         )
-        self.stdout.write(self.style.SUCCESS(
-            f"Channel: service: {mastodon_bigcases_ch.CHANNELS[mastodon_bigcases_ch.service - 1][1]} account: '{mastodon_bigcases_ch.account}' group: '{mastodon_bigcases_ch.group.name}' enabled? {mastodon_bigcases_ch.enabled}"))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Channel: service: {mastodon_bigcases_ch.CHANNELS[mastodon_bigcases_ch.service - 1][1]} account: '{mastodon_bigcases_ch.account}' group: '{mastodon_bigcases_ch.group.name}' enabled? {mastodon_bigcases_ch.enabled}"
+            )
+        )
 
         for cl_id in [65748821, 64983976]:
             subscription = Subscription.objects.get(cl_docket_id=cl_id)
             subscription.channel.add(mastodon_bigcases_ch)
-            self.stdout.write(self.style.SUCCESS(
-                f"Subscription {subscription} was added to the big cases channel."))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Subscription {subscription} was added to the big cases channel."
+                )
+            )
