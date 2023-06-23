@@ -71,8 +71,34 @@ class GroupFactory(DjangoModelFactory):
 
 
 class ChannelFactory(DjangoModelFactory):
+    """
+    Traits:
+      - mastodon Create an enabled Channel for Mastodon
+      - twitter Create an enabled Channel for Twitter
+    """
+
+
     class Meta:
         model = Channel
 
+    enabled = False
+    access_token = factory.LazyFunction(fake_token)
+    access_token_secret = factory.LazyAttribute(
+        lambda _: fake_token("####################")
+    )
     service = FuzzyChoice(Channel.CHANNELS, getter=lambda c: c[0])
     group = SubFactory(GroupFactory)
+
+    class Params:
+        mastodon = factory.Trait(
+            service=Channel.MASTODON,
+            account='BigCases2-faux',
+            account_id='Mastodon-big-cases-email-faux',
+            enabled=True
+        )
+        twitter = factory.Trait(
+            service=Channel.TWITTER,
+            account='BigCases2-faux',
+            account_id='Twitter-big-cases-email-faux',
+            enabled=True
+        )
