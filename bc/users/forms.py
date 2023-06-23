@@ -47,9 +47,7 @@ class ConfirmedEmailAuthenticationForm(AuthenticationForm):
 class UserForm(forms.ModelForm):
     email = forms.EmailField(
         required=True,
-        widget=forms.TextInput(
-            attrs={"class": "form-control", "autocomplete": "email"}
-        ),
+        widget=forms.TextInput(attrs={"autocomplete": "email"}),
     )
 
     class Meta:
@@ -57,10 +55,10 @@ class UserForm(forms.ModelForm):
         fields = ("first_name", "last_name", "email", "affiliation")
         widgets = {
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "autocomplete": "given-name"}
+                attrs={"autocomplete": "given-name"}
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "autocomplete": "family-name"}
+                attrs={"autocomplete": "family-name"}
             ),
             "affiliation": forms.Textarea(attrs={"rows": 4}),
         }
@@ -82,7 +80,6 @@ class AccountDeleteForm(forms.Form):
         strip=False,
         widget=forms.PasswordInput(
             attrs={
-                "class": "form-control input-lg",
                 "placeholder": "Your password...",
                 "autocomplete": "off",
                 "autofocus": "on",
