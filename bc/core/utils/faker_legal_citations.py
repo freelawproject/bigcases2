@@ -10,13 +10,31 @@ _faker = Faker()
 
 class LegalCitationsProvider(BaseProvider):
     """
-        Generates fake legal-like citations, court names, and docket numbers.
+    Generates fake legal-like citations, court names, and docket numbers.
 
-        This does not create all possible citation forms; it only creates
-        simple citations.
-        This uses a combination of fake & farcical words and
-        real or real-like words.
-        The list of reporters used is quite small.
+    This does not create all possible citation forms; it only creates
+    simple citations.
+    This uses a combination of fake & farcical words and
+    real or real-like words.
+    The list of reporters used is quite small.
+
+    As with other Faker providers, you can use this in code by doing:
+    # fmt: off
+    ```python
+        from faker import Faker
+        from bc.core.utils.faker_legal_citations import LegalCitationsProvider
+
+        fake = Faker()
+        fake.add_provider(LegalCitationsProvider)
+    ```
+    # fmt: on
+    Now the methods in LegalCitationsProvider are available to fake (the
+    Faker instance you created).
+    Ex:
+      `fake.court_name()`
+      `fake.docket_number()`
+      `fake.citation()`
+      etc.
     """
 
     def __init__(self, generator):
