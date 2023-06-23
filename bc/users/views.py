@@ -306,6 +306,8 @@ def password_change(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 
 @login_required
+@ratelimiter_unsafe_10_per_m
+@ratelimiter_unsafe_2000_per_h
 def take_out(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         email: EmailType = emails["take_out_requested"]
@@ -333,6 +335,8 @@ def take_out_done(request: HttpRequest) -> HttpResponse:
 
 @sensitive_post_parameters("password")
 @login_required
+@ratelimiter_unsafe_10_per_m
+@ratelimiter_unsafe_2000_per_h
 def delete_account(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         delete_form = AccountDeleteForm(request, request.POST)
