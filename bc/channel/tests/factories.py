@@ -48,7 +48,6 @@ class GroupFactory(DjangoModelFactory):
     overview = factory.LazyAttribute(lambda obj: f"Group for {obj.name}")
     slug = factory.LazyAttribute(lambda obj: slugify(obj.name))
 
-
     @factory.post_generation
     def sponsorships(self, create, extracted, **kwargs):
         if not create or not extracted:
@@ -58,15 +57,15 @@ class GroupFactory(DjangoModelFactory):
 
     class Params:
         big_cases = factory.Trait(
-            name='Big cases',
+            name="Big cases",
             is_big_cases=True,
-            overview='Group for all big cases',
-            slug='big_cases'
+            overview="Group for all big cases",
+            slug="big_cases",
         )
         little_cases = factory.Trait(
-            name='Little cases',
-            overview='Group for all little cases',
-            slug='little_cases'
+            name="Little cases",
+            overview="Group for all little cases",
+            slug="little_cases",
         )
 
 
@@ -76,7 +75,6 @@ class ChannelFactory(DjangoModelFactory):
       - mastodon Create an enabled Channel for Mastodon
       - twitter Create an enabled Channel for Twitter
     """
-
 
     class Meta:
         model = Channel
@@ -92,13 +90,13 @@ class ChannelFactory(DjangoModelFactory):
     class Params:
         mastodon = factory.Trait(
             service=Channel.MASTODON,
-            account='BigCases2-faux',
-            account_id='Mastodon-big-cases-email-faux',
-            enabled=True
+            account="BigCases2-faux",
+            account_id="Mastodon-big-cases-email-faux",
+            enabled=True,
         )
         twitter = factory.Trait(
             service=Channel.TWITTER,
-            account='BigCases2-faux',
-            account_id='Twitter-big-cases-email-faux',
-            enabled=True
+            account="BigCases2-faux",
+            account_id="Twitter-big-cases-email-faux",
+            enabled=True,
         )

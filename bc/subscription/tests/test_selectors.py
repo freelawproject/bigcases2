@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
 from bc.subscription.selectors import get_subscriptions_for_big_cases
+
 from .factories import SubscriptionFactory
 
 
