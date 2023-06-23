@@ -37,7 +37,6 @@ class LegalCitationsProvider(BaseProvider):
       etc.
     """
 
-
     def citation_with_case(self) -> str:
         """
         Make a randomly generated citation that has a randomly generated
@@ -47,7 +46,6 @@ class LegalCitationsProvider(BaseProvider):
         :rtype: str
         """
         return f"{self.case_name()}, {self.citation()}"
-
 
     @staticmethod
     def citation() -> str:
@@ -63,24 +61,46 @@ class LegalCitationsProvider(BaseProvider):
         :rtype: str
         """
         reporters = [
-            'U.S.', 'S. Ct.', 'L. Ed.', 'L. Ed. 2d',
-            'F.', 'F.2d', 'F.3d',
-            "F. Supp.", "F. Supp. 2d",
-            'W.W.d', 'W.W.2d', 'W.W.3d',
-            'X.d', 'X.2d', 'X.3d', 'X.4d', 'X.5d',
-            'Y.d', 'Y.2d', 'Y.3d', 'Y.4d', 'Y.5d', 'Y.6d',
-            'Z.1d', 'Z.2d', 'Z.3d', 'Z.4d', 'Z.5d', 'Z.6d', 'Z.7d', 'Z.8d',
-            'Z.9d',
+            "U.S.",
+            "S. Ct.",
+            "L. Ed.",
+            "L. Ed. 2d",
+            "F.",
+            "F.2d",
+            "F.3d",
+            "F. Supp.",
+            "F. Supp. 2d",
+            "W.W.d",
+            "W.W.2d",
+            "W.W.3d",
+            "X.d",
+            "X.2d",
+            "X.3d",
+            "X.4d",
+            "X.5d",
+            "Y.d",
+            "Y.2d",
+            "Y.3d",
+            "Y.4d",
+            "Y.5d",
+            "Y.6d",
+            "Z.1d",
+            "Z.2d",
+            "Z.3d",
+            "Z.4d",
+            "Z.5d",
+            "Z.6d",
+            "Z.7d",
+            "Z.8d",
+            "Z.9d",
         ]
         reporter = random.choice(reporters)
         volume = random.randint(1, 999)
         page = random.randint(1, 999)
         return f"{volume} {reporter} {page}"
 
-
     def case_name(
-        self, plaintiff: str | None = None, defendant: str | None
-        = None
+        self, plaintiff: str | None = None, defendant: str | None = None
     ) -> str:
         """
         Make a case name like "O'Neil v. Jordan".
@@ -96,7 +116,6 @@ class LegalCitationsProvider(BaseProvider):
         defend = self.case_party_name() if defendant is None else defendant
         return f"{plaint} v. {defend}"
 
-
     @staticmethod
     def case_party_name() -> str:
         """
@@ -111,7 +130,6 @@ class LegalCitationsProvider(BaseProvider):
             return _faker.company()
         else:
             return _faker.last_name()
-
 
     @staticmethod
     def court_name() -> str:
@@ -148,7 +166,6 @@ class LegalCitationsProvider(BaseProvider):
         )
         return " ".join([section, connector, whole])
 
-
     def docket_number(self) -> str:
         """
         Make either a simple docket number or a federal district docket
@@ -162,7 +179,6 @@ class LegalCitationsProvider(BaseProvider):
             return self.simple_docket_number()
         else:
             return self.federal_district_docket_number()
-
 
     @staticmethod
     def simple_docket_number() -> str:
@@ -178,8 +194,7 @@ class LegalCitationsProvider(BaseProvider):
         :returns: the fake  docket number
         :rtype:   str
         """
-        return _faker.numerify(text='%%-%####')
-
+        return _faker.numerify(text="%%-%####")
 
     @staticmethod
     def federal_district_docket_number() -> str:
@@ -198,11 +213,11 @@ class LegalCitationsProvider(BaseProvider):
         number = random.randint(1, 200_000)
         return f"{office}:{year:02}-{letters}-{number:05}"
 
-
     @staticmethod
     def humanized_join(
-        items: None | list = None, conjunction: str = " and ",
-        separator: str = ", "
+        items: None | list = None,
+        conjunction: str = " and ",
+        separator: str = ", ",
     ) -> str:
         """
         Join together items in a human-readable list, each item separated
@@ -230,18 +245,20 @@ class LegalCitationsProvider(BaseProvider):
         :rtype:  str
         """
         if items is None:
-            return ''
+            return ""
 
-        joined_str = ''
+        joined_str = ""
         str_items = list(map(str, items))
         num_items = len(str_items)
-        if num_items==0:
+        if num_items == 0:
             joined_str = ""
-        elif num_items==1:
+        elif num_items == 1:
             joined_str = str_items[0]
-        elif num_items==2:
+        elif num_items == 2:
             joined_str = f"{str_items[0]} {conjunction} {str_items[1]}"
         elif num_items > 2:
             last_item = str_items.pop()
-            joined_str = f"{separator.join(str_items)} {conjunction} {last_item}"
+            joined_str = (
+                f"{separator.join(str_items)} {conjunction} {last_item}"
+            )
         return joined_str
