@@ -25,8 +25,29 @@ def fake_token(format_str: str = "#############") -> str:
 
 
 class GroupFactory(DjangoModelFactory):
+    """
+    Traits:
+      - big_cases  Create a Group with is_big_cases=True and the name "Big
+      cases" and some other attributes
+        Ex: `GroupFactory(big_cases=True)`
+      - little_cases  Create a Group with is_big_cases=False and the name
+      "Little cases" and some other attributes
+        Ex: `GroupFactory(big_cases=True)`
+
+    Post-generation:
+        After creating, will optionally also create sponsorships using the
+        `@factory.post_generation` decorator.
+          - Ex: GroupFactory(sponsorships=[<some list of Sponsorships>])
+    """
+
     class Meta:
         model = Group
+
+    name = factory.LazyFunction(faker.last_name)
+    is_big_cases = False
+    overview = factory.LazyAttribute(lambda obj: f"Group for {obj.name}")
+    slug = factory.LazyAttribute(lambda obj: slugify(obj.name))
+
 
     @factory.post_generation
     def sponsorships(self, create, extracted, **kwargs):
@@ -34,6 +55,19 @@ class GroupFactory(DjangoModelFactory):
             return
 
         self.sponsorships.add(*extracted)
+
+    class Params:
+        big_cases = factory.Trait(
+            name='Big cases',
+            is_big_cases=True,
+            overview='Group for all big cases',
+            slug='big_cases'
+        )
+        little_cases = factory.Trait(
+            name='Little cases',
+            overview='Group for all little cases',
+            slug='little_cases'
+        )
 
 
 class ChannelFactory(DjangoModelFactory):
