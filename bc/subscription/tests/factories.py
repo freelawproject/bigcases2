@@ -25,11 +25,11 @@ class SubscriptionFactory(DjangoModelFactory):
     @factory.post_generation
     def channels(self, create, extracted, **kwargs):
         """
-            Add channels to this subscription
-            @see https://factoryboy.readthedocs.io/en/stable/reference.html?highlight=post_generation#post-generation-hooks
-            @example:
-                some_channel = ChannelFactory.create()
-                SubscriptionFactory(channels=[channel_1, channel_2]) # subscribes this to channel_1 and channel_2
+        Add channels to this subscription
+        @see https://factoryboy.readthedocs.io/en/stable/reference.html?highlight=post_generation#post-generation-hooks
+        @example:
+            some_channel = ChannelFactory.create()
+            SubscriptionFactory(channels=[channel_1, channel_2]) # subscribes this to channel_1 and channel_2
         """
         if not create or not extracted:
             return
