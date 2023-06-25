@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "bc.web",
     # other apps
     "django_rq",
+    "hcaptcha",
     "tailwind",
     "django_htmx",
 ]
@@ -126,6 +127,13 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
+
+MANAGERS = [
+    (
+        env("MANAGER_NAME", default="Joe Schmoe"),
+        env("MANAGER_EMAIL", default="joe@courtlistener.com"),
+    )
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

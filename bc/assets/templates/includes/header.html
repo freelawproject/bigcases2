@@ -140,10 +140,47 @@
               <div class="w-28 text-sm font-medium mr-1">
                 {% include './action-button.html' with link="https://free.law/donate/" text="Donate" size='sm' color='saffron' %}
               </div>
-              <div class="w-20 text-sm font-medium sm:text-md {% if user.is_authenticated %}hidden{% endif %}">
-                {% url 'sign-in' as sign_in %}
-                {% include './action-button.html' with link=sign_in text="Sign In" size='sm' %}
-              </div>
+              {% if user.is_authenticated %}
+                <div class="w-28 text-sm font-medium sm:text-md">
+                  <button id="profileButton" data-dropdown-toggle="profile-dropdown" class="flex justify-around items-center w-full text-center whitespace-nowrap no-underline border border-transparent rounded-md shadow-sm text-bcb-black bg-white hover:bg-gray-100 p-2" aria-label="profile button">
+                    <div class="w-4 h-4">
+                      {% include './inlines/profile.svg' %}
+                    </div>
+                    Profile
+                    <div class="w-5 h-5">
+                      {% include './inlines/caret.svg' %}
+                    </div>
+                  </button>
+                </div>
+                <div class="absolute top-16 translate-x-[106px] z-50">
+                  <div id="profile-dropdown" class="z-10 bg-white hidden divide-y divide-gray-100 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 overflow-hidden max-w-xs">
+                    <div class="relative grid px-6 py-6 gap-5 text-gray-700 dark:text-gray-400" aria-labelledby="dropdown-profile-menu">
+                      <a href="{% url 'big_cases_about' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100 text-gray-900" aria-label="Account">
+                        <div class="h-4 w-4 relative flex-shrink-0 ">
+                            {% include './inlines/profile.svg' %}
+                        </div>
+                        <div class="ml-2">
+                            <p class="text-sm font-medium">Account</p>
+                        </div>
+                      </a>
+
+                      <a href="{% url 'logout' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100 text-gray-900">
+                        <div class="h-4 w-4 relative flex-shrink-0 ">
+                          {% include './inlines/logout.svg' %}
+                        </div>
+                        <div class="ml-2">
+                            <p class="text-sm font-medium">Sign Out</p>
+                        </div>
+                      </a>
+                  </div>
+                  </div>
+                </div>
+              {% else %}
+                <div class="w-20 text-sm font-medium sm:text-md">
+                  {% url 'sign-in' as sign_in %}
+                  {% include './action-button.html' with link=sign_in text="Sign In" size='sm' %}
+                </div>
+              {% endif %}
             </div>
         </div>
     </div>

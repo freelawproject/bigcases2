@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Successful Registration{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 mt-16 grid grid-cols-1 gap-y-3 text-bcb-black">
+  <div class="flex justify-center self-center mb-[0.888em] ">
+    <div class="h-12 w-12 text-saffron-400">
+      {% include 'includes/inlines/check-circle.svg'%}
+    </div>
+    <div class="flex self-center ml-2">
+      <h1 class="text-4xl font-display font-light tracking-wide">
+        Registration Complete
+      </h1>
+    </div>
+  </div>
+  <p>We have sent you an email to confirm the following address:</p>
+  <div class="bg-saffron-100 border-l-2 border-saffron-500 p-4 my-2">
+    <h1>{{email}}</h1>
+  </div>
+  <p class="italic">If this address is not correct, please register again using your correct email address.</p>
+  <p>To log in, please click the link in that email within five days. That will confirm your account.</p>
+  <p>If you do not receive the confirmation email:</p>
+  <ul class="list-disc list-outside pl-10 space-y-3">
+    <li>Is the email address above correct? If not, please register again.</li>
+    <li>Check your spam folder. We sometimes get wrongly categorized as a spammer. If the email is in your spam folder, please mark the message as <strong>NOT SPAM</strong> and add <code class="bg-gray-200 px-1">{{ default_from }}</code> to your contacts.
+    </li>
+    <li><p>If it's not in your spam folder, you may
+      {% url 'email_confirmation_request' as email_request %}
+      {% include 'includes/regular-anchor.html' with text='request another confirmation email' href=email_request %}
+      from us. This can sometimes help if the email gets lost in transit.</p>
+    </li>
+  </ul>
+  <p>If you are still unable to confirm your email address, please
+    {% include 'includes/regular-anchor.html' with text='contact us for assistance' href="https://free.law/contact/"%}
+    We are always happy to help.
+  </p>
+  <p class="tracking-[.8px] font-medium max-w-xs">
+    {% include 'includes/action-button.html' with link=redirect_to text='Return to Where you Left Off' size="sm" color='saffron' %}
+  </p>
+</div>
+{% endblock %}
