@@ -1,52 +1,98 @@
+{% load static %}
 <div>
     <form action="" method="post">
         {% csrf_token %}
-
         <div class="grid grid-cols-1 max-w-md gap-4">
 
-            <div class="flex flex-col">
-                <div>
-                    {{ form.name.label_tag }}
-                    <span class="text-red-500">*</span>
-                </div>
-                {{ form.name.errors }}
-                {{ form.name }}
-            </div>
-
-
+          <div class="flex flex-col">
             <div>
-                <div>
-                    {{ form.platform.label_tag }}
-                    <span class="text-red-500">*</span>
-                </div>
-                {{ form.platform.errors }}
-                <div id="{{form.platform.auto_id}}" class="flex">
-                    {% for choice in form.platform %}
-                        <label for="{{ choice.id_for_label }}" class="flex items-center {% if forloop.counter0 %} ml-3 {% endif %}">
-                            {{ choice.tag }}
-                            <div class="flex ml-2">
-                                {{ choice.choice_label }}
-                            </div>
-                        </label>
-                    {% endfor %}
-                </div>
+                {{ form.user_full_name.label_tag }}
+                <span class="text-red-500">*</span>
             </div>
+            {{ form.user_full_name.errors }}
+            {{ form.user_full_name }}
+          </div>
 
-            <div class="flex flex-col">
-                <div>
-                    {{ form.use_case.label_tag }}
-                    <span class="text-red-500">*</span>
-                </div>
-                {{ form.use_case.errors }}
-                {{ form.use_case }}
+          <div class="flex flex-col">
+            <div>
+                {{ form.user_email.label_tag }}
+                <span class="text-red-500">*</span>
             </div>
+            {{ form.user_email.errors }}
+            {{ form.user_email }}
+          </div>
+
+          <div class="flex flex-col">
+            <div>
+                {{ form.bot_name.label_tag }}
+                <span class="text-red-500">*</span>
+            </div>
+            {{ form.bot_name.errors }}
+            {{ form.bot_name }}
+          </div>
 
 
-            {% include 'includes/submit-button.html' with value='Submit' %}
+          <div>
+            <div>
+              {{ form.platform.label_tag }}
+              <span class="text-red-500">*</span>
+            </div>
+            {{ form.platform.errors }}
+            <div id="{{form.platform.auto_id}}" class="flex">
+              {% for choice in form.platform %}
+                  <label for="{{ choice.id_for_label }}" class="flex items-center {% if forloop.counter0 %} ml-3 {% endif %}">
+                      {{ choice.tag }}
+                      <div class="flex ml-2">
+                          {{ choice.choice_label }}
+                      </div>
+                  </label>
+              {% endfor %}
+            </div>
+          </div>
 
+          <div class="flex flex-col">
+              <div>
+                  {{ form.purpose.label_tag }}
+                  <span class="text-red-500">*</span>
+              </div>
+              {{ form.purpose.errors }}
+              {{ form.purpose }}
+          </div>
+
+          <div class="flex flex-col">
+            <div>
+                {{ form.user_expertise.label_tag }}
+                <span class="text-red-500">*</span>
+            </div>
+            {{ form.user_expertise.errors }}
+            {{ form.user_expertise }}
+          </div>
+
+          <div class="flex flex-col">
+            <div>
+                {{ form.is_curator.label_tag }}
+                <span class="text-red-500">*</span>
+            </div>
+            {{ form.is_curator.errors }}
+            {{ form.is_curator }}
+          </div>
+
+          <div class="flex flex-col hidden" id="suggested_curators">
+            <div>
+                {{ form.suggested_curators.label_tag }}
+                <span class="text-red-500">*</span>
+            </div>
+            {{ form.suggested_curators.errors }}
+            {{ form.suggested_curators }}
+          </div>
+
+          {% include 'includes/submit-button.html' with value='Submit' %}
         </div>
     </form>
 </div>
 
 
 
+{% block footer-scripts %}
+  <script src="{% static "js/suggest-a-bot.js" %}"></script>
+{% endblock %}

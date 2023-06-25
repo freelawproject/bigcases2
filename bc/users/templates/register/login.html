@@ -7,9 +7,11 @@
   <div class="py-12 prose">
     <h1 class="font-display font-light tracking-wide">Sign In</h2>
       {% if form.errors %}
-        {% for error in form.non_field_errors %}
-          <p class="alert alert-danger">{{ error|safe }}</p>
-        {% endfor %}
+        <div class="bg-red-100 border-l-2 border-red-500 text-red-700 p-4 mb-2" role="alert">
+          {% for error in form.non_field_errors %}
+            <p class="m-0">{{ error|safe }}</p>
+          {% endfor %}
+        </div>
       {% endif %}
 
       <form action="{% url "sign-in" %}" method="post">
@@ -28,6 +30,12 @@
           {% include 'includes/submit-button.html' with value='Sign In' %}
         </div>
       </form>
+      <div class="mt-4 text-md">
+        {% url 'register' as register %}
+        {% include 'includes/regular-anchor.html' with text='Register' href=register%} |
+        {% url 'password_reset' as password_reset %}
+        {% include 'includes/regular-anchor.html' with text='Forgot username/password' href=password_reset %}
+      </div>
   </div>
 </div>
 {% endblock %}
