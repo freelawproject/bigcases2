@@ -5,7 +5,7 @@ from .models import BotSuggestion, WaitList
 
 @admin.register(BotSuggestion)
 class BotSuggestionAdmin(admin.ModelAdmin):
-    list_display = ("name", "platform", "date_created")
+    list_display = ("bot_name", "platform", "date_created")
 
 
 @admin.register(WaitList)
