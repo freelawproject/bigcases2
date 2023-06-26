@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Out{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 prose">
+  <div class="pt-10 mt-10 px-5">
+    <div class="flex items-center justify-center mb-8">
+      <div class="h-12 w-12 text-saffron-400">
+        {% include 'includes/inlines/check-circle.svg' %}
+      </div>
+      <h1 class="font-light tracking-tight text-center items-center ml-4 mb-0">
+        You Have Successfully Signed Out
+      </h1>
+    </div>
+    <p>Why don't you try one of the following pages?</p>
+    <div class="grid grid-cols-2 gap-8">
+      {% url 'homepage' as homepage %}
+      {% include 'includes/transparent-button.html' with link=homepage text='Homepage'%}
+      {% url 'big_cases_about' as big_cases_about %}
+      {% include 'includes/transparent-button.html' with link=big_cases_about text='About Me'%}
+    </div>
+  </div>
+</div>
+{% endblock %}
