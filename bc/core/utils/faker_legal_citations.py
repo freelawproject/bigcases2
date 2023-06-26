@@ -216,31 +216,30 @@ class LegalCitationsProvider(BaseProvider):
     @staticmethod
     def humanized_join(
         items: None | list = None,
-        conjunction: str = " and ",
-        separator: str = ", ",
+        conjunction: str = "and",
+        separator: str = ",",
     ) -> str:
         """
         Join together items in a human-readable list, each item separated
         by `separator` and the last item is preceded by the `conjunction`.
-          Ex: `humanized_join(['one','two','three'])`
-             - uses the default separator ", "
-             - uses the default conjunction " and "
-             returns `"one, two, and three"`
-
-             `humanized_join(['one','two','three'], " or ")`
-             returns `"one, two, or three"`
-
+        This uses an "Oxford comma": it puts a comma before the conjunction.
+        Adds a space after the separator and before and after the
+        conjunction.
         All items in the list are converted to strings.
+
+        Ex: `LegalCitationsProvider.humanized_join(['one','two','three'])`
+          - uses the default conjunction "and"
+          - uses the default separator ","
+            returns `"one, two, and three"`
+
+          `LegalCitationsProvider.humanized_join(['one','two','three'], "or")`
+            returns `"one, two, or three"`
 
         :param items: The list to be joined together.
         :param conjunction: The word to join the items together with
-            (typically " and "), but any string can be used (e.g. " & ").
-            Note the spaces: This does not add any spaces. You *should* include
-            spaces in the conjunction string if you want it to be readable.
-            If you don't include them, you'll get something like
-             "item1, item2, anditem3"
-
-        :param separator: The separator between the items. Default = ', '
+            (typically "and"), but any string can be used (e.g. "&").
+            Default = "and"
+        :param separator: The separator between the items. Default = ","
         :returns: a string with the items in the list joined together.
         :rtype:  str
         """
@@ -250,6 +249,7 @@ class LegalCitationsProvider(BaseProvider):
         joined_str = ""
         str_items = list(map(str, items))
         num_items = len(str_items)
+        sep_space = f"{separator} "
         if num_items==0:
             joined_str = ""
         elif num_items==1:
@@ -259,6 +259,7 @@ class LegalCitationsProvider(BaseProvider):
         elif num_items > 2:
             last_item = str_items.pop()
             joined_str = (
-                f"{separator.join(str_items)} {conjunction} {last_item}"
+                f"{sep_space.join(str_items)}"
+                f"{sep_space}{conjunction} {last_item}"
             )
         return joined_str
