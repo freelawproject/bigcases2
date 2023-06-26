@@ -58,8 +58,8 @@ class LegalCitationsProvider(BaseProvider):
           - volume is a random number between 1 and 999
           - reporter is randomly selected from the list of known reporters
           - page is a random number between 1 and 999
-
-        Ex: "345 Mass. 76"
+        Ex: `LegalCitationsProvider.citation_()`
+            returns "380 L. Ed. 2d 403"
 
         :returns: the fake citation
         :rtype: str
