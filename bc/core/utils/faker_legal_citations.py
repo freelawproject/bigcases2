@@ -166,7 +166,8 @@ class LegalCitationsProvider(BaseProvider):
         )
         return " ".join([section, connector, whole])
 
-    def docket_number(self) -> str:
+    @staticmethod
+    def docket_number() -> str:
         """
         Make either a simple docket number or a federal district docket
         number. There is an equal chance (50/50) of returning one or the other.
@@ -176,9 +177,9 @@ class LegalCitationsProvider(BaseProvider):
         """
         use_simple = random.choice([True, False])
         if use_simple:
-            return self.simple_docket_number()
+            return LegalCitationsProvider.simple_docket_number()
         else:
-            return self.federal_district_docket_number()
+            return LegalCitationsProvider.federal_district_docket_number()
 
     @staticmethod
     def simple_docket_number() -> str:
