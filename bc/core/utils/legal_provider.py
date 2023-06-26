@@ -8,7 +8,7 @@ from faker.providers import BaseProvider
 _faker = Faker()
 
 
-class LegalCitationsProvider(BaseProvider):
+class LegalProvider(BaseProvider):
     """
     Generates fake legal-like citations, court names, and docket numbers.
 
@@ -22,19 +22,30 @@ class LegalCitationsProvider(BaseProvider):
     # fmt: off
     ```python
         from faker import Faker
-        from bc.core.utils.faker_legal_citations import LegalCitationsProvider
+        from bc.core.utils.legal_provider import LegalProvider
 
         fake = Faker()
-        fake.add_provider(LegalCitationsProvider)
+        fake.add_provider(LegalProvider)
     ```
     # fmt: on
-    Now the methods in LegalCitationsProvider are available to fake (the
+    Now the methods in LegalProvider are available to fake (the
     Faker instance you created).
     Ex:
       `fake.court_name()`
       `fake.docket_number()`
       `fake.citation()`
       etc.
+
+    Because the methods are static, you can also use LegalProvider by
+    itself (without Faker). Ex:
+    # fmt: off
+    ```python
+        from bc.core.utils.legal_provider import LegalProvider
+
+        some_case_name = LegalProvider.case_name()
+        some_court = LegalProvider.court_name()
+    ```
+    # fmt: on
     """
 
     # Number of parties to create if creating a full (long) list of parties.
@@ -46,13 +57,13 @@ class LegalCitationsProvider(BaseProvider):
         """
         Make a randomly generated citation that has a randomly generated
         case name and a randomly generated citation.
-        Ex: `LegalCitationsProvider.citation_with_case()`
+        Ex: `LegalProvider.citation_with_case()`
             returns "Hooper, Gardner and Perry v. Bond Group, 579 L. Ed. 102"
 
         :returns: the fake citation
         :rtype: str
         """
-        return f"{LegalCitationsProvider.case_name()}, {LegalCitationsProvider.citation()}"
+        return f"{LegalProvider.case_name()}, {LegalProvider.citation()}"
 
     @staticmethod
     def citation() -> str:
@@ -61,7 +72,7 @@ class LegalCitationsProvider(BaseProvider):
           - volume is a random number between 1 and 999
           - reporter is randomly selected from the list of known reporters
           - page is a random number between 1 and 999
-        Ex: `LegalCitationsProvider.citation_()`
+        Ex: `LegalProvider.citation_()`
             returns "380 L. Ed. 2d 403"
 
         :returns: the fake citation
@@ -113,32 +124,32 @@ class LegalCitationsProvider(BaseProvider):
     ) -> str:
         """
         Make a case name like "O'Neil v. Jordan".
-        Ex: `LegalCitationsProvider.case_name()`
+        Ex: `LegalProvider.case_name()`
             returns "Mendoza-Page v. Smith"
             or possibly "Curtis, Davis and Atkins v. Hughes"
-        Ex: `LegalCitationsProvider.case_name(True)`
+        Ex: `LegalProvider.case_name(True)`
             returns "Aguirre-Patrick, Brown, Carter and Bell, Robinson Ltd, Campos, Miller and Wiley, and Thomas-Avila v. Wagner, Rodriguez, Glover, Kim, and Moore"
-        Ex: `LegalCitationsProvider.case_name(False, "Doe")`
+        Ex: `LegalProvider.case_name(False, "Doe")`
             returns "Doe v. Wright-Davis"
-        Ex: `LegalCitationsProvider.case_name(True,None,"Doe2")`
+        Ex: `LegalProvider.case_name(True,None,"Doe2")`
             returns "Knox, Campbell, Alexander, Morse, and Branch v. Doe2"
 
         :param full: Whether to make a full (long) list of names for the parties
             Default = False
         :type: bool
         :param plaintiff: string to use for the plaintiff. If not given,
-            a fake `LegalCitationsProvider.party_name()` will be used.
+            a fake `LegalProvider.party_name()` will be used.
         :param defendant: string to use for the defendant. If not given,
-            a fake `LegalCitationsProvider.party_name()` will be used.
+            a fake `LegalProvider.party_name()` will be used.
         :returns: the fake generated case name
         :rtype: str
         """
         if plaintiff is None:
-            plaint = LegalCitationsProvider.party_name(full)
+            plaint = LegalProvider.party_name(full)
         else:
             plaint = plaintiff
         if defendant is None:
-            defend = LegalCitationsProvider.party_name(full)
+            defend = LegalProvider.party_name(full)
         else:
             defend = defendant
         return f"{plaint} v. {defend}"
@@ -148,17 +159,17 @@ class LegalCitationsProvider(BaseProvider):
         """
         Make a name that could be a party to a legal case.
         The name has a 50/50 chance of being either a person or a company.
-        Ex: `LegalCitationsProvider.party_name()`
+        Ex: `LegalProvider.party_name()`
             returns "Smith"
             or possibly "Campbell, Mercado and Dickerson"
         Ex: create a party with a 'full' list of names:
-            `LegalCitationsProvider.party_name(True)`
+            `LegalProvider.party_name(True)`
                 returns "Perez-Wolfe, Brennan LLC, Harris, Harris and Parrish, Davila, Peterson and Miller, and Joseph, Griffin and Coleman"
                 or possibly "Bender, Ryan, Wilson, Rodriguez, and Carroll"
 "
 
         :param full: Whether to make a long (full) list of parties.
-          If True, will make a list LegalCitationsProvider.NUM_PARTIES long.
+          If True, will make a list LegalProvider.NUM_PARTIES long.
           Default = False
         :type: bool
         :returns: the fake name
@@ -167,17 +178,17 @@ class LegalCitationsProvider(BaseProvider):
         do_company = random.choice([True, False])
         if do_company:
             if full:
-                return LegalCitationsProvider.humanized_join(
+                return LegalProvider.humanized_join(
                     [_faker.company() for _ in
-                     range(LegalCitationsProvider.NUM_PARTIES)]
+                     range(LegalProvider.NUM_PARTIES)]
                 )
             else:
                 return _faker.company()
         else:
             if full:
-                return LegalCitationsProvider.humanized_join(
+                return LegalProvider.humanized_join(
                     [_faker.last_name() for _ in
-                     range(LegalCitationsProvider.NUM_PARTIES)]
+                     range(LegalProvider.NUM_PARTIES)]
                 )
             else:
                 return _faker.last_name()
@@ -186,7 +197,7 @@ class LegalCitationsProvider(BaseProvider):
     def court_name() -> str:
         """
         Make a fake court name in the format <section> <connector> <whole>
-        Ex: `LegalCitationsProvider.court_name()`
+        Ex: `LegalProvider.court_name()`
             returns "First circuit for the zoo"
             or possibly "District court of albatross"
             or possibly "Appeals court of Eruptanyom"
@@ -229,9 +240,9 @@ class LegalCitationsProvider(BaseProvider):
         """
         use_simple = random.choice([True, False])
         if use_simple:
-            return LegalCitationsProvider.simple_docket_number()
+            return LegalProvider.simple_docket_number()
         else:
-            return LegalCitationsProvider.federal_district_docket_number()
+            return LegalProvider.federal_district_docket_number()
 
     @staticmethod
     def simple_docket_number() -> str:
@@ -239,7 +250,7 @@ class LegalCitationsProvider(BaseProvider):
         Make a docket number of the form NN-NXXXX, where:
              * 'N' is a number 1 - 9,
              * 'X' is a number 0 - 9
-        Ex: `LegalCitationsProvider.simple_docket_number()`
+        Ex: `LegalProvider.simple_docket_number()`
             returns "17-78721"
 
         :returns: the fake  docket number
@@ -252,7 +263,7 @@ class LegalCitationsProvider(BaseProvider):
         """
         Make a docket number like you'd see in a district court
             of the form <office>:<year>-<2 characters>-<5 digits>
-        Ex: `LegalCitationsProvider.federal_district_docket_number()`
+        Ex: `LegalProvider.federal_district_docket_number()`
             returns "2:13-cv-03239"
 
         :returns: a docket number
@@ -278,12 +289,12 @@ class LegalCitationsProvider(BaseProvider):
         conjunction.
         All items in the list are converted to strings.
 
-        Ex: `LegalCitationsProvider.humanized_join(['one','two','three'])`
+        Ex: `LegalProvider.humanized_join(['one','two','three'])`
           - uses the default conjunction "and"
           - uses the default separator ","
             returns `"one, two, and three"`
 
-          `LegalCitationsProvider.humanized_join(['one','two','three'], "or")`
+          `LegalProvider.humanized_join(['one','two','three'], "or")`
             returns `"one, two, or three"`
 
         :param items: The list to be joined together.
