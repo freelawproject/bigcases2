@@ -134,12 +134,11 @@ class LegalCitationsProvider(BaseProvider):
     @staticmethod
     def court_name() -> str:
         """
-        Make a court names like
-          - First circuit for the zoo
-          - District court of albatross
-          - Appeals court of eczema
-
-        Basic format is <section> <connector> <whole>
+        Make a fake court name in the format <section> <connector> <whole>
+        Ex: `LegalCitationsProvider.court_name()`
+            returns "First circuit for the zoo"
+            or possibly "District court of albatross"
+            or possibly "Appeals court of Eruptanyom"
 
         :returns: the fake court name
         :rtype: str
@@ -162,6 +161,8 @@ class LegalCitationsProvider(BaseProvider):
                 "dragons",
                 "Dirty Dishes",
                 "Eruptanyom",  # Kelvin's pretend world
+                "Albatross",
+                "eczema"
             ]
         )
         return " ".join([section, connector, whole])
