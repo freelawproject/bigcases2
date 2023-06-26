@@ -41,15 +41,18 @@ class LegalCitationsProvider(BaseProvider):
     NUM_PARTIES = 5
 
 
+    @staticmethod
     def citation_with_case() -> str:
         """
         Make a randomly generated citation that has a randomly generated
-        case name and a randomly citation.
+        case name and a randomly generated citation.
+        Ex: `LegalCitationsProvider.citation_with_case()`
+            returns "Hooper, Gardner and Perry v. Bond Group, 579 L. Ed. 102"
 
         :returns: the fake citation
         :rtype: str
         """
-        return f"{self.case_name()}, {self.citation()}"
+        return f"{LegalCitationsProvider.case_name()}, {LegalCitationsProvider.citation()}"
 
     @staticmethod
     def citation() -> str:
