@@ -51,7 +51,6 @@ class LegalProvider(BaseProvider):
     # Number of parties to create if creating a full (long) list of parties.
     NUM_PARTIES = 5
 
-
     @staticmethod
     def citation_with_case() -> str:
         """
@@ -120,7 +119,8 @@ class LegalProvider(BaseProvider):
     @staticmethod
     def case_name(
         full: bool = False,
-        plaintiff: str | None = None, defendant: str | None = None
+        plaintiff: str | None = None,
+        defendant: str | None = None,
     ) -> str:
         """
         Make a case name like "O'Neil v. Jordan".
@@ -157,38 +157,42 @@ class LegalProvider(BaseProvider):
     @staticmethod
     def party_name(full: bool = False) -> str:
         """
-        Make a name that could be a party to a legal case.
-        The name has a 50/50 chance of being either a person or a company.
-        Ex: `LegalProvider.party_name()`
-            returns "Smith"
-            or possibly "Campbell, Mercado and Dickerson"
-        Ex: create a party with a 'full' list of names:
-            `LegalProvider.party_name(True)`
-                returns "Perez-Wolfe, Brennan LLC, Harris, Harris and Parrish, Davila, Peterson and Miller, and Joseph, Griffin and Coleman"
-                or possibly "Bender, Ryan, Wilson, Rodriguez, and Carroll"
-"
+                Make a name that could be a party to a legal case.
+                The name has a 50/50 chance of being either a person or a company.
+                Ex: `LegalProvider.party_name()`
+                    returns "Smith"
+                    or possibly "Campbell, Mercado and Dickerson"
+                Ex: create a party with a 'full' list of names:
+                    `LegalProvider.party_name(True)`
+                        returns "Perez-Wolfe, Brennan LLC, Harris, Harris and Parrish, Davila, Peterson and Miller, and Joseph, Griffin and Coleman"
+                        or possibly "Bender, Ryan, Wilson, Rodriguez, and Carroll"
+        "
 
-        :param full: Whether to make a long (full) list of parties.
-          If True, will make a list LegalProvider.NUM_PARTIES long.
-          Default = False
-        :type: bool
-        :returns: the fake name
-        :rtype: str
+                :param full: Whether to make a long (full) list of parties.
+                  If True, will make a list LegalProvider.NUM_PARTIES long.
+                  Default = False
+                :type: bool
+                :returns: the fake name
+                :rtype: str
         """
         do_company = random.choice([True, False])
         if do_company:
             if full:
                 return LegalProvider.humanized_join(
-                    [_faker.company() for _ in
-                     range(LegalProvider.NUM_PARTIES)]
+                    [
+                        _faker.company()
+                        for _ in range(LegalProvider.NUM_PARTIES)
+                    ]
                 )
             else:
                 return _faker.company()
         else:
             if full:
                 return LegalProvider.humanized_join(
-                    [_faker.last_name() for _ in
-                     range(LegalProvider.NUM_PARTIES)]
+                    [
+                        _faker.last_name()
+                        for _ in range(LegalProvider.NUM_PARTIES)
+                    ]
                 )
             else:
                 return _faker.last_name()
@@ -224,7 +228,7 @@ class LegalProvider(BaseProvider):
                 "Dirty Dishes",
                 "Eruptanyom",  # Kelvin's pretend world
                 "Albatross",
-                "eczema"
+                "eczema",
             ]
         )
         return " ".join([section, connector, whole])
@@ -312,11 +316,11 @@ class LegalProvider(BaseProvider):
         str_items = list(map(str, items))
         num_items = len(str_items)
         sep_space = f"{separator} "
-        if num_items==0:
+        if num_items == 0:
             joined_str = ""
-        elif num_items==1:
+        elif num_items == 1:
             joined_str = str_items[0]
-        elif num_items==2:
+        elif num_items == 2:
             joined_str = f"{str_items[0]} {conjunction} {str_items[1]}"
         elif num_items > 2:
             last_item = str_items.pop()
