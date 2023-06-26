@@ -112,12 +112,12 @@ class LegalCitationsProvider(BaseProvider):
         :returns: the fake generated case name
         :rtype: str
         """
-        plaint = self.case_party_name() if plaintiff is None else plaintiff
-        defend = self.case_party_name() if defendant is None else defendant
+        plaint = self.party_name() if plaintiff is None else plaintiff
+        defend = self.party_name() if defendant is None else defendant
         return f"{plaint} v. {defend}"
 
     @staticmethod
-    def case_party_name() -> str:
+    def party_name() -> str:
         """
         Make a name that could be a party to a legal case.
         The name has a 50/50 chance of being either a person or a company.
@@ -250,11 +250,11 @@ class LegalCitationsProvider(BaseProvider):
         joined_str = ""
         str_items = list(map(str, items))
         num_items = len(str_items)
-        if num_items == 0:
+        if num_items==0:
             joined_str = ""
-        elif num_items == 1:
+        elif num_items==1:
             joined_str = str_items[0]
-        elif num_items == 2:
+        elif num_items==2:
             joined_str = f"{str_items[0]} {conjunction} {str_items[1]}"
         elif num_items > 2:
             last_item = str_items.pop()
