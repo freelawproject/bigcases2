@@ -41,7 +41,7 @@ from .utils.email import EmailType, emails, message_dict
 
 
 @sensitive_post_parameters("password1", "password2")
-@sensitive_variables("cd")
+@sensitive_variables("cd", "signed_pk", "email")
 @ratelimiter_unsafe_10_per_m
 @ratelimiter_unsafe_2000_per_h
 def register(request: HttpRequest) -> HttpResponse:
@@ -129,7 +129,7 @@ def register_success(request: HttpRequest) -> HttpResponse:
     )
 
 
-@sensitive_variables("activation_key")
+@sensitive_variables("signed_pk")
 def confirm_email(request, signed_pk):
     """Confirms email addresses for a user and sends an email to the admins.
 
@@ -166,7 +166,7 @@ def confirm_email(request, signed_pk):
 
 
 @sensitive_variables(
-    "activation_key",
+    "signed_pk",
     "email",
     "cd",
     "confirmation_email",
@@ -233,9 +233,10 @@ class RateLimitedPasswordResetView(PasswordResetView):
 
 
 @sensitive_variables(
-    # Contains password info
+    # Contains user info
     "user_cd",
     # Contains activation key
+    "signed_pk",
     "email",
 )
 @login_required
@@ -249,14 +250,14 @@ def profile_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
         changed_email = old_email != new_email
         if changed_email:
             # Email was changed.
-            activation_key = user.get_signed_pk()
+            signed_pk = user.get_signed_pk()
 
             # Send an email to the new and old addresses. New for verification;
             # old for notification of the change.
             email: EmailType = emails["email_changed_successfully"]
             send_mail(
                 email["subject"],
-                email["body"] % (user.username, activation_key),
+                email["body"] % (user.username, signed_pk),
                 email["from_email"],
                 [new_email],
             )
