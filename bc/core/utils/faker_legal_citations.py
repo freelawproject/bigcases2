@@ -185,11 +185,9 @@ class LegalCitationsProvider(BaseProvider):
         """
         Make a docket number of the form NN-NXXXX, where:
              * 'N' is a number 1 - 9,
-             * 'X' is a number 0-9
-
-            Examples:
-                '17-78721'
-                '90-20018'
+             * 'X' is a number 0 - 9
+        Ex: `LegalCitationsProvider.simple_docket_number()`
+            returns "17-78721"
 
         :returns: the fake  docket number
         :rtype:   str
@@ -201,8 +199,8 @@ class LegalCitationsProvider(BaseProvider):
         """
         Make a docket number like you'd see in a district court
             of the form <office>:<year>-<2 characters>-<5 digits>
-
-        Ex: "2:13-cv-03239"
+        Ex: `LegalCitationsProvider.federal_district_docket_number()`
+            returns "2:13-cv-03239"
 
         :returns: a docket number
         :rtype: str
