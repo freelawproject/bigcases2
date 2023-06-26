@@ -37,7 +37,11 @@ class LegalCitationsProvider(BaseProvider):
       etc.
     """
 
-    def citation_with_case(self) -> str:
+    # Number of parties to create if creating a full (long) list of parties.
+    NUM_PARTIES = 5
+
+
+    def citation_with_case() -> str:
         """
         Make a randomly generated citation that has a randomly generated
         case name and a randomly citation.
@@ -117,19 +121,43 @@ class LegalCitationsProvider(BaseProvider):
         return f"{plaint} v. {defend}"
 
     @staticmethod
-    def party_name() -> str:
+    def party_name(full: bool = False) -> str:
         """
         Make a name that could be a party to a legal case.
         The name has a 50/50 chance of being either a person or a company.
+        Ex: `LegalCitationsProvider.party_name()`
+            returns "Smith"
+            or possibly "Campbell, Mercado and Dickerson"
+        Ex: create a party with a 'full' list of names:
+            `LegalCitationsProvider.party_name(True)`
+                returns "Perez-Wolfe, Brennan LLC, Harris, Harris and Parrish, Davila, Peterson and Miller, and Joseph, Griffin and Coleman"
+                or possibly "Bender, Ryan, Wilson, Rodriguez, and Carroll"
+"
 
+        :param full: Whether to make a long (full) list of parties.
+          If True, will make a list LegalCitationsProvider.NUM_PARTIES long.
+          Default = False
+        :type: bool
         :returns: the fake name
         :rtype: str
         """
         do_company = random.choice([True, False])
         if do_company:
-            return _faker.company()
+            if full:
+                return LegalCitationsProvider.humanized_join(
+                    [_faker.company() for _ in
+                     range(LegalCitationsProvider.NUM_PARTIES)]
+                )
+            else:
+                return _faker.company()
         else:
-            return _faker.last_name()
+            if full:
+                return LegalCitationsProvider.humanized_join(
+                    [_faker.last_name() for _ in
+                     range(LegalCitationsProvider.NUM_PARTIES)]
+                )
+            else:
+                return _faker.last_name()
 
     @staticmethod
     def court_name() -> str:
