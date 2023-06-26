@@ -67,7 +67,6 @@ def register(request: HttpRequest) -> HttpResponse:
             if cd["last_name"]:
                 user.last_name = cd["last_name"]
 
-            # Build and assign the
             signed_pk = user.get_signed_pk()
             email: EmailType = emails["confirm_your_new_account"]
             send_mail(
