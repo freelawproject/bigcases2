@@ -103,21 +103,41 @@ class LegalCitationsProvider(BaseProvider):
         page = random.randint(1, 999)
         return f"{volume} {reporter} {page}"
 
+    @staticmethod
     def case_name(
-        self, plaintiff: str | None = None, defendant: str | None = None
+        full: bool = False,
+        plaintiff: str | None = None, defendant: str | None = None
     ) -> str:
         """
         Make a case name like "O'Neil v. Jordan".
+        Ex: `LegalCitationsProvider.case_name()`
+            returns "Mendoza-Page v. Smith"
+            or possibly "Curtis, Davis and Atkins v. Hughes"
+        Ex: `LegalCitationsProvider.case_name(True)`
+            returns "Aguirre-Patrick, Brown, Carter and Bell, Robinson Ltd, Campos, Miller and Wiley, and Thomas-Avila v. Wagner, Rodriguez, Glover, Kim, and Moore"
+        Ex: `LegalCitationsProvider.case_name(False, "Doe")`
+            returns "Doe v. Wright-Davis"
+        Ex: `LegalCitationsProvider.case_name(True,None,"Doe2")`
+            returns "Knox, Campbell, Alexander, Morse, and Branch v. Doe2"
 
+        :param full: Whether to make a full (long) list of names for the parties
+            Default = False
+        :type: bool
         :param plaintiff: string to use for the plaintiff. If not given,
-            a fake `case_party_name()` will be used.
+            a fake `LegalCitationsProvider.party_name()` will be used.
         :param defendant: string to use for the defendant. If not given,
-            a fake `case_party_name()` will be used.
+            a fake `LegalCitationsProvider.party_name()` will be used.
         :returns: the fake generated case name
         :rtype: str
         """
-        plaint = self.party_name() if plaintiff is None else plaintiff
-        defend = self.party_name() if defendant is None else defendant
+        if plaintiff is None:
+            plaint = LegalCitationsProvider.party_name(full)
+        else:
+            plaint = plaintiff
+        if defendant is None:
+            defend = LegalCitationsProvider.party_name(full)
+        else:
+            defend = defendant
         return f"{plaint} v. {defend}"
 
     @staticmethod
