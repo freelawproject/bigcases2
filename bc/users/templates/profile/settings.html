@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Account Settings{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 mt-16 grid grid-cols-1 gap-y-5">
+  {% include "includes/account-tabs.html"%}
+  <div class="flex justify-center">
+    <div class="flex flex-col w-[36rem]">
+      {% block messages %}
+        {% include "includes/messages.html" %}
+      {% endblock %}
+      {% if form.errors %}
+        <div class="bg-red-100 border-l-2 border-red-500 text-red-700 p-4 mb-2" role="alert">
+          <p class="m-0">There were errors with your submission.</p>
+        </div>
+      {% endif %}
+      <form action="" method="post" class="grid grid-cols-1 gap-4">
+        {% csrf_token %}
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex flex-col">
+            <div>
+              <label for="id_first_name">First Name:</label>
+            </div>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+              <div class="text-sm text-red-700 mt-1">
+                {{form.first_name.errors}}
+              </div>
+            {% endif %}
+          </div>
+          <div class="flex flex-col">
+            <div>
+              <label for="id_last_name">Last Name:</label>
+            </div>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+              <div class="text-sm text-red-700 mt-1">
+                {{form.last_name.errors}}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+          <div class="flex flex-col">
+            <div>
+              <label for="id_email">Email (will log you out until re-confirmed):</label>
+            </div>
+            {{ form.email }}
+            {% if form.email.errors %}
+              <div class="text-sm text-red-700 mt-1">
+                {{form.email.errors}}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+          <div class="flex flex-col">
+            <div>
+              <label for="id_affiliation">Affiliation:</label>
+            </div>
+            {{ form.affiliation }}
+            {% if form.affiliation.errors %}
+              <div class="text-sm text-red-700 mt-1">
+                {{form.affiliation.errors}}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        {% include 'includes/submit-button.html' with value='Save Changes' %}
+
+      </form>
+      <div class="flex mt-4 text-md">
+        <div class="flex items-center">
+          <div class="w-5 h-5 mr-1">
+            {% include 'includes/inlines/trash.svg' %}
+          </div>
+          {% url 'delete_account' as delete_account %}
+          {% include 'includes/regular-anchor.html' with text='Delete my account' href=delete_account%}
+        </div>
+        &nbsp;|&nbsp;
+        <div class="flex items-center">
+          <div class="w-5 h-5 mr-1">
+            {% include 'includes/inlines/document-arrow-down.svg' %}
+          </div>
+          {% url 'take_out' as take_out %}
+          {% include 'includes/regular-anchor.html' with text='Export my data' href=take_out %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

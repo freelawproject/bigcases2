@@ -1,14 +1,7 @@
-from typing import NotRequired, TypedDict
-
 from django.conf import settings
+from django.contrib import messages
 
-
-class EmailType(TypedDict):
-    subject: str
-    body: str
-    from_email: str
-    to: NotRequired[list[str]]
-
+from bc.users.types import EmailType, MessageType
 
 emails: dict[str, EmailType] = {
     "account_deleted": {
@@ -136,5 +129,23 @@ emails: dict[str, EmailType] = {
         "The Bots.law Bots",
         "from_email": settings.DEFAULT_FROM_EMAIL,
         "to": [a[1] for a in settings.MANAGERS],
+    },
+}
+
+message_dict: dict[str, MessageType] = {
+    "email_changed_successfully": {
+        "level": messages.SUCCESS,
+        "message": "Your settings were saved successfully and you have been "
+        "logged out. To sign back in and continue using "
+        "Bots.law, please confirm your new email address by "
+        "checking your email within five days.",
+    },
+    "settings_changed_successfully": {
+        "level": messages.SUCCESS,
+        "message": "Your settings were saved successfully.",
+    },
+    "pwd_changed_successfully": {
+        "level": messages.SUCCESS,
+        "message": "Your password was changed successfully",
     },
 }
