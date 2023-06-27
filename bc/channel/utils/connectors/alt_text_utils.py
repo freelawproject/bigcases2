@@ -28,4 +28,4 @@ def text_image_alt_text(text_image_description: str = "") -> str:
     Returns:
         (str)
     """
-    return f"An image of the entry's full text: {text_image_description}"
+    return f"The entry's text: {text_image_description}"
