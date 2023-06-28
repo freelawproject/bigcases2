@@ -8,9 +8,15 @@ from .forms import ConfirmedEmailAuthenticationForm
 from .views import (
     RateLimitedPasswordResetView,
     confirm_email,
+    delete_account,
+    delete_profile_done,
+    password_change,
+    profile_settings,
     register,
     register_success,
     request_email_confirmation,
+    take_out,
+    take_out_done,
 )
 
 urlpatterns = [
@@ -82,5 +88,15 @@ urlpatterns = [
             template_name="register/password_reset_complete.html"
         ),
         name="password_reset_complete",
+    ),
+    path("profile/settings/", profile_settings, name="profile_settings"),
+    path("profile/password/change/", password_change, name="password_change"),
+    path("profile/take-out/", take_out, name="take_out"),
+    path("profile/take-out/done/", take_out_done, name="take_out_done"),
+    path("profile/delete/", delete_account, name="delete_account"),
+    path(
+        "profile/delete/done/",
+        delete_profile_done,
+        name="delete_profile_done",
     ),
 ]

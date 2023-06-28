@@ -1,0 +1,7 @@
+{% if messages %}
+  {% for message in messages %}
+    <div class="bg-saffron-100 border-l-2 border-saffron-500 p-4 my-2" role="alert">
+      <p>{{message|safe}}</p>
+    </div>
+  {% endfor %}
+{% endif %}

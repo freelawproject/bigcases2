@@ -6,6 +6,9 @@
 <div class="max-w-xl mx-auto px-4 sm:px-6 md:px-10">
   <div class="py-12 prose">
     <h1 class="font-display font-light tracking-wide">Sign In</h2>
+      {% block messages %}
+        {% include "includes/messages.html" %}
+      {% endblock %}
       {% if form.errors %}
         <div class="bg-red-100 border-l-2 border-red-500 text-red-700 p-4 mb-2" role="alert">
           {% for error in form.non_field_errors %}

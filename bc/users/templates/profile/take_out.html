@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Create a Data Export Request{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 mt-16 grid grid-cols-1 gap-y-4 text-bcb-black">
+  <div class="flex justify-center self-center mb-[0.888em] items-stretch">
+    <div class="h-11 w-11 text-saffron-400 flex self-center items-center justify-center">
+      {% include 'includes/inlines/document-arrow-down.svg'%}
+    </div>
+    <div class="flex self-center items-center ml-2">
+      <h1 class="text-4xl font-display font-light tracking-wide">
+        Request Your Data
+      </h1>
+    </div>
+  </div>
+  <p>We believe that our users have a general right to access their data and to export it from <b>bots.law</b>.
+  </p>
+  <p>To create an export request, please press the button below, and we will generate a file with your data and email it to the address that is associated with your account.
+  </p>
+  <p>Generating exports typically takes 2&dash;5 days. If you delete your account during this time, we will not be able to generate your export.</p>
+
+  <div class="flex justify-between">
+    <div class="flex items-center">
+      <div class="w-5 h-5 mr-1">
+        {% include 'includes/inlines/arrow-left-circle.svg' %}
+      </div>
+      {% url 'profile_settings' as profile_settings %}
+      {% include 'includes/regular-anchor.html' with text='Go back' href=profile_settings%}
+    </div>
+    <div class="max-w-[135px]">
+      <form action="" method="post" class="float-right">{% csrf_token %}
+        {% include 'includes/submit-button.html' with value='Request a Data Export' %}
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
