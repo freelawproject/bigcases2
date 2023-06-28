@@ -10,10 +10,9 @@ _faker = Faker()
 
 class LegalProvider(BaseProvider):
     """
-    Generates fake legal-like citations, court names, and docket numbers.
+    Generates fake legal-like case names, party names, court names,
+    and docket numbers.
 
-    This does not create all possible citation forms; it only creates
-    simple citations.
     This uses a combination of fake & farcical words and
     real or real-like words.
     The list of reporters used is quite small.
@@ -31,9 +30,9 @@ class LegalProvider(BaseProvider):
     Now the methods in LegalProvider are available to fake (the
     Faker instance you created).
     Ex:
+      `fake.case_name()`
       `fake.court_name()`
       `fake.docket_number()`
-      `fake.citation()`
       etc.
 
     Because the methods are static, you can also use LegalProvider by
@@ -50,71 +49,6 @@ class LegalProvider(BaseProvider):
 
     # Number of parties to create if creating a full (long) list of parties.
     NUM_PARTIES = 5
-
-    @staticmethod
-    def citation_with_case() -> str:
-        """
-        Make a randomly generated citation that has a randomly generated
-        case name and a randomly generated citation.
-        Ex: `LegalProvider.citation_with_case()`
-            returns "Hooper, Gardner and Perry v. Bond Group, 579 L. Ed. 102"
-
-        :returns: the fake citation
-        :rtype: str
-        """
-        return f"{LegalProvider.case_name()}, {LegalProvider.citation()}"
-
-    @staticmethod
-    def citation() -> str:
-        """
-        Make a citation of the form "{volume} {reporter} {page}" where:
-          - volume is a random number between 1 and 999
-          - reporter is randomly selected from the list of known reporters
-          - page is a random number between 1 and 999
-        Ex: `LegalProvider.citation_()`
-            returns "380 L. Ed. 2d 403"
-
-        :returns: the fake citation
-        :rtype: str
-        """
-        reporters = [
-            "U.S.",
-            "S. Ct.",
-            "L. Ed.",
-            "L. Ed. 2d",
-            "F.",
-            "F.2d",
-            "F.3d",
-            "F. Supp.",
-            "F. Supp. 2d",
-            "W.W.d",
-            "W.W.2d",
-            "W.W.3d",
-            "X.d",
-            "X.2d",
-            "X.3d",
-            "X.4d",
-            "X.5d",
-            "Y.d",
-            "Y.2d",
-            "Y.3d",
-            "Y.4d",
-            "Y.5d",
-            "Y.6d",
-            "Z.1d",
-            "Z.2d",
-            "Z.3d",
-            "Z.4d",
-            "Z.5d",
-            "Z.6d",
-            "Z.7d",
-            "Z.8d",
-            "Z.9d",
-        ]
-        reporter = random.choice(reporters)
-        volume = random.randint(1, 999)
-        page = random.randint(1, 999)
-        return f"{volume} {reporter} {page}"
 
     @staticmethod
     def case_name(
