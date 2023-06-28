@@ -1,0 +1,13 @@
+<div
+    class="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+    <ul class="flex flex-wrap -mb-px">
+      <li class="mr-2">
+        {% url 'profile_settings' as profile_settings %}
+        {% include "./tab.html" with href=profile_settings text="Profile Settings" view_name='profile_settings' %}
+      </li>
+      <li class="mr-2">
+        {% url 'password_change' as password_change %}
+        {% include "./tab.html" with href=password_change text="Change Password" view_name='password_change' %}
+      </li>
+    </ul>
+  </div>

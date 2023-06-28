@@ -11,7 +11,7 @@ ApiWrapper = Union[Mastodon, TwitterAPI]
 class BaseAPIConnector(Protocol):
     def get_api_object(self, version: str | None = None) -> ApiWrapper:
         """
-        Returns an instance of a API wrapper class.
+        Returns an instance of an API wrapper class.
 
         Any authentication step required to create the API instance should
         be included in this method. This method uses the version parameter
@@ -53,11 +53,12 @@ class BaseAPIConnector(Protocol):
         representation of the identifier for the new status.
 
         This method should handle any extra step needed to attach/upload images before
-        creating an status update using the API object.
+        creating a status update using the API object.
 
         Args:
             message (str): Text to include in the new status
             text_image (TextImage | None): Image to attach to the new status
+            thumbnails ( list[bytes] | None): list of thumbnail images to include
 
         Returns:
             int: The unique identifier for the new status.

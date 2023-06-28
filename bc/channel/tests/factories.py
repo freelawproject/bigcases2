@@ -49,7 +49,7 @@ class GroupFactory(DjangoModelFactory):
     slug = factory.LazyAttribute(lambda obj: slugify(obj.name))
 
     @factory.post_generation
-    def sponsorships(self, create, extracted, **kwargs):
+    def sponsorships(self, create, extracted, **_kwargs):
         if not create or not extracted:
             return
 
