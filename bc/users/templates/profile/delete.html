@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Account{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 mt-16 grid grid-cols-1 gap-y-5 text-bcb-black">
+  <div class="flex justify-center self-center mb-[0.888em] ">
+    <div class="flex self-center">
+      <h1 class="text-4xl font-display font-light tracking-wide">
+        You Are About to Delete Your Account
+      </h1>
+    </div>
+  </div>
+  <p>We hope that you will have no need to delete your account, but we
+    understand that sometimes people want a clean slate.</p>
+
+  <p>After you press the button below, your data will be deleted
+    and resurrecting your account will not be possible.</p>
+
+  <p>If you have any last minute questions or comments, we hope you'll
+    {% include 'includes/regular-anchor.html' with text='share them with us' href="https://free.law/contact/"%} before you delete your account.
+  </p>
+
+  <form action="" method="post" class="mt-2 grid grid-cols-1 gap-4">{% csrf_token %}
+    <div class="flex flex-col">
+      {{ form.password.label_tag }}
+      {{ form.password }}
+      {% if form.password.errors %}
+        <div class="text-sm text-red-700 mt-1">
+          {{form.password.errors}}
+        </div>
+      {% endif %}
+    </div>
+    <div class="flex justify-end">
+      <div>
+        {% include 'includes/submit-button.html' with value='Delete My Account Now' %}
+      </div>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

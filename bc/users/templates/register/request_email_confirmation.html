@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Send Email Confirmation{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-10 mt-16 grid grid-cols-1 gap-y-5 text-bcb-black">
+  <div class="flex justify-center self-center mb-[0.888em] ">
+    <div class="flex self-center ml-2">
+      <h1 class="text-4xl font-display font-light tracking-wide">
+        Request Email Confirmation Link
+      </h1>
+    </div>
+  </div>
+
+  {% if form.errors %}
+    <div class="bg-red-100 border-l-2 border-red-500 text-red-700 p-4 mb-2" role="alert">
+      {% for error in form.errors %}
+        <p class="m-0">{{ error|safe }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <p>Enter your email address and we will send you a confirmation email for your account.</p>
+
+  <div class="flex flex-col">
+    <div class="flex flex-col">
+      <form action="" method="post">
+        {% csrf_token %}
+        <div class="flex item-center">
+          <label for="simple-search" class="sr-only">Email Address</label>
+          <div class="relative w-full">
+            <input type="text" id="simple-search" name="email" autocomplete=off
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 placeholder-gray-400"
+              placeholder="Your Email Address" required>
+          </div>
+          <button type="submit"
+            class="p-2.5 ml-2 text-sm font-medium bg-saffron-400 rounded-lg border border-saffron-400 hover:bg-saffron-500 focus:ring-4 focus:outline-none focus:ring-blue-300">
+            Submit
+            <span class="sr-only">Search</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <p>
+    If you are unable to confirm your email address, please
+    {% include 'includes/regular-anchor.html' with text='contact us for assistance' href="https://free.law/contact/"%}.
+  </p>
+</div>
+{% endblock %}

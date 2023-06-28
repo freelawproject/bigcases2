@@ -1,0 +1,4 @@
+<a href="{{href}}"
+  class="inline-block p-4 border-b-2 rounded-t-lg {% if request.resolver_match.view_name == view_name %} text-blue-600 border-blue-600  active {% else %} border-transparent hover:text-gray-600 hover:border-gray-300 {% endif %} ">
+  {{text}}
+</a>
