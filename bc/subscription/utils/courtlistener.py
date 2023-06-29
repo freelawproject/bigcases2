@@ -125,8 +125,10 @@ def lookup_docket_by_cl_id(cl_id: int):
 
 
 class DocumentDict(TypedDict):
+    id: int
     page_count: int
     filepath_local: str
+    pacer_doc_id: str
 
 
 def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
@@ -136,7 +138,7 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     """
     response = requests.get(
         f"{CL_API['recap-documents']}{doc_id}/",
-        params={"fields": "filepath_local,page_count"},
+        params={"fields": "id,filepath_local,page_count,pacer_doc_id"},
         headers=auth_header(),
         timeout=5,
     )
@@ -174,8 +176,10 @@ def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
 
     document = data["results"][0]["recap_documents"][0]
     return {
+        "id": document["id"],
         "filepath_local": document["filepath_local"],
         "page_count": document["page_count"],
+        "pacer_doc_id": document["pacer_doc_id"],
     }
 
 

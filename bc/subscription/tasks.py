@@ -43,6 +43,11 @@ def enqueue_posts_for_new_case(subscription_pk: int) -> None:
     cl_document = lookup_initial_complaint(subscription.cl_docket_id)
     if cl_document and cl_document["filepath_local"]:
         document = download_pdf_from_cl(cl_document["filepath_local"])
+    elif cl_document and cl_document["pacer_doc_id"]:
+        sponsorship = check_active_sponsorships(subscription.pk)
+        if sponsorship:
+            purchase_pdf_by_doc_id(cl_document["id"])
+            return
 
     files = None
     if document:
