@@ -4,7 +4,10 @@ from django.test import TestCase
 
 from bc.channel.models import Channel, Post
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
-from bc.core.utils.status.templates import TWITTER_FOLLOW_A_NEW_CASE
+from bc.core.utils.status.templates import (
+    TWITTER_FOLLOW_A_NEW_CASE,
+    TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE,
+)
 from bc.core.utils.tests.base import faker
 from bc.sponsorship.tests.factories import SponsorshipFactory
 from bc.subscription.models import FilingWebhookEvent
@@ -297,12 +300,16 @@ class MakePostForWebhookEventTest(TestCase):
 class EnqueuePostsForNewCaseTest(TestCase):
     channel = None
     subscription = None
+    subscription_w_link = None
     webhook_event = None
 
     @classmethod
     def setUpTestData(cls) -> None:
         cls.channel = ChannelFactory(twitter=True)
         cls.subscription = SubscriptionFactory(channels=[cls.channel])
+        cls.subscription_w_link = SubscriptionFactory(
+            article=True, channels=[cls.channel]
+        )
         cls.webhook_event = FilingWebhookEventFactory(
             docket_id=65745614,
             doc_id=217368466,
@@ -329,6 +336,89 @@ class EnqueuePostsForNewCaseTest(TestCase):
 
         mock_queue.enqueue.assert_called_once_with(
             api_wrapper.add_status, message, None, None, retry=mock_retry()
+        )
+
+    def test_can_post_new_case_w_link(
+        self, mock_api, mock_queue, mock_retry, mock_lookup
+    ):
+        api_wrapper = self.mock_api_wrapper()
+        mock_api.return_value = api_wrapper
+        mock_lookup.return_value = None
+        message, _ = TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE.format(
+            docket=self.subscription_w_link.name_with_summary,
+            docket_link=self.subscription_w_link.cl_url,
+            docket_id=self.subscription_w_link.cl_docket_id,
+            article_url=self.subscription_w_link.article_url,
+        )
+
+        enqueue_posts_for_new_case(self.subscription_w_link.pk)
+
+        mock_queue.enqueue.assert_called_once_with(
+            api_wrapper.add_status, message, None, None, retry=mock_retry()
+        )
+
+    @patch("bc.subscription.tasks.purchase_pdf_by_doc_id")
+    def test_can_purchase_initial_complaint(
+        self, mock_purchase, mock_api, mock_queue, mock_retry, mock_lookup
+    ):
+        api_wrapper = self.mock_api_wrapper()
+        mock_api.return_value = api_wrapper
+
+        sponsorship = SponsorshipFactory()
+        channel_group = GroupFactory(sponsorships=[sponsorship])
+        channel = ChannelFactory(group=channel_group)
+        mock_lookup.return_value = {
+            "id": 1,
+            "filepath_local": "",
+            "pacer_doc_id": "051023651280",
+        }
+
+        self.subscription.channel.add(channel)
+
+        enqueue_posts_for_new_case(self.subscription.pk)
+
+        mock_purchase.assert_called_once_with(1)
+        mock_queue.assert_not_called()
+
+    @patch("bc.subscription.tasks.get_thumbnails_from_range")
+    @patch("bc.subscription.tasks.download_pdf_from_cl")
+    def test_can_post_new_case_w_thumbnails(
+        self,
+        mock_download,
+        mock_thumbnails,
+        mock_api,
+        mock_queue,
+        mock_retry,
+        mock_lookup,
+    ):
+        api_wrapper = self.mock_api_wrapper()
+        mock_api.return_value = api_wrapper
+        mock_lookup.return_value = {"filepath_local": faker.url()}
+
+        document = faker.binary(2)
+        mock_download.return_value = document
+
+        thumb_1 = faker.binary(4)
+        thumb_2 = faker.binary(6)
+        mock_thumbnails.return_value = [thumb_1, thumb_2]
+
+        message, _ = TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE.format(
+            docket=self.subscription_w_link.name_with_summary,
+            docket_link=self.subscription_w_link.cl_url,
+            docket_id=self.subscription_w_link.cl_docket_id,
+            article_url=self.subscription_w_link.article_url,
+        )
+
+        enqueue_posts_for_new_case(self.subscription_w_link.pk)
+
+        mock_download.assert_called_once()
+        mock_thumbnails.assert_called_once_with(document, "[1,2,3,4]")
+        mock_queue.enqueue.assert_called_once_with(
+            api_wrapper.add_status,
+            message,
+            None,
+            [thumb_1, thumb_2],
+            retry=mock_retry(),
         )
 
 
