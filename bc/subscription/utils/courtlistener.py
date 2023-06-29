@@ -29,6 +29,7 @@ PDF_URL_PATTERN = re.compile(
 CL_API = {
     "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
     "docket-alerts": "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
+    "docket-entries": "https://www.courtlistener.com/api/rest/v3/docket-entries/",
     "recap-documents": "https://www.courtlistener.com/api/rest/v3/recap-documents/",
     "recap-fetch": "https://www.courtlistener.com/api/rest/v3/recap-fetch/",
     "media-storage": "https://storage.courtlistener.com/",
@@ -142,6 +143,40 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     response.raise_for_status()
     data: DocumentDict = response.json()
     return data
+
+
+def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
+    """
+    Performs a GET query on /api/rest/v3/docket-entries/
+    using the docket_id to get the first entry of the case.
+
+    Args:
+        docket_id (int): CourtListener docket identifier
+
+    Returns:
+        DocumentDict | None: Dictionary containing the path to get
+            the document or None when the entry is not available.
+    """
+    if not docket_id:
+        return None
+
+    response = requests.get(
+        f"{CL_API['docket-entries']}",
+        params={"docket__id": docket_id, "entry_number": 1},
+        headers=auth_header(),
+        timeout=5,
+    )
+    response.raise_for_status()
+
+    data = response.json()
+    if not data["count"]:
+        return None
+
+    document = data["results"][0]["recap_documents"][0]
+    return {
+        "filepath_local": document["filepath_local"],
+        "page_count": document["page_count"],
+    }
 
 
 def download_pdf_from_cl(filepath: str) -> bytes:
