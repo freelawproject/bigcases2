@@ -1,11 +1,14 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.views import View
 from django_htmx.http import trigger_client_event
+from django_rq.queues import get_queue
 from requests.exceptions import HTTPError, ReadTimeout
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rq import Retry
 
 from bc.channel.models import Group
 from bc.channel.selectors import get_channel_groups_per_user
@@ -17,6 +20,8 @@ from .utils.courtlistener import (
     get_docket_id_from_query,
     lookup_docket_by_cl_id,
 )
+
+queue = get_queue("default")
 
 
 def search(request: Request) -> Response:
@@ -84,6 +89,13 @@ class AddCaseView(LoginRequiredMixin, View):
             subscription.channel.add(channel_id)
 
         if created:
-            enqueue_posts_for_new_case(subscription)
+            queue.enqueue(
+                enqueue_posts_for_new_case,
+                subscription.pk,
+                retry=Retry(
+                    max=settings.RQ_MAX_NUMBER_OF_RETRIES,
+                    interval=settings.RQ_RETRY_INTERVAL,
+                ),
+            )
 
         return render(request, "./includes/search_htmx/success.html")
