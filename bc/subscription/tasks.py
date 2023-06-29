@@ -37,12 +37,15 @@ def enqueue_posts_for_new_case(subscription: Subscription) -> None:
         subscription (Subscription): the new subscription object.
     """
     for channel in get_channels_per_subscription(subscription.pk):
-        template = get_new_case_template(channel.service)
+        template = get_new_case_template(
+            channel.service, subscription.article_url
+        )
 
         message, _ = template.format(
             docket=subscription.name_with_summary,
             docket_link=subscription.cl_url,
             docket_id=subscription.cl_docket_id,
+            article_url=subscription.article_url,
         )
 
         api = channel.get_api_wrapper()
