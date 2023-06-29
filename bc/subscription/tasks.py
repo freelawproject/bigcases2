@@ -20,6 +20,7 @@ from bc.sponsorship.services import log_purchase
 from bc.subscription.utils.courtlistener import (
     download_pdf_from_cl,
     lookup_document_by_doc_id,
+    lookup_initial_complaint,
     purchase_pdf_by_doc_id,
 )
 
@@ -28,14 +29,25 @@ from .models import FilingWebhookEvent, Subscription
 queue = get_queue("default")
 
 
-def enqueue_posts_for_new_case(subscription: Subscription) -> None:
+def enqueue_posts_for_new_case(subscription_pk: int) -> None:
     """
     Enqueue jobs to create a post in the available channels after
     following a new case.
 
     Args:
-        subscription (Subscription): the new subscription object.
+        subscription_pk (int): The PK of the Subscription record.
     """
+    subscription = Subscription.objects.get(pk=subscription_pk)
+
+    document = None
+    cl_document = lookup_initial_complaint(subscription.cl_docket_id)
+    if cl_document and cl_document["filepath_local"]:
+        document = download_pdf_from_cl(cl_document["filepath_local"])
+
+    files = None
+    if document:
+        files = get_thumbnails_from_range(document, "[1,2,3,4]")
+
     for channel in get_channels_per_subscription(subscription.pk):
         template = get_new_case_template(
             channel.service, subscription.article_url
@@ -54,6 +66,7 @@ def enqueue_posts_for_new_case(subscription: Subscription) -> None:
             api.add_status,
             message,
             None,
+            files,
             retry=Retry(
                 max=settings.RQ_MAX_NUMBER_OF_RETRIES,
                 interval=settings.RQ_RETRY_INTERVAL,
