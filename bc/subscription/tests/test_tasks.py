@@ -290,10 +290,11 @@ class MakePostForWebhookEventTest(TestCase):
         )
 
 
+@patch("bc.subscription.tasks.lookup_initial_complaint")
 @patch("bc.subscription.tasks.Retry")
 @patch("bc.subscription.tasks.queue")
 @patch.object(Channel, "get_api_wrapper")
-class EnqueuePostsForNewStatusTest(TestCase):
+class EnqueuePostsForNewCaseTest(TestCase):
     channel = None
     subscription = None
     webhook_event = None
@@ -313,21 +314,45 @@ class EnqueuePostsForNewStatusTest(TestCase):
         return MagicMock(name="api_wrapper")
 
     def test_can_enqueue_new_case_status(
-        self, mock_api, mock_queue, mock_retry
+        self, mock_api, mock_queue, mock_retry, mock_lookup
     ):
         api_wrapper = self.mock_api_wrapper()
         mock_api.return_value = api_wrapper
+        mock_lookup.return_value = None
         message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
             docket=self.subscription.name_with_summary,
             docket_link=self.subscription.cl_url,
             docket_id=self.subscription.cl_docket_id,
         )
 
-        enqueue_posts_for_new_case(self.subscription)
+        enqueue_posts_for_new_case(self.subscription.pk)
 
         mock_queue.enqueue.assert_called_once_with(
-            api_wrapper.add_status, message, None, retry=mock_retry()
+            api_wrapper.add_status, message, None, None, retry=mock_retry()
         )
+
+
+@patch("bc.subscription.tasks.Retry")
+@patch("bc.subscription.tasks.queue")
+@patch.object(Channel, "get_api_wrapper")
+class EnqueuePostsForNewFilingTest(TestCase):
+    channel = None
+    subscription = None
+    webhook_event = None
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.channel = ChannelFactory(enabled=True, service=Channel.TWITTER)
+        cls.subscription = SubscriptionFactory(channels=[cls.channel])
+        cls.webhook_event = FilingWebhookEventFactory(
+            docket_id=65745614,
+            doc_id=217368466,
+            subscription=cls.subscription,
+            status=FilingWebhookEvent.SUCCESSFUL,
+        )
+
+    def mock_api_wrapper(self):
+        return MagicMock(name="api_wrapper")
 
     def test_can_enqueue_new_filing_status(
         self, mock_api, mock_queue, mock_retry
