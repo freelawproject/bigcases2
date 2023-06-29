@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from bc.channel.models import Group
 from bc.channel.selectors import get_channel_groups_per_user
 
+from .forms import AddSubscriptionForm
 from .services import create_or_update_subscription_from_docket
 from .tasks import enqueue_posts_for_new_case
 from .utils.courtlistener import (
@@ -26,7 +27,9 @@ def search(request: Request) -> Response:
         data = lookup_docket_by_cl_id(docket_id)
         if data:
             context["docket_id"] = docket_id
-            context["case_name"] = data["case_name"]
+            context["form"] = AddSubscriptionForm(
+                initial={"docket_name": data["case_name"]}
+            )
             context["channels"] = get_channel_groups_per_user(request.user.pk)
             template = "./includes/search_htmx/case-form.html"
             response = render(request, template, context)
@@ -51,23 +54,27 @@ class AddCaseView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         docket_id = request.POST.get("docketId")
-        name = request.POST.get("name")
-        case_summary = request.POST.get("caseSummary")
+        form = AddSubscriptionForm(request.POST)
+        if not form.is_valid():
+            context = {"docket_id": docket_id, "form": form}
+            template = "./includes/search_htmx/case-form.html"
+            return render(request, template, context)
 
         try:
             docket = lookup_docket_by_cl_id(docket_id)
-        except HTTPError:
+        except (HTTPError, ReadTimeout):
             context = {
                 "docket_id": docket_id,
-                "case_name": name,
-                "summary": case_summary,
+                "form": form,
                 "error": "There was an error trying to submit the form. Please try again.",
             }
             template = "./includes/search_htmx/case-form.html"
             return render(request, template, context)
 
-        docket["case_name"] = name
-        docket["case_summary"] = case_summary
+        cd = form.cleaned_data
+        docket["case_name"] = cd["docket_name"]
+        docket["case_summary"] = cd["case_summary"]
+        docket["article_url"] = cd["article_url"]
         subscription, created = create_or_update_subscription_from_docket(
             docket
         )
