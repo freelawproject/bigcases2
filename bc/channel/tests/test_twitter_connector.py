@@ -93,7 +93,7 @@ class AddStatusTest(SimpleTestCase):
         )
         mock_upload_media.assert_called_with(
             "image bytes",
-            "An image of the entry's full text: the image description",
+            "The entry's text: the image description",
         )
 
     @patch.object(TwitterConnector, "upload_media", side_effect=[2, 3, 5, 8])
