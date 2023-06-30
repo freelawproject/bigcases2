@@ -132,7 +132,9 @@ class CheckWebhookBeforePostingTest(TestCase):
         self.assertEqual(
             webhook.status, FilingWebhookEvent.WAITING_FOR_DOCUMENT
         )
-        mock_purchase.assert_called_with(self.webhook_event.doc_id)
+        mock_purchase.assert_called_with(
+            self.webhook_event.doc_id, self.webhook_event.docket_id
+        )
         mock_download.assert_not_called()
 
 
@@ -377,7 +379,9 @@ class EnqueuePostsForNewCaseTest(TestCase):
 
         enqueue_posts_for_new_case(self.subscription.pk)
 
-        mock_purchase.assert_called_once_with(1)
+        mock_purchase.assert_called_once_with(
+            1, self.subscription.cl_docket_id
+        )
         mock_queue.assert_not_called()
 
     @patch("bc.subscription.tasks.get_thumbnails_from_range")

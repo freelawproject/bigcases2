@@ -46,7 +46,9 @@ def enqueue_posts_for_new_case(subscription_pk: int) -> None:
     elif cl_document and cl_document["pacer_doc_id"]:
         sponsorship = check_active_sponsorships(subscription.pk)
         if sponsorship:
-            purchase_pdf_by_doc_id(cl_document["id"])
+            purchase_pdf_by_doc_id(
+                cl_document["id"], subscription.cl_docket_id
+            )
             return
 
     files = None
@@ -196,7 +198,9 @@ def check_webhook_before_posting(fwe_pk: int):
             and filing_webhook_event.pacer_doc_id
             and not DO_NOT_PAY.search(filing_webhook_event.description)
         ):
-            purchase_pdf_by_doc_id(filing_webhook_event.doc_id)
+            purchase_pdf_by_doc_id(
+                filing_webhook_event.doc_id, filing_webhook_event.docket_id
+            )
             filing_webhook_event.status = (
                 FilingWebhookEvent.WAITING_FOR_DOCUMENT
             )

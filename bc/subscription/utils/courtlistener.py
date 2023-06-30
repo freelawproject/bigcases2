@@ -190,7 +190,7 @@ def download_pdf_from_cl(filepath: str) -> bytes:
     return document_request.content
 
 
-def purchase_pdf_by_doc_id(doc_id: int | None) -> int:
+def purchase_pdf_by_doc_id(doc_id: int | None, docket_id: int | None) -> int:
     """
     Performs a POST query on /api/rest/v3/recap-fetch/
     using the document_id from CL and the PACER's login
@@ -203,6 +203,7 @@ def purchase_pdf_by_doc_id(doc_id: int | None) -> int:
             "pacer_username": settings.PACER_USERNAME,
             "pacer_password": settings.PACER_PASSWORD,
             "recap_document": doc_id,
+            "docket": docket_id,
         },
         headers=auth_header(),
         timeout=5,
