@@ -632,13 +632,13 @@ files = [
 
 [[package]]
 name = "django-htmx"
-version = "1.14.0"
+version = "1.15.0"
 description = "Extensions for using Django with htmx."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_htmx-1.14.0-py3-none-any.whl", hash = "sha256:393e2a4a963aff691b3973c898dbca1363139d7c7bf2e8cc4c605e2ad808a779"},
-    {file = "django_htmx-1.14.0.tar.gz", hash = "sha256:b689a8d6f7052a96a373411ec55ba81c1ddffb4d66b1f5ab4d6e3d28420842fd"},
+    {file = "django_htmx-1.15.0-py3-none-any.whl", hash = "sha256:b76068485905ad9f911419746f07f877633bb036c0870a0f9fc13dec42c6e425"},
+    {file = "django_htmx-1.15.0.tar.gz", hash = "sha256:bac7ff59bf507db6d40424f635f83889ce028a54f47663f227083413de22cabf"},
 ]
 
 [package.dependencies]
@@ -1919,7 +1919,7 @@ files = [
 
 [package.dependencies]
 requests = "*"
-requests_oauthlib = "*"
+requests-oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -2156,4 +2156,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3613b508ce127517e014fd6ba2f79cf02ab819687e977b4774d47887033a2368"
+content-hash = "6bddb9935c4bd780a63304e5e6cce26c8413f027da69240d86c81a9c949ea1d6"
