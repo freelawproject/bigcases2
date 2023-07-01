@@ -657,19 +657,19 @@ files = [
 
 [[package]]
 name = "django-rq"
-version = "2.7.0"
+version = "2.8.1"
 description = "An app that provides django integration for RQ (Redis Queue)"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-rq-2.7.0.tar.gz", hash = "sha256:50440be33c23427f3b34d206ff72025740b721b54b42976e7b18a0474174802b"},
-    {file = "django_rq-2.7.0-py2.py3-none-any.whl", hash = "sha256:5b09798a3d0b03d4c7b55dbba50409c16dcbb09d42c2839511b52c29744be8c8"},
+    {file = "django-rq-2.8.1.tar.gz", hash = "sha256:ff053aa4d1b1e1acc47c99b4a21b514de8745894c00d1e6f4abc8b37d35d66d6"},
+    {file = "django_rq-2.8.1-py2.py3-none-any.whl", hash = "sha256:f5d649dc57b5564011460b2b69c8a60a4f5f10ee8692b51d1dfc17035b1039b8"},
 ]
 
 [package.dependencies]
 django = ">=2.0"
 redis = ">=3"
-rq = ">=1.2"
+rq = ">=1.14"
 
 [package.extras]
 sentry = ["raven (>=6.1.0)"]
@@ -1736,18 +1736,18 @@ rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
 name = "rq"
-version = "1.12.0"
+version = "1.15.1"
 description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 files = [
-    {file = "rq-1.12.0-py2.py3-none-any.whl", hash = "sha256:b268947a94a1da7de3c5f3925a59db60bffdede782ca1f23da654bf985a83c7a"},
-    {file = "rq-1.12.0.tar.gz", hash = "sha256:16ebbfa8891ece999485cb7d1e0559550ac576da43585138e6951db23654bbf6"},
+    {file = "rq-1.15.1-py2.py3-none-any.whl", hash = "sha256:6e243d8d9c4af4686ded4b01b25ea1ff4bac4fc260b02638fbe9c8c17b004bd1"},
+    {file = "rq-1.15.1.tar.gz", hash = "sha256:1f49f4ac1a084044bb8e95b3f305c0bf17e55618b08c18e0b60c080f12d6f008"},
 ]
 
 [package.dependencies]
 click = ">=5.0.0"
-redis = ">=3.5.0"
+redis = ">=4.0.0"
 
 [[package]]
 name = "s3transfer"
@@ -1919,7 +1919,7 @@ files = [
 
 [package.dependencies]
 requests = "*"
-requests_oauthlib = "*"
+requests-oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -2156,4 +2156,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3613b508ce127517e014fd6ba2f79cf02ab819687e977b4774d47887033a2368"
+content-hash = "350c0725a594c68b1c331409addba4e82b074aacce1a71f6836c3affb4be6d20"
