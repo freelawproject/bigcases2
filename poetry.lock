@@ -1919,7 +1919,7 @@ files = [
 
 [package.dependencies]
 requests = "*"
-requests_oauthlib = "*"
+requests-oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -1959,13 +1959,13 @@ files = [
 
 [[package]]
 name = "types-redis"
-version = "4.5.1.4"
+version = "4.6.0.1"
 description = "Typing stubs for redis"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-redis-4.5.1.4.tar.gz", hash = "sha256:7660178754d60a4cfacf5b33ee063aa0625311791c62075cd936136627a3f7bf"},
-    {file = "types_redis-4.5.1.4-py3-none-any.whl", hash = "sha256:4ad21473605b9e1f96162b1298383dcbc73daa3bec2abe1fd3e81d077753f9ab"},
+    {file = "types-redis-4.6.0.1.tar.gz", hash = "sha256:1254d525de7a45e2efaacb6969e67ad1dd5cc359a092022200583a3f04868669"},
+    {file = "types_redis-4.6.0.1-py3-none-any.whl", hash = "sha256:88ceb79c27f2084ad6f0b8514f8fcd8a740811f07c25f3fef5c9e843fc6c60a2"},
 ]
 
 [package.dependencies]
@@ -2156,4 +2156,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3613b508ce127517e014fd6ba2f79cf02ab819687e977b4774d47887033a2368"
+content-hash = "416893ab3847b79ed7e143f998dab8d8bc2bd74141a9f0948b2b3e6f7c36a263"
