@@ -3,12 +3,12 @@ from factory import SubFactory
 from factory.django import DjangoModelFactory
 from faker import Faker
 
-from bc.core.utils.faker_legal_citations import LegalCitationsProvider
+from bc.core.utils.legal_provider import LegalProvider
 from bc.core.utils.tests.base import faker
 from bc.subscription.models import FilingWebhookEvent, Subscription
 
 local_faker = Faker()
-local_faker.add_provider(LegalCitationsProvider)
+local_faker.add_provider(LegalProvider)
 
 
 class SubscriptionFactory(DjangoModelFactory):
@@ -29,11 +29,14 @@ class SubscriptionFactory(DjangoModelFactory):
         @see https://factoryboy.readthedocs.io/en/stable/reference.html?highlight=post_generation#post-generation-hooks
         @example:
             some_channel = ChannelFactory.create()
-            SubscriptionFactory(channels=[channel_1, channel_2]) # subscribes this to channel_1 and channel_2
+            SubscriptionFactory(channels=[channel_1, channel_2]) #
+            subscribes this to channel_1 and channel_2
         """
         if not create or not extracted:
             return
+        print(f"extracted: {extracted}")
         self.channel.add(*extracted)
+        print(f"self.channel: {self.channel}")
 
 
 class FilingWebhookEventFactory(DjangoModelFactory):
