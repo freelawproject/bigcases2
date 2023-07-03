@@ -300,7 +300,7 @@ class EnqueuePostsForNewStatusTest(TestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.channel = ChannelFactory(enabled=True, service=Channel.TWITTER)
+        cls.channel = ChannelFactory(twitter=True)
         cls.subscription = SubscriptionFactory(channels=[cls.channel])
         cls.webhook_event = FilingWebhookEventFactory(
             docket_id=65745614,
