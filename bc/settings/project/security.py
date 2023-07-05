@@ -4,6 +4,7 @@ import environ
 
 from ..django import DEVELOPMENT, INSTALLED_APPS
 from ..third_party.aws import AWS_S3_CUSTOM_DOMAIN
+from ..third_party.sentry import SENTRY_REPORT_URI
 
 env = environ.FileAwareEnv()
 
@@ -30,6 +31,9 @@ CSP_DEFAULT_SRC = (
     AWS_S3_CUSTOM_DOMAIN,
     "https://newassets.hcaptcha.com/",
 )
+if SENTRY_REPORT_URI:
+    CSP_REPORT_URI = SENTRY_REPORT_URI
+
 
 RATELIMIT_VIEW = "bc.web.views.ratelimited"
 
