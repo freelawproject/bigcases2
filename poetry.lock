@@ -178,17 +178,17 @@ test = ["Pillow", "numpy", "pytest"]
 
 [[package]]
 name = "boto3"
-version = "1.26.80"
+version = "1.27.0"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.26.80-py3-none-any.whl", hash = "sha256:704065abc8fdd2519491c11eeb65d69f21d0baf278b66b0b44090cc09c8c7bf8"},
-    {file = "boto3-1.26.80.tar.gz", hash = "sha256:7816da48b9626a482e955628ade527a4a84ff462043ac1a129011f7f66e8648c"},
+    {file = "boto3-1.27.0-py3-none-any.whl", hash = "sha256:e1e535e9fb23977252f13652ed2fa9b4f2d59a53b04a5f2fad3ee415b6a3b2b0"},
+    {file = "boto3-1.27.0.tar.gz", hash = "sha256:908f9c277325d68963dfcfce963a05336f0eb19505fc239c0ab9d01f4cba0296"},
 ]
 
 [package.dependencies]
-botocore = ">=1.29.80,<1.30.0"
+botocore = ">=1.30.0,<1.31.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -197,13 +197,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.29.80"
+version = "1.30.0"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.29.80-py3-none-any.whl", hash = "sha256:9a301cb4de8ec6efe4e4b6ebb29b4301decd5b00c1a7f9187652002efb520ad0"},
-    {file = "botocore-1.29.80.tar.gz", hash = "sha256:19d4cadc79f75b31ffa78b5e750833d53e0edfe414d308b6788382ad32d23e12"},
+    {file = "botocore-1.30.0-py3-none-any.whl", hash = "sha256:cac1333f41ec98e6f75bbba3f2c74b9e76aa3847469ecea6e7773a0af0049bee"},
+    {file = "botocore-1.30.0.tar.gz", hash = "sha256:b9cb5b78a289f0615a48d85066f01869029aa41b95993f2c0c55003df037c23f"},
 ]
 
 [package.dependencies]
@@ -1919,7 +1919,7 @@ files = [
 
 [package.dependencies]
 requests = "*"
-requests_oauthlib = "*"
+requests-oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -2156,4 +2156,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3613b508ce127517e014fd6ba2f79cf02ab819687e977b4774d47887033a2368"
+content-hash = "134872a487f8a4ad475caba7887fca43d1a2b4ac28394d1648969cb874a4f664"
