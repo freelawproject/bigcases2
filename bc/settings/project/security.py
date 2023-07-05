@@ -20,6 +20,12 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "same-origin"
 CSP_CONNECT_SRC = ("'self'", "https://plausible.io/")
+CSP_IMG_SRC = (
+    "'self'",
+    AWS_S3_CUSTOM_DOMAIN,
+    "https://plausible.io/",
+    "data:",  # @tailwindcss/forms uses data URIs for images.
+)
 CSP_SCRIPT_SRC = (
     "'self'",
     AWS_S3_CUSTOM_DOMAIN,
