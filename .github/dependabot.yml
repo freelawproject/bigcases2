@@ -5,6 +5,16 @@ updates:
   schedule:
     interval: monthly
   open-pull-requests-limit: 10
+  groups:
+    django-extensions:
+      patterns:
+        - "django-*"
+      exclude-patterns:
+        - "django-stubs"
+    stub-packages:
+      patterns:
+        - "types-*"
+        - "django-stubs"
   ignore:
   # Ignore all tooling (it can get old, it's mature enough)
   - dependency-name: selenium
