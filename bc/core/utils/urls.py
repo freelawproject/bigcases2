@@ -45,15 +45,11 @@ def is_safe_url(url: str, request: HttpRequest) -> bool:
     """
     sign_in_url = reverse("sign-in") in url
     register_in_url = reverse("register") in url
-    # Fixes security vulnerability reported upstream to Python, where
-    # whitespace can be provided in the scheme like "java\nscript:alert(bad)"
-    garbage_url = any([c in url for c in ["\n", "\r", " "]])
-    no_url = not url
     not_safe_url = not url_has_allowed_host_and_scheme(
         url,
         allowed_hosts={request.get_host()},
         require_https=request.is_secure(),
     )
-    if any([sign_in_url, register_in_url, garbage_url, no_url, not_safe_url]):
+    if any([sign_in_url, register_in_url, not_safe_url]):
         return False
     return True
