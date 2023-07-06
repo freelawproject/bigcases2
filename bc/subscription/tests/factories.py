@@ -34,9 +34,7 @@ class SubscriptionFactory(DjangoModelFactory):
         """
         if not create or not extracted:
             return
-        print(f"extracted: {extracted}")
         self.channel.add(*extracted)
-        print(f"self.channel: {self.channel}")
 
 
 class FilingWebhookEventFactory(DjangoModelFactory):
