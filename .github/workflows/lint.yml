@@ -12,7 +12,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v3
 
       - uses: actions/setup-python@v4
         id: cp311
@@ -66,11 +66,11 @@ jobs:
   lint-isort:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.5.3
+      - uses: actions/checkout@v3
 
       - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
       - name: isort Import Sorter
-        uses: isort/isort-action@v1.1.0
+        uses: isort/isort-action@v1
