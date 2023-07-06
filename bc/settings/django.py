@@ -144,7 +144,7 @@ STATIC_ROOT = BASE_DIR / "bc/assets/static/"
 if not any([TESTING, DEBUG]):
     STORAGES = {
         "staticfiles": {
-            "BACKEND": "cl.lib.storage.SubDirectoryS3ManifestStaticStorage",
+            "BACKEND": "bc.core.utils.storage.SubDirectoryS3ManifestStaticStorage",
         },
     }
 
