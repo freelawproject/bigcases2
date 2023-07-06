@@ -26,18 +26,18 @@ files = [
 
 [[package]]
 name = "art"
-version = "5.9"
+version = "6.0"
 description = "ASCII Art Library For Python"
 category = "main"
 optional = false
-python-versions = ">=2.7"
+python-versions = ">=3.5"
 files = [
-    {file = "art-5.9-py2.py3-none-any.whl", hash = "sha256:9b02463468fc51c77200dadee970cf02c9576008c4f3b99d7ed02371ec037bd1"},
-    {file = "art-5.9.tar.gz", hash = "sha256:6a311ec0a227c6554c6789e91e74c3f2c86453a2a8e76947788695b7a91ccff0"},
+    {file = "art-6.0-py3-none-any.whl", hash = "sha256:882e6b5a4c6045c6dace31147c0b8522c8ca70177a5922f172733d116123a187"},
+    {file = "art-6.0.tar.gz", hash = "sha256:884ef1c10e900387cce97789e8668125720cbf4459206641b91fc298c859cda9"},
 ]
 
 [package.extras]
-dev = ["bandit (>=1.5.1)", "codecov (>=2.0.15)", "coverage (>=4.1)", "pydocstyle (>=3.0.0)", "vulture (>=1.0)"]
+dev = ["bandit (>=1.5.1)", "coverage (>=4.1)", "pydocstyle (>=3.0.0)", "vulture (>=1.0)"]
 
 [[package]]
 name = "asgiref"
@@ -2256,4 +2256,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0c771891e9287d6119327656d6cd381e80f8666046d3b7463203ce5534cc8684"
+content-hash = "81ca8e7211d98a05ebd71ffebd1993952ad1bd5c80f0cefee77cee2d21280d46"
