@@ -123,7 +123,7 @@ class MakeDevData:
         AdminFactory.create_batch(self.NUM_ADMIN_USERS)
         return self._made_str(self.NUM_ADMIN_USERS, info)
 
-    def make_big_cases_group_and_channels(self) -> Tuple[Group, str]:
+    def make_big_cases_group_and_channels(self) -> tuple[Group, str]:
         """
         Make 1 big cases Group and 2 channels for it (Mastodon and Twitter)
 
@@ -134,7 +134,7 @@ class MakeDevData:
         big_cases_group = self._make_group_and_2_channels(True, "Big cases")
         return big_cases_group, self._made_str(self.NUM_BIGCASES_GROUPS, info)
 
-    def make_little_cases_group_and_channels(self) -> Tuple[Group, str]:
+    def make_little_cases_group_and_channels(self) -> tuple[Group, str]:
         """
         Make 1 little cases Group and 2 channels for it (Mastodon and Twitter)
 
@@ -153,7 +153,7 @@ class MakeDevData:
         self,
         random_num=(DEFAULT_NUM_BIG_CASES + DEFAULT_NUM_LITTLE_CASES),
         docket_ids: list[int] | None = None,
-    ) -> Tuple[list[Subscription], str]:
+    ) -> tuple[list[Subscription], str]:
         """
         Make subscriptions: Make [random_num] random subscriptions.
         If there are any docket_ids, make subscriptions from those CL docket ids.
@@ -190,7 +190,7 @@ class MakeDevData:
 
     def make_subs_from_cl_docket_ids(
         self, docket_ids: list[int] | None = None
-    ) -> Tuple[list[Subscription], str]:
+    ) -> tuple[list[Subscription], str]:
         """
         Makes subscriptions from CourtListener dockets with the given
         docket_ids.
@@ -232,7 +232,7 @@ class MakeDevData:
 
     def make_random_subscriptions(
         self, num=5
-    ) -> Tuple[list[Subscription], str]:
+    ) -> tuple[list[Subscription], str]:
         """
         Make [num] subscriptions with randomly generated info.
         Default num = 5
@@ -254,7 +254,7 @@ class MakeDevData:
         group,
         num=3,
         subscriptions: list[Subscription] | None = None,
-    ) -> Tuple[list[Subscription], str]:
+    ) -> tuple[list[Subscription], str]:
         """
         Pick {num} random subscriptions and add them to given group
 
