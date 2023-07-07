@@ -1,4 +1,5 @@
 from django.core.management.base import CommandParser
+
 from bc.core.management.commands.command_utils import VerboseCommand
 from bc.core.management.commands.make_dev_data import MakeDevData
 
@@ -47,7 +48,7 @@ class Command(VerboseCommand):
 
     def handle(self, *args, **options) -> None:
         self.requires_migrations_checks = True
-        super(Command, self).handle(*args, **options)
+        super().handle(*args, **options)
 
         num_big_cases = self.DEFAULT_BIG_CASES
         if options["big_cases"]:

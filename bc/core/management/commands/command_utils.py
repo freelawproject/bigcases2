@@ -21,7 +21,7 @@ class VerboseCommand(BaseCommand):
             self.logger.setLevel(logging.DEBUG)
 
 
-class CommandUtils(object):
+class CommandUtils:
     """A mixin to give some useful methods to subclasses."""
 
     @staticmethod

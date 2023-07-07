@@ -1,13 +1,13 @@
 # This is based on CourtListener cl/lib/management/make_dev_data.py
 
+from faker import Faker
+
 from bc.channel.models import Group
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
 from bc.subscription.models import Subscription
 from bc.subscription.tests.factories import SubscriptionFactory
 from bc.subscription.utils.courtlistener import lookup_docket_by_cl_id
 from bc.users.tests.factories import AdminFactory
-
-from faker import Faker
 
 fake = Faker()
 
@@ -67,7 +67,7 @@ class MakeDevData:
         """
         result_str = "\nCreated and saved data. Made:\n"
 
-        result_str += self.make_admin_users() + "\n"
+        result_str += f"{self.make_admin_users()}\n"
 
         (
             self.big_cases_group,
