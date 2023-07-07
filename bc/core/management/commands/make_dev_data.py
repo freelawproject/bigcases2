@@ -153,7 +153,7 @@ class MakeDevData:
         self,
         random_num=(DEFAULT_NUM_BIG_CASES + DEFAULT_NUM_LITTLE_CASES),
         docket_ids: list[int] | None = None,
-    ) -> Tuple[list[Subscription], str]:
+    ) -> Tuple[list[Subscription | SubscriptionFactory], str]:
         """
         Make subscriptions: Make [random_num] random subscriptions.
         If there are any docket_ids, make subscriptions from those CL docket ids.
