@@ -61,12 +61,17 @@ class Command(VerboseCommand):
         if options["real_cases"]:
             real_cases = options["real_cases"]
 
-        self.logger.info(f"Creating dummy data.... ")
+        self._show_and_log("Creating dummy data.... ")
         maker = MakeDevData(
             num_big_cases,
             num_little_cases,
             real_cases,
-            self.logger,
         )
-        maker.create()
-        self.logger.info("Done.")
+        result_summary = maker.create()
+        self._show_and_log(result_summary)
+        self._show_and_log("Done.")
+
+    def _show_and_log(self, info_str: str = ""):
+        if len(info_str) > 0:
+            self.logger.info(info_str)
+            print(info_str)
