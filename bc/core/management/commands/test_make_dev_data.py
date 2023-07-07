@@ -37,7 +37,7 @@ class TestMakeDataDev(SimpleTestCase):
     return_value=([], "subbed randoms"),
 )
 class TestCreate(SimpleTestCase):
-    cl_docket_result: dict[str, Union[str, int]] = {}
+    cl_docket_result: dict[str, str | int] = {}
     mock_big_cases_group: Mock = MagicMock()
     mocked_make_big_cases_group_and_channels: Mock = MagicMock()
     mocked_make_little_cases_group_and_channels: Mock = MagicMock()
@@ -373,7 +373,7 @@ class TestMakeSubscriptions(SimpleTestCase):
 # @see https://docs.python.org/3/library/unittest.mock.html#where-to-patch
 @patch("bc.core.management.commands.make_dev_data.lookup_docket_by_cl_id")
 class TestMakeSubsFromClDocketId(SimpleTestCase):
-    cl_docket_result: dict[str, Union[str, int]] = {}
+    cl_docket_result: dict[str, str | int] = {}
     mocked_channels: Mock = MagicMock()
     mock_big_cases_group: Mock = MagicMock()
 
