@@ -1,25 +1,24 @@
-# This file was copied from CourtListener
-# TODO create 1 common library that both (all) FLP can use
+# This file is a slightly modified copy from CourtListener
 
 import logging
 import os
 
 from django.core.management import BaseCommand, CommandError
 
-logger = logging.getLogger(__name__)
-
 
 class VerboseCommand(BaseCommand):
+    logger = logging.getLogger(__name__)
+
     def handle(self, *args, **options):
         verbosity = options.get("verbosity")
         if not verbosity:
-            logger.setLevel(logging.WARN)
-        elif verbosity==0:
-            logger.setLevel(logging.WARN)
-        elif verbosity==1:  # default
-            logger.setLevel(logging.INFO)
+            self.logger.setLevel(logging.WARN)
+        elif verbosity == 0:
+            self.logger.setLevel(logging.WARN)
+        elif verbosity == 1:  # default
+            self.logger.setLevel(logging.INFO)
         elif verbosity > 1:
-            logger.setLevel(logging.DEBUG)
+            self.logger.setLevel(logging.DEBUG)
 
 
 class CommandUtils(object):
