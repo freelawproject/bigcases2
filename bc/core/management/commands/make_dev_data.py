@@ -1,5 +1,4 @@
 # This is based on CourtListener cl/lib/management/make_dev_data.py
-import logging
 
 from bc.channel.models import Group
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
@@ -15,11 +14,13 @@ fake = Faker()
 
 class MakeDevData:
     """
-    Use existing factories to create data.
-    Log information to the logger, if given.
-    Create the given number of 'big cases'.
+    Creates data using factories.
 
-    When finished (if successful), logs a readable summary of how many objects were created.
+    The create method actually creates the data (and returns a string with
+    a summary of what was created).
+    Ex:
+      maker = MakeDevData(2, 1, [1234])
+      result_str = maker.create()
     """
 
     NUM_ADMIN_USERS = 1
@@ -32,14 +33,12 @@ class MakeDevData:
     num_big_case_subscriptions = DEFAULT_NUM_BIG_CASES
     num_little_case_subscriptions = DEFAULT_NUM_LITTLE_CASES
     docket_ids = []
-    logger = None
 
     def __init__(
         self,
         num_big_cases: int = DEFAULT_NUM_BIG_CASES,
         num_little_cases: int = DEFAULT_NUM_LITTLE_CASES,
         docket_ids: list[int] | None = None,
-        logger: logging.Logger | None = None,
     ) -> None:
         self.big_cases_group = None
         self.num_big_case_subscriptions = num_big_cases
@@ -48,63 +47,68 @@ class MakeDevData:
             self.subscribed_dockets = []
         else:
             self.subscribed_dockets = docket_ids
-        self.logger = logger
 
-    def create(self) -> None:
-        summary = "\nCreated and saved data. Made:\n"
-        try:
-            summary += self.make_admin_users() + "\n"
+    def create(self) -> str:
+        """
+        Create the objects needed:
+          1 Admin user
+          1 Group for big cases, with 2 associated channels
+          1 Group for little cases, with 2 associated channels
+          Subscriptions:
+            - creates (number of big cases given + number of little cases
+            given) subscriptions with randomly generated info
+            - If any docket ids are given:
+                - gets docket info from CourtListener and creates
+                  subscriptions based on those.
+                - subscribes these to the big cases group
 
+        :return: a human-readable string showing what was created
+        :rtype: str
+        """
+        result_str = "\nCreated and saved data. Made:\n"
+
+        result_str += self.make_admin_users() + "\n"
+
+        (
+            self.big_cases_group,
+            big_cases_made_str,
+        ) = self.make_big_cases_group_and_channels()
+        result_str += f"{big_cases_made_str}\n"
+
+        (
+            little_cases_group,
+            little_cases_made_str,
+        ) = self.make_little_cases_group_and_channels()
+        result_str += f"{little_cases_made_str}\n"
+
+        all_subscriptions, subs_made_str = self.make_subscriptions(
+            self.num_big_case_subscriptions
+            + self.num_little_case_subscriptions,
+            self.subscribed_dockets,
+        )
+        result_str += f"{subs_made_str}\n"
+
+        remaining_subs = all_subscriptions
+        if self.num_big_case_subscriptions > 0:
             (
+                big_case_subs,
+                big_case_sub_str,
+            ) = self.subscribe_randoms_to_group(
                 self.big_cases_group,
-                big_cases_made_str,
-            ) = self.make_big_cases_group_and_channels()
-            summary += f"{big_cases_made_str}\n"
-
-            (
-                little_cases_group,
-                little_cases_made_str,
-            ) = self.make_little_cases_group_and_channels()
-            summary += f"{little_cases_made_str}\n"
-
-            all_subscriptions, subs_made_str = self.make_subscriptions(
-                self.num_big_case_subscriptions
-                + self.num_little_case_subscriptions,
-                self.subscribed_dockets,
+                self.num_big_case_subscriptions,
+                all_subscriptions,
             )
-            summary += f"{subs_made_str}\n"
+            result_str += f"{big_case_sub_str}\n"
+            remaining_subs = list(set(all_subscriptions) - set(big_case_subs))
 
-            remaining_subs = all_subscriptions
-            if self.num_big_case_subscriptions > 0:
-                (
-                    big_case_subs,
-                    big_case_sub_str,
-                ) = self.subscribe_randoms_to_group(
-                    self.big_cases_group,
-                    self.num_big_case_subscriptions,
-                    all_subscriptions,
-                )
-                summary += f"{big_case_sub_str}\n"
-                remaining_subs = list(
-                    set(all_subscriptions) - set(big_case_subs)
-                )
-
-            if self.num_little_case_subscriptions > 0:
-                _, little_case_sub_str = self.subscribe_randoms_to_group(
-                    little_cases_group,
-                    self.num_little_case_subscriptions,
-                    remaining_subs,
-                )
-                summary += f"{little_case_sub_str}\n"
-
-            if self.logger is not None:
-                self.logger.info(summary)
-            print(summary)
-
-        except Exception as err:
-            if self.logger is not None:
-                self.logger.error(f"Unexpected {err=}, {type(err)=}")
-            raise
+        if self.num_little_case_subscriptions > 0:
+            _, little_case_sub_str = self.subscribe_randoms_to_group(
+                little_cases_group,
+                self.num_little_case_subscriptions,
+                remaining_subs,
+            )
+            result_str += f"{little_case_sub_str}\n"
+        return result_str
 
     def make_admin_users(self) -> str:
         """
@@ -114,7 +118,6 @@ class MakeDevData:
         :rtype: str
         """
         info = "Admin user(s)"
-        self._log_making(self.NUM_ADMIN_USERS, info)
         AdminFactory.create_batch(self.NUM_ADMIN_USERS)
         return self._made_str(self.NUM_ADMIN_USERS, info)
 
@@ -126,7 +129,6 @@ class MakeDevData:
         :rtype: (Group, str)
         """
         info = "Big Cases Group and the Mastodon and Twitter Channels"
-        self._log_making(self.NUM_BIGCASES_GROUPS, info)
         big_cases_group = self._make_group_and_2_channels(True, "Big cases")
         return big_cases_group, self._made_str(self.NUM_BIGCASES_GROUPS, info)
 
@@ -138,7 +140,6 @@ class MakeDevData:
         :rtype: (Group, str)
         """
         info = "Little Cases Group and the Mastodon and Twitter Channels"
-        self._log_making(self.NUM_LITTLECASES_GROUPS, info)
         little_cases_group = self._make_group_and_2_channels(
             False, "Little cases"
         )
@@ -289,10 +290,6 @@ class MakeDevData:
         new_cases_group.channels.add(mastodon_ch)
         new_cases_group.channels.add(twitter_ch)
         return new_cases_group
-
-    def _log_making(self, num: int = 1, info: str = ""):
-        if self.logger is not None:
-            self.logger.info(f">> Making {num} {info}")
 
     @staticmethod
     def _made_str(num: int = 1, info: str = "") -> str:

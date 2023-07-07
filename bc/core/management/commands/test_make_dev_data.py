@@ -250,7 +250,7 @@ class TestCreate(SimpleTestCase):
 
         mock_make_subscriptions.assert_called_with(5, [1234])
 
-    def test_concats_make_strs_with_linefeed(
+    def test_returns_made_strs_with_linefeeds(
         self,
         _mock_subscribe_randoms_to_group,
         _mock_make_subscriptions,
@@ -258,10 +258,9 @@ class TestCreate(SimpleTestCase):
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
     ):
-        mock_logger = MagicMock()
-        maker = MakeDevData(10, 10, None, mock_logger)
+        maker = MakeDevData(10, 10, None)
         self._mock_maker_groups_methods(maker)
-        maker.create()
+        result = maker.create()
 
         expected = (
             "\nCreated and saved data. Made:\n"
@@ -272,7 +271,7 @@ class TestCreate(SimpleTestCase):
             "subbed randoms\n"
             "subbed randoms\n"
         )
-        mock_logger.info.assert_called_with(expected)
+        self.assertEqual(expected, result)
 
 
 class TestMakeSubscriptions(SimpleTestCase):
