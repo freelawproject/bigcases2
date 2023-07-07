@@ -36,6 +36,11 @@ class TestMakeDataDev(SimpleTestCase):
     return_value=([], "subbed randoms"),
 )
 class TestCreate(SimpleTestCase):
+    cl_docket_result = {}
+    mock_big_cases_group: Mock = MagicMock()
+    mocked_make_big_cases_group_and_channels: Mock = MagicMock()
+    mocked_make_little_cases_group_and_channels: Mock = MagicMock()
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.cl_docket_result = CL_DOCKET_RESULT
@@ -367,6 +372,10 @@ class TestMakeSubscriptions(SimpleTestCase):
 # @see https://docs.python.org/3/library/unittest.mock.html#where-to-patch
 @patch("bc.core.management.commands.make_dev_data.lookup_docket_by_cl_id")
 class TestMakeSubsFromClDocketId(SimpleTestCase):
+    cl_docket_result = {}
+    mocked_channels: Mock = MagicMock()
+    mock_big_cases_group: Mock = MagicMock()
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.cl_docket_result = CL_DOCKET_RESULT
@@ -445,9 +454,11 @@ class TestMakeRandomSubscriptions(SimpleTestCase):
 
 
 class TestSubscribeRandomToGroup(SimpleTestCase):
+    mock_group: Mock = MagicMock()
+
     @classmethod
     def setUpClass(cls) -> None:
-        mocked_group = Mock()
+        mocked_group = MagicMock()
         mocked_group.channels.all.return_value = ["ch 1"]
         cls.mock_group = mocked_group
 
