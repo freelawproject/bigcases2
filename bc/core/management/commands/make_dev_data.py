@@ -1,5 +1,4 @@
 # This is based on CourtListener cl/lib/management/make_dev_data.py
-from typing import Tuple
 
 from faker import Faker
 
