@@ -27,7 +27,8 @@ class UserFactory(DjangoModelFactory):
 
         self.channels.add(*extracted)
 
+
 class AdminFactory(UserFactory):
     is_staff = True
     is_superuser = True
-    last_name = 'Admin'
+    last_name = "Admin"

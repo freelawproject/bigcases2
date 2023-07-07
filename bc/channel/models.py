@@ -4,6 +4,7 @@ from django.urls import reverse
 from bc.core.models import AbstractDateTimeModel
 from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
+
 from .utils.connectors.base import BaseAPIConnector
 from .utils.connectors.masto import (
     MastodonConnector,
@@ -106,11 +107,11 @@ class Channel(AbstractDateTimeModel):
                 )
 
     def self_url(self):
-        if self.service==self.TWITTER:
+        if self.service == self.TWITTER:
             return f"https://twitter.com/{self.account}"
-        elif self.service==self.MASTODON:
+        elif self.service == self.MASTODON:
             result = masto_regex.search(self.account)
-            assert len(result.groups())==2
+            assert len(result.groups()) == 2
             account_part, instance_part = result.groups()
             return f"https://{instance_part}/@{account_part}"
         else:
@@ -124,8 +125,7 @@ class Channel(AbstractDateTimeModel):
         return f"{self.pk}"
 
     def service_str(self) -> str:
-        """Return a human readable string showing the service
-        """
+        """Return a human readable string showing the service"""
         return f"{self.CHANNELS[self.service - 1][1]}" if self.service else ""
 
 
@@ -158,8 +158,6 @@ class Post(AbstractDateTimeModel):
             case Channel.MASTODON:
                 return f"https://law.builders/@bigcases/{self.object_id}"
             case Channel.TWITTER:
-                return (
-                    f"https://twitter.com/big_cases/status/{self.object_id}"
-                )
+                return f"https://twitter.com/big_cases/status/{self.object_id}"
             case _:
                 raise NotImplementedError(f"Unknown service: '{service}'.")

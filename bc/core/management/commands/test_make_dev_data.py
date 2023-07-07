@@ -1,9 +1,9 @@
-from django.test import SimpleTestCase
 from unittest.mock import ANY, MagicMock, Mock, call, patch
+
+from django.test import SimpleTestCase
 
 from bc.core.management.commands.make_dev_data import MakeDevData
 from bc.subscription.tests.factories import SubscriptionFactory
-
 
 CL_DOCKET_RESULT = {
     "docket_id": 42,
@@ -441,7 +441,7 @@ class TestMakeRandomSubscriptions(SimpleTestCase):
         # calls made_str to return results info
         _, result_str = MakeDevData().make_random_subscriptions(3)
 
-        self.assertRegex(result_str, "\d+ Subscriptions \(random\)")
+        self.assertRegex(result_str, r"\d+ Subscriptions \(random\)")
 
 
 class TestSubscribeRandomToGroup(SimpleTestCase):
@@ -515,5 +515,5 @@ class TestSubscribeRandomToGroup(SimpleTestCase):
         )
 
         self.assertRegex(
-            subbed_str, "(\d)+ subscriptions subscribed to " "group \((.)*\)"
+            subbed_str, r"(\d)+ subscriptions subscribed to " r"group \((.)*\)"
         )

@@ -7,6 +7,7 @@ from bc.channel.selectors import (
 )
 from bc.subscription.tests.factories import SubscriptionFactory
 from bc.users.tests.factories import UserFactory
+
 from .factories import ChannelFactory, GroupFactory
 
 
