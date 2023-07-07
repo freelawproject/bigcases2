@@ -173,7 +173,7 @@ class MakeDevData:
         random subscriptions made
         :rtype: tuple[list[Subscription | SubscriptionFactory], str]
         """
-        subs_made = []
+        subs_made: list[Subscription | SubscriptionFactory] = []
         result_strs = []
         if (docket_ids is not None) and len(docket_ids) > 0:
             cl_docket_subs, cl_docket_str = self.make_subs_from_cl_docket_ids(
