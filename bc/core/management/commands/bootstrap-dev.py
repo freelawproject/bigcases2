@@ -1,57 +1,72 @@
-import logging
-
-from django.core.management.base import BaseCommand
-
-from bc.subscription.models import Subscription
-
-logger = logging.getLogger(__name__)
-
-from django.conf import settings
-
-from bc.channel.models import Channel, Group
-from bc.subscription.services import create_or_update_subscription_from_docket
-from bc.subscription.utils.courtlistener import lookup_docket_by_cl_id
+from django.core.management.base import CommandParser
+from bc.core.management.commands.command_utils import VerboseCommand
+from bc.core.management.commands.make_dev_data import MakeDevData
 
 
-class Command(BaseCommand):
-    help = "Add some minimal information for development"
+class Command(VerboseCommand):
+    """
+    A command for creating dummy data in the system.
+    Parses arguments and then sends them to the class to actually make the
+    data.
+    """
 
-    def handle(self, *args, **options):
-        for cl_id in [65748821, 64983976, 66624578]:
-            docket: str = lookup_docket_by_cl_id(cl_id)
-            subscription, _ = create_or_update_subscription_from_docket(docket)
-            self.stdout.write(
-                self.style.SUCCESS(f"Subscription: {subscription}")
-            )
+    help = "Create dummy data in your system for development purposes. Uses Factories"
 
-        ch_group = Group.objects.create(
-            name='Big cases',
-            is_big_cases=True,
-            overview='Group for all big cases',
-            slug='big_cases'
+    DEFAULT_BIG_CASES = 10
+    DEFAULT_LITTLE_CASES = 3
+
+    def add_arguments(self, parser: CommandParser) -> None:
+        parser.add_argument(
+            "--big-cases",
+            "-b",
+            type=int,
+            default=self.DEFAULT_BIG_CASES,
+            help=f"The number of big cases to create in addition to any "
+            f"subscriptions to real cases (which are set to big cases). "
+            f"(integer) Default = {self.DEFAULT_BIG_CASES}",
         )
-        self.stdout.write(
-            self.style.SUCCESS(f"Channel Group: {ch_group}")
+        parser.add_argument(
+            "--little-cases",
+            "-l",
+            type=int,
+            default=self.DEFAULT_LITTLE_CASES,
+            help=f"The number of little cases to create. "
+            f"(integer) Default = {self.DEFAULT_LITTLE_CASES}",
         )
-
-        mastodon_bigcases_ch = Channel.objects.create(
-            service=Channel.MASTODON,
-            account=settings.MASTODON_ACCOUNT,
-            account_id=settings.MASTODON_EMAIL,
-            enabled=True,
-            group=ch_group
-        )
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Channel: service: {mastodon_bigcases_ch.CHANNELS[mastodon_bigcases_ch.service - 1][1]} account: '{mastodon_bigcases_ch.account}' group: '{mastodon_bigcases_ch.group.name}' enabled? {mastodon_bigcases_ch.enabled}"
-            )
+        parser.add_argument(
+            "--real-cases",
+            "-r",
+            type=int,
+            action="append",
+            help=f"Subscribe to a real case from Court Listener with this "
+            f"Court Listener docket id (integer).  This will be "
+            f"subscribed as a big case.  You can use this option "
+            f"multiple times to subscribe to multiple cases. Ex: "
+            f"--real-subscription 67490069 --real-subscription 67490070",
         )
 
-        for cl_id in [65748821, 64983976]:
-            subscription = Subscription.objects.get(cl_docket_id=cl_id)
-            subscription.channel.add(mastodon_bigcases_ch)
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"Subscription {subscription} was added to the big cases channel."
-                )
-            )
+    def handle(self, *args, **options) -> None:
+        self.requires_migrations_checks = True
+        super(Command, self).handle(*args, **options)
+
+        num_big_cases = self.DEFAULT_BIG_CASES
+        if options["big_cases"]:
+            num_big_cases = options["big_cases"]
+
+        num_little_cases = self.DEFAULT_LITTLE_CASES
+        if options["little_cases"]:
+            num_little_cases = options["little_cases"]
+
+        real_cases = None
+        if options["real_cases"]:
+            real_cases = options["real_cases"]
+
+        self.logger.info(f"Creating dummy data.... ")
+        maker = MakeDevData(
+            num_big_cases,
+            num_little_cases,
+            real_cases,
+            self.logger,
+        )
+        maker.create()
+        self.logger.info("Done.")
