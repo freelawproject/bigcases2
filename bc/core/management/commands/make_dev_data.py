@@ -1,4 +1,5 @@
 # This is based on CourtListener cl/lib/management/make_dev_data.py
+from typing import Tuple
 
 from faker import Faker
 
@@ -32,7 +33,8 @@ class MakeDevData:
 
     num_big_case_subscriptions = DEFAULT_NUM_BIG_CASES
     num_little_case_subscriptions = DEFAULT_NUM_LITTLE_CASES
-    docket_ids = []
+    docket_ids: list[int] = []
+    big_cases_group: Group | None
 
     def __init__(
         self,
@@ -121,7 +123,7 @@ class MakeDevData:
         AdminFactory.create_batch(self.NUM_ADMIN_USERS)
         return self._made_str(self.NUM_ADMIN_USERS, info)
 
-    def make_big_cases_group_and_channels(self) -> (Group, str):
+    def make_big_cases_group_and_channels(self) -> Tuple[Group, str]:
         """
         Make 1 big cases Group and 2 channels for it (Mastodon and Twitter)
 
@@ -132,7 +134,7 @@ class MakeDevData:
         big_cases_group = self._make_group_and_2_channels(True, "Big cases")
         return big_cases_group, self._made_str(self.NUM_BIGCASES_GROUPS, info)
 
-    def make_little_cases_group_and_channels(self) -> (Group, str):
+    def make_little_cases_group_and_channels(self) -> Tuple[Group, str]:
         """
         Make 1 little cases Group and 2 channels for it (Mastodon and Twitter)
 
@@ -151,7 +153,7 @@ class MakeDevData:
         self,
         random_num=(DEFAULT_NUM_BIG_CASES + DEFAULT_NUM_LITTLE_CASES),
         docket_ids: list[int] | None = None,
-    ) -> (list[Subscription], str):
+    ) -> Tuple[list[Subscription], str]:
         """
         Make subscriptions: Make [random_num] random subscriptions.
         If there are any docket_ids, make subscriptions from those CL docket ids.
@@ -188,7 +190,7 @@ class MakeDevData:
 
     def make_subs_from_cl_docket_ids(
         self, docket_ids: list[int] | None = None
-    ) -> (list[Subscription], str):
+    ) -> Tuple[list[Subscription], str]:
         """
         Makes subscriptions from CourtListener dockets with the given
         docket_ids.
@@ -205,6 +207,11 @@ class MakeDevData:
 
         subs = []
         num = len(docket_ids)
+        if self.big_cases_group is not None:
+            big_cases_channels = self.big_cases_group.channels.all()
+        else:
+            big_cases_channels = None
+
         for docket_id in docket_ids:
             docket = lookup_docket_by_cl_id(docket_id)
             subscription = SubscriptionFactory(
@@ -214,7 +221,7 @@ class MakeDevData:
                 cl_court_id=docket["court_id"],
                 pacer_case_id=docket["pacer_case_id"],
                 cl_slug=docket["slug"],
-                channels=self.big_cases_group.channels.all(),
+                channels=big_cases_channels,
             )
             subs.append(subscription)
 
@@ -223,7 +230,9 @@ class MakeDevData:
             f"{info} {docket_ids}",
         )
 
-    def make_random_subscriptions(self, num=5) -> (list[Subscription], str):
+    def make_random_subscriptions(
+        self, num=5
+    ) -> Tuple[list[Subscription], str]:
         """
         Make [num] subscriptions with randomly generated info.
         Default num = 5
@@ -245,7 +254,7 @@ class MakeDevData:
         group,
         num=3,
         subscriptions: list[Subscription] | None = None,
-    ) -> (list[Subscription], str):
+    ) -> Tuple[list[Subscription], str]:
         """
         Pick {num} random subscriptions and add them to given group
 
