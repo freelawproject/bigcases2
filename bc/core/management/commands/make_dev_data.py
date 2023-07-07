@@ -122,7 +122,9 @@ class MakeDevData:
         AdminFactory.create_batch(self.NUM_ADMIN_USERS)
         return self._made_str(self.NUM_ADMIN_USERS, info)
 
-    def make_big_cases_group_and_channels(self) -> tuple[Group, str]:
+    def make_big_cases_group_and_channels(
+        self,
+    ) -> tuple[Group | GroupFactory, str]:
         """
         Make 1 big cases Group and 2 channels for it (Mastodon and Twitter)
 
@@ -133,7 +135,9 @@ class MakeDevData:
         big_cases_group = self._make_group_and_2_channels(True, "Big cases")
         return big_cases_group, self._made_str(self.NUM_BIGCASES_GROUPS, info)
 
-    def make_little_cases_group_and_channels(self) -> tuple[Group, str]:
+    def make_little_cases_group_and_channels(
+        self,
+    ) -> tuple[Group | GroupFactory, str]:
         """
         Make 1 little cases Group and 2 channels for it (Mastodon and Twitter)
 
@@ -150,7 +154,7 @@ class MakeDevData:
 
     def make_subscriptions(
         self,
-        random_num=(DEFAULT_NUM_BIG_CASES + DEFAULT_NUM_LITTLE_CASES),
+        random_num: int = (DEFAULT_NUM_BIG_CASES + DEFAULT_NUM_LITTLE_CASES),
         docket_ids: list[int] | None = None,
     ) -> tuple[list[Subscription | SubscriptionFactory], str]:
         """
@@ -189,7 +193,7 @@ class MakeDevData:
 
     def make_subs_from_cl_docket_ids(
         self, docket_ids: list[int] | None = None
-    ) -> tuple[list[Subscription], str]:
+    ) -> tuple[list[Subscription | SubscriptionFactory], str]:
         """
         Makes subscriptions from CourtListener dockets with the given
         docket_ids.
@@ -230,8 +234,8 @@ class MakeDevData:
         )
 
     def make_random_subscriptions(
-        self, num=5
-    ) -> tuple[list[Subscription], str]:
+        self, num: int = 5
+    ) -> tuple[list[Subscription | SubscriptionFactory], str]:
         """
         Make [num] subscriptions with randomly generated info.
         Default num = 5
@@ -250,10 +254,10 @@ class MakeDevData:
 
     def subscribe_randoms_to_group(
         self,
-        group,
-        num=3,
-        subscriptions: list[Subscription] | None = None,
-    ) -> tuple[list[Subscription], str]:
+        group: Group | GroupFactory,
+        num: int = 3,
+        subscriptions: list[Subscription | SubscriptionFactory] | None = None,
+    ) -> tuple[list[Subscription | SubscriptionFactory], str]:
         """
         Pick {num} random subscriptions and add them to given group
 
@@ -283,8 +287,8 @@ class MakeDevData:
 
     @staticmethod
     def _make_group_and_2_channels(
-        is_big_cases=False, name: str | None = None
-    ) -> Group:
+        is_big_cases: bool = False, name: str | None = None
+    ) -> Group | GroupFactory:
         if name is None:
             new_cases_group = GroupFactory.create(is_big_cases=is_big_cases)
         else:

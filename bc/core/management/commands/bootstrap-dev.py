@@ -74,7 +74,7 @@ class Command(VerboseCommand):
         self._show_and_log(result_summary)
         self._show_and_log("Done.")
 
-    def _show_and_log(self, info_str: str = ""):
+    def _show_and_log(self, info_str: str = "") -> None:
         if len(info_str) > 0:
             self.logger.info(info_str)
             print(info_str)

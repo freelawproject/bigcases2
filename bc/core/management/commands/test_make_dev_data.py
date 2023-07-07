@@ -1,3 +1,4 @@
+from typing import Union
 from unittest.mock import ANY, MagicMock, Mock, call, patch
 
 from django.test import SimpleTestCase
@@ -16,7 +17,7 @@ CL_DOCKET_RESULT = {
 
 
 class TestMakeDataDev(SimpleTestCase):
-    def test_default_values(self):
+    def test_default_values(self) -> None:
         maker = MakeDevData()
 
         self.assertEqual(1, maker.num_big_case_subscriptions)
@@ -36,7 +37,7 @@ class TestMakeDataDev(SimpleTestCase):
     return_value=([], "subbed randoms"),
 )
 class TestCreate(SimpleTestCase):
-    cl_docket_result = {}
+    cl_docket_result: dict[str, Union[str, int]] = {}
     mock_big_cases_group: Mock = MagicMock()
     mocked_make_big_cases_group_and_channels: Mock = MagicMock()
     mocked_make_little_cases_group_and_channels: Mock = MagicMock()
@@ -67,7 +68,7 @@ class TestCreate(SimpleTestCase):
             mocked_make_little_cases_group_and_channels
         )
 
-    def _mock_maker_groups_methods(self, maker):
+    def _mock_maker_groups_methods(self, maker: MakeDevData) -> None:
         """
         Helper method for testing that refactors out commonly needed mocking
         """
@@ -86,7 +87,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData()
         self._mock_maker_groups_methods(maker)
         maker.create()
@@ -100,7 +101,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(10, 10)
         self._mock_maker_groups_methods(maker)
         maker.create()
@@ -114,7 +115,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(10, 10)
         self._mock_maker_groups_methods(maker)
         maker.create()
@@ -128,7 +129,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(0, 1)
         self._mock_maker_groups_methods(maker)
         maker.create()
@@ -146,7 +147,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(3, 0)
         self._mock_maker_groups_methods(maker)
         maker.make_subscriptions.return_value = (
@@ -172,7 +173,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(1, 0)
         self._mock_maker_groups_methods(maker)
         maker.create()
@@ -192,7 +193,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(0, 1)
         self._mock_maker_groups_methods(maker)
         maker.make_subscriptions.return_value = (
@@ -217,7 +218,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(2, 1)
         self._mock_maker_groups_methods(maker)
         maker.make_subscriptions.return_value = (
@@ -248,7 +249,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(2, 3, [1234])
         self._mock_maker_groups_methods(maker)
         maker.create()
@@ -262,7 +263,7 @@ class TestCreate(SimpleTestCase):
         _mock_make_little_cases_group_and_channels,
         _mock_make_big_cases_group_and_channels,
         _mock_admin_users,
-    ):
+    ) -> None:
         maker = MakeDevData(10, 10, None)
         self._mock_maker_groups_methods(maker)
         result = maker.create()
@@ -280,7 +281,7 @@ class TestCreate(SimpleTestCase):
 
 
 class TestMakeSubscriptions(SimpleTestCase):
-    def test_default_values(self):
+    def test_default_values(self) -> None:
         mock_make_random_subs = MagicMock()
         mock_make_random_subs.return_value = [], "Made random subs"
 
@@ -295,7 +296,7 @@ class TestMakeSubscriptions(SimpleTestCase):
         mock_make_random_subs.assert_called_with(expected_num_random)
         maker.make_subs_from_cl_docket_ids.assert_not_called()
 
-    def test_no_cl_docket_ids(self):
+    def test_no_cl_docket_ids(self) -> None:
         maker = MakeDevData()
         maker.make_subs_from_cl_docket_ids = MagicMock()
 
@@ -303,7 +304,7 @@ class TestMakeSubscriptions(SimpleTestCase):
 
         maker.make_subs_from_cl_docket_ids.assert_not_called()
 
-    def test_only_cl_docket_ids(self):
+    def test_only_cl_docket_ids(self) -> None:
         mock_make_subs_from_cl_docket_id = MagicMock()
         mock_make_subs_from_cl_docket_id.return_value = [], "Made docket subs"
 
@@ -315,7 +316,7 @@ class TestMakeSubscriptions(SimpleTestCase):
         mock_make_subs_from_cl_docket_id.assert_called_with([1234, 5678])
         maker.make_random_subscriptions.assert_not_called()
 
-    def test_no_random_subs(self):
+    def test_no_random_subs(self) -> None:
         maker = MakeDevData()
         maker.make_random_subscriptions = MagicMock()
 
@@ -323,7 +324,7 @@ class TestMakeSubscriptions(SimpleTestCase):
 
         maker.make_random_subscriptions.assert_not_called()
 
-    def test_only_random_subs(self):
+    def test_only_random_subs(self) -> None:
         mock_make_random_subs = MagicMock()
         mock_make_random_subs.return_value = [], "Made random subs"
 
@@ -336,7 +337,7 @@ class TestMakeSubscriptions(SimpleTestCase):
         maker.make_random_subscriptions.assert_called_with(2)
         maker.make_subs_from_cl_docket_ids.assert_not_called()
 
-    def test_both_randoms_and_cl_dockets_made(self):
+    def test_both_randoms_and_cl_dockets_made(self) -> None:
         mock_make_subs_from_cl_docket_id = MagicMock()
         mock_make_subs_from_cl_docket_id.return_value = [], "Made docket subs"
 
@@ -352,7 +353,7 @@ class TestMakeSubscriptions(SimpleTestCase):
         maker.make_random_subscriptions.assert_called_with(2)
         maker.make_subs_from_cl_docket_ids.assert_called_with([1234, 5678])
 
-    def test_result_str_is_concat_with_linefeed(self):
+    def test_result_str_is_concat_with_linefeed(self) -> None:
         mock_make_subs_from_cl_docket_id = MagicMock()
         mock_make_subs_from_cl_docket_id.return_value = [], "docket string"
         mock_make_random_subs = MagicMock()
@@ -372,7 +373,7 @@ class TestMakeSubscriptions(SimpleTestCase):
 # @see https://docs.python.org/3/library/unittest.mock.html#where-to-patch
 @patch("bc.core.management.commands.make_dev_data.lookup_docket_by_cl_id")
 class TestMakeSubsFromClDocketId(SimpleTestCase):
-    cl_docket_result = {}
+    cl_docket_result: dict[str, Union[str, int]] = {}
     mocked_channels: Mock = MagicMock()
     mock_big_cases_group: Mock = MagicMock()
 
@@ -391,7 +392,7 @@ class TestMakeSubsFromClDocketId(SimpleTestCase):
     @patch.object(SubscriptionFactory, "create")
     def test_looks_up_cl_docket_id(
         self, _mock_sub_factory_create, mock_cl_lookup_docket_by_cl_id
-    ):
+    ) -> None:
         mock_cl_lookup_docket_by_cl_id.return_value = self.cl_docket_result
         maker = MakeDevData()
         maker.big_cases_group = self.mock_big_cases_group
@@ -405,7 +406,7 @@ class TestMakeSubsFromClDocketId(SimpleTestCase):
     @patch.object(SubscriptionFactory, "create")
     def test_creates_subs_from_factory(
         self, mock_sub_factory_create, mock_cl_lookup_docket_by_cl_id
-    ):
+    ) -> None:
         mock_cl_lookup_docket_by_cl_id.return_value = self.cl_docket_result
         maker = MakeDevData()
         maker.big_cases_group = self.mock_big_cases_group
@@ -426,7 +427,7 @@ class TestMakeSubsFromClDocketId(SimpleTestCase):
         self,
         _mock_sub_factory_create,
         mock_cl_lookup_docket_by_cl_id,
-    ):
+    ) -> None:
         # calls made_str to return results info
         mock_cl_lookup_docket_by_cl_id.return_value = self.cl_docket_result
         maker = MakeDevData()
@@ -441,12 +442,14 @@ class TestMakeSubsFromClDocketId(SimpleTestCase):
 
 class TestMakeRandomSubscriptions(SimpleTestCase):
     @patch.object(SubscriptionFactory, "create")
-    def test_calls_sub_factory_num_times(self, mock_sub_factory_create):
+    def test_calls_sub_factory_num_times(
+        self, mock_sub_factory_create
+    ) -> None:
         MakeDevData().make_random_subscriptions(3)
         self.assertEqual(3, mock_sub_factory_create.call_count)
 
     @patch.object(SubscriptionFactory, "create")
-    def test_returns_made_str(self, _mock_sub_factory_create):
+    def test_returns_made_str(self, _mock_sub_factory_create) -> None:
         # calls made_str to return results info
         _, result_str = MakeDevData().make_random_subscriptions(3)
 
@@ -462,19 +465,19 @@ class TestSubscribeRandomToGroup(SimpleTestCase):
         mocked_group.channels.all.return_value = ["ch 1"]
         cls.mock_group = mocked_group
 
-    def test_no_subs_given_returns_empty_list(self):
+    def test_no_subs_given_returns_empty_list(self) -> None:
         subs, _ = MakeDevData().subscribe_randoms_to_group(self.mock_group, 1)
 
         self.assertEqual([], subs)
 
-    def test_num_is_zero_returns_empty_list(self):
+    def test_num_is_zero_returns_empty_list(self) -> None:
         subs, _ = MakeDevData().subscribe_randoms_to_group(
             self.mock_group, 0, [MagicMock()]
         )
 
         self.assertEqual([], subs)
 
-    def test_num_are_subscribed(self):
+    def test_num_are_subscribed(self) -> None:
         mock_sub_1 = MagicMock(return_value=[])
         mock_sub_2 = MagicMock(return_value=[])
         mock_sub_3 = MagicMock(return_value=[])
@@ -485,7 +488,7 @@ class TestSubscribeRandomToGroup(SimpleTestCase):
 
         self.assertEqual(2, len(subbed))
 
-    def test_subscribed_to_channels(self):
+    def test_subscribed_to_channels(self) -> None:
         mock_sub_1 = MagicMock()
         mock_sub_1.channel.return_value = []
 
@@ -495,7 +498,7 @@ class TestSubscribeRandomToGroup(SimpleTestCase):
 
         mock_sub_1.channel.add.assert_called_with("ch 1")
 
-    def test_returns_list_subbed(self):
+    def test_returns_list_subbed(self) -> None:
         mock_sub_1 = MagicMock()
         mock_sub_1.channel.return_value = []
         mock_sub_2 = MagicMock()
@@ -512,7 +515,7 @@ class TestSubscribeRandomToGroup(SimpleTestCase):
         self.assertIn(mock_sub_1, subs_added_to_group)
         self.assertIn(mock_sub_2, subs_added_to_group)
 
-    def test_returns_subs_str(self):
+    def test_returns_subs_str(self) -> None:
         mock_sub_1 = MagicMock()
         mock_sub_1.channel.return_value = []
         mock_sub_2 = MagicMock()
