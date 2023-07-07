@@ -1,5 +1,4 @@
 # This is based on CourtListener cl/lib/management/make_dev_data.py
-from typing import Union
 
 from faker import Faker
 
@@ -130,7 +129,7 @@ class MakeDevData:
         Make 1 big cases Group and 2 channels for it (Mastodon and Twitter)
 
         :return: the big cases Group, a string saying that they were made
-        :rtype: (Group, str)
+        :rtype: tuple[Group | GroupFactory, str]
         """
         info = "Big Cases Group and the Mastodon and Twitter Channels"
         big_cases_group = self._make_group_and_2_channels(True, "Big cases")
@@ -143,7 +142,7 @@ class MakeDevData:
         Make 1 little cases Group and 2 channels for it (Mastodon and Twitter)
 
         :return: the little cases Group, a string saying that they were made
-        :rtype: (Group, str)
+        :rtype: tuple[Group | GroupFactory, str]
         """
         info = "Little Cases Group and the Mastodon and Twitter Channels"
         little_cases_group = self._make_group_and_2_channels(
@@ -172,7 +171,7 @@ class MakeDevData:
         :type: list[int] | None
         :return: the list of subscriptions created, a string with the number of
         random subscriptions made
-        :rtype: (list[Subscription], str)
+        :rtype: tuple[list[Subscription | SubscriptionFactory], str]
         """
         subs_made = []
         result_strs = []
@@ -194,7 +193,7 @@ class MakeDevData:
 
     def make_subs_from_cl_docket_ids(
         self, docket_ids: list[int] | None = None
-    ) -> tuple[list[Subscription | SubscriptionFactory], str]:
+    ) -> tuple[list[SubscriptionFactory], str]:
         """
         Makes subscriptions from CourtListener dockets with the given
         docket_ids.
@@ -203,7 +202,7 @@ class MakeDevData:
         :param docket_ids:
         :returns: the list of Subscriptions made, string saying how many
         were made
-        :rtype: (list[Subscription], str)
+        :rtype: tuple[list[SubscriptionFactory], str]
         """
         info = "Real subscription(s) (Big cases) from CL docket ids"
         if docket_ids is None:
@@ -243,7 +242,7 @@ class MakeDevData:
 
         :returns: the list of Subscriptions made, string saying how many
         were made
-        :rtype: (list[Subscription], str)
+        :rtype: tuple[list[Subscription | SubscriptionFactory], str]
         """
         info = "Subscriptions (random)"
         if num < 1:
@@ -264,7 +263,7 @@ class MakeDevData:
 
         :returns: the list of subscriptions subscribed to the group,
           a string saying that the subscriptions were subscribed
-        :rtype: (list[Subscription],str)
+        :rtype: tuple[list[Subscription | SubscriptionFactory], str]
         """
         group_str = f"group ([{group.id}] {group.name})"
         info = f"subscriptions subscribed to {group_str}"
