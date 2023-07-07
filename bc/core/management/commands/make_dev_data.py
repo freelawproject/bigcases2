@@ -194,7 +194,7 @@ class MakeDevData:
 
     def make_subs_from_cl_docket_ids(
         self, docket_ids: list[int] | None = None
-    ) -> tuple[list[Union[Subscription, SubscriptionFactory]], str]:
+    ) -> tuple[list[Subscription | SubscriptionFactory], str]:
         """
         Makes subscriptions from CourtListener dockets with the given
         docket_ids.
