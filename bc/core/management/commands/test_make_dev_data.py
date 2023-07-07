@@ -1,6 +1,10 @@
-# mypy doesn't like assigning an attribute or  function/method to a MagicMock()
+# mypy doesn't like assigning an attribute or function/method to a MagicMock()
 #   so those lines have comments so mypy will ignore the [assignment] error.
 #   @see  https://github.com/python/mypy/issues/6713
+#   Likewise, it does not like return_value or side_effect used with
+#   MagicMocks, so those lines are commented to ignore the [attr-defined]
+#   error.
+
 
 from unittest.mock import ANY, MagicMock, call, patch
 
@@ -79,10 +83,14 @@ class TestCreate(SimpleTestCase):
         maker.make_big_cases_group_and_channels = (  # type: ignore[assignment]
             self.mocked_make_big_cases_group_and_channels
         )  # type: ignore[assignment]
-        maker.make_little_cases_group_and_channels = (
-            # type: ignore[assignment]
+
+        # Turn off the IntelliJ IDE formatter so it doesn't wrap the
+        # type...  comment
+        # @formatter:off
+        maker.make_little_cases_group_and_channels = (  # type: ignore[assignment]
             self.mocked_make_little_cases_group_and_channels
-        )
+        )  # type: ignore[assignment]
+        # @formatter:on
 
     def test_makes_1_admin(
         self,
@@ -154,7 +162,7 @@ class TestCreate(SimpleTestCase):
     ) -> None:
         maker = MakeDevData(3, 0)
         self._mock_maker_groups_methods(maker)
-        maker.make_subscriptions.return_value = (
+        maker.make_subscriptions.return_value = (  # type: ignore[attr-defined]
             ["one", "two", "three", "four"],
             "made subs",
         )
@@ -200,7 +208,7 @@ class TestCreate(SimpleTestCase):
     ) -> None:
         maker = MakeDevData(0, 1)
         self._mock_maker_groups_methods(maker)
-        maker.make_subscriptions.return_value = (
+        maker.make_subscriptions.return_value = (  # type: ignore[attr-defined]
             ["one", "two", "three", "four"],
             "made subs",
         )
@@ -225,15 +233,20 @@ class TestCreate(SimpleTestCase):
     ) -> None:
         maker = MakeDevData(2, 1)
         self._mock_maker_groups_methods(maker)
-        maker.make_subscriptions.return_value = (
+        maker.make_subscriptions.return_value = (  # type: ignore[attr-defined]
             ["one", "two", "three"],
             "made subs",
-        )
+        )  # type: ignore[attr-defined]
+
         # Set the return values for each call
-        maker.subscribe_randoms_to_group.side_effect = [
+        # Turn off the IntelliJ IDE formatter so it doesn't wrap the
+        # type...  comment
+        # @formatter:off
+        maker.subscribe_randoms_to_group.side_effect = [  # type: ignore[attr-defined]
             (["one", "three"], "subbed big cases"),
             (["two"], "subbed little cases"),
-        ]
+        ]  # type: ignore[attr-defined]
+        # @formatter:on
         maker.create()
 
         self.mocked_make_big_cases_group_and_channels.assert_called_with()
