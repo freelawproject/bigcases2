@@ -24,17 +24,17 @@ files = [
 
 [[package]]
 name = "art"
-version = "5.9"
+version = "6.0"
 description = "ASCII Art Library For Python"
 optional = false
-python-versions = ">=2.7"
+python-versions = ">=3.5"
 files = [
-    {file = "art-5.9-py2.py3-none-any.whl", hash = "sha256:9b02463468fc51c77200dadee970cf02c9576008c4f3b99d7ed02371ec037bd1"},
-    {file = "art-5.9.tar.gz", hash = "sha256:6a311ec0a227c6554c6789e91e74c3f2c86453a2a8e76947788695b7a91ccff0"},
+    {file = "art-6.0-py3-none-any.whl", hash = "sha256:882e6b5a4c6045c6dace31147c0b8522c8ca70177a5922f172733d116123a187"},
+    {file = "art-6.0.tar.gz", hash = "sha256:884ef1c10e900387cce97789e8668125720cbf4459206641b91fc298c859cda9"},
 ]
 
 [package.extras]
-dev = ["bandit (>=1.5.1)", "codecov (>=2.0.15)", "coverage (>=4.1)", "pydocstyle (>=3.0.0)", "vulture (>=1.0)"]
+dev = ["bandit (>=1.5.1)", "coverage (>=4.1)", "pydocstyle (>=3.0.0)", "vulture (>=1.0)"]
 
 [[package]]
 name = "asgiref"
@@ -178,17 +178,17 @@ test = ["Pillow", "numpy", "pytest"]
 
 [[package]]
 name = "boto3"
-version = "1.26.80"
+version = "1.27.1"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.26.80-py3-none-any.whl", hash = "sha256:704065abc8fdd2519491c11eeb65d69f21d0baf278b66b0b44090cc09c8c7bf8"},
-    {file = "boto3-1.26.80.tar.gz", hash = "sha256:7816da48b9626a482e955628ade527a4a84ff462043ac1a129011f7f66e8648c"},
+    {file = "boto3-1.27.1-py3-none-any.whl", hash = "sha256:0085c1066953e61915b34f24fbdee7117fd2d8b5c9188b9519d47ba84510c067"},
+    {file = "boto3-1.27.1.tar.gz", hash = "sha256:cf43deb4556295219d9de44d1c95921209c90ee25246673b5768aef9d46519cc"},
 ]
 
 [package.dependencies]
-botocore = ">=1.29.80,<1.30.0"
+botocore = ">=1.30.1,<1.31.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -197,13 +197,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.29.80"
+version = "1.30.1"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.29.80-py3-none-any.whl", hash = "sha256:9a301cb4de8ec6efe4e4b6ebb29b4301decd5b00c1a7f9187652002efb520ad0"},
-    {file = "botocore-1.29.80.tar.gz", hash = "sha256:19d4cadc79f75b31ffa78b5e750833d53e0edfe414d308b6788382ad32d23e12"},
+    {file = "botocore-1.30.1-py3-none-any.whl", hash = "sha256:18a32a21bfa9b418b9a38ea5ef4464eba003cbb26fca2cd56e4f51098c5d1a0f"},
+    {file = "botocore-1.30.1.tar.gz", hash = "sha256:4d1ac5a796c5c5c87946f25f3d98764288a0ed848e772a7a47cd134847e885e7"},
 ]
 
 [package.dependencies]
@@ -538,18 +538,18 @@ files = [
 
 [[package]]
 name = "django"
-version = "4.1.7"
+version = "4.2.3"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Django-4.1.7-py3-none-any.whl", hash = "sha256:f2f431e75adc40039ace496ad3b9f17227022e8b11566f4b363da44c7e44761e"},
-    {file = "Django-4.1.7.tar.gz", hash = "sha256:44f714b81c5f190d9d2ddad01a532fe502fa01c4cb8faf1d081f4264ed15dcd8"},
+    {file = "Django-4.2.3-py3-none-any.whl", hash = "sha256:f7c7852a5ac5a3da5a8d5b35cc6168f31b605971441798dac845f17ca8028039"},
+    {file = "Django-4.2.3.tar.gz", hash = "sha256:45a747e1c5b3d6df1b141b1481e193b033fd1fdbda3ff52677dc81afdaacbaed"},
 ]
 
 [package.dependencies]
-asgiref = ">=3.5.2,<4"
-sqlparse = ">=0.2.2"
+asgiref = ">=3.6.0,<4"
+sqlparse = ">=0.3.1"
 tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 
 [package.extras]
@@ -558,13 +558,13 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 name = "django-browser-reload"
-version = "1.7.0"
+version = "1.10.0"
 description = "Automatically reload your browser in development."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_browser_reload-1.7.0-py3-none-any.whl", hash = "sha256:0d7cc4308ebbdf9b5637e28ee7b41ae28d4fcdf350d55ce007515b44cd10291b"},
-    {file = "django_browser_reload-1.7.0.tar.gz", hash = "sha256:712d0a4d6caa6833c8c205d4ce177b474feb45583cd6ee684c9ea7b71dd921b6"},
+    {file = "django_browser_reload-1.10.0-py3-none-any.whl", hash = "sha256:a4c72ad7e7c670ce15d9c8e8f649d47c661fd1de383f3e5a0cd9da613b439364"},
+    {file = "django_browser_reload-1.10.0.tar.gz", hash = "sha256:7528891a2d231e9fa6b04575154e636d099b03480cd75c571aad97c3c5b9d9b9"},
 ]
 
 [package.dependencies]
@@ -590,13 +590,13 @@ tests = ["jinja2 (>=2.9.6)", "mock (==1.0.1)", "pep8 (==1.4.6)", "pytest (<4.0)"
 
 [[package]]
 name = "django-debug-toolbar"
-version = "4.0.0"
+version = "4.1.0"
 description = "A configurable set of panels that display various debug information about the current request/response."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_debug_toolbar-4.0.0-py3-none-any.whl", hash = "sha256:bad339d68520652ddc1580c76f136fcbc3e020fd5ed96510a89a02ec81bb3fb1"},
-    {file = "django_debug_toolbar-4.0.0.tar.gz", hash = "sha256:89619f6e0ea1057dca47bfc429ed99b237ef70074dabc065a7faa5f00e1459cf"},
+    {file = "django_debug_toolbar-4.1.0-py3-none-any.whl", hash = "sha256:a0b532ef5d52544fd745d1dcfc0557fa75f6f0d1962a8298bd568427ef2fa436"},
+    {file = "django_debug_toolbar-4.1.0.tar.gz", hash = "sha256:f57882e335593cb8e74c2bda9f1116bbb9ca8fc0d81b50a75ace0f83de5173c7"},
 ]
 
 [package.dependencies]
@@ -632,13 +632,13 @@ files = [
 
 [[package]]
 name = "django-htmx"
-version = "1.14.0"
+version = "1.15.0"
 description = "Extensions for using Django with htmx."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django_htmx-1.14.0-py3-none-any.whl", hash = "sha256:393e2a4a963aff691b3973c898dbca1363139d7c7bf2e8cc4c605e2ad808a779"},
-    {file = "django_htmx-1.14.0.tar.gz", hash = "sha256:b689a8d6f7052a96a373411ec55ba81c1ddffb4d66b1f5ab4d6e3d28420842fd"},
+    {file = "django_htmx-1.15.0-py3-none-any.whl", hash = "sha256:b76068485905ad9f911419746f07f877633bb036c0870a0f9fc13dec42c6e425"},
+    {file = "django_htmx-1.15.0.tar.gz", hash = "sha256:bac7ff59bf507db6d40424f635f83889ce028a54f47663f227083413de22cabf"},
 ]
 
 [package.dependencies]
@@ -657,19 +657,19 @@ files = [
 
 [[package]]
 name = "django-rq"
-version = "2.7.0"
+version = "2.8.1"
 description = "An app that provides django integration for RQ (Redis Queue)"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-rq-2.7.0.tar.gz", hash = "sha256:50440be33c23427f3b34d206ff72025740b721b54b42976e7b18a0474174802b"},
-    {file = "django_rq-2.7.0-py2.py3-none-any.whl", hash = "sha256:5b09798a3d0b03d4c7b55dbba50409c16dcbb09d42c2839511b52c29744be8c8"},
+    {file = "django-rq-2.8.1.tar.gz", hash = "sha256:ff053aa4d1b1e1acc47c99b4a21b514de8745894c00d1e6f4abc8b37d35d66d6"},
+    {file = "django_rq-2.8.1-py2.py3-none-any.whl", hash = "sha256:f5d649dc57b5564011460b2b69c8a60a4f5f10ee8692b51d1dfc17035b1039b8"},
 ]
 
 [package.dependencies]
 django = ">=2.0"
 redis = ">=3"
-rq = ">=1.2"
+rq = ">=1.14"
 
 [package.extras]
 sentry = ["raven (>=6.1.0)"]
@@ -756,18 +756,21 @@ typing-extensions = "*"
 
 [[package]]
 name = "django-tailwind"
-version = "3.5.0"
+version = "3.6.0"
 description = "Tailwind CSS Framework for Django projects"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "django_tailwind-3.5.0-py3-none-any.whl", hash = "sha256:dcc3b29463fff48a0e8ccd15c87fd467f0e746a7987bde0fdde6253dbb7861be"},
-    {file = "django_tailwind-3.5.0.tar.gz", hash = "sha256:c089b05b47d0e9d19567a81a74949fde16cbbfd8e4264c1f8eb4216a644065b2"},
+    {file = "django_tailwind-3.6.0-py3-none-any.whl", hash = "sha256:93db0ed1c18ae21ee8ad7f19f96744f5b2322e9d9872307a06e0f45b21cbe60a"},
+    {file = "django_tailwind-3.6.0.tar.gz", hash = "sha256:d878222a4ef957d1d0f0529dcd28b0065995ca6b8c7b43b058b9214c9e7d8ec0"},
 ]
 
 [package.dependencies]
 django = ">=3.2.14"
-django-browser-reload = ">=1.6.0,<2.0.0"
+django-browser-reload = {version = ">=1.6.0,<2.0.0", optional = true, markers = "extra == \"reload\""}
+
+[package.extras]
+reload = ["django-browser-reload (>=1.6.0,<2.0.0)"]
 
 [[package]]
 name = "djangorestframework"
@@ -1724,18 +1727,18 @@ rsa = ["oauthlib[signedtoken] (>=3.0.0)"]
 
 [[package]]
 name = "rq"
-version = "1.12.0"
+version = "1.15.1"
 description = "RQ is a simple, lightweight, library for creating background jobs, and processing them."
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 files = [
-    {file = "rq-1.12.0-py2.py3-none-any.whl", hash = "sha256:b268947a94a1da7de3c5f3925a59db60bffdede782ca1f23da654bf985a83c7a"},
-    {file = "rq-1.12.0.tar.gz", hash = "sha256:16ebbfa8891ece999485cb7d1e0559550ac576da43585138e6951db23654bbf6"},
+    {file = "rq-1.15.1-py2.py3-none-any.whl", hash = "sha256:6e243d8d9c4af4686ded4b01b25ea1ff4bac4fc260b02638fbe9c8c17b004bd1"},
+    {file = "rq-1.15.1.tar.gz", hash = "sha256:1f49f4ac1a084044bb8e95b3f305c0bf17e55618b08c18e0b60c080f12d6f008"},
 ]
 
 [package.dependencies]
 click = ">=5.0.0"
-redis = ">=3.5.0"
+redis = ">=4.0.0"
 
 [[package]]
 name = "s3transfer"
@@ -1756,13 +1759,13 @@ crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 
 [[package]]
 name = "sentry-sdk"
-version = "1.26.0"
+version = "1.27.1"
 description = "Python client for Sentry (https://sentry.io)"
 optional = false
 python-versions = "*"
 files = [
-    {file = "sentry-sdk-1.26.0.tar.gz", hash = "sha256:760e4fb6d01c994110507133e08ecd4bdf4d75ee4be77f296a3579796cf73134"},
-    {file = "sentry_sdk-1.26.0-py2.py3-none-any.whl", hash = "sha256:0c9f858337ec3781cf4851972ef42bba8c9828aea116b0dbed8f38c5f9a1896c"},
+    {file = "sentry-sdk-1.27.1.tar.gz", hash = "sha256:53f36293a0da271a22f476259d2fda76c0b8a1cb96b16d6e6e6aca490d7f3451"},
+    {file = "sentry_sdk-1.27.1-py2.py3-none-any.whl", hash = "sha256:24308bd05a1f7d65e40acc68a768b4e5c35462039bfd6ae2ca116b92a7b53c78"},
 ]
 
 [package.dependencies]
@@ -1947,13 +1950,13 @@ files = [
 
 [[package]]
 name = "types-redis"
-version = "4.5.1.4"
+version = "4.6.0.2"
 description = "Typing stubs for redis"
 optional = false
 python-versions = "*"
 files = [
-    {file = "types-redis-4.5.1.4.tar.gz", hash = "sha256:7660178754d60a4cfacf5b33ee063aa0625311791c62075cd936136627a3f7bf"},
-    {file = "types_redis-4.5.1.4-py3-none-any.whl", hash = "sha256:4ad21473605b9e1f96162b1298383dcbc73daa3bec2abe1fd3e81d077753f9ab"},
+    {file = "types-redis-4.6.0.2.tar.gz", hash = "sha256:d0efcd96f65fd2036437c29d8c12566cfdc549345d73eddacb0488b81aff9f9e"},
+    {file = "types_redis-4.6.0.2-py3-none-any.whl", hash = "sha256:a98f3386f44d045057696f3efc8869c53dda0060610e0fe3d8a4d391e2a8916a"},
 ]
 
 [package.dependencies]
@@ -2144,4 +2147,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "e432c42c9af6f9101b66299bbcbfb7a3e0d66fa1b61799c6ffa0c5e58f6ae783"
+content-hash = "ecb1b8990fb7546810da01b34302d57376bebac540672bcf4ae474cf0965fc2c"

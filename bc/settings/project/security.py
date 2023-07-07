@@ -28,12 +28,14 @@ CSP_IMG_SRC = (
 )
 CSP_SCRIPT_SRC = (
     "'self'",
+    "'report-sample'",
     AWS_S3_CUSTOM_DOMAIN,
     "https://plausible.io/",
     "https://hcaptcha.com/",
 )
 CSP_DEFAULT_SRC = (
     "'self'",
+    "'report-sample'",
     AWS_S3_CUSTOM_DOMAIN,
     "https://newassets.hcaptcha.com/",
 )

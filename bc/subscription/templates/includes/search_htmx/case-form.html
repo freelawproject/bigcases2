@@ -40,8 +40,13 @@
               {{ group.name }}
             </div>
             <div class="text-sm self-end">
-              <a href="javascript:void(0)" class="underline text-blue-600 hover:text-blue-800" data-cg-target="group-{{group.pk}}" data-cg-uncheck="check-none-group-{{group.pk}}">All</a> /
-              <a href="javascript:void(0)" class="underline text-blue-600 hover:text-blue-800" id="check-none-group-{{group.pk}}">None</a>
+              <button class="underline text-blue-600 hover:text-blue-800 background-transparent" type="button"
+                data-cg-target="group-{{group.pk}}" data-cg-uncheck="check-none-group-{{group.pk}}">
+                All
+              </button> /
+              <button class="underline text-blue-600 hover:text-blue-800" id="check-none-group-{{group.pk}}" type="button">
+                None
+              </button>
             </div>
           </div>
           <div class="my-2 grid grid-cols-4 gap-4 mx-2">

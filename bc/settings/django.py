@@ -142,9 +142,11 @@ STATICFILES_DIRS = (BASE_DIR / "bc/assets/static-global/",)
 STATIC_ROOT = BASE_DIR / "bc/assets/static/"
 
 if not any([TESTING, DEBUG]):
-    STATICFILES_STORAGE = (
-        "bc.core.utils.storage.SubDirectoryS3ManifestStaticStorage"
-    )
+    STORAGES = {
+        "staticfiles": {
+            "BACKEND": "bc.core.utils.storage.SubDirectoryS3ManifestStaticStorage",
+        },
+    }
 
 LOGIN_URL = "/sign-in/"
 LOGIN_REDIRECT_URL = "/"
