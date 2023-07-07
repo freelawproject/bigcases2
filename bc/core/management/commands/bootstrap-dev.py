@@ -21,24 +21,26 @@ class Command(VerboseCommand):
             "-b",
             type=int,
             default=self.DEFAULT_BIG_CASES,
-            help=f"The number of big cases to create in addition to any "
-            f"subscriptions to real cases (which are set to big cases). "
-            f"(integer) Default = {self.DEFAULT_BIG_CASES}",
+            help=f"The number of subscriptions to create that will be "
+            f"subscribed to the big cases group."
+            f"  (integer) Default = {self.DEFAULT_BIG_CASES}",
         )
         parser.add_argument(
             "--little-cases",
             "-l",
             type=int,
             default=self.DEFAULT_LITTLE_CASES,
-            help=f"The number of little cases to create. "
-            f"(integer) Default = {self.DEFAULT_LITTLE_CASES}",
+            help=f"The number of subscriptions to create that will be "
+            f"subscribed to the little cases group."
+            f"  (integer) Default = {self.DEFAULT_LITTLE_CASES}",
         )
         parser.add_argument(
-            "--real-cases",
+            "--real-case",
             "-r",
             type=int,
             action="append",
-            help=f"Subscribe to a real case from Court Listener with this "
+            help=f"A subscription created with data from a "
+            f"real case in Court Listener with the given "
             f"Court Listener docket id (integer).  This will be "
             f"subscribed as a big case.  You can use this option "
             f"multiple times to subscribe to multiple cases. Ex: "
