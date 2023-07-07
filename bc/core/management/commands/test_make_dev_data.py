@@ -1,5 +1,8 @@
-from typing import Union
-from unittest.mock import ANY, MagicMock, Mock, call, patch
+# mypy doesn't like assigning an attribute or  function/method to a MagicMock()
+#   so those lines have comments so mypy will ignore the [assignment] error.
+#   @see  https://github.com/python/mypy/issues/6713
+
+from unittest.mock import ANY, MagicMock, call, patch
 
 from django.test import SimpleTestCase
 
@@ -37,10 +40,10 @@ class TestMakeDataDev(SimpleTestCase):
     return_value=([], "subbed randoms"),
 )
 class TestCreate(SimpleTestCase):
-    cl_docket_result: dict[str, Union[str, int]] = {}
-    mock_big_cases_group: Mock = MagicMock()
-    mocked_make_big_cases_group_and_channels: Mock = MagicMock()
-    mocked_make_little_cases_group_and_channels: Mock = MagicMock()
+    cl_docket_result: dict[str, object] = {}
+    mock_big_cases_group: MagicMock = MagicMock()
+    mocked_make_big_cases_group_and_channels: MagicMock = MagicMock()
+    mocked_make_little_cases_group_and_channels: MagicMock = MagicMock()
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -72,11 +75,12 @@ class TestCreate(SimpleTestCase):
         """
         Helper method for testing that refactors out commonly needed mocking
         """
-        maker.big_cases_group = self.mock_big_cases_group
-        maker.make_big_cases_group_and_channels = (
+        maker.big_cases_group = self.mock_big_cases_group  # type: ignore[assignment]
+        maker.make_big_cases_group_and_channels = (  # type: ignore[assignment]
             self.mocked_make_big_cases_group_and_channels
-        )
+        )  # type: ignore[assignment]
         maker.make_little_cases_group_and_channels = (
+            # type: ignore[assignment]
             self.mocked_make_little_cases_group_and_channels
         )
 
@@ -286,8 +290,8 @@ class TestMakeSubscriptions(SimpleTestCase):
         mock_make_random_subs.return_value = [], "Made random subs"
 
         maker = MakeDevData()
-        maker.make_subs_from_cl_docket_ids = MagicMock()
-        maker.make_random_subscriptions = mock_make_random_subs
+        maker.make_subs_from_cl_docket_ids = MagicMock()  # type: ignore[assignment]
+        maker.make_random_subscriptions = mock_make_random_subs  # type: ignore[assignment]
 
         maker.make_subscriptions()
 
@@ -298,7 +302,7 @@ class TestMakeSubscriptions(SimpleTestCase):
 
     def test_no_cl_docket_ids(self) -> None:
         maker = MakeDevData()
-        maker.make_subs_from_cl_docket_ids = MagicMock()
+        maker.make_subs_from_cl_docket_ids = MagicMock()  # type: ignore[assignment]
 
         maker.make_subscriptions(0, [])
 
@@ -309,8 +313,8 @@ class TestMakeSubscriptions(SimpleTestCase):
         mock_make_subs_from_cl_docket_id.return_value = [], "Made docket subs"
 
         maker = MakeDevData()
-        maker.make_subs_from_cl_docket_ids = mock_make_subs_from_cl_docket_id
-        maker.make_random_subscriptions = MagicMock()
+        maker.make_subs_from_cl_docket_ids = mock_make_subs_from_cl_docket_id  # type: ignore[assignment]
+        maker.make_random_subscriptions = MagicMock()  # type: ignore[assignment]
 
         maker.make_subscriptions(0, [1234, 5678])
         mock_make_subs_from_cl_docket_id.assert_called_with([1234, 5678])
@@ -318,7 +322,7 @@ class TestMakeSubscriptions(SimpleTestCase):
 
     def test_no_random_subs(self) -> None:
         maker = MakeDevData()
-        maker.make_random_subscriptions = MagicMock()
+        maker.make_random_subscriptions = MagicMock()  # type: ignore[assignment]
 
         maker.make_subscriptions(0)
 
@@ -329,8 +333,8 @@ class TestMakeSubscriptions(SimpleTestCase):
         mock_make_random_subs.return_value = [], "Made random subs"
 
         maker = MakeDevData()
-        maker.make_subs_from_cl_docket_ids = MagicMock()
-        maker.make_random_subscriptions = mock_make_random_subs
+        maker.make_subs_from_cl_docket_ids = MagicMock()  # type: ignore[assignment]
+        maker.make_random_subscriptions = mock_make_random_subs  # type: ignore[assignment]
 
         maker.make_subscriptions(2)
 
@@ -345,8 +349,8 @@ class TestMakeSubscriptions(SimpleTestCase):
         mock_make_random_subs.return_value = [], "Made random subs"
 
         maker = MakeDevData()
-        maker.make_subs_from_cl_docket_ids = mock_make_subs_from_cl_docket_id
-        maker.make_random_subscriptions = mock_make_random_subs
+        maker.make_subs_from_cl_docket_ids = mock_make_subs_from_cl_docket_id  # type: ignore[assignment]
+        maker.make_random_subscriptions = mock_make_random_subs  # type: ignore[assignment]
 
         maker.make_subscriptions(2, [1234, 5678])
 
@@ -360,8 +364,8 @@ class TestMakeSubscriptions(SimpleTestCase):
         mock_make_random_subs.return_value = [], "random string"
 
         maker = MakeDevData()
-        maker.make_subs_from_cl_docket_ids = mock_make_subs_from_cl_docket_id
-        maker.make_random_subscriptions = mock_make_random_subs
+        maker.make_subs_from_cl_docket_ids = mock_make_subs_from_cl_docket_id  # type: ignore[assignment]
+        maker.make_random_subscriptions = mock_make_random_subs  # type: ignore[assignment]
 
         _, subs_str = maker.make_subscriptions(3, [1234, 5678])
         self.assertEqual("docket string\nrandom string", subs_str)
@@ -373,9 +377,9 @@ class TestMakeSubscriptions(SimpleTestCase):
 # @see https://docs.python.org/3/library/unittest.mock.html#where-to-patch
 @patch("bc.core.management.commands.make_dev_data.lookup_docket_by_cl_id")
 class TestMakeSubsFromClDocketId(SimpleTestCase):
-    cl_docket_result: dict[str, Union[str, int]] = {}
-    mocked_channels: Mock = MagicMock()
-    mock_big_cases_group: Mock = MagicMock()
+    cl_docket_result: dict[str, object] = {}
+    mocked_channels: MagicMock = MagicMock()
+    mock_big_cases_group: MagicMock = MagicMock()
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -395,7 +399,7 @@ class TestMakeSubsFromClDocketId(SimpleTestCase):
     ) -> None:
         mock_cl_lookup_docket_by_cl_id.return_value = self.cl_docket_result
         maker = MakeDevData()
-        maker.big_cases_group = self.mock_big_cases_group
+        maker.big_cases_group = self.mock_big_cases_group  # type: ignore[assignment]
         maker.make_subs_from_cl_docket_ids([12345, 67890])
 
         expected_calls = [call(12345), call(67890)]
@@ -409,7 +413,7 @@ class TestMakeSubsFromClDocketId(SimpleTestCase):
     ) -> None:
         mock_cl_lookup_docket_by_cl_id.return_value = self.cl_docket_result
         maker = MakeDevData()
-        maker.big_cases_group = self.mock_big_cases_group
+        maker.big_cases_group = self.mock_big_cases_group  # type: ignore[assignment]
         maker.make_subs_from_cl_docket_ids([12345, 67890])
 
         mock_sub_factory_create.assert_called_with(
@@ -431,7 +435,7 @@ class TestMakeSubsFromClDocketId(SimpleTestCase):
         # calls made_str to return results info
         mock_cl_lookup_docket_by_cl_id.return_value = self.cl_docket_result
         maker = MakeDevData()
-        maker.big_cases_group = self.mock_big_cases_group
+        maker.big_cases_group = self.mock_big_cases_group  # type: ignore[assignment]
         _, made_str = maker.make_subs_from_cl_docket_ids([1, 2, 3])
 
         self.assertRegex(
@@ -457,7 +461,7 @@ class TestMakeRandomSubscriptions(SimpleTestCase):
 
 
 class TestSubscribeRandomToGroup(SimpleTestCase):
-    mock_group: Mock = MagicMock()
+    mock_group: MagicMock = MagicMock()
 
     @classmethod
     def setUpClass(cls) -> None:
