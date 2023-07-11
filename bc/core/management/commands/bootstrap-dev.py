@@ -40,12 +40,12 @@ class Command(VerboseCommand):
             "-r",
             type=int,
             action="append",
-            help=f"A subscription created with data from a "
-            f"real case in Court Listener with the given "
-            f"Court Listener docket id (integer).  This will be "
-            f"subscribed as a big case.  You can use this option "
-            f"multiple times to subscribe to multiple cases. Ex: "
-            f"--real-subscription 67490069 --real-subscription 67490070",
+            help=f"Create a subscription with data from a "
+            f"real case in Court Listener with the "
+            f"Court Listener docket id (integer) that you provide."
+            f"  This will be subscribed as a big case.  "
+            f"You can use this option multiple times to  subscribe to "
+            f"multiple cases. Ex: --real-case 67490069 --real-case 67490070",
         )
 
     def handle(self, *args, **options) -> None:
@@ -61,8 +61,8 @@ class Command(VerboseCommand):
             num_little_cases = options["little_cases"]
 
         real_cases = None
-        if options["real_cases"]:
-            real_cases = options["real_cases"]
+        if options["real_case"]:
+            real_cases = options["real_case"]
 
         self._show_and_log("Creating dummy data.... ")
         maker = MakeDevData(
