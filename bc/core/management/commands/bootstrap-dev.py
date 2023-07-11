@@ -11,7 +11,11 @@ class Command(VerboseCommand):
     data.
     """
 
-    help = "Create dummy data in your system for development purposes. Uses Factories"
+    help = (
+        "Create dummy data in your system for development purposes. Uses "
+        "Factories. Note: This ADDS to whatever is already in the db."
+        "  It doesn't check to see if models (data) already exist."
+    )
 
     DEFAULT_BIG_CASES = 10
     DEFAULT_LITTLE_CASES = 3
