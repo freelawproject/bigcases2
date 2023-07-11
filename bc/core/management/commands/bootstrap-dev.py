@@ -52,22 +52,14 @@ class Command(VerboseCommand):
         self.requires_migrations_checks = True
         super().handle(*args, **options)
 
-        num_big_cases = self.DEFAULT_BIG_CASES
-        if options["big_cases"]:
-            num_big_cases = options["big_cases"]
-
-        num_little_cases = self.DEFAULT_LITTLE_CASES
-        if options["little_cases"]:
-            num_little_cases = options["little_cases"]
-
         real_cases = None
         if options["real_case"]:
             real_cases = options["real_case"]
 
         self._show_and_log("Creating dummy data.... ")
         maker = MakeDevData(
-            num_big_cases,
-            num_little_cases,
+            options["big_cases"],
+            options["little_cases"],
             real_cases,
         )
         result_summary = maker.create()
