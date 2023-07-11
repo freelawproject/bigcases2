@@ -124,10 +124,6 @@ class Channel(AbstractDateTimeModel):
             return f"{self.pk}: {self.account}"
         return f"{self.pk}"
 
-    def service_str(self) -> str:
-        """Return a human readable string showing the service"""
-        return f"{self.CHANNELS[self.service - 1][1]}" if self.service else ""
-
 
 class Post(AbstractDateTimeModel):
     filing_webhook_event = models.ForeignKey(
