@@ -290,8 +290,8 @@ class TestCreate(SimpleTestCase):
             "made big_cases group\n"
             "made little_cases group\n"
             "made subs\n"
-            "subbed randoms\n"
-            "subbed randoms\n"
+            f"{maker.INDENT_STR}subbed randoms\n"
+            f"{maker.INDENT_STR}subbed randoms\n"
         )
         self.assertEqual(expected, result)
 

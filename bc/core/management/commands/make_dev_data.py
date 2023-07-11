@@ -30,6 +30,8 @@ class MakeDevData:
     DEFAULT_NUM_BIG_CASES = 1
     DEFAULT_NUM_LITTLE_CASES = 1
 
+    INDENT_STR = "   "
+
     num_big_case_subscriptions = DEFAULT_NUM_BIG_CASES
     num_little_case_subscriptions = DEFAULT_NUM_LITTLE_CASES
     docket_ids: list[int] = []
@@ -87,7 +89,7 @@ class MakeDevData:
             + self.num_little_case_subscriptions,
             self.subscribed_dockets,
         )
-        result_str += f"{subs_made_str}\n"
+        result_str += f"{subs_made_str}"
 
         remaining_subs = all_subscriptions
         if self.num_big_case_subscriptions > 0:
@@ -99,7 +101,7 @@ class MakeDevData:
                 self.num_big_case_subscriptions,
                 all_subscriptions,
             )
-            result_str += f"{big_case_sub_str}\n"
+            result_str += f"\n{self.INDENT_STR}{big_case_sub_str}"
             remaining_subs = list(set(all_subscriptions) - set(big_case_subs))
 
         if self.num_little_case_subscriptions > 0:
@@ -108,8 +110,8 @@ class MakeDevData:
                 self.num_little_case_subscriptions,
                 remaining_subs,
             )
-            result_str += f"{little_case_sub_str}\n"
-        return result_str
+            result_str += f"\n{self.INDENT_STR}{little_case_sub_str}"
+        return result_str + "\n"
 
     def make_admin_users(self) -> str:
         """
@@ -227,10 +229,12 @@ class MakeDevData:
                 channels=big_cases_channels,
             )
             subs.append(subscription)
-
+        subd_to_big_cases = self._made_str(
+            num, self._subd_to_group_str(self.big_cases_group)
+        )
         return subs, self._made_str(
             num,
-            f"{info} {docket_ids}",
+            f"{info} {docket_ids}" f"\n{self.INDENT_STR}{subd_to_big_cases}",
         )
 
     def make_random_subscriptions(
@@ -265,8 +269,7 @@ class MakeDevData:
           a string saying that the subscriptions were subscribed
         :rtype: tuple[list[Subscription | SubscriptionFactory], str]
         """
-        group_str = f"group ([{group.id}] {group.name})"
-        info = f"subscriptions subscribed to {group_str}"
+        info = self._subd_to_group_str(group)
         if (subscriptions is None) or num == 0:
             return [], self._made_str(0, info)
 
@@ -306,3 +309,7 @@ class MakeDevData:
     @staticmethod
     def _made_str(num: int = 1, info: str = "") -> str:
         return f"   {num} {info}"
+
+    @staticmethod
+    def _subd_to_group_str(group) -> str:
+        return f"subscribed to {group}"
