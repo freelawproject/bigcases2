@@ -465,7 +465,8 @@ class TestMakeSubsFromClDocketId(NumSubdToGroupStrTest, SimpleTestCase):
 
         self.assertRegex(
             made_str,
-            r"3 Real subscription\(s\) (.)+ docket ids \[1, 2, 3\]",
+            r"3 Real subscription\(s\) created from CL docket id\(s\) \[1, 2, "
+            r"3\]",
         )
         self.has_group_subscribed_str(3, f"{maker.big_cases_group}", made_str)
 
@@ -483,7 +484,9 @@ class TestMakeRandomSubscriptions(SimpleTestCase):
         # calls made_str to return results info
         _, result_str = MakeDevData().make_random_subscriptions(3)
 
-        self.assertRegex(result_str, r"\d+ Subscriptions \(random\)")
+        self.assertRegex(
+            result_str, r"\d+ Subscriptions created with random data"
+        )
 
 
 class TestSubscribeRandomToGroup(NumSubdToGroupStrTest, SimpleTestCase):

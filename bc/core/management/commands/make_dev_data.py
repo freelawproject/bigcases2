@@ -206,7 +206,7 @@ class MakeDevData:
         were made
         :rtype: tuple[list[SubscriptionFactory], str]
         """
-        info = "Real subscription(s) (Big cases) from CL docket ids"
+        info = "Real subscription(s) created from CL docket id(s)"
         if docket_ids is None:
             return [], self._made_str(0, info)
 
@@ -248,7 +248,7 @@ class MakeDevData:
         were made
         :rtype: tuple[list[Subscription | SubscriptionFactory], str]
         """
-        info = "Subscriptions (random)"
+        info = "Subscriptions created with random data"
         if num < 1:
             return [], self._made_str(0, info)
         else:
