@@ -392,7 +392,9 @@ class NumSubdToGroupStrTest(SimpleTestCase):
     def has_group_subscribed_str(
         self, num: int = 0, group_str: str = "", actual_str=""
     ):
-        expected_indented_subcribed = f"  {num} subscribed to {group_str}"
+        expected_indented_subcribed = (
+            f"  {num} subscribed to group" f" {group_str}"
+        )
         self.assertRegex(actual_str, re.compile(expected_indented_subcribed))
 
 

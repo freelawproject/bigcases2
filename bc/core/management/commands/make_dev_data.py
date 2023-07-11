@@ -312,4 +312,4 @@ class MakeDevData:
 
     @staticmethod
     def _subd_to_group_str(group) -> str:
-        return f"subscribed to {group}"
+        return f"subscribed to group {group}"
