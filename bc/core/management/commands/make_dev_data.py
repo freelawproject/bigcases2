@@ -111,7 +111,7 @@ class MakeDevData:
                 remaining_subs,
             )
             result_str += f"\n{self.INDENT_STR}{little_case_sub_str}"
-        return result_str + "\n"
+        return f"{result_str}\n"
 
     def make_admin_users(self) -> str:
         """
