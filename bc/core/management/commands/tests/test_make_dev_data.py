@@ -4,8 +4,7 @@
 #   Likewise, it does not like return_value or side_effect used with
 #   MagicMocks, so those lines are commented to ignore the [attr-defined]
 #   error.
-
-
+import re
 from unittest.mock import ANY, MagicMock, call, patch
 
 from django.test import SimpleTestCase
@@ -384,12 +383,25 @@ class TestMakeSubscriptions(SimpleTestCase):
         self.assertEqual("docket string\nrandom string", subs_str)
 
 
+class NumSubdToGroupStrTest(SimpleTestCase):
+    """
+    Mixin to test a string matches a 'subscribed to group...'
+    str
+    """
+
+    def has_group_subscribed_str(
+        self, num: int = 0, group_str: str = "", actual_str=""
+    ):
+        expected_indented_subcribed = f"  {num} subscribed to {group_str}"
+        self.assertRegex(actual_str, re.compile(expected_indented_subcribed))
+
+
 # Note that we're mocking the function that has already been
 # imported by make_dev_data so it must be specified as within
 # ...make_dev_data...
 # @see https://docs.python.org/3/library/unittest.mock.html#where-to-patch
 @patch("bc.core.management.commands.make_dev_data.lookup_docket_by_cl_id")
-class TestMakeSubsFromClDocketId(SimpleTestCase):
+class TestMakeSubsFromClDocketId(NumSubdToGroupStrTest, SimpleTestCase):
     cl_docket_result: dict[str, object] = {}
     mocked_channels: MagicMock = MagicMock()
     mock_big_cases_group: MagicMock = MagicMock()
@@ -455,6 +467,7 @@ class TestMakeSubsFromClDocketId(SimpleTestCase):
             made_str,
             r"3 Real subscription\(s\) (.)+ docket ids \[1, 2, 3\]",
         )
+        self.has_group_subscribed_str(3, f"{maker.big_cases_group}", made_str)
 
 
 class TestMakeRandomSubscriptions(SimpleTestCase):
@@ -473,7 +486,7 @@ class TestMakeRandomSubscriptions(SimpleTestCase):
         self.assertRegex(result_str, r"\d+ Subscriptions \(random\)")
 
 
-class TestSubscribeRandomToGroup(SimpleTestCase):
+class TestSubscribeRandomToGroup(NumSubdToGroupStrTest, SimpleTestCase):
     mock_group: MagicMock = MagicMock()
 
     @classmethod
@@ -544,7 +557,4 @@ class TestSubscribeRandomToGroup(SimpleTestCase):
         ) = MakeDevData().subscribe_randoms_to_group(
             self.mock_group, 2, [mock_sub_1, mock_sub_2]
         )
-
-        self.assertRegex(
-            subbed_str, r"(\d)+ subscriptions subscribed to " r"group \((.)*\)"
-        )
+        self.has_group_subscribed_str(2, f"{self.mock_group}", subbed_str)
