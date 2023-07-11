@@ -7,7 +7,7 @@ from bc.channel.tests.factories import ChannelFactory, GroupFactory
 from bc.subscription.models import Subscription
 from bc.subscription.tests.factories import SubscriptionFactory
 from bc.subscription.utils.courtlistener import lookup_docket_by_cl_id
-from bc.users.tests.factories import AdminFactory
+from bc.users.tests.factories import UserFactory
 
 fake = Faker()
 
@@ -119,7 +119,7 @@ class MakeDevData:
         :rtype: str
         """
         info = "Admin user(s)"
-        AdminFactory.create_batch(self.NUM_ADMIN_USERS)
+        UserFactory.create_batch(self.NUM_ADMIN_USERS, admin=True)
         return self._made_str(self.NUM_ADMIN_USERS, info)
 
     def make_big_cases_group_and_channels(
