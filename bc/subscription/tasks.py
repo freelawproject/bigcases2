@@ -219,6 +219,41 @@ def check_webhook_before_posting(fwe_pk: int):
 
 
 @transaction.atomic
+def check_initial_complaint_before_posting(
+    subscription_pk: int,
+) -> Subscription:
+    """Checks whether the initial complaint of the case is available
+    in the RECAP archive or not to retrieve it and use it to create a
+    post in the enabled channels.
+
+    This method also checks the active sponsorships when the initial
+    complaint is not available in the archive. The file is purchased if
+    there's a sponsorship available for the subscription.
+
+    :param subscription_pk: The PK of the subscription record.
+    :return: the subscription object used to create the posts.
+    """
+    subscription = Subscription.objects.get(pk=subscription_pk)
+
+    document = None
+    cl_document = lookup_initial_complaint(subscription.cl_docket_id)
+    if cl_document and cl_document["filepath_local"]:
+        document = download_pdf_from_cl(cl_document["filepath_local"])
+    elif cl_document and cl_document["pacer_doc_id"]:
+        sponsorship = check_active_sponsorships(subscription.pk)
+        if sponsorship:
+            purchase_pdf_by_doc_id(
+                cl_document["id"], subscription.cl_docket_id
+            )
+            return
+
+    # Got the document or no sponsorship. Tweet and toot.
+    enqueue_posts_for_new_case(subscription, document)
+
+    return subscription
+
+
+@transaction.atomic
 def process_fetch_webhook_event(fwe_pk: int):
     """Process a RECAP fetch webhook event from CL.
 
