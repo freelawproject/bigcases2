@@ -2,7 +2,7 @@ import socket
 
 import environ
 
-from ..django import DEVELOPMENT, INSTALLED_APPS
+from ..django import DEVELOPMENT, INSTALLED_APPS, TESTING
 from ..third_party.aws import AWS_S3_CUSTOM_DOMAIN
 from ..third_party.sentry import SENTRY_REPORT_URI
 
@@ -19,26 +19,57 @@ SECURE_HSTS_PRELOAD = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "same-origin"
-CSP_CONNECT_SRC = ("'self'", "https://plausible.io/")
+
+# CSP
+# Components:
+# - hCaptcha: https://docs.hcaptcha.com/#content-security-policy-settings
+# - Plausible: https://github.com/plausible/docs/issues/20
+CSP_CONNECT_SRC = (
+    "'self'",
+    "https://hcaptcha.com/",
+    "https://*.hcaptcha.com/",
+    "https://plausible.io/",
+)
+CSP_FONT_SRC = (
+    "'self'",
+    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
+    "data:",  # Some browser extensions like this.
+)
+CSP_FRAME_SRC = (
+    "'self'",
+    "https://hcaptcha.com/",
+    "https://*.hcaptcha.com/",
+)
 CSP_IMG_SRC = (
     "'self'",
-    AWS_S3_CUSTOM_DOMAIN,
-    "https://plausible.io/",
+    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
     "data:",  # @tailwindcss/forms uses data URIs for images.
 )
+CSP_OBJECT_SRC = "'none'"
 CSP_SCRIPT_SRC = (
     "'self'",
     "'report-sample'",
-    AWS_S3_CUSTOM_DOMAIN,
-    "https://plausible.io/",
+    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
     "https://hcaptcha.com/",
+    "https://*.hcaptcha.com/",
+    "https://plausible.io/",
+)
+CSP_STYLE_SRC = (
+    "'self'",
+    "'report-sample'",
+    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
+    "https://hcaptcha.com/",
+    "https://*.hcaptcha.com/",
 )
 CSP_DEFAULT_SRC = (
     "'self'",
-    "'report-sample'",
-    AWS_S3_CUSTOM_DOMAIN,
-    "https://newassets.hcaptcha.com/",
+    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
 )
+CSP_BASE_URI = "'none'"
+if not any(
+    (DEVELOPMENT, TESTING)
+):  # Development and test aren’t used over HTTPS (yet)
+    CSP_UPGRADE_INSECURE_REQUESTS = True
 if SENTRY_REPORT_URI:
     CSP_REPORT_URI = SENTRY_REPORT_URI
 
