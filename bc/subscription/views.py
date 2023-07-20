@@ -10,12 +10,11 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rq import Retry
 
-from bc.channel.models import Group
 from bc.channel.selectors import get_channel_groups_per_user
 
 from .forms import AddSubscriptionForm
 from .services import create_or_update_subscription_from_docket
-from .tasks import enqueue_posts_for_new_case
+from .tasks import check_initial_complaint_before_posting
 from .utils.courtlistener import (
     get_docket_id_from_query,
     lookup_docket_by_cl_id,
@@ -90,7 +89,7 @@ class AddCaseView(LoginRequiredMixin, View):
 
         if created:
             queue.enqueue(
-                enqueue_posts_for_new_case,
+                check_initial_complaint_before_posting,
                 subscription.pk,
                 retry=Retry(
                     max=settings.RQ_MAX_NUMBER_OF_RETRIES,
