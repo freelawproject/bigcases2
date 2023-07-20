@@ -245,7 +245,7 @@ def check_initial_complaint_before_posting(
             purchase_pdf_by_doc_id(
                 cl_document["id"], subscription.cl_docket_id
             )
-            return
+            return subscription
 
     # Got the document or no sponsorship. Tweet and toot.
     enqueue_posts_for_new_case(subscription, document)

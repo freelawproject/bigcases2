@@ -1,6 +1,5 @@
 from datetime import timedelta
 from http import HTTPStatus
-from typing import Union
 
 from django.conf import settings
 from django.core.cache import cache
