@@ -254,7 +254,10 @@ def check_initial_complaint_before_posting(
 
 
 @transaction.atomic
-def process_fetch_webhook_event(fwe_pk: int):
+def process_fetch_webhook_event(
+    record_pk: int,
+    record_type: Literal["filing_webhook", "subscription"] = "filing_webhook",
+) -> int:
     """Process a RECAP fetch webhook event from CL.
 
     This functions retrieves the new document available in the
@@ -262,34 +265,59 @@ def process_fetch_webhook_event(fwe_pk: int):
     in the ledger and schedule the tasks to create new post in
     the enabled channels.
 
-    :param fwe_pk: The PK of the FilingWebhookEvent record.
-    :return: A FilingWebhookEvent object that was updated.
+    :param record_pk: The PK of the of record that triggered the purchase.
+    :param record_type: The type of record that triggered the purchase.
+    :return: The PK of the of record that triggered the purchase.
     """
-    filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
+    cl_document: DocumentDict | None
+    if record_type == "filing_webhook":
+        filing_webhook_event = FilingWebhookEvent.objects.get(pk=record_pk)
 
-    # check if the webhook event is linked to a subscription record
-    if not filing_webhook_event.subscription:
+        # check if the webhook event is linked to a subscription record
+        if not filing_webhook_event.subscription:
+            raise AssertionError(
+                "The webhook event doesn't have a relationship with a subscription record"
+            )
+
+        filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
+        filing_webhook_event.save(update_fields=["status"])
+
+        subscription = filing_webhook_event.subscription
+        cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
+    else:
+        subscription = Subscription.objects.get(pk=record_pk)
+        cl_document = lookup_initial_complaint(subscription.cl_docket_id)
+
+    if not cl_document:
+        raise AssertionError("The RECAP document lookup failed")
+
+    if not cl_document["filepath_local"]:
         raise AssertionError(
-            "The webhook event doesn't have a relationship with a subscription record"
+            "The RECAP document doesn't have a path to download the file"
         )
 
-    filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
-    filing_webhook_event.save(update_fields=["status"])
+    pdf_data = download_pdf_from_cl(cl_document["filepath_local"])
 
-    cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
-    document = download_pdf_from_cl(cl_document["filepath_local"])
+    sponsor_groups = get_sponsored_groups_per_subscription(subscription.pk)
 
-    sponsor_groups = get_sponsored_groups_per_subscription(
-        filing_webhook_event.subscription.pk
+    document = Document(
+        description=f"Initial Complaint from {subscription.docket_name}"
+        if record_type == "subscription"
+        else str(filing_webhook_event),
+        page_count=cl_document["page_count"],
+        docket_number=subscription.docket_number,
+        court_name=subscription.court_name,
+        court_id=subscription.pacer_court_id,
     )
     if sponsor_groups:
-        log_purchase(
-            sponsor_groups, filing_webhook_event, cl_document["page_count"]
-        )
+        log_purchase(sponsor_groups, subscription.pk, document)
 
-    enqueue_posts_for_docket_alert(filing_webhook_event, document, True)
+    if record_type == "filing_webhook":
+        enqueue_posts_for_docket_alert(filing_webhook_event, pdf_data, True)
+    else:
+        enqueue_posts_for_new_case(subscription, pdf_data, True)
 
-    return filing_webhook_event
+    return record_pk
 
 
 @transaction.atomic
