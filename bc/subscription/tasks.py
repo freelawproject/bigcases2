@@ -1,3 +1,5 @@
+from typing import Literal
+
 from django.conf import settings
 from django.db import transaction
 from django_rq.queues import get_queue
@@ -18,6 +20,7 @@ from bc.core.utils.status.templates import DO_NOT_PAY, DO_NOT_POST
 from bc.sponsorship.selectors import check_active_sponsorships
 from bc.sponsorship.services import log_purchase
 from bc.subscription.utils.courtlistener import (
+    DocumentDict,
     download_pdf_from_cl,
     lookup_document_by_doc_id,
     lookup_initial_complaint,
@@ -25,31 +28,26 @@ from bc.subscription.utils.courtlistener import (
 )
 
 from .models import FilingWebhookEvent, Subscription
+from .types import Document
 
 queue = get_queue("default")
 
 
-def enqueue_posts_for_new_case(subscription_pk: int) -> None:
+def enqueue_posts_for_new_case(
+    subscription: Subscription,
+    document: bytes | None = None,
+    check_sponsor_message: bool = False,
+) -> None:
     """
     Enqueue jobs to create a post in the available channels after
     following a new case.
 
     Args:
-        subscription_pk (int): The PK of the Subscription record.
+        subscription (Subscription): the new subscription object.
+        document (bytes | None, optional): document content(if available) as bytes.
+        check_sponsor_message (bool, optional): designates whether this method should check
+        the sponsorships field and compute the sponsor_message for each channel. Defaults to False.
     """
-    subscription = Subscription.objects.get(pk=subscription_pk)
-
-    document = None
-    cl_document = lookup_initial_complaint(subscription.cl_docket_id)
-    if cl_document and cl_document["filepath_local"]:
-        document = download_pdf_from_cl(cl_document["filepath_local"])
-    elif cl_document and cl_document["pacer_doc_id"]:
-        sponsorship = check_active_sponsorships(subscription.pk)
-        if sponsorship:
-            purchase_pdf_by_doc_id(
-                cl_document["id"], subscription.cl_docket_id
-            )
-            return
 
     files = None
     if document:
@@ -68,6 +66,13 @@ def enqueue_posts_for_new_case(subscription_pk: int) -> None:
         )
 
         api = channel.get_api_wrapper()
+
+        sponsor_message = None
+        sponsorships_for_channel = channel.group.sponsorships.all()  # type: ignore
+        if check_sponsor_message and sponsorships_for_channel and files:
+            sponsorship = sponsorships_for_channel[0]
+            sponsor_message = sponsorship.watermark_message
+            files = add_sponsored_text_to_thumbnails(files, sponsor_message)
 
         queue.enqueue(
             api.add_status,
