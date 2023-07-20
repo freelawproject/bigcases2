@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from django.test import TestCase
 
@@ -12,6 +12,7 @@ from bc.core.utils.tests.base import faker
 from bc.sponsorship.tests.factories import SponsorshipFactory
 from bc.subscription.models import FilingWebhookEvent
 from bc.subscription.tasks import (
+    check_initial_complaint_before_posting,
     check_webhook_before_posting,
     enqueue_posts_for_docket_alert,
     enqueue_posts_for_new_case,
@@ -121,7 +122,7 @@ class CheckWebhookBeforePostingTest(TestCase):
     ):
         sponsorship = SponsorshipFactory()
         channel_group = GroupFactory(sponsorships=[sponsorship])
-        channel = ChannelFactory(group=channel_group)
+        channel = ChannelFactory(mastodon=True, group=channel_group)
         mock_lookup.return_value = {"filepath_local": ""}
 
         self.subscription.channel.add(channel)
@@ -167,7 +168,10 @@ class ProcessFetchWebhookEventTest(TestCase):
         filepath = (
             "recap/gov.uscourts.dcd.178502/gov.uscourts.dcd.178502.2.0_18.pdf"
         )
-        mock_lookup.return_value = {"filepath_local": filepath}
+        mock_lookup.return_value = {
+            "filepath_local": filepath,
+            "page_count": 1,
+        }
         mock_download.return_value = b"\x68\x65\x6c\x6c\x6f"
 
         process_fetch_webhook_event(self.webhook_event.id)
@@ -202,7 +206,7 @@ class MakePostForWebhookEventTest(TestCase):
             subscription=subscription,
             status=FilingWebhookEvent.WAITING_FOR_DOCUMENT,
         )
-        cls.channel = ChannelFactory()
+        cls.channel = ChannelFactory(mastodon=True)
         cls.bin_object = b"\x68\x65\x6c\x6c\x6f"
 
     def setUp(self) -> None:
@@ -322,6 +326,82 @@ class EnqueuePostsForNewCaseTest(TestCase):
     def mock_api_wrapper(self):
         return MagicMock(name="api_wrapper")
 
+    @patch("bc.subscription.tasks.enqueue_posts_for_new_case")
+    @patch("bc.subscription.tasks.download_pdf_from_cl")
+    def test_can_create_new_post_wo_document(
+        self,
+        mock_download,
+        mock_enqueue,
+        mock_api,
+        mock_queue,
+        mock_retry,
+        mock_lookup,
+    ):
+        mock_lookup.return_value = {
+            "id": 1,
+            "filepath_local": "",
+            "pacer_doc_id": "051023651280",
+        }
+
+        check_initial_complaint_before_posting(self.subscription.pk)
+
+        mock_lookup.assert_called_once_with(self.subscription.cl_docket_id)
+        mock_download.assert_not_called()
+        mock_enqueue.assert_called_once_with(self.subscription, None)
+
+    @patch("bc.subscription.tasks.enqueue_posts_for_new_case")
+    @patch("bc.subscription.tasks.download_pdf_from_cl")
+    def test_can_download_initial_complaint(
+        self,
+        mock_download,
+        mock_enqueue,
+        mock_api,
+        mock_queue,
+        mock_retry,
+        mock_lookup,
+    ):
+        local_filepath = faker.url()
+        mock_lookup.return_value = {
+            "id": 1,
+            "filepath_local": local_filepath,
+            "pacer_doc_id": "051023651280",
+        }
+        mock_download.return_value = faker.binary(3)
+
+        check_initial_complaint_before_posting(self.subscription.pk)
+
+        mock_lookup.assert_called_once_with(self.subscription.cl_docket_id)
+        mock_download.assert_called_with(local_filepath)
+        mock_enqueue.assert_called_once_with(
+            self.subscription, mock_download()
+        )
+
+    @patch("bc.subscription.tasks.purchase_pdf_by_doc_id")
+    def test_can_purchase_initial_complaint(
+        self, mock_purchase, mock_api, mock_queue, mock_retry, mock_lookup
+    ):
+        api_wrapper = self.mock_api_wrapper()
+        mock_api.return_value = api_wrapper
+
+        sponsorship = SponsorshipFactory()
+        channel_group = GroupFactory(sponsorships=[sponsorship])
+        channel = ChannelFactory(mastodon=True, group=channel_group)
+
+        mock_lookup.return_value = {
+            "id": 1,
+            "filepath_local": "",
+            "pacer_doc_id": "051023651280",
+        }
+
+        self.subscription.channel.add(channel)
+
+        check_initial_complaint_before_posting(self.subscription.pk)
+
+        mock_purchase.assert_called_once_with(
+            1, self.subscription.cl_docket_id
+        )
+        mock_queue.assert_not_called()
+
     def test_can_enqueue_new_case_status(
         self, mock_api, mock_queue, mock_retry, mock_lookup
     ):
@@ -334,7 +414,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
             docket_id=self.subscription.cl_docket_id,
         )
 
-        enqueue_posts_for_new_case(self.subscription.pk)
+        enqueue_posts_for_new_case(self.subscription)
 
         mock_queue.enqueue.assert_called_once_with(
             api_wrapper.add_status, message, None, None, retry=mock_retry()
@@ -352,43 +432,15 @@ class EnqueuePostsForNewCaseTest(TestCase):
             docket_id=self.subscription_w_link.cl_docket_id,
             article_url=self.subscription_w_link.article_url,
         )
-
-        enqueue_posts_for_new_case(self.subscription_w_link.pk)
+        enqueue_posts_for_new_case(self.subscription_w_link)
 
         mock_queue.enqueue.assert_called_once_with(
             api_wrapper.add_status, message, None, None, retry=mock_retry()
         )
 
-    @patch("bc.subscription.tasks.purchase_pdf_by_doc_id")
-    def test_can_purchase_initial_complaint(
-        self, mock_purchase, mock_api, mock_queue, mock_retry, mock_lookup
-    ):
-        api_wrapper = self.mock_api_wrapper()
-        mock_api.return_value = api_wrapper
-
-        sponsorship = SponsorshipFactory()
-        channel_group = GroupFactory(sponsorships=[sponsorship])
-        channel = ChannelFactory(group=channel_group)
-        mock_lookup.return_value = {
-            "id": 1,
-            "filepath_local": "",
-            "pacer_doc_id": "051023651280",
-        }
-
-        self.subscription.channel.add(channel)
-
-        enqueue_posts_for_new_case(self.subscription.pk)
-
-        mock_purchase.assert_called_once_with(
-            1, self.subscription.cl_docket_id
-        )
-        mock_queue.assert_not_called()
-
     @patch("bc.subscription.tasks.get_thumbnails_from_range")
-    @patch("bc.subscription.tasks.download_pdf_from_cl")
     def test_can_post_new_case_w_thumbnails(
         self,
-        mock_download,
         mock_thumbnails,
         mock_api,
         mock_queue,
@@ -397,10 +449,8 @@ class EnqueuePostsForNewCaseTest(TestCase):
     ):
         api_wrapper = self.mock_api_wrapper()
         mock_api.return_value = api_wrapper
-        mock_lookup.return_value = {"filepath_local": faker.url()}
 
         document = faker.binary(2)
-        mock_download.return_value = document
 
         thumb_1 = faker.binary(4)
         thumb_2 = faker.binary(6)
@@ -413,9 +463,8 @@ class EnqueuePostsForNewCaseTest(TestCase):
             article_url=self.subscription_w_link.article_url,
         )
 
-        enqueue_posts_for_new_case(self.subscription_w_link.pk)
+        enqueue_posts_for_new_case(self.subscription_w_link, document)
 
-        mock_download.assert_called_once()
         mock_thumbnails.assert_called_once_with(document, "[1,2,3,4]")
         mock_queue.enqueue.assert_called_once_with(
             api_wrapper.add_status,
@@ -423,6 +472,69 @@ class EnqueuePostsForNewCaseTest(TestCase):
             None,
             [thumb_1, thumb_2],
             retry=mock_retry(),
+        )
+
+    @patch("bc.subscription.tasks.add_sponsored_text_to_thumbnails")
+    @patch("bc.subscription.tasks.get_thumbnails_from_range")
+    def test_can_create_post_w_sponsored_thumbnails(
+        self,
+        mock_thumbnails,
+        mock_sponsored,
+        mock_api,
+        mock_queue,
+        mock_retry,
+        mock_lookup,
+    ):
+        sponsorship = SponsorshipFactory()
+        channel_group = GroupFactory(sponsorships=[sponsorship])
+        channel = ChannelFactory(mastodon=True, group=channel_group)
+        self.subscription_w_link.channel.add(channel)
+
+        api_wrapper = self.mock_api_wrapper()
+        mock_api.return_value = api_wrapper
+
+        document = faker.binary(2)
+
+        thumb_1 = faker.binary(4)
+        thumb_2 = faker.binary(6)
+        mock_thumbnails.return_value = [thumb_1, thumb_2]
+
+        thumb_3 = faker.binary(5)
+        thumb_4 = faker.binary(7)
+        mock_sponsored.return_value = [thumb_3, thumb_4]
+
+        message, _ = TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE.format(
+            docket=self.subscription_w_link.name_with_summary,
+            docket_link=self.subscription_w_link.cl_url,
+            docket_id=self.subscription_w_link.cl_docket_id,
+            article_url=self.subscription_w_link.article_url,
+        )
+
+        enqueue_posts_for_new_case(self.subscription_w_link, document, True)
+
+        expected_enqueue_calls = [
+            call(
+                api_wrapper.add_status,
+                message,
+                None,
+                [thumb_1, thumb_2],
+                retry=mock_retry(),
+            ),
+            call(
+                api_wrapper.add_status,
+                message,
+                None,
+                [thumb_3, thumb_4],
+                retry=mock_retry(),
+            ),
+        ]
+
+        mock_thumbnails.assert_called_once_with(document, "[1,2,3,4]")
+        mock_sponsored.assert_called_with(
+            [thumb_1, thumb_2], sponsorship.watermark_message
+        )
+        mock_queue.enqueue.assert_has_calls(
+            expected_enqueue_calls, any_order=True
         )
 
 
@@ -436,7 +548,7 @@ class EnqueuePostsForNewFilingTest(TestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.channel = ChannelFactory(enabled=True, service=Channel.TWITTER)
+        cls.channel = ChannelFactory(twitter=True)
         cls.subscription = SubscriptionFactory(channels=[cls.channel])
         cls.webhook_event = FilingWebhookEventFactory(
             docket_id=65745614,
