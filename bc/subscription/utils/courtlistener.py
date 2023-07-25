@@ -29,6 +29,7 @@ PDF_URL_PATTERN = re.compile(
 CL_API = {
     "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
     "docket-alerts": "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
+    "docket-entries": "https://www.courtlistener.com/api/rest/v3/docket-entries/",
     "recap-documents": "https://www.courtlistener.com/api/rest/v3/recap-documents/",
     "recap-fetch": "https://www.courtlistener.com/api/rest/v3/recap-fetch/",
     "media-storage": "https://storage.courtlistener.com/",
@@ -124,8 +125,10 @@ def lookup_docket_by_cl_id(cl_id: int):
 
 
 class DocumentDict(TypedDict):
+    id: int
     page_count: int
     filepath_local: str
+    pacer_doc_id: str
 
 
 def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
@@ -135,13 +138,49 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     """
     response = requests.get(
         f"{CL_API['recap-documents']}{doc_id}/",
-        params={"fields": "filepath_local,page_count"},
+        params={"fields": "id,filepath_local,page_count,pacer_doc_id"},
         headers=auth_header(),
         timeout=5,
     )
     response.raise_for_status()
     data: DocumentDict = response.json()
     return data
+
+
+def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
+    """
+    Performs a GET query on /api/rest/v3/docket-entries/
+    using the docket_id to get the first entry of the case.
+
+    Args:
+        docket_id (int): CourtListener docket identifier
+
+    Returns:
+        DocumentDict | None: Dictionary containing the path to get
+            the document or None when the entry is not available.
+    """
+    if not docket_id:
+        return None
+
+    response = requests.get(
+        f"{CL_API['docket-entries']}",
+        params={"docket__id": docket_id, "entry_number": 1},
+        headers=auth_header(),
+        timeout=5,
+    )
+    response.raise_for_status()
+
+    data = response.json()
+    if not data["count"]:
+        return None
+
+    document = data["results"][0]["recap_documents"][0]
+    return {
+        "id": document["id"],
+        "filepath_local": document["filepath_local"],
+        "page_count": document["page_count"],
+        "pacer_doc_id": document["pacer_doc_id"],
+    }
 
 
 def download_pdf_from_cl(filepath: str) -> bytes:
@@ -151,7 +190,7 @@ def download_pdf_from_cl(filepath: str) -> bytes:
     return document_request.content
 
 
-def purchase_pdf_by_doc_id(doc_id: int | None) -> int:
+def purchase_pdf_by_doc_id(doc_id: int | None, docket_id: int | None) -> int:
     """
     Performs a POST query on /api/rest/v3/recap-fetch/
     using the document_id from CL and the PACER's login
@@ -164,6 +203,7 @@ def purchase_pdf_by_doc_id(doc_id: int | None) -> int:
             "pacer_username": settings.PACER_USERNAME,
             "pacer_password": settings.PACER_PASSWORD,
             "recap_document": doc_id,
+            "docket": docket_id,
         },
         headers=auth_header(),
         timeout=5,

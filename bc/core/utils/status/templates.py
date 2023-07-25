@@ -53,6 +53,18 @@ MASTODON_FOLLOW_A_NEW_CASE = MastodonTemplate(
 #CL{docket_id}""",
 )
 
+MASTODON_FOLLOW_A_NEW_CASE_W_ARTICLE = MastodonTemplate(
+    link_placeholders=["article_url"],
+    str_template="""I'm now following {docket}:
+
+Docket: {docket_link}
+
+Context: {article_url}
+
+#CL{docket_id}""",
+)
+
+
 TWITTER_POST_TEMPLATE = TwitterTemplate(
     link_placeholders=["pdf_link"],
     str_template="""New filing: "{docket}"
@@ -78,6 +90,17 @@ TWITTER_FOLLOW_A_NEW_CASE = TwitterTemplate(
     str_template="""I'm now following {docket}:
 
 {docket_link}
+
+#CL{docket_id}""",
+)
+
+TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE = TwitterTemplate(
+    link_placeholders=["article_url"],
+    str_template="""I'm now following {docket}:
+
+Docket: {docket_link}
+
+Context: {article_url}
 
 #CL{docket_id}""",
 )

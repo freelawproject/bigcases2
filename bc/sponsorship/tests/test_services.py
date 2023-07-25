@@ -8,6 +8,7 @@ from bc.subscription.tests.factories import (
     FilingWebhookEventFactory,
     SubscriptionFactory,
 )
+from bc.subscription.types import Document
 
 from .factories import SponsorshipFactory
 
@@ -46,7 +47,16 @@ class LogPurchaseTest(TestCase):
         sponsored_groups = get_sponsored_groups_per_subscription(
             self.subscription.pk
         )
-        log_purchase(sponsored_groups, self.webhook_event, 10)
+        document = Document(
+            description=str(self.webhook_event),
+            docket_number=self.webhook_event.subscription.docket_number,
+            court_name=self.webhook_event.subscription.court_name,
+            court_id=self.webhook_event.subscription.pacer_court_id,
+            page_count=10,
+        )
+        log_purchase(
+            sponsored_groups, self.webhook_event.subscription.id, document
+        )
 
         purchase_transactions = Transaction.objects.filter(
             type=Transaction.DOCUMENT_PURCHASE
