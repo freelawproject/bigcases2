@@ -57,9 +57,9 @@ MASTODON_FOLLOW_A_NEW_CASE_W_ARTICLE = MastodonTemplate(
     link_placeholders=["article_url"],
     str_template="""I'm now following {docket}:
 
-{docket_link}
+Docket: {docket_link}
 
-[read more: {article_url}]
+Context: {article_url}
 
 #CL{docket_id}""",
 )
@@ -98,9 +98,9 @@ TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE = TwitterTemplate(
     link_placeholders=["article_url"],
     str_template="""I'm now following {docket}:
 
-{docket_link}
+Docket: {docket_link}
 
-[read more: {article_url}]
+Context: {article_url}
 
 #CL{docket_id}""",
 )
