@@ -52,7 +52,7 @@ twitterapi = "^2.8.2"
 django-ses = "^3.5.0"
 django-htmx = "^1.15.0"
 factory-boy = "^3.2.1"
-faker = "^18.11.2"
+faker = "^19.2.0"
 disposable-email-domains = "^0.0.90"
 django-hcaptcha = "^0.2.0"
 
