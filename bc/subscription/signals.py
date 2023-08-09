@@ -22,7 +22,7 @@ def subscription_handler(sender, instance=None, created=False, **kwargs):
         ):
             queue.enqueue(
                 create_cache_invalidation,
-                reverse("big_cases_about"),
+                "/*",
                 retry=Retry(
                     max=settings.RQ_MAX_NUMBER_OF_RETRIES,
                     interval=settings.RQ_RETRY_INTERVAL,
