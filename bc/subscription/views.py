@@ -18,6 +18,7 @@ from .tasks import check_initial_complaint_before_posting
 from .utils.courtlistener import (
     get_docket_id_from_query,
     lookup_docket_by_cl_id,
+    subscribe_to_docket_alert,
 )
 
 queue = get_queue("default")
@@ -96,5 +97,14 @@ class AddCaseView(LoginRequiredMixin, View):
                     interval=settings.RQ_RETRY_INTERVAL,
                 ),
             )
+
+        queue.enqueue(
+            subscribe_to_docket_alert,
+            docket["id"],
+            retry=Retry(
+                max=settings.RQ_MAX_NUMBER_OF_RETRIES,
+                interval=settings.RQ_RETRY_INTERVAL,
+            ),
+        )
 
         return render(request, "./includes/search_htmx/success.html")
