@@ -31,7 +31,7 @@ def group_handler(sender, instance=None, created=False, **kwargs):
 
 
 @receiver(post_save, sender=Channel)
-def group_handler(sender, instance=None, created=False, **kwargs):
+def channel_handler(sender, instance=None, created=False, **kwargs):
     # create a new invalidation after changing data of a channel
     if not instance.group:
         return
