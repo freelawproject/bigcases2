@@ -21,6 +21,7 @@ class SubscriptionFactory(DjangoModelFactory):
     docket_name = factory.LazyFunction(local_faker.case_name)
     docket_number = factory.LazyFunction(local_faker.docket_number)
     court_name = factory.LazyAttribute(lambda _: local_faker.court_name())
+    article_url = ""
 
     @factory.post_generation
     def channels(self, create, extracted, **kwargs):
@@ -35,6 +36,9 @@ class SubscriptionFactory(DjangoModelFactory):
         if not create or not extracted:
             return
         self.channel.add(*extracted)
+
+    class Params:
+        article = factory.Trait(article_url=faker.url())
 
 
 class FilingWebhookEventFactory(DjangoModelFactory):

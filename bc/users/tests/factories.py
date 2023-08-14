@@ -1,6 +1,6 @@
 import factory
 from django.contrib.auth.hashers import make_password
-from factory import LazyAttribute, LazyFunction
+from factory import LazyAttribute, LazyFunction, Trait
 from factory.django import DjangoModelFactory
 
 from bc.core.utils.tests.base import faker
@@ -20,8 +20,11 @@ class UserFactory(DjangoModelFactory):
     is_superuser = False
     is_active = True
 
+    class Params:
+        admin = Trait(is_staff=True, is_superuser=True, last_name="Admin")
+
     @factory.post_generation
-    def channels(self, create, extracted, **kwargs):
+    def channels(self, create, extracted, **_kwargs):
         if not create or not extracted:
             return
 

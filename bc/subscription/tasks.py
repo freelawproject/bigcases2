@@ -1,3 +1,5 @@
+from typing import Literal
+
 from django.conf import settings
 from django.db import transaction
 from django_rq.queues import get_queue
@@ -18,39 +20,65 @@ from bc.core.utils.status.templates import DO_NOT_PAY, DO_NOT_POST
 from bc.sponsorship.selectors import check_active_sponsorships
 from bc.sponsorship.services import log_purchase
 from bc.subscription.utils.courtlistener import (
+    DocumentDict,
     download_pdf_from_cl,
     lookup_document_by_doc_id,
+    lookup_initial_complaint,
     purchase_pdf_by_doc_id,
 )
 
 from .models import FilingWebhookEvent, Subscription
+from .types import Document
 
 queue = get_queue("default")
 
 
-def enqueue_posts_for_new_case(subscription: Subscription) -> None:
+def enqueue_posts_for_new_case(
+    subscription: Subscription,
+    document: bytes | None = None,
+    check_sponsor_message: bool = False,
+) -> None:
     """
     Enqueue jobs to create a post in the available channels after
     following a new case.
 
     Args:
         subscription (Subscription): the new subscription object.
+        document (bytes | None, optional): document content(if available) as bytes.
+        check_sponsor_message (bool, optional): designates whether this method should check
+        the sponsorships field and compute the sponsor_message for each channel. Defaults to False.
     """
+
+    files = None
+    if document:
+        files = get_thumbnails_from_range(document, "[1,2,3,4]")
+
     for channel in get_channels_per_subscription(subscription.pk):
-        template = get_new_case_template(channel.service)
+        template = get_new_case_template(
+            channel.service, subscription.article_url
+        )
 
         message, _ = template.format(
             docket=subscription.name_with_summary,
             docket_link=subscription.cl_url,
             docket_id=subscription.cl_docket_id,
+            article_url=subscription.article_url,
         )
 
         api = channel.get_api_wrapper()
+
+        sponsor_message = None
+        sponsorships_for_channel = channel.group.sponsorships.all()  # type: ignore
+        if check_sponsor_message and sponsorships_for_channel and files:
+            sponsorship = sponsorships_for_channel[0]
+            sponsor_message = sponsorship.watermark_message
+            files = add_sponsored_text_to_thumbnails(files, sponsor_message)
 
         queue.enqueue(
             api.add_status,
             message,
             None,
+            files,
             retry=Retry(
                 max=settings.RQ_MAX_NUMBER_OF_RETRIES,
                 interval=settings.RQ_RETRY_INTERVAL,
@@ -175,7 +203,9 @@ def check_webhook_before_posting(fwe_pk: int):
             and filing_webhook_event.pacer_doc_id
             and not DO_NOT_PAY.search(filing_webhook_event.description)
         ):
-            purchase_pdf_by_doc_id(filing_webhook_event.doc_id)
+            purchase_pdf_by_doc_id(
+                filing_webhook_event.doc_id, filing_webhook_event.docket_id
+            )
             filing_webhook_event.status = (
                 FilingWebhookEvent.WAITING_FOR_DOCUMENT
             )
@@ -189,7 +219,45 @@ def check_webhook_before_posting(fwe_pk: int):
 
 
 @transaction.atomic
-def process_fetch_webhook_event(fwe_pk: int):
+def check_initial_complaint_before_posting(
+    subscription_pk: int,
+) -> Subscription:
+    """Checks whether the initial complaint of the case is available
+    in the RECAP archive or not to retrieve it and use it to create a
+    post in the enabled channels.
+
+    This method also checks the active sponsorships when the initial
+    complaint is not available in the archive. The file is purchased if
+    there's a sponsorship available for the subscription.
+
+    :param subscription_pk: The PK of the subscription record.
+    :return: the subscription object used to create the posts.
+    """
+    subscription = Subscription.objects.get(pk=subscription_pk)
+
+    document = None
+    cl_document = lookup_initial_complaint(subscription.cl_docket_id)
+    if cl_document and cl_document["filepath_local"]:
+        document = download_pdf_from_cl(cl_document["filepath_local"])
+    elif cl_document and cl_document["pacer_doc_id"]:
+        sponsorship = check_active_sponsorships(subscription.pk)
+        if sponsorship:
+            purchase_pdf_by_doc_id(
+                cl_document["id"], subscription.cl_docket_id
+            )
+            return subscription
+
+    # Got the document or no sponsorship. Tweet and toot.
+    enqueue_posts_for_new_case(subscription, document)
+
+    return subscription
+
+
+@transaction.atomic
+def process_fetch_webhook_event(
+    record_pk: int,
+    record_type: Literal["filing_webhook", "subscription"] = "filing_webhook",
+) -> int:
     """Process a RECAP fetch webhook event from CL.
 
     This functions retrieves the new document available in the
@@ -197,34 +265,59 @@ def process_fetch_webhook_event(fwe_pk: int):
     in the ledger and schedule the tasks to create new post in
     the enabled channels.
 
-    :param fwe_pk: The PK of the FilingWebhookEvent record.
-    :return: A FilingWebhookEvent object that was updated.
+    :param record_pk: The PK of the of record that triggered the purchase.
+    :param record_type: The type of record that triggered the purchase.
+    :return: The PK of the of record that triggered the purchase.
     """
-    filing_webhook_event = FilingWebhookEvent.objects.get(pk=fwe_pk)
+    cl_document: DocumentDict | None
+    if record_type == "filing_webhook":
+        filing_webhook_event = FilingWebhookEvent.objects.get(pk=record_pk)
 
-    # check if the webhook event is linked to a subscription record
-    if not filing_webhook_event.subscription:
+        # check if the webhook event is linked to a subscription record
+        if not filing_webhook_event.subscription:
+            raise AssertionError(
+                "The webhook event doesn't have a relationship with a subscription record"
+            )
+
+        filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
+        filing_webhook_event.save(update_fields=["status"])
+
+        subscription = filing_webhook_event.subscription
+        cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
+    else:
+        subscription = Subscription.objects.get(pk=record_pk)
+        cl_document = lookup_initial_complaint(subscription.cl_docket_id)
+
+    if not cl_document:
+        raise AssertionError("The RECAP document lookup failed")
+
+    if not cl_document["filepath_local"]:
         raise AssertionError(
-            "The webhook event doesn't have a relationship with a subscription record"
+            "The RECAP document doesn't have a path to download the file"
         )
 
-    filing_webhook_event.status = FilingWebhookEvent.SUCCESSFUL
-    filing_webhook_event.save(update_fields=["status"])
+    pdf_data = download_pdf_from_cl(cl_document["filepath_local"])
 
-    cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
-    document = download_pdf_from_cl(cl_document["filepath_local"])
+    sponsor_groups = get_sponsored_groups_per_subscription(subscription.pk)
 
-    sponsor_groups = get_sponsored_groups_per_subscription(
-        filing_webhook_event.subscription.pk
+    document = Document(
+        description=f"Initial Complaint from {subscription.docket_name}"
+        if record_type == "subscription"
+        else str(filing_webhook_event),
+        page_count=cl_document["page_count"],
+        docket_number=subscription.docket_number,
+        court_name=subscription.court_name,
+        court_id=subscription.pacer_court_id,
     )
     if sponsor_groups:
-        log_purchase(
-            sponsor_groups, filing_webhook_event, cl_document["page_count"]
-        )
+        log_purchase(sponsor_groups, subscription.pk, document)
 
-    enqueue_posts_for_docket_alert(filing_webhook_event, document, True)
+    if record_type == "filing_webhook":
+        enqueue_posts_for_docket_alert(filing_webhook_event, pdf_data, True)
+    else:
+        enqueue_posts_for_new_case(subscription, pdf_data, True)
 
-    return filing_webhook_event
+    return record_pk
 
 
 @transaction.atomic

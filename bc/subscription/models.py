@@ -62,6 +62,9 @@ class Subscription(AbstractDateTimeModel):
         max_length=100,
         blank=True,
     )
+    article_url = models.URLField(
+        help_text="Link to a news article", default="", blank=True
+    )
     channel = models.ManyToManyField(
         Channel,
         help_text="Channels where a post related to this docket should be created",

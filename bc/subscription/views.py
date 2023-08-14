@@ -1,21 +1,27 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 from django.shortcuts import render
 from django.views import View
 from django_htmx.http import trigger_client_event
+from django_rq.queues import get_queue
 from requests.exceptions import HTTPError, ReadTimeout
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rq import Retry
 
-from bc.channel.models import Group
 from bc.channel.selectors import get_channel_groups_per_user
 
+from .forms import AddSubscriptionForm
 from .services import create_or_update_subscription_from_docket
-from .tasks import enqueue_posts_for_new_case
+from .tasks import check_initial_complaint_before_posting
 from .utils.courtlistener import (
     get_docket_id_from_query,
     lookup_docket_by_cl_id,
+    subscribe_to_docket_alert,
 )
+
+queue = get_queue("default")
 
 
 def search(request: Request) -> Response:
@@ -26,7 +32,9 @@ def search(request: Request) -> Response:
         data = lookup_docket_by_cl_id(docket_id)
         if data:
             context["docket_id"] = docket_id
-            context["case_name"] = data["case_name"]
+            context["form"] = AddSubscriptionForm(
+                initial={"docket_name": data["case_name"]}
+            )
             context["channels"] = get_channel_groups_per_user(request.user.pk)
             template = "./includes/search_htmx/case-form.html"
             response = render(request, template, context)
@@ -51,23 +59,27 @@ class AddCaseView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         docket_id = request.POST.get("docketId")
-        name = request.POST.get("name")
-        case_summary = request.POST.get("caseSummary")
+        form = AddSubscriptionForm(request.POST)
+        if not form.is_valid():
+            context = {"docket_id": docket_id, "form": form}
+            template = "./includes/search_htmx/case-form.html"
+            return render(request, template, context)
 
         try:
             docket = lookup_docket_by_cl_id(docket_id)
-        except HTTPError:
+        except (HTTPError, ReadTimeout):
             context = {
                 "docket_id": docket_id,
-                "case_name": name,
-                "summary": case_summary,
+                "form": form,
                 "error": "There was an error trying to submit the form. Please try again.",
             }
             template = "./includes/search_htmx/case-form.html"
             return render(request, template, context)
 
-        docket["case_name"] = name
-        docket["case_summary"] = case_summary
+        cd = form.cleaned_data
+        docket["case_name"] = cd["docket_name"]
+        docket["case_summary"] = cd["case_summary"]
+        docket["article_url"] = cd["article_url"]
         subscription, created = create_or_update_subscription_from_docket(
             docket
         )
@@ -77,6 +89,22 @@ class AddCaseView(LoginRequiredMixin, View):
             subscription.channel.add(channel_id)
 
         if created:
-            enqueue_posts_for_new_case(subscription)
+            queue.enqueue(
+                check_initial_complaint_before_posting,
+                subscription.pk,
+                retry=Retry(
+                    max=settings.RQ_MAX_NUMBER_OF_RETRIES,
+                    interval=settings.RQ_RETRY_INTERVAL,
+                ),
+            )
+
+        queue.enqueue(
+            subscribe_to_docket_alert,
+            docket["id"],
+            retry=Retry(
+                max=settings.RQ_MAX_NUMBER_OF_RETRIES,
+                interval=settings.RQ_RETRY_INTERVAL,
+            ),
+        )
 
         return render(request, "./includes/search_htmx/success.html")

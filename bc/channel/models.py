@@ -152,10 +152,8 @@ class Post(AbstractDateTimeModel):
         service = self.channel.service
         match service:
             case Channel.MASTODON:
-                return f"https://law.builders/@bigcases/{ self.object_id }"
+                return f"https://law.builders/@bigcases/{self.object_id}"
             case Channel.TWITTER:
-                return (
-                    f"https://twitter.com/big_cases/status/{ self.object_id }"
-                )
+                return f"https://twitter.com/big_cases/status/{self.object_id}"
             case _:
-                raise NotImplementedError(f"Unknown service: '{ service }'.")
+                raise NotImplementedError(f"Unknown service: '{service}'.")

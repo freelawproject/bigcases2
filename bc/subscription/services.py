@@ -20,6 +20,7 @@ def create_or_update_subscription_from_docket(docket):
     court = find_court_by_id(cl_court_id)
     court_name = court[0]["name"] if len(court) == 1 else ""
 
+    article_url = docket["article_url"]
     return Subscription.objects.update_or_create(
         cl_docket_id=cl_docket_id,
         defaults={
@@ -30,5 +31,6 @@ def create_or_update_subscription_from_docket(docket):
             "case_summary": case_summary,
             "pacer_case_id": pacer_case_id,
             "court_name": court_name,
+            "article_url": article_url,
         },
     )

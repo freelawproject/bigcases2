@@ -18,8 +18,6 @@ services:
 
   bc2-postgresql:
     container_name: bc2-postgresql
-    ports:
-      - "5433:5432"
     image: postgres:15.2-alpine
     environment:
       POSTGRES_USER: "postgres"
@@ -31,8 +29,6 @@ services:
   bc2-redis:
     container_name: bc2-redis
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
     networks:
       - bc2_net_overlay
 
