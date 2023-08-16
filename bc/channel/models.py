@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from spectrum.fields import ColorField
 
 from bc.core.models import AbstractDateTimeModel
 from bc.sponsorship.models import Sponsorship
@@ -33,6 +34,10 @@ class Group(AbstractDateTimeModel):
     )
     overview = models.TextField(
         help_text="Short description of the purpose of this group", default=""
+    )
+    border_color = ColorField(
+        help_text="Color used in the images' borders of this group",
+        default="#F3C33E",
     )
 
     def __str__(self) -> str:
