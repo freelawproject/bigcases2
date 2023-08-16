@@ -12,6 +12,7 @@ from PIL.ImageDraw import Draw
 class TextImage:
     title: str
     description: str
+    border_color: tuple[int, int, int]
     title_font_path: str | None = finders.find("fonts/CooperHewitt-Bold.otf")
     desc_font_path: str | None = finders.find("fonts/CooperHewitt-Light.otf")
     font_size: int = 24
@@ -274,7 +275,7 @@ class TextImage:
             spacing=self.line_spacing,
         )
 
-        return ImageOps.expand(self.img, border=10, fill=(243, 195, 62))
+        return ImageOps.expand(self.img, border=10, fill=self.border_color)
 
     def to_bytes(self) -> bytes:
         buffer = io.BytesIO()

@@ -58,6 +58,9 @@ def enqueue_posts_for_new_case(
             channel.service, subscription.article_url
         )
 
+        if channel.group:
+            template.border_color = channel.group.border_color.rgb
+
         message, _ = template.format(
             docket=subscription.name_with_summary,
             docket_link=subscription.cl_url,
@@ -351,6 +354,9 @@ def make_post_for_webhook_event(
     template = get_template_for_channel(
         channel.service, filing_webhook_event.document_number
     )
+
+    if channel.group:
+        template.border_color = channel.group.border_color.rgb
 
     message, image = template.format(
         docket=filing_webhook_event.subscription.name_with_summary,

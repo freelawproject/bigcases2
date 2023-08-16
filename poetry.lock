@@ -700,6 +700,20 @@ bounce = ["cryptography (>=36.0.2)", "requests (>=2.27.1)"]
 events = ["cryptography (>=36.0.2)", "requests (>=2.27.1)"]
 
 [[package]]
+name = "django-spectrum"
+version = "0.5.2"
+description = "Provides a colorpicker field for Django"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "django-spectrum-0.5.2.tar.gz", hash = "sha256:85de267062cc437254d50c0953cc30ce361f8ebc1bc3e0868fc0f6e616ba5bb8"},
+    {file = "django_spectrum-0.5.2-py2.py3-none-any.whl", hash = "sha256:5bab055c9850fb92ab3e60cf12b481906200fb98930257db582b3f17fce03260"},
+]
+
+[package.dependencies]
+Django = ">=1.11"
+
+[[package]]
 name = "django-storages"
 version = "1.13.2"
 description = "Support for many storage backends in Django"
@@ -1916,7 +1930,7 @@ files = [
 
 [package.dependencies]
 requests = "*"
-requests_oauthlib = "*"
+requests-oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -2153,4 +2167,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "c8ffca3e162e385aaa259b3059889c918d29b715a614de234b8e07f727c35912"
+content-hash = "a997a589494a95937d8c6e4bdc78ebfa40c07454ef017e607714fb3152900abb"

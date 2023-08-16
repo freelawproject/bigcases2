@@ -17,6 +17,7 @@ class BaseTemplate:
     str_template: str
     link_placeholders: list[str]
     max_characters: int
+    border_color: tuple[int, int, int] = (243, 195, 62)
 
     def __len__(self) -> int:
         """Returns the length of the template without the placeholders
@@ -62,7 +63,11 @@ class BaseTemplate:
             available_space = self._available_space("description", **kwargs)
             if len(kwargs["description"]) > available_space:
                 docket = kwargs.get("docket")
-                image = TextImage(f"Case: {docket}", kwargs["description"])
+                image = TextImage(
+                    f"{docket}",
+                    kwargs["description"],
+                    border_color=self.border_color,
+                )
                 kwargs["description"] = trunc(
                     kwargs["description"],
                     available_space,

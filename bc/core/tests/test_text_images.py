@@ -9,20 +9,27 @@ class TextImageTest(SimpleTestCase):
     def test_max_character_count_avoids_overflow(self):
         tests = (
             # Simple case
-            {"title": "short title", "description": 10 * "short description"},
+            {
+                "title": "short title",
+                "description": 10 * "short description",
+                "border_color": (256, 256, 256),
+            },
             # Short title and long description
             {
                 "title": 5 * "short title",
                 "description": 20 * "short description",
+                "border_color": (256, 256, 256),
             },
             # Long title and long description
             {
                 "title": 15 * "short title",
                 "description": 20 * "short description",
+                "border_color": (256, 256, 256),
             },
             {
                 "title": 30 * "short title",
                 "description": 50 * "short description",
+                "border_color": (256, 256, 256),
             },
             {
                 "title": (
@@ -36,6 +43,7 @@ class TextImageTest(SimpleTestCase):
                     " of the order form with the appeals court. (Lynch,"
                     " Christopher) (Entered: 04/10/2023)"
                 ),
+                "border_color": (256, 256, 256),
             },
         )
 
