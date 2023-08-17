@@ -12,7 +12,7 @@ from PIL.ImageDraw import Draw
 class TextImage:
     title: str
     description: str
-    border_color: tuple[int, int, int]
+    border_color: tuple[int, ...]
     title_font_path: str | None = finders.find("fonts/CooperHewitt-Bold.otf")
     desc_font_path: str | None = finders.find("fonts/CooperHewitt-Light.otf")
     font_size: int = 24

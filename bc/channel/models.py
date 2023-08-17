@@ -1,8 +1,8 @@
 from django.db import models
 from django.urls import reverse
-from spectrum.fields import ColorField
 
 from bc.core.models import AbstractDateTimeModel
+from bc.core.utils.color import format_color_str
 from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
@@ -35,8 +35,9 @@ class Group(AbstractDateTimeModel):
     overview = models.TextField(
         help_text="Short description of the purpose of this group", default=""
     )
-    border_color = ColorField(
+    border_color = models.CharField(
         help_text="Color used in the images' borders of this group",
+        max_length=7,
         default="#F3C33E",
     )
 
@@ -45,6 +46,14 @@ class Group(AbstractDateTimeModel):
 
     def get_absolute_url(self):
         return reverse("little_cases_detail", args=[self.slug])
+
+    @property
+    def border_color_rgb(self) -> tuple[int, ...]:
+        rgb = format_color_str(self.border_color)
+        if not rgb:
+            # we return the default yellow border if we fail to parse the hex str
+            return (243, 195, 62)
+        return rgb
 
 
 class Channel(AbstractDateTimeModel):

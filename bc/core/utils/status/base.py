@@ -17,7 +17,7 @@ class BaseTemplate:
     str_template: str
     link_placeholders: list[str]
     max_characters: int
-    border_color: tuple[int, int, int] = (243, 195, 62)
+    border_color: tuple[int, ...] = (243, 195, 62)
 
     def __len__(self) -> int:
         """Returns the length of the template without the placeholders
