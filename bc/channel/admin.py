@@ -1,4 +1,6 @@
+from django import forms
 from django.contrib import admin
+from django.forms.widgets import TextInput
 
 from .models import Channel, Group
 
@@ -26,10 +28,20 @@ class ChannelInline(admin.TabularInline):
         return False
 
 
+class GroupAdminForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = "__all__"
+        widgets = {
+            "border_color": TextInput(attrs={"type": "color"}),
+        }
+
+
 class GroupAdmin(admin.ModelAdmin):
     inlines = (ChannelInline,)
     exclude = ["sponsorships"]
     prepopulated_fields = {"slug": ["name"]}
+    form = GroupAdminForm
 
 
 admin.site.register(Channel, ChannelAdmin)
