@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     "hcaptcha",
     "tailwind",
     "django_htmx",
-    "spectrum",
 ]
 
 if DEVELOPMENT:
