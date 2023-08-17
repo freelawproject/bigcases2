@@ -59,7 +59,7 @@ def enqueue_posts_for_new_case(
         )
 
         if channel.group:
-            template.border_color = channel.group.border_color.rgb
+            template.border_color = channel.group.border_color_rgb
 
         message, _ = template.format(
             docket=subscription.name_with_summary,
@@ -356,7 +356,7 @@ def make_post_for_webhook_event(
     )
 
     if channel.group:
-        template.border_color = channel.group.border_color.rgb
+        template.border_color = channel.group.border_color_rgb
 
     message, image = template.format(
         docket=filing_webhook_event.subscription.name_with_summary,
