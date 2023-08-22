@@ -18,9 +18,15 @@
     message (typically something like, "This update sponsored by Acme Law, Inc.").
   </p>
   <p>To sponsor the Bot, please get in touch and we'll go over the details.</p>
-  <p class="tracking-[.8px] font-medium max-w-[135px]">
-    {% include 'includes/action-button.html' with link="https://free.law/contact/" text='Contact Us' size="sm" color='saffron' %}
-  </p>
+  <div class="flex items-center justify-center tracking-[.8px] font-medium ">
+    <div class="max-w-fit pr-4">
+      {% include 'includes/action-button.html' with link="https://free.law/contact/" text='Contact Us' size="sm" color='saffron' %}
+    </div>
+    <div class="max-w-fit">
+      {% include 'includes/action-button.html' with link="https://twitter.com/techcases_bot/status/1693714102382886951" text='See an Example' size="sm" color='saffron' %}
+    </div>
+
+  </div>
 
   {% if current_sponsors %}
   <h2>Current sponsors</h2>
