@@ -55,7 +55,7 @@ def get_sponsored_groups_per_subscription(
     subscription_pk: int,
 ) -> QuerySet[Group]:
     """
-    Returns the set of channel groups that has an active sponsorship and
+    Returns the set of channel groups that has been sponsored and
     are related to the given subscription.
 
     Args:
@@ -70,7 +70,7 @@ def get_sponsored_groups_per_subscription(
             sponsorships__isnull=False,
         )
         .prefetch_related(
-            Prefetch(  # retrieve only Groups related to the subscription
+            Prefetch(  # retrieve only active sponsorships
                 "sponsorships",
                 queryset=Sponsorship.objects.filter(
                     current_amount__gte=3.00

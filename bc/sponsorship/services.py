@@ -19,12 +19,13 @@ def log_purchase(
     webhook event and the subscription record.
 
     Args:
-        sponsored_groups (Sponsorship): Set of channels groups with available sponsorships.
+        sponsored_groups (Sponsorship): Set of sponsored channels groups following the case.
         subscription_pk (int): PK of the subscription record related to the document.
         document (Document): Document instance that stores data of the file that was bought.
     """
+    # Gets the ids of the active sponsorships from each sponsor group.
     sponsorship_ids: list[int] = [
-        group.sponsorships.first().pk for group in sponsored_groups if group.sponsorships  # type: ignore
+        group.sponsorships.first().pk for group in sponsored_groups if group.sponsorships.count()  # type: ignore
     ]
     sponsorships = get_sponsorships_for_subscription(
         sponsorship_ids, subscription_pk
