@@ -37,33 +37,15 @@ RUN python -m venv $POETRY_HOME && \
     ln -s $POETRY_HOME/bin/poetry "$(dirname $(which python))/poetry"  # make accessible via $PATH
 
 
-FROM build-base as build-dev
+ARG BUILD_ENV=prod
+FROM build-base as python-base
 
 WORKDIR $PYSETUP_PATH
 
-COPY poetry.lock ./
-COPY pyproject.toml ./
-RUN poetry install
+COPY poetry.lock pyproject.toml ./
+RUN poetry install --no-root $(test "$BUILD_ENV" != "dev" && echo "--without dev")
 
 COPY . /opt/bigcases2
-
-
-FROM build-base as build-prod
-
-WORKDIR $PYSETUP_PATH
-
-# copy project requirement files here to ensure they will be cached.
-COPY poetry.lock ./
-COPY pyproject.toml ./
-
-# install runtime deps
-RUN poetry install --no-root
-
-COPY . /opt/bigcases2
-
-
-# `python-base` sets up all our shared environment variables
-FROM build-${BUILD_ENV} as python-base
 
 WORKDIR /opt
 
