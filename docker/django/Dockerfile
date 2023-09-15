@@ -82,17 +82,20 @@ WORKDIR /opt/bigcases2
 # freelawproject/bigcases2:latest-rq
 FROM python-base as rq
 
+USER www-data
 CMD python manage.py rqworker --with-scheduler
 
 # freelawproject/bigcases2:latest-tailwind-reload-dev
 FROM python-base as tailwind-reload-dev
 
+USER www-data
 CMD python /opt/bigcases2/manage.py tailwind install --no-input  && \
     python /opt/bigcases2/manage.py tailwind start --no-input
 
 #freelawproject/bigcases2:latest-web-dev
 FROM python-base as web-dev
 
+USER www-data
 CMD python /opt/bigcases2/manage.py migrate  && \
     python /opt/bigcases2/manage.py runserver 0.0.0.0:8000
 
@@ -101,6 +104,7 @@ WORKDIR /opt/bigcases2
 #freelawproject/bigcases2:latest-web-prod
 FROM python-base as web-prod
 
+USER www-data
 CMD python /opt/bigcases2/manage.py migrate && \
     gunicorn wsgi:application \
     --chdir /opt/bigcases2/docker/django/wsgi-configs/ \
