@@ -53,18 +53,13 @@ FROM build-base as build-prod
 WORKDIR $PYSETUP_PATH
 
 # copy project requirement files here to ensure they will be cached.
-ADD https://raw.githubusercontent.com/freelawproject/bigcases2/main/poetry.lock /opt/poetry.lock
-ADD https://raw.githubusercontent.com/freelawproject/bigcases2/main/pyproject.toml /opt/pyproject.toml
+COPY poetry.lock ./
+COPY pyproject.toml ./
 
 # install runtime deps
 RUN poetry install --no-root
 
-
-ADD https://github.com/freelawproject/bigcases2/archive/main.tar.gz /opt/bigcases2.tar.gz
-WORKDIR /opt
-RUN tar xvfz bigcases2.tar.gz && \
-    mv /opt/bigcases2-main /opt/bigcases2 && \
-    rm -r /opt/bigcases2.tar.gz
+COPY . /opt/bigcases2
 
 
 # `python-base` sets up all our shared environment variables
