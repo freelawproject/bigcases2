@@ -35,7 +35,6 @@ services:
 
   bc2-rq:
     container_name: bc2-rq
-    image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bigcases2:latest-rq-dev}
     build:
       dockerfile: docker/django/Dockerfile
       context: ../../
@@ -55,7 +54,6 @@ services:
 
   bc2-tailwind-reload:
     container_name: bc2-tailwind-reload
-    image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bigcases2:latest-tailwind-reload}
     build:
       dockerfile: docker/django/Dockerfile
       context: ../../
@@ -72,7 +70,6 @@ services:
 
   bc2-django:
     container_name: bc2-django
-    image: ${DJANGO_DOCKER_IMAGE:-freelawproject/bigcases2:latest-web-dev}
     build:
       dockerfile: docker/django/Dockerfile
       context: ../../
