@@ -37,38 +37,15 @@ RUN python -m venv $POETRY_HOME && \
     ln -s $POETRY_HOME/bin/poetry "$(dirname $(which python))/poetry"  # make accessible via $PATH
 
 
-FROM build-base as build-dev
+ARG BUILD_ENV=prod
+FROM build-base as python-base
 
 WORKDIR $PYSETUP_PATH
 
-COPY poetry.lock ./
-COPY pyproject.toml ./
-RUN poetry install
+COPY poetry.lock pyproject.toml ./
+RUN poetry install --no-root $(test "$BUILD_ENV" != "dev" && echo "--without dev")
 
 COPY . /opt/bigcases2
-
-
-FROM build-base as build-prod
-
-WORKDIR $PYSETUP_PATH
-
-# copy project requirement files here to ensure they will be cached.
-ADD https://raw.githubusercontent.com/freelawproject/bigcases2/main/poetry.lock /opt/poetry.lock
-ADD https://raw.githubusercontent.com/freelawproject/bigcases2/main/pyproject.toml /opt/pyproject.toml
-
-# install runtime deps
-RUN poetry install --no-root
-
-
-ADD https://github.com/freelawproject/bigcases2/archive/main.tar.gz /opt/bigcases2.tar.gz
-WORKDIR /opt
-RUN tar xvfz bigcases2.tar.gz && \
-    mv /opt/bigcases2-main /opt/bigcases2 && \
-    rm -r /opt/bigcases2.tar.gz
-
-
-# `python-base` sets up all our shared environment variables
-FROM build-${BUILD_ENV} as python-base
 
 WORKDIR /opt
 
