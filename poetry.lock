@@ -24,13 +24,13 @@ files = [
 
 [[package]]
 name = "art"
-version = "6.0"
+version = "6.1"
 description = "ASCII Art Library For Python"
 optional = false
 python-versions = ">=3.5"
 files = [
-    {file = "art-6.0-py3-none-any.whl", hash = "sha256:882e6b5a4c6045c6dace31147c0b8522c8ca70177a5922f172733d116123a187"},
-    {file = "art-6.0.tar.gz", hash = "sha256:884ef1c10e900387cce97789e8668125720cbf4459206641b91fc298c859cda9"},
+    {file = "art-6.1-py3-none-any.whl", hash = "sha256:159819c418001467f8d79616fa0814277deac97c8a363d1eb3e7c0a31526bfc3"},
+    {file = "art-6.1.tar.gz", hash = "sha256:6ab3031e3b7710039e73497b0e750cadfe04d4c1279ce3a123500dbafb9e1b64"},
 ]
 
 [package.extras]
@@ -1916,7 +1916,7 @@ files = [
 
 [package.dependencies]
 requests = "*"
-requests-oauthlib = "*"
+requests_oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -2153,4 +2153,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ad68126814650489517a02a4dcfedca377808b0293051c12078b794be97d1e21"
+content-hash = "5c055419965179104eea0230215c47040b59e9eb219b69a60e021d9470f15bd5"
