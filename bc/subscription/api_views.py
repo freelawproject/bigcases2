@@ -116,6 +116,11 @@ def handle_recap_fetch_webhook(request: Request) -> Response:
         webhook_record = FilingWebhookEvent.objects.get(
             doc_id=data["payload"]["recap_document"]
         )
+    except FilingWebhookEvent.MultipleObjectsReturned:
+        # we have received the same docket entry in different webhooks
+        webhook_record = FilingWebhookEvent.objects.filter(  # type: ignore
+            doc_id=data["payload"]["recap_document"]
+        ).first()
     except FilingWebhookEvent.DoesNotExist:
         # if we dont have a filing webhook related to the document, It must be an initial complaint
         webhook_record = Subscription.objects.get(
