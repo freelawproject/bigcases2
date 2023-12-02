@@ -64,9 +64,11 @@ class Channel(AbstractDateTimeModel):
 
     TWITTER = 1
     MASTODON = 2
+    BLUESKY = 3
     CHANNELS = (
         (TWITTER, "Twitter"),
         (MASTODON, "Mastodon"),
+        (BLUESKY, "Bluesky"),
     )
     service = models.PositiveSmallIntegerField(
         help_text="Type of the service",
@@ -148,7 +150,7 @@ class Post(AbstractDateTimeModel):
     channel = models.ForeignKey(
         "Channel", related_name="posts", on_delete=models.CASCADE
     )
-    object_id = models.PositiveBigIntegerField(
+    object_id = models.CharField(
         help_text="The object's id returned by Twitter/Mastodon/etc's API",
     )
     text = models.TextField(
