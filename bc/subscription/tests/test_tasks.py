@@ -210,8 +210,8 @@ class MakePostForWebhookEventTest(TestCase):
         cls.bin_object = b"\x68\x65\x6c\x6c\x6f"
 
     def setUp(self) -> None:
-        self.status_id = faker.pyint(
-            min_value=100_000_000, max_value=900_000_000
+        self.status_id = str(
+            faker.pyint(min_value=100_000_000, max_value=900_000_000)
         )
 
     def mock_api_wrapper(self, status_id):
