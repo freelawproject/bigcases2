@@ -7,6 +7,7 @@ from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
 from .utils.connectors.base import BaseAPIConnector
+from .utils.connectors.bluesky import BlueskyConnector
 from .utils.connectors.masto import (
     MastodonConnector,
     get_server_url,
@@ -117,6 +118,8 @@ class Channel(AbstractDateTimeModel):
                 return MastodonConnector(
                     self.access_token, get_server_url(self.account)
                 )
+            case self.BLUESKY:
+                return BlueskyConnector(self.account_id, self.access_token)
             case _:
                 raise NotImplementedError(
                     f"No wrapper implemented for service: '{self.service}'."

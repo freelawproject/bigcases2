@@ -5,7 +5,9 @@ from TwitterAPI import TwitterAPI
 
 from bc.core.utils.images import TextImage
 
-ApiWrapper = Union[Mastodon, TwitterAPI]
+from .bluesky_api.client import BlueskyAPI
+
+ApiWrapper = Union[Mastodon, TwitterAPI, BlueskyAPI]
 
 
 class BaseAPIConnector(Protocol):
