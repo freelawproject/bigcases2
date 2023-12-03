@@ -5,9 +5,9 @@ from TwitterAPI import TwitterAPI
 
 from bc.core.utils.images import TextImage
 
-from .bluesky_api.client import BlueskyAPI
+from .bluesky_api.types import ImageBlob
 
-ApiWrapper = Union[Mastodon, TwitterAPI, BlueskyAPI]
+ApiWrapper = Union[Mastodon, TwitterAPI]
 
 
 class BaseAPIConnector(Protocol):
@@ -27,7 +27,7 @@ class BaseAPIConnector(Protocol):
         """
         ...
 
-    def upload_media(self, media: bytes, alt_text: str) -> int:
+    def upload_media(self, media: bytes, alt_text: str) -> int | ImageBlob:
         """
         creates a media attachment to be used with a new status.
 
@@ -49,7 +49,7 @@ class BaseAPIConnector(Protocol):
         message: str,
         text_image: TextImage | None = None,
         thumbnails: list[bytes] | None = None,
-    ) -> int:
+    ) -> int | str:
         """
         Creates a new status using the API wrapper object and returns the integer
         representation of the identifier for the new status.
