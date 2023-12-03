@@ -1,6 +1,10 @@
 from bc.channel.models import Channel
 
 from .templates import (
+    BLUESKY_FOLLOW_A_NEW_CASE,
+    BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE,
+    BLUESKY_MINUTE_TEMPLATE,
+    BLUESKY_POST_TEMPLATE,
     MASTODON_FOLLOW_A_NEW_CASE,
     MASTODON_FOLLOW_A_NEW_CASE_W_ARTICLE,
     MASTODON_MINUTE_TEMPLATE,
@@ -43,6 +47,12 @@ def get_template_for_channel(
                 if document_number
                 else MASTODON_MINUTE_TEMPLATE
             )
+        case Channel.BLUESKY:
+            return (
+                BLUESKY_POST_TEMPLATE
+                if document_number
+                else BLUESKY_MINUTE_TEMPLATE
+            )
         case _:
             raise NotImplementedError(
                 f"No wrapper implemented for service: '{service}'."
@@ -76,6 +86,12 @@ def get_new_case_template(
                 MASTODON_FOLLOW_A_NEW_CASE_W_ARTICLE
                 if article_url
                 else MASTODON_FOLLOW_A_NEW_CASE
+            )
+        case Channel.BLUESKY:
+            return (
+                BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE
+                if article_url
+                else BLUESKY_FOLLOW_A_NEW_CASE
             )
         case _:
             raise NotImplementedError(
