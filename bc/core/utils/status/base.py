@@ -110,3 +110,27 @@ class TwitterTemplate(BaseTemplate):
         They count as 23 characters.
         """
         return 23 * len(self.link_placeholders) + self.count_fixed_characters()
+
+
+@dataclass
+class BlueskyTemplate(BaseTemplate):
+    max_characters: int = 300
+
+    def __len__(self) -> int:
+        return self.count_fixed_characters()
+
+    def _available_space(self, *args, **kwargs) -> int:
+        """This method overrides `Template._available_space`.
+
+        Bluesky don't use a fixed length for links like mastodon or
+        Twitter/X.
+        """
+        placeholder_characters = sum(
+            [
+                len(str(val))
+                for key, val in kwargs.items()
+                if key != "description"
+            ]
+        )
+
+        return self.max_characters - len(self) - placeholder_characters
