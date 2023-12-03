@@ -3,7 +3,14 @@ from datetime import datetime, timezone
 
 import requests
 
-from .types import ImageBlob, RegexMatch, Session, TextAnnotation, Thumbnail
+from .types import (
+    ImageBlob,
+    Record,
+    RegexMatch,
+    Session,
+    TextAnnotation,
+    Thumbnail,
+)
 
 _BASE_API_URL = "https://bsky.social/xrpc"
 _DEFAULT_CONTENT_TYPE = "application/json"
@@ -121,21 +128,21 @@ class BlueskyAPI:
             the text, along with its type.
         """
         facets = []
+        annotation: TextAnnotation
         for u in self._parse_urls(text):
-            facets.append(
-                {
-                    "index": {
-                        "byteStart": u.start,
-                        "byteEnd": u.end,
-                    },
-                    "features": [
-                        {
-                            "$type": "app.bsky.richtext.facet#link",
-                            "uri": u.text,
-                        }
-                    ],
-                }
-            )
+            annotation = {
+                "index": {
+                    "byteStart": u.start,
+                    "byteEnd": u.end,
+                },
+                "features": [
+                    {
+                        "$type": "app.bsky.richtext.facet#link",
+                        "uri": u.text,
+                    }
+                ],
+            }
+            facets.append(annotation)
         return facets
 
     def post_status(self, text: str, media: list[Thumbnail]) -> dict[str, str]:
@@ -151,7 +158,7 @@ class BlueskyAPI:
         """
         # Fetch the current time
         now = self.get_current_time_iso()
-        message_object = {
+        message_object: Record = {
             "$type": "app.bsky.feed.post",
             "text": text,
             "facets": self._parse_text_facets(text),

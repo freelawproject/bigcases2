@@ -39,7 +39,7 @@ ImageBlob = TypedDict(
 
 
 class Thumbnail(TypedDict):
-    alt_text: str
+    alt: str
     image: ImageBlob
 
 

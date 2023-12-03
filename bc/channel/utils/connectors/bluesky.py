@@ -3,7 +3,7 @@ from bc.core.utils.images import TextImage
 from .alt_text_utils import text_image_alt_text, thumb_num_alt_text
 from .base import ApiWrapper
 from .bluesky_api.client import BlueskyAPI
-from .bluesky_api.types import ImageBlob
+from .bluesky_api.types import ImageBlob, Thumbnail
 
 
 class BlueskyConnector:
@@ -26,7 +26,7 @@ class BlueskyConnector:
         thumbnails: list[bytes] | None = None,
     ) -> str:
         """Send post with attached image."""
-        media = []
+        media: list[Thumbnail] = []
         if text_image:
             blob = self.upload_media(text_image.to_bytes(), None)
             media.append(
