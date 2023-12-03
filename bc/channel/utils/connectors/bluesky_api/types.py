@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Literal, TypedDict
+from typing import Literal, NotRequired, TypedDict
 
 
 @dataclass
@@ -25,14 +25,27 @@ class ByteSlice(TypedDict):
     byteEnd: int
 
 
+ImageBlobRef = TypedDict("ImageBlobRef", {"$link": str})
+
 ImageBlob = TypedDict(
     "ImageBlob",
     {
         "$type": Literal["blob"],
         "mimeType": str,
         "size": int,
-        "ref": TypedDict("ref", {"$link": str}),
+        "ref": ImageBlobRef,
     },
+)
+
+
+class Thumbnail(TypedDict):
+    alt_text: str
+    image: ImageBlob
+
+
+ImageEmbed = TypedDict(
+    "ImageEmbed",
+    {"$type": Literal["app.bsky.embed.images"], "images": list[Thumbnail]},
 )
 
 LinkFacet = TypedDict(
@@ -45,6 +58,13 @@ class TextAnnotation(TypedDict):
     features: list[LinkFacet]
 
 
-class Thumbnail(TypedDict):
-    alt_text: str
-    image: ImageBlob
+Record = TypedDict(
+    "Record",
+    {
+        "$type": Literal["app.bsky.feed.post"],
+        "text": str,
+        "facets": list[TextAnnotation],
+        "createdAt": str,
+        "embed": NotRequired[ImageEmbed],
+    },
+)
