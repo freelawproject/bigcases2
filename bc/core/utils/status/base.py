@@ -5,6 +5,10 @@ from bc.core.utils.string_utils import trunc
 from ..images import TextImage
 
 
+class InvalidTemplate(Exception):
+    pass
+
+
 class AlwaysBlankValueDict(dict):
     """Just return blank, regardless of the key"""
 
@@ -18,6 +22,7 @@ class BaseTemplate:
     link_placeholders: list[str]
     max_characters: int
     border_color: tuple[int, ...] = (243, 195, 62)
+    is_valid: bool = True
 
     def __len__(self) -> int:
         """Returns the length of the template without the placeholders
@@ -74,7 +79,11 @@ class BaseTemplate:
                     "…\n\n[full entry below 👇]",
                 )
 
-        return self.str_template.format(**kwargs), image
+        text = self.str_template.format(**kwargs)
+
+        self.is_valid = len(text) <= self.max_characters
+
+        return text, image
 
 
 @dataclass
