@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 
 from bc.core.utils.string_utils import trunc
@@ -61,6 +62,18 @@ class BaseTemplate:
 
         return self.max_characters - len(self) - placeholder_characters
 
+    def _check_output_validity(self, text: str) -> bool:
+        """
+        Checks whether the provided text exceeds the maximum allowed length.
+
+        Args:
+            text (str): The text to be evaluated.
+
+        Returns:
+            bool: True if the text length is within the limit, False otherwise.
+        """
+        return len(text) <= self.max_characters
+
     def format(self, *args, **kwargs) -> tuple[str, TextImage | None]:
         image = None
 
@@ -81,7 +94,7 @@ class BaseTemplate:
 
         text = self.str_template.format(**kwargs)
 
-        self.is_valid = len(text) <= self.max_characters
+        self.is_valid = self._check_output_validity(text)
 
         return text, image
 
@@ -116,8 +129,14 @@ class TwitterTemplate(BaseTemplate):
 class BlueskyTemplate(BaseTemplate):
     max_characters: int = 300
 
-    def __len__(self) -> int:
-        return self.count_fixed_characters()
+    def _check_output_validity(self, text: str) -> bool:
+        """This method overrides `Template._check_output_validity`.
+
+        Strips links from the output text since they form part of the custom
+        markup language.
+        """
+        cleaned_text = re.sub(r"(?<=])\(\S+\)", "", text)
+        return len(cleaned_text) <= self.max_characters
 
     def _available_space(self, *args, **kwargs) -> int:
         """This method overrides `Template._available_space`.
