@@ -111,7 +111,7 @@ Context: {article_url}
 )
 
 
-BLUESKY_FOLLOW_A_NEW_CASE = TwitterTemplate(
+BLUESKY_FOLLOW_A_NEW_CASE = BlueskyTemplate(
     link_placeholders=[],
     str_template="""I'm now following {docket}:
 
@@ -120,7 +120,7 @@ BLUESKY_FOLLOW_A_NEW_CASE = TwitterTemplate(
 #CL{docket_id}""",
 )
 
-BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE = TwitterTemplate(
+BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE = BlueskyTemplate(
     link_placeholders=["article_url"],
     str_template="""I'm now following {docket}:
 
@@ -131,7 +131,7 @@ Context: {article_url}
 #CL{docket_id}""",
 )
 
-BLUESKY_POST_TEMPLATE = TwitterTemplate(
+BLUESKY_POST_TEMPLATE = BlueskyTemplate(
     link_placeholders=["pdf_link"],
     str_template="""New filing: "{docket}"
 Doc #{doc_num}: {description}
@@ -141,7 +141,7 @@ PDF: {pdf_link}
 #CL{docket_id}""",
 )
 
-BLUESKY_MINUTE_TEMPLATE = TwitterTemplate(
+BLUESKY_MINUTE_TEMPLATE = BlueskyTemplate(
     link_placeholders=["docket_link"],
     str_template="""New minute entry in {docket}: {description}
 
