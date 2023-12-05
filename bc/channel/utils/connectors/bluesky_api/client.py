@@ -109,6 +109,68 @@ class BlueskyAPI:
             )
         return spans
 
+    def _parse_embedded_links(self, text: str) -> list[RegexMatch]:
+        """
+        Parses embedded links from text.
+
+        This helper method attempts to identify and return all occurrences of
+        link markup in the provided text. If no occurrences are found, an empty
+        list is returned.
+
+        Args:
+            text (str): The text to parse.
+
+        Returns:
+            list[RegexMatch]: List of matches.
+        """
+        spans = []
+        # Matches anything that isn't a square closing bracket
+        name_regex = "[^]]+"
+        # Matches http:// or https:// followed by anything but a closing parenthesis
+        url_regex = "http[s]?://[^)]+"
+        # Combined regex expression with named groups.
+        markup_regex = (
+            rf"(?P<name>\[{name_regex}])(?P<uri>\(\s*{url_regex}\s*\))"
+        ).encode()
+        text_bytes = text.encode("UTF-8")
+        offset = 0
+        for m in re.finditer(markup_regex, text_bytes):
+            # Remove parenthesis and whitespaces from the uri
+            cleaned_uri = re.sub(
+                r"\(\s*|\s*\)", "", m.group("uri").decode("UTF-8")
+            )
+            # We need the offset variable to fine-tune the target word's
+            # position and ensure the link is created in the right spot
+            # because We run the regex on the full text with links, but
+            # only post the cleaned-up version without them
+            spans.append(
+                RegexMatch(
+                    start=m.start("name") - offset,
+                    end=m.end("name") - offset,
+                    text=cleaned_uri,
+                )
+            )
+            offset += len(m.group("uri"))
+        return spans
+
+    def _clean_text(sef, text: str) -> str:
+        """
+        Removes all link markup notations from a given text, leaving only the
+        plain text content.
+
+        This helper function specifically targets the markup used for embedding
+        hyperlinks within the provided text. It aims to strip away all URLs
+        associated with links, leaving behind the raw textual information.
+
+        Args:
+            text (str): the text to be cleansed of link markup.
+
+        Returns:
+            str: string containing the original text with all link markup
+            notations removed.
+        """
+        return re.sub(r"(?<=])\(\S+\)", "", text)
+
     def _parse_text_facets(self, text) -> list[TextAnnotation]:
         """
         Parses text and extracts text annotations (e.g., links and mentions)
@@ -129,6 +191,22 @@ class BlueskyAPI:
         """
         facets = []
         annotation: TextAnnotation
+        for u in self._parse_embedded_links(text):
+            annotation = {
+                "index": {
+                    "byteStart": u.start,
+                    "byteEnd": u.end,
+                },
+                "features": [
+                    {
+                        "$type": "app.bsky.richtext.facet#link",
+                        "uri": u.text,
+                    }
+                ],
+            }
+            facets.append(annotation)
+
+        text = self._clean_text(text)
         for u in self._parse_urls(text):
             annotation = {
                 "index": {
@@ -156,11 +234,10 @@ class BlueskyAPI:
         Returns:
             dict[str, str]: Response including the cid and the uri of the record.
         """
-        # Fetch the current time
         now = self.get_current_time_iso()
         message_object: Record = {
             "$type": "app.bsky.feed.post",
-            "text": text,
+            "text": self._clean_text(text),
             "facets": self._parse_text_facets(text),
             "createdAt": now,
         }
