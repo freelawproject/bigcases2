@@ -122,8 +122,7 @@ class BlueskyTemplate(BaseTemplate):
     def _available_space(self, *args, **kwargs) -> int:
         """This method overrides `Template._available_space`.
 
-        Bluesky don't use a fixed length for links like mastodon or
-        Twitter/X.
+        Bluesky doesn't use a fixed length for links like mastodon or Twitter/X
         """
         placeholder_characters = sum(
             [
