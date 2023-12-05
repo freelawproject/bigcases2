@@ -112,31 +112,29 @@ Context: {article_url}
 
 
 BLUESKY_FOLLOW_A_NEW_CASE = BlueskyTemplate(
-    link_placeholders=[],
+    link_placeholders=["docket_link"],
     str_template="""I'm now following {docket}:
 
-{docket_link}
+[Docket]({docket_link})
 
 #CL{docket_id}""",
 )
 
 BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE = BlueskyTemplate(
-    link_placeholders=["article_url"],
+    link_placeholders=["docket_link", "article_url"],
     str_template="""I'm now following {docket}:
 
-Docket: {docket_link}
-
-Context: {article_url}
+[Docket]({docket_link}) | [Article Link]({article_url})
 
 #CL{docket_id}""",
 )
 
 BLUESKY_POST_TEMPLATE = BlueskyTemplate(
-    link_placeholders=["pdf_link"],
+    link_placeholders=["pdf_link", "docket_link"],
     str_template="""New filing: "{docket}"
 Doc #{doc_num}: {description}
 
-PDF: {pdf_link}
+[Download PDF]({pdf_link}) | [View Docket]({docket_link})
 
 #CL{docket_id}""",
 )
@@ -145,7 +143,7 @@ BLUESKY_MINUTE_TEMPLATE = BlueskyTemplate(
     link_placeholders=["docket_link"],
     str_template="""New minute entry in {docket}: {description}
 
-Docket: {docket_link}
+[View Docket]({docket_link})
 
 #CL{docket_id}""",
 )
