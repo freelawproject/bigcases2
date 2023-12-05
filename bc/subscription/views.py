@@ -117,7 +117,7 @@ class AddCaseView(LoginRequiredMixin, View):
                     "The combination of name, summary and article URL exceeds "
                     f"the maximum character limit for {channel.get_service_display()} "
                     "posts. Please try reducing the number of characters in the inputs."
-                    "You can use abbreviations, or remove unnecessary words. Once you "
+                    "You can use abbreviations or remove unnecessary words. Once you "
                     "have made these changes, resubmit the form."
                 ),
             }
