@@ -242,7 +242,7 @@ class BlueskyAPI:
             the Bluesky post social card
         """
         try:
-            resp = requests.get(url)
+            resp = requests.get(url, timeout=self._timeout)
             resp.raise_for_status()
         except HTTPError:
             return None
@@ -262,7 +262,7 @@ class BlueskyAPI:
         mime_type = mime_tag["content"] if mime_tag else "image/png"
         img_url = urljoin(url, image_tag["content"])
         try:
-            resp = requests.get(img_url)
+            resp = requests.get(img_url, timeout=self._timeout)
             resp.raise_for_status()
         except HTTPError:
             return None
