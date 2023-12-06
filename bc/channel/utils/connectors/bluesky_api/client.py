@@ -1,13 +1,17 @@
 import re
 from datetime import datetime, timezone
+from urllib.parse import urljoin
 
 import requests
+from bs4 import BeautifulSoup
+from requests import HTTPError
 
 from .types import (
     ImageBlob,
     Record,
     RegexMatch,
     Session,
+    SocialCard,
     TextAnnotation,
     Thumbnail,
 )
@@ -223,6 +227,56 @@ class BlueskyAPI:
             facets.append(annotation)
         return facets
 
+    def fetch_embed_url_card(self, url: str) -> SocialCard | None:
+        """
+        Fetches metadata from a given URL to add the rendered preview in a post
+
+        This method uses the Open Graph protocol to extract metadata from the
+        provided url and build a rich social card for a Bluesky post.
+
+        Args:
+            url (str): The URL to fetch the social card information from.
+
+        Returns:
+            SocialCard (optional): A dictionary containing the keys for building
+            the Bluesky post social card
+        """
+        try:
+            resp = requests.get(url)
+            resp.raise_for_status()
+        except HTTPError:
+            return None
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+
+        # parse out the "og:title" and "og:description" HTML meta tags
+        title_tag = soup.find("meta", property="og:title")
+        description_tag = soup.find("meta", property="og:description")
+
+        # if there is an "og:image" HTML meta tag, fetch and upload that image
+        image_tag = soup.find("meta", property="og:image")
+        if not image_tag:
+            return None
+
+        mime_tag = soup.find("meta", property="og:image:type")
+        mime_type = mime_tag["content"] if mime_tag else "image/png"
+        img_url = urljoin(url, image_tag["content"])
+        try:
+            resp = requests.get(img_url)
+            resp.raise_for_status()
+        except HTTPError:
+            return None
+
+        thumbnail = self.post_media(resp.content, mime_type)
+        return {
+            "uri": url,
+            "title": title_tag["content"] if title_tag else "",
+            "description": description_tag["content"]
+            if description_tag
+            else "",
+            "thumb": thumbnail,
+        }
+
     def post_status(self, text: str, media: list[Thumbnail]) -> dict[str, str]:
         """
         Creates a new status post on Bluesky using the provided text and thumbnails.
@@ -247,6 +301,15 @@ class BlueskyAPI:
                 "$type": "app.bsky.embed.images",
                 "images": media,
             }
+        elif message_object["facets"]:
+            card = self.fetch_embed_url_card(
+                message_object["facets"][-1]["features"][0]["uri"]
+            )
+            if card:
+                message_object["embed"] = {
+                    "$type": "app.bsky.embed.external",
+                    "external": card,
+                }
 
         response = requests.post(
             f"{_BASE_API_URL}/com.atproto.repo.createRecord",

@@ -48,6 +48,19 @@ ImageEmbed = TypedDict(
     {"$type": Literal["app.bsky.embed.images"], "images": list[Thumbnail]},
 )
 
+
+class SocialCard(TypedDict):
+    uri: str
+    title: str
+    description: str
+    thumb: ImageBlob
+
+
+ExternalEmbed = TypedDict(
+    "ExternalEmbed",
+    {"$type": Literal["app.bsky.embed.external"], "external": SocialCard},
+)
+
 LinkFacet = TypedDict(
     "LinkFacet", {"$type": Literal["app.bsky.richtext.facet#link"], "uri": str}
 )
@@ -65,6 +78,6 @@ Record = TypedDict(
         "text": str,
         "facets": list[TextAnnotation],
         "createdAt": str,
-        "embed": NotRequired[ImageEmbed],
+        "embed": NotRequired[ImageEmbed | ExternalEmbed],
     },
 )
