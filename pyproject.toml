@@ -55,6 +55,7 @@ factory-boy = "^3.3.0"
 faker = "^19.3.1"
 disposable-email-domains = "^0.0.90"
 django-hcaptcha = "^0.2.0"
+beautifulsoup4 = "^4.12.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
