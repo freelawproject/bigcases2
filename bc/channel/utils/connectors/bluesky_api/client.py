@@ -242,7 +242,11 @@ class BlueskyAPI:
             the Bluesky post social card
         """
         try:
-            resp = requests.get(url, timeout=self._timeout)
+            resp = requests.get(
+                url,
+                headers={"User-Agent": "bots.law"},
+                timeout=self._timeout,
+            )
             resp.raise_for_status()
         except HTTPError:
             return None
