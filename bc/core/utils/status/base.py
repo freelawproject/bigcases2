@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+from string import Formatter
 
 from bc.core.utils.string_utils import trunc
 
@@ -54,9 +55,11 @@ class BaseTemplate:
 
         placeholder_characters = sum(
             [
-                len(str(val))
-                for key, val in kwargs.items()
-                if key not in excluded
+                len(str(kwargs.get(field_name)))
+                for text, field_name, *_ in Formatter().parse(
+                    self.str_template
+                )
+                if field_name and field_name not in excluded
             ]
         )
 
@@ -137,18 +140,3 @@ class BlueskyTemplate(BaseTemplate):
         """
         cleaned_text = re.sub(r"(?<=])\(\S+\)", "", text)
         return len(cleaned_text) <= self.max_characters
-
-    def _available_space(self, *args, **kwargs) -> int:
-        """This method overrides `Template._available_space`.
-
-        Bluesky doesn't use a fixed length for links like mastodon or Twitter/X
-        """
-        placeholder_characters = sum(
-            [
-                len(str(val))
-                for key, val in kwargs.items()
-                if key != "description"
-            ]
-        )
-
-        return self.max_characters - len(self) - placeholder_characters
