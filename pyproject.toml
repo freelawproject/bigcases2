@@ -28,7 +28,7 @@ art = "^6.0"
 requests = "^2.31.0"
 python-dotenv = "^1.0.0"
 "Mastodon.py" = {extras = ["cryptography"], version = "^1.8.0"}
-cryptography = "^41.0.3"
+cryptography = "^41.0.6"
 http-ece = "^1.1.0"
 psycopg2-binary = "^2.9.6"
 ansicolors = "^1.1.8"
