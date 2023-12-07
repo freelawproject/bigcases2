@@ -126,17 +126,20 @@ class Channel(AbstractDateTimeModel):
                 )
 
     def self_url(self):
-        if self.service == self.TWITTER:
-            return f"https://twitter.com/{self.account}"
-        elif self.service == self.MASTODON:
-            result = masto_regex.search(self.account)
-            assert len(result.groups()) == 2
-            account_part, instance_part = result.groups()
-            return f"https://{instance_part}/@{account_part}"
-        else:
-            raise NotImplementedError(
-                f"Channel.self_url() not yet implemented for service {self.service}"
-            )
+        match self.service:
+            case self.TWITTER:
+                return f"https://twitter.com/{self.account}"
+            case self.MASTODON:
+                result = masto_regex.search(self.account)
+                assert len(result.groups()) == 2
+                account_part, instance_part = result.groups()
+                return f"https://{instance_part}/@{account_part}"
+            case self.BLUESKY:
+                return f"https://bsky.app/profile/{self.account_id}"
+            case _:
+                raise NotImplementedError(
+                    f"Channel.self_url() not yet implemented for service {self.service}"
+                )
 
     def __str__(self) -> str:
         if self.account:
