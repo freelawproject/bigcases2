@@ -29,16 +29,19 @@ class BlueskyConnector:
         media: list[Thumbnail] = []
         if text_image:
             blob = self.upload_media(text_image.to_bytes(), None)
-            media.append(
-                {
-                    "alt": text_image_alt_text(text_image.description),
-                    "image": blob,
-                }
-            )
+            if blob:
+                media.append(
+                    {
+                        "alt": text_image_alt_text(text_image.description),
+                        "image": blob,
+                    }
+                )
 
         if thumbnails:
             for idx, thumbnail in enumerate(thumbnails):
                 blob = self.upload_media(thumbnail, None)
+                if not blob:
+                    continue
                 media.append(
                     {
                         "alt": thumb_num_alt_text(idx),
