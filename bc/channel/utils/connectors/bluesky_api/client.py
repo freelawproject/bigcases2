@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime, timezone
 from urllib.parse import urljoin
@@ -15,6 +16,8 @@ from .types import (
     TextAnnotation,
     Thumbnail,
 )
+
+logger = logging.getLogger(__name__)
 
 _BASE_API_URL = "https://bsky.social/xrpc"
 _DEFAULT_CONTENT_TYPE = "application/json"
@@ -50,7 +53,7 @@ class BlueskyAPI:
         )
         return Session(**response.json())
 
-    def post_media(self, media: bytes, mime_type: str) -> ImageBlob:
+    def post_media(self, media: bytes, mime_type: str) -> ImageBlob | None:
         """
         Upload bytes data (a "blob") using the given content type.
 
@@ -63,9 +66,10 @@ class BlueskyAPI:
         """
         # this size limit is specified in the app.bsky.embed.images lexicon
         if len(media) > 1000000:
-            raise Exception(
+            logger.error(
                 f"image file size too large. 1000000 bytes maximum, got: {len(media)}"
             )
+            return None
 
         resp = requests.post(
             f"{_BASE_API_URL}/com.atproto.repo.uploadBlob",
@@ -272,6 +276,9 @@ class BlueskyAPI:
             return None
 
         thumbnail = self.post_media(resp.content, mime_type)
+        if not thumbnail:
+            return None
+
         return {
             "uri": url,
             "title": title_tag["content"] if title_tag else "",
