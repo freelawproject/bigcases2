@@ -69,13 +69,20 @@ class BaseTemplate:
         """
         Checks whether the provided text exceeds the maximum allowed length.
 
+        Strips links from the output text since they use a fixed character
+        count.
+
         Args:
             text (str): The text to be evaluated.
 
         Returns:
             bool: True if the text length is within the limit, False otherwise.
         """
-        return len(text) <= self.max_characters
+        url_pattern = r"https?://\S+"
+        url_match = re.findall(url_pattern, text)
+        output = re.sub(url_pattern, "", text)
+
+        return len(output) + 23 * len(url_match) <= self.max_characters
 
     def format(self, *args, **kwargs) -> tuple[str, TextImage | None]:
         image = None
