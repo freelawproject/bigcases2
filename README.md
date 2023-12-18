@@ -56,7 +56,7 @@ It costs a lot to build and maintain this system and we need your support.
 [slack]: https://github.com/freelawproject/bigcases2/issues/10
 [teams]: https://github.com/freelawproject/bigcases2/issues/41
 [flp]: https://free.law/
-[flpd]: https://free.law/donate/
+[flpd]: https://donate.free.law/forms/supportflp
 [bcb1]: https://github.com/bdheath/Big-Cases
 [c]: https://free.law/contact/
 [litte]: https://github.com/freelawproject/bigcases2/issues/8
