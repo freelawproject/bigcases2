@@ -2,7 +2,156 @@ from textwrap import wrap
 
 from django.test import SimpleTestCase
 
-from bc.core.utils.status.templates import MastodonTemplate
+from bc.core.utils.status.templates import (
+    BLUESKY_FOLLOW_A_NEW_CASE,
+    BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE,
+    MASTODON_FOLLOW_A_NEW_CASE,
+    MASTODON_FOLLOW_A_NEW_CASE_W_ARTICLE,
+    TWITTER_FOLLOW_A_NEW_CASE,
+    TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE,
+    MastodonTemplate,
+)
+
+
+class NewSubscriptionValidTemplateTest(SimpleTestCase):
+    def setUp(self) -> None:
+        self.docket_url = "https://www.courtlistener.com/docket/68073028/01208579363/united-states-v-donald-trump/?redirect_or_modal=True"
+        self.article_url = "https://www.theverge.com/2023/9/11/23868870/internet-archive-hachette-open-library-copyright-lawsuit-appeal"
+        self.docket_id = "68073028"
+        return super().setUp()
+
+    def test_check_output_validity_mastodon_simple_template(self):
+        template = MASTODON_FOLLOW_A_NEW_CASE
+        valid_multipliers = [5, 10, 20, 40, 48]
+        for multiplier in valid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertTrue(template.is_valid)
+
+        invalid_multipliers = [50, 100]
+        for multiplier in invalid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertFalse(template.is_valid)
+
+    def test_check_output_validity_mastodon_template_w_article(self):
+        template = MASTODON_FOLLOW_A_NEW_CASE_W_ARTICLE
+        valid_multipliers = [5, 10, 20, 40]
+        for multiplier in valid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+
+            self.assertTrue(template.is_valid)
+
+        invalid_multipliers = [41, 50, 100]
+        for multiplier in invalid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertFalse(template.is_valid)
+
+    def test_check_output_validity_twitter_simple_template(self):
+        template = TWITTER_FOLLOW_A_NEW_CASE
+        valid_multipliers = [5, 10, 20, 40, 44]
+        for multiplier in valid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertTrue(template.is_valid)
+
+        invalid_multipliers = [45, 50, 100]
+        for multiplier in invalid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertFalse(template.is_valid)
+
+    def test_check_output_validity_twitter_template_w_article(self):
+        template = TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE
+        valid_multipliers = [5, 10, 20, 35]
+        for multiplier in valid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertTrue(template.is_valid)
+
+        invalid_multipliers = [37, 50, 100]
+        for multiplier in invalid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertFalse(template.is_valid)
+
+    def test_check_output_validity_bluesky_simple_template(self):
+        template = BLUESKY_FOLLOW_A_NEW_CASE
+        valid_multipliers = [5, 10, 20, 40, 50]
+        for multiplier in valid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertTrue(template.is_valid)
+
+        invalid_multipliers = [51, 100]
+        for multiplier in invalid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertFalse(template.is_valid)
+
+    def test_check_output_validity_bluesky_template_w_article(self):
+        template = BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE
+        valid_multipliers = [5, 10, 20, 40, 46]
+        for multiplier in valid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertTrue(template.is_valid)
+
+        invalid_multipliers = [47, 50, 100]
+        for multiplier in invalid_multipliers:
+            template.format(
+                docket=multiplier * "short",
+                docket_link=self.docket_url,
+                docket_id=self.docket_id,
+                article_url=self.article_url,
+            )
+            self.assertFalse(template.is_valid)
 
 
 class MastodonTemplateTest(SimpleTestCase):
