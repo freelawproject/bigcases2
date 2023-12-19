@@ -79,10 +79,11 @@ class BaseTemplate:
             bool: True if the text length is within the limit, False otherwise.
         """
         url_pattern = r"https?://\S+"
-        url_match = re.findall(url_pattern, text)
-        output = re.sub(url_pattern, "", text)
+        url_count = len(re.findall(url_pattern, text))
+        linkless_output = re.sub(url_pattern, "", text)
 
-        return len(output) + 23 * len(url_match) <= self.max_characters
+        # Twitter and Mastodon both count links as 23 chars at present
+        return len(linkless_output) + (23 * url_count) <= self.max_characters
 
     def format(self, *args, **kwargs) -> tuple[str, TextImage | None]:
         image = None
