@@ -667,6 +667,20 @@ files = [
 Django = ">=3.2"
 
 [[package]]
+name = "django-permissions-policy"
+version = "4.18.0"
+description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "django_permissions_policy-4.18.0-py3-none-any.whl", hash = "sha256:36aeb2ab7e694b8db5a60780c0325608014bbfd10df16cd51ef3b1522f922d23"},
+    {file = "django_permissions_policy-4.18.0.tar.gz", hash = "sha256:a6bfd94910f95c0b1c911dbeda6ad340902d3c9caac78d1c20c76f9a4b27929f"},
+]
+
+[package.dependencies]
+Django = ">=3.2"
+
+[[package]]
 name = "django-ratelimit"
 version = "4.1.0"
 description = "Cache-based rate-limiting for Django."
@@ -2192,4 +2206,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "91f3bba3b43bc541453570d8c1295b1f6bd88278adf70b9acc3fddb286104581"
+content-hash = "ed651085baeeb01f646578315c5305a12ec08badbe6476f4d136c48e4bcd205c"
