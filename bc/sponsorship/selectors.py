@@ -2,7 +2,7 @@ from django.db.models import Prefetch, QuerySet
 
 from bc.channel.models import Group
 
-from .models import Sponsorship
+from .models import Sponsorship, Transaction
 
 
 def get_sponsorships_for_subscription(
@@ -79,4 +79,23 @@ def get_past_sponsor_organization() -> QuerySet[Sponsorship]:
         Sponsorship.objects.filter(current_amount__lte=3.00)
         .distinct("user_id")
         .all()
+    )
+
+
+def get_total_documents_purchased_by_group_id(group_id: int) -> int:
+    """Counts the number of documents purchased for a group of channels.
+
+    Args:
+        group_id (int): The ID of the group channel.
+
+    Returns:
+        int: The total number of documents purchased for the channels in the group.
+    """
+    return (
+        Transaction.objects.filter(
+            sponsorship__groups__pk=group_id,
+            type=Transaction.DOCUMENT_PURCHASE,
+        )
+        .distinct("id")
+        .count()
     )
