@@ -4,7 +4,9 @@ from bc.channel.selectors import (
     get_all_enabled_channels,
     get_channel_groups_per_user,
     get_channels_per_subscription,
+    get_groups_with_low_funding,
 )
+from bc.sponsorship.tests.factories import SponsorshipFactory
 from bc.subscription.tests.factories import SubscriptionFactory
 from bc.users.tests.factories import UserFactory
 
@@ -71,3 +73,48 @@ class GetChannelGroupsPerUser(TestCase):
         for group in groups:
             # check the number of channels per group
             self.assertEqual(group.channels.count(), 1)
+
+
+class GetGroupsWithLowFunding(TestCase):
+    group_1 = None
+    group_2 = None
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        # Create 2 sponsorships and update the current amount
+        old_sponsorship_1 = SponsorshipFactory()
+        old_sponsorship_1.current_amount = 10.0
+        old_sponsorship_1.save()
+
+        old_sponsorship_2 = SponsorshipFactory()
+        old_sponsorship_2.current_amount = 20.0
+        old_sponsorship_2.save()
+
+        # Create 2 channel with a sponsorship
+        cls.group_1 = GroupFactory(sponsorships=[old_sponsorship_1])
+        cls.group_2 = GroupFactory(sponsorships=[old_sponsorship_2])
+
+    def test_can_get_groups_with_low_funding(self):
+        """Can we get groups with low funding"""
+        low_funding_groups = get_groups_with_low_funding()
+        self.assertEqual(low_funding_groups.count(), 2)
+
+        # Add a big sponsorship for one of the groups
+        sponsorship = SponsorshipFactory(original_amount=400)
+        self.group_1.sponsorships.add(sponsorship)
+
+        low_funding_groups = get_groups_with_low_funding()
+        self.assertEqual(low_funding_groups.count(), 1)
+        self.assertEqual(
+            list(low_funding_groups.values_list("id", flat=True)),
+            [self.group_2.pk],
+        )
+
+    def test_exclude_groups_with_no_sponsorship(self):
+        """Can the query exclude groups with no sponsorships"""
+        # Create six channels with no sponsorship
+        GroupFactory.create_batch(6)
+
+        # Get the list of groups with low funding
+        low_funding_groups = get_groups_with_low_funding()
+        self.assertEqual(low_funding_groups.count(), 2)
