@@ -1,3 +1,7 @@
+from decimal import Decimal
+
+from django.core import mail
+from django.core.cache import cache
 from django.test import TestCase
 
 from bc.channel.selectors import get_sponsored_groups_per_subscription
@@ -9,6 +13,7 @@ from bc.subscription.tests.factories import (
     SubscriptionFactory,
 )
 from bc.subscription.types import Document
+from bc.users.tests.factories import UserFactory
 
 from .factories import SponsorshipFactory
 
@@ -16,30 +21,36 @@ from .factories import SponsorshipFactory
 class LogPurchaseTest(TestCase):
     subscription = None
     webhook_event = None
+    act_sponsorship_1 = None
     act_sponsorship_2 = None
     act_sponsorship_3 = None
+    group_1 = None
+    group_2 = None
+    channel_1 = None
+    channel_2 = None
     document = None
 
     @classmethod
     def setUpTestData(cls) -> None:
-        act_sponsorship_1 = SponsorshipFactory.create_batch(2)
+        cache.clear()
+        cls.act_sponsorship_1 = SponsorshipFactory.create_batch(2)
         cls.act_sponsorship_2 = SponsorshipFactory()
         cls.act_sponsorship_3 = SponsorshipFactory()
 
-        group_1 = GroupFactory(sponsorships=act_sponsorship_1)
-        group_2 = GroupFactory(sponsorships=[cls.act_sponsorship_2])
+        cls.group_1 = GroupFactory(sponsorships=cls.act_sponsorship_1)
+        cls.group_2 = GroupFactory(sponsorships=[cls.act_sponsorship_2])
         group_3 = GroupFactory(
             sponsorships=[cls.act_sponsorship_2, cls.act_sponsorship_3]
         )
         group_4 = GroupFactory()
 
-        channel_1 = ChannelFactory(group=group_1)
-        channel_2 = ChannelFactory(group=group_2)
+        cls.channel_1 = ChannelFactory(group=cls.group_1)
+        cls.channel_2 = ChannelFactory(group=cls.group_2)
         channel_3 = ChannelFactory(group=group_3)
         channel_4 = ChannelFactory(group=group_4)
 
         cls.subscription = SubscriptionFactory(
-            channels=[channel_1, channel_2, channel_3, channel_4]
+            channels=[cls.channel_1, cls.channel_2, channel_3, channel_4]
         )
         cls.webhook_event = FilingWebhookEventFactory(
             subscription=cls.subscription,
@@ -53,6 +64,10 @@ class LogPurchaseTest(TestCase):
             court_id=cls.webhook_event.subscription.pacer_court_id,
             page_count=10,
         )
+
+    def tearDown(self) -> None:
+        cache.clear()
+        return super().tearDown()
 
     def test_can_split_transactions(self):
         sponsored_groups = get_sponsored_groups_per_subscription(
@@ -89,3 +104,74 @@ class LogPurchaseTest(TestCase):
         ).all()
         # We should get just one transaction from group 1
         self.assertEqual(purchase_transactions.count(), 1)
+
+    def test_transaction_updates_sponsorship_current_amount(self):
+        sponsored_groups = get_sponsored_groups_per_subscription(
+            self.subscription.pk
+        )
+        with self.captureOnCommitCallbacks(execute=True):
+            log_purchase(
+                sponsored_groups,
+                self.webhook_event.subscription.id,
+                self.document,
+            )
+
+        # Refresh data of active sponsorships
+        sponsorship_1 = self.act_sponsorship_1[0]
+        sponsorship_1.refresh_from_db()
+        self.act_sponsorship_2.refresh_from_db()
+
+        # the document has 10 pages and the log_purchase method evenly
+        # divides the total cost among active sponsorships, deducting
+        # $.33 from sponsorship record #1 and $.66 from record #2
+        self.assertEqual(
+            sponsorship_1.current_amount,
+            round(sponsorship_1.original_amount - Decimal(1 / 3), 2),
+        )
+        self.assertEqual(
+            self.act_sponsorship_2.current_amount,
+            round(self.act_sponsorship_2.original_amount - Decimal(2 / 3), 2),
+        )
+
+    def test_can_send_low_fund_emails(self):
+        # Create two curators for channel 1
+        UserFactory.create_batch(2, channels=[self.channel_1])
+
+        # Update the current amount of the sponsorships for group 1
+        for sponsorship in self.act_sponsorship_1:
+            sponsorship.current_amount = Decimal(10.00)
+            sponsorship.save()
+
+        # Create one curator for channel 2
+        UserFactory(channels=[self.channel_2])
+
+        sponsored_groups = get_sponsored_groups_per_subscription(
+            self.subscription.pk
+        )
+        # Adds transaction for sponsorship #1 and #2. Only sponsorship #1
+        # will trigger logic to send email
+        with self.captureOnCommitCallbacks(execute=True):
+            log_purchase(
+                sponsored_groups,
+                self.webhook_event.subscription.id,
+                self.document,
+            )
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(self.group_1.name, mail.outbox[0].body)
+
+        self.act_sponsorship_2.current_amount = 5.00
+        self.act_sponsorship_2.save()
+
+        # Adds another transaction for sponsorship #1 and #2. Sponsorship #2
+        # will trigger email this time. The logic should skip email for
+        # sponsorship #1 because we already sent one.
+        with self.captureOnCommitCallbacks(execute=True):
+            log_purchase(
+                sponsored_groups,
+                self.webhook_event.subscription.id,
+                self.document,
+            )
+
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertIn(self.group_2.name, mail.outbox[1].body)
