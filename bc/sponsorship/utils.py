@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.db import transaction
 from django.db.models import F
 from django_rq.queues import get_queue
@@ -12,7 +12,6 @@ from bc.channel.models import Group
 from bc.channel.selectors import get_groups_with_low_funding
 from bc.sponsorship.emails import emails
 from bc.sponsorship.models import Sponsorship
-from bc.sponsorship.selectors import get_total_documents_purchased_by_group_id
 from bc.users.selectors import get_curators_by_channel_group_id
 from bc.users.utils.email import EmailType
 
@@ -21,28 +20,75 @@ from .models import Transaction
 queue = get_queue("default")
 
 
-def send_low_fund_email_to_curators(group_id: int) -> None:
-    """Sends emails to curator users of the given group.
+def get_ordinal(n: int) -> str:
+    """Converts a non-negative integer to its ordinal representation.
 
     Args:
+        n (int): A non-negative integer.
+
+    Returns:
+        str: A string representing the ordinal form of the number.
+    """
+    # Handle cases for 11, 12, 13
+    if 11 <= (n % 100) <= 13:
+        suffix = "th"
+    else:
+        suffix = ["th", "st", "nd", "rd", "th"][min(n % 10, 4)]
+    return str(n) + suffix
+
+
+def send_low_fund_email_to_curators(
+    threshold_idx: int,
+    group_id: int,
+    sponsorship_id: int,
+    amount_remaining: float,
+) -> None:
+    """Sends emails to curator users of the given group.
+
+    This method uses the threshold index to compute the subject of the email.
+
+    Args:
+        threshold_idx (int): Index of the email threshold.
         group_id (int): The ID of the channel group to send emails to.
+        sponsorship_id (int): The ID of active sponsorship
+        amount_remaining (float): The remaining amount of the sponsorship after
+        buying the document.
     """
     group = Group.objects.get(pk=group_id)
     curators = get_curators_by_channel_group_id(group_id)
-    total_purchases = get_total_documents_purchased_by_group_id(group_id)
+    sponsorship = Sponsorship.objects.select_related("user").get(
+        pk=sponsorship_id
+    )
     curators_emails = list(curators.values_list("email", flat=True))
 
-    email: EmailType = emails["low_funds_alert"]
-    body = email["body"] % (group.name, total_purchases)
-    send_mail(
-        email["subject"],
-        body,
-        email["from_email"],
-        curators_emails,
+    email_template: EmailType = emails["low_funds_alert"]
+    core_subject = email_template["subject"].format(bot_name=group.name)
+    if not threshold_idx:
+        prefix_subject = "[Action Needed]"
+    elif threshold_idx == len(settings.LOW_FUNDING_EMAIL_THRESHOLDS) - 1:
+        prefix_subject = "[Action Needed, Final Notice]"
+        curators_emails.append("info@free.law")
+    else:
+        ordinal = get_ordinal(threshold_idx + 1)
+        prefix_subject = f"[Action Needed, {ordinal} Notice]"
+    subject = f"{prefix_subject}: {core_subject}"
+
+    body = email_template["body"].format(
+        bot_name=group.name,
+        original_amount=sponsorship.original_amount,
+        amount_remaining=round(amount_remaining, 2),
     )
-    cache_key = f"low-funding:{group_id}"
-    # Save the idempotency key for 7 days
-    cache.set(cache_key, True, 60 * 60 * 24 * 7)
+    # Send the alert to all the curators and the user associated to the
+    # sponsorships. We add info@free.law to the list of emails for the
+    # Final Notice alert.
+    email = EmailMessage(
+        subject,
+        body,
+        email_template["from_email"],
+        to=[sponsorship.user.email],
+        bcc=curators_emails,
+    )
+    email.send()
 
 
 def update_sponsorships_current_amount(ledger_entry: Transaction) -> None:
