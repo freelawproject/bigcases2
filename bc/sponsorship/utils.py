@@ -20,6 +20,41 @@ from .models import Transaction
 queue = get_queue("default")
 
 
+def get_email_threshold_index(current_amount: Decimal) -> int | None:
+    """
+    Retrieves the index of the first email threshold that is equal or lower
+    than the current sponsorship amount.
+
+    Args:
+        current_amount (Decimal): Updated amount of the sponsorship
+
+    Returns:
+        int: index of the first threshold in the list that is lower than the
+        current sponsorship amount, or None if all thresholds are higher than
+        the current amount.
+
+    Examples:
+        thresholds = [1500, 1000, 500, 200, 100]
+        current_amount = 800
+        index = get_email_threshold_index(thresholds, current_amount)
+        print(index)  # Output: 2 (500 is the first threshold lower than 800)
+
+
+        thresholds = [1500, 1000, 500, 200, 100]
+        current_amount = 10
+        index = get_email_threshold_index(thresholds, current_amount)
+        print(index)  # Output: None (all thresholds are higher than 10)
+    """
+    return next(
+        (
+            i
+            for i, v in enumerate(settings.LOW_FUNDING_EMAIL_THRESHOLDS)
+            if current_amount >= Decimal(v)
+        ),
+        None,
+    )
+
+
 def get_ordinal(n: int) -> str:
     """Converts a non-negative integer to its ordinal representation.
 
