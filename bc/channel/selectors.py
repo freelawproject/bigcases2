@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db.models import Prefetch, Q, QuerySet, Sum
+from django.db.models import Prefetch, QuerySet
 
 from bc.sponsorship.models import Sponsorship
 
@@ -103,22 +103,4 @@ def get_channel_groups_per_user(user_pk: int) -> QuerySet[Group]:
             )
         )
         .all()
-    )
-
-
-def get_groups_with_low_funding() -> QuerySet[Group]:
-    """Queries all groups with total funding left below a specified threshold
-
-    Returns:
-        QuerySet[Group]: list of groups with low funding
-    """
-    return (
-        Group.objects.prefetch_related("sponsorships")
-        .annotate(
-            total_funding=Sum(
-                "sponsorships__current_amount",
-                filter=Q(sponsorships__current_amount__gte=3.00),
-            )
-        )
-        .filter(total_funding__lte=settings.LOW_FUNDING_EMAIL_THRESHOLD)
     )

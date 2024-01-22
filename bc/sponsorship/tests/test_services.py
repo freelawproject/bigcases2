@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.core import mail
 from django.core.cache import cache
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from bc.channel.selectors import get_sponsored_groups_per_subscription
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
@@ -133,13 +133,14 @@ class LogPurchaseTest(TestCase):
             round(self.act_sponsorship_2.original_amount - Decimal(2 / 3), 2),
         )
 
+    @override_settings(LOW_FUNDING_EMAIL_THRESHOLDS=[60.00, 30.00, 3.00])
     def test_can_send_low_fund_emails(self):
         # Create two curators for channel 1
         UserFactory.create_batch(2, channels=[self.channel_1])
 
         # Update the current amount of the sponsorships for group 1
         for sponsorship in self.act_sponsorship_1:
-            sponsorship.current_amount = Decimal(10.00)
+            sponsorship.current_amount = Decimal(60.00)
             sponsorship.save()
 
         # Create one curator for channel 2
@@ -149,7 +150,7 @@ class LogPurchaseTest(TestCase):
             self.subscription.pk
         )
         # Adds transaction for sponsorship #1 and #2. Only sponsorship #1
-        # will trigger logic to send email
+        # will trigger logic to send the first alert
         with self.captureOnCommitCallbacks(execute=True):
             log_purchase(
                 sponsored_groups,
@@ -159,13 +160,19 @@ class LogPurchaseTest(TestCase):
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn(self.group_1.name, mail.outbox[0].body)
+        self.assertIn("[Action Needed]:", mail.outbox[0].subject)
 
-        self.act_sponsorship_2.current_amount = 5.00
+        # reload a model’s values from the database
+        for sponsorship in self.act_sponsorship_1:
+            sponsorship.refresh_from_db()
+
+        self.act_sponsorship_2.current_amount = Decimal(30.00)
         self.act_sponsorship_2.save()
 
         # Adds another transaction for sponsorship #1 and #2. Sponsorship #2
-        # will trigger email this time. The logic should skip email for
-        # sponsorship #1 because we already sent one.
+        # will trigger an alert this time. The logic should skip email for
+        # sponsorship #1 because the current amount is bigger than the second
+        # threshold.
         with self.captureOnCommitCallbacks(execute=True):
             log_purchase(
                 sponsored_groups,
@@ -175,3 +182,49 @@ class LogPurchaseTest(TestCase):
 
         self.assertEqual(len(mail.outbox), 2)
         self.assertIn(self.group_2.name, mail.outbox[1].body)
+        self.assertIn("[Action Needed, 2nd Notice]:", mail.outbox[1].subject)
+
+        # reload a model’s values from the database
+        for sponsorship in self.act_sponsorship_1:
+            sponsorship.refresh_from_db()
+        self.act_sponsorship_2.refresh_from_db()
+
+        # Adds another transaction for sponsorship #1 and #2. This new
+        # transaction should not trigger alerts.
+        with self.captureOnCommitCallbacks(execute=True):
+            log_purchase(
+                sponsored_groups,
+                self.webhook_event.subscription.id,
+                self.document,
+            )
+
+        self.assertEqual(len(mail.outbox), 2)
+
+    @override_settings(LOW_FUNDING_EMAIL_THRESHOLDS=[60.00, 30.00, 3.00])
+    def test_add_info_mail_to_final_notice_alert(self):
+        # Create two curators for channel 1
+        UserFactory.create_batch(2, channels=[self.channel_1])
+
+        # Update the current amount of the sponsorship for group 1
+        sponsorship = self.act_sponsorship_1[0]
+        sponsorship.current_amount = Decimal(3.10)
+        sponsorship.save()
+
+        sponsored_groups = get_sponsored_groups_per_subscription(
+            self.subscription.pk
+        )
+        # Adds transaction for sponsorship #1 and #2. Only sponsorship #1
+        # will trigger logic to send the first alert
+        with self.captureOnCommitCallbacks(execute=True):
+            log_purchase(
+                sponsored_groups,
+                self.webhook_event.subscription.id,
+                self.document,
+            )
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(self.group_1.name, mail.outbox[0].body)
+        self.assertIn("[Action Needed, Final Notice]:", mail.outbox[0].subject)
+        # check the number of email address in the “Bcc” header
+        self.assertEqual(3, len(mail.outbox[0].bcc))
+        self.assertIn("info@free.law", mail.outbox[0].bcc)
