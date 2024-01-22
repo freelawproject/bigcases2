@@ -10,10 +10,11 @@ from rq import Retry
 
 from bc.channel.models import Group
 from bc.channel.selectors import get_groups_with_low_funding
+from bc.sponsorship.emails import emails
 from bc.sponsorship.models import Sponsorship
 from bc.sponsorship.selectors import get_total_documents_purchased_by_group_id
 from bc.users.selectors import get_curators_by_channel_group_id
-from bc.users.utils.email import EmailType, emails
+from bc.users.utils.email import EmailType
 
 from .models import Transaction
 
@@ -31,7 +32,7 @@ def send_low_fund_email_to_curators(group_id: int) -> None:
     total_purchases = get_total_documents_purchased_by_group_id(group_id)
     curators_emails = list(curators.values_list("email", flat=True))
 
-    email: EmailType = emails["confirm_your_new_account"]
+    email: EmailType = emails["low_funds_alert"]
     body = email["body"] % (group.name, total_purchases)
     send_mail(
         email["subject"],
