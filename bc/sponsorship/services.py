@@ -60,6 +60,7 @@ def log_purchase(
             threshold_value
             and threshold_value > sponsorship.current_amount - document_cost
         ):
+            # Purchase will cross low funding threshold. Send an email.
             group = sponsorship.groups.first()
             queue.enqueue(
                 send_low_fund_email_to_curators,
