@@ -65,10 +65,6 @@ class LogPurchaseTest(TestCase):
             page_count=10,
         )
 
-    def tearDown(self) -> None:
-        cache.clear()
-        return super().tearDown()
-
     def test_can_split_transactions(self):
         sponsored_groups = get_sponsored_groups_per_subscription(
             self.subscription.pk
