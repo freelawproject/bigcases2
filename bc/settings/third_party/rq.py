@@ -2,6 +2,7 @@ import environ
 
 env = environ.FileAwareEnv()
 
+from ..project.testing import TESTING
 from .redis import REDIS_DATABASES, REDIS_HOST, REDIS_PORT
 
 RQ_SHOW_ADMIN_LINK = True
@@ -15,3 +16,7 @@ RQ_QUEUES = {
 
 RQ_MAX_NUMBER_OF_RETRIES = env.int("RQ_MAX_NUMBER_OF_RETRIES", default=3)
 RQ_RETRY_INTERVAL = env.int("RQ_RETRY_INTERVAL", default=20)
+
+if TESTING:
+    for queueConfig in RQ_QUEUES.values():
+        queueConfig["ASYNC"] = False
