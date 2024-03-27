@@ -304,9 +304,11 @@ def process_fetch_webhook_event(
     sponsor_groups = get_sponsored_groups_per_subscription(subscription.pk)
 
     document = Document(
-        description=f"Initial Complaint from {subscription.docket_name}"
-        if record_type == "subscription"
-        else str(filing_webhook_event),
+        description=(
+            f"Initial Complaint from {subscription.docket_name}"
+            if record_type == "subscription"
+            else str(filing_webhook_event)
+        ),
         page_count=cl_document["page_count"],
         docket_number=subscription.docket_number,
         court_name=subscription.court_name,
