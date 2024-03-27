@@ -141,9 +141,11 @@ def handle_recap_fetch_webhook(request: Request) -> Response:
         queue.enqueue(
             process_fetch_webhook_event,
             webhook_record.pk,
-            "filing_webhook"
-            if isinstance(webhook_record, FilingWebhookEvent)
-            else "subscription",
+            (
+                "filing_webhook"
+                if isinstance(webhook_record, FilingWebhookEvent)
+                else "subscription"
+            ),
             retry=Retry(
                 max=settings.RQ_MAX_NUMBER_OF_RETRIES,
                 interval=settings.RQ_RETRY_INTERVAL,
