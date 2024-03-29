@@ -927,12 +927,12 @@ tornado = ["tornado (>=0.2)"]
 
 [[package]]
 name = "http-ece"
-version = "1.1.0"
+version = "1.2.0"
 description = "Encrypted Content Encoding for HTTP"
 optional = false
 python-versions = "*"
 files = [
-    {file = "http_ece-1.1.0.tar.gz", hash = "sha256:932ebc2fa7c216954c320a188ae9c1f04d01e67bec9cdce1bfbc912813b0b4f8"},
+    {file = "http_ece-1.2.0.tar.gz", hash = "sha256:b5920f8efb8e1b5fb025713e3b36fda54336262010634b26dc1f98f85d1eb3de"},
 ]
 
 [package.dependencies]
@@ -2198,4 +2198,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "37d8d66b271e389d92c16fb0c037f7e620372a76949b029cf1c08a18983aa32c"
+content-hash = "426764b17b8d75d09d7c5ee326c3ebfbf2888a2aa83c84e3b28b745094a21f9e"
