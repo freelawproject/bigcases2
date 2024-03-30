@@ -7,6 +7,7 @@ from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
 from .utils.connectors.base import BaseAPIConnector
+from .utils.connectors.bluesky import BlueskyConnector
 from .utils.connectors.masto import (
     MastodonConnector,
     get_server_url,
@@ -64,9 +65,11 @@ class Channel(AbstractDateTimeModel):
 
     TWITTER = 1
     MASTODON = 2
+    BLUESKY = 3
     CHANNELS = (
         (TWITTER, "Twitter"),
         (MASTODON, "Mastodon"),
+        (BLUESKY, "Bluesky"),
     )
     service = models.PositiveSmallIntegerField(
         help_text="Type of the service",
@@ -115,23 +118,28 @@ class Channel(AbstractDateTimeModel):
                 return MastodonConnector(
                     self.access_token, get_server_url(self.account)
                 )
+            case self.BLUESKY:
+                return BlueskyConnector(self.account_id, self.access_token)
             case _:
                 raise NotImplementedError(
                     f"No wrapper implemented for service: '{self.service}'."
                 )
 
     def self_url(self):
-        if self.service == self.TWITTER:
-            return f"https://twitter.com/{self.account}"
-        elif self.service == self.MASTODON:
-            result = masto_regex.search(self.account)
-            assert len(result.groups()) == 2
-            account_part, instance_part = result.groups()
-            return f"https://{instance_part}/@{account_part}"
-        else:
-            raise NotImplementedError(
-                f"Channel.self_url() not yet implemented for service {self.service}"
-            )
+        match self.service:
+            case self.TWITTER:
+                return f"https://twitter.com/{self.account}"
+            case self.MASTODON:
+                result = masto_regex.search(self.account)
+                assert len(result.groups()) == 2
+                account_part, instance_part = result.groups()
+                return f"https://{instance_part}/@{account_part}"
+            case self.BLUESKY:
+                return f"https://bsky.app/profile/{self.account_id}"
+            case _:
+                raise NotImplementedError(
+                    f"Channel.self_url() not yet implemented for service {self.service}"
+                )
 
     def __str__(self) -> str:
         if self.account:
@@ -148,7 +156,7 @@ class Post(AbstractDateTimeModel):
     channel = models.ForeignKey(
         "Channel", related_name="posts", on_delete=models.CASCADE
     )
-    object_id = models.PositiveBigIntegerField(
+    object_id = models.CharField(
         help_text="The object's id returned by Twitter/Mastodon/etc's API",
     )
     text = models.TextField(

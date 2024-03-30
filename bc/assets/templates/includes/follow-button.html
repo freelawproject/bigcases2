@@ -3,8 +3,10 @@
   <div class="h-6 w-6">
     {% if service_name == 'Twitter' %}
       {% include 'includes/inlines/twitter.svg' %}
-    {% else %}
+    {% elif service_name == 'Mastodon' %}
       {% include 'includes/inlines/mastodon.svg' %}
+    {% elif service_name == 'Bluesky' %}
+      {% include 'includes/inlines/bluesky.svg' %}
     {% endif %}
   </div>
   <div class="ml-3">

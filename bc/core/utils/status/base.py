@@ -1,8 +1,14 @@
+import re
 from dataclasses import dataclass
+from string import Formatter
 
 from bc.core.utils.string_utils import trunc
 
 from ..images import TextImage
+
+
+class InvalidTemplate(Exception):
+    pass
 
 
 class AlwaysBlankValueDict(dict):
@@ -18,6 +24,7 @@ class BaseTemplate:
     link_placeholders: list[str]
     max_characters: int
     border_color: tuple[int, ...] = (243, 195, 62)
+    is_valid: bool = True
 
     def __len__(self) -> int:
         """Returns the length of the template without the placeholders
@@ -48,13 +55,35 @@ class BaseTemplate:
 
         placeholder_characters = sum(
             [
-                len(str(val))
-                for key, val in kwargs.items()
-                if key not in excluded
+                len(str(kwargs.get(field_name)))
+                for text, field_name, *_ in Formatter().parse(
+                    self.str_template
+                )
+                if field_name and field_name not in excluded
             ]
         )
 
         return self.max_characters - len(self) - placeholder_characters
+
+    def _check_output_validity(self, text: str) -> bool:
+        """
+        Checks whether the provided text exceeds the maximum allowed length.
+
+        Strips links from the output text since they use a fixed character
+        count.
+
+        Args:
+            text (str): The text to be evaluated.
+
+        Returns:
+            bool: True if the text length is within the limit, False otherwise.
+        """
+        url_pattern = r"https?://\S+"
+        url_count = len(re.findall(url_pattern, text))
+        linkless_output = re.sub(url_pattern, "", text)
+
+        # Twitter and Mastodon both count links as 23 chars at present
+        return len(linkless_output) + (23 * url_count) <= self.max_characters
 
     def format(self, *args, **kwargs) -> tuple[str, TextImage | None]:
         image = None
@@ -74,7 +103,11 @@ class BaseTemplate:
                     "…\n\n[full entry below 👇]",
                 )
 
-        return self.str_template.format(**kwargs), image
+        text = self.str_template.format(**kwargs)
+
+        self.is_valid = self._check_output_validity(text)
+
+        return text, image
 
 
 @dataclass
@@ -101,3 +134,17 @@ class TwitterTemplate(BaseTemplate):
         They count as 23 characters.
         """
         return 23 * len(self.link_placeholders) + self.count_fixed_characters()
+
+
+@dataclass
+class BlueskyTemplate(BaseTemplate):
+    max_characters: int = 300
+
+    def _check_output_validity(self, text: str) -> bool:
+        """This method overrides `Template._check_output_validity`.
+
+        Strips links from the output text since they form part of the custom
+        markup language.
+        """
+        cleaned_text = re.sub(r"(?<=])\(\S+\)", "", text)
+        return len(cleaned_text) <= self.max_characters
