@@ -8,7 +8,11 @@ def trunc(s: str, length: int, ellipsis: str | None = None) -> str:
     addition of the ellipsis without being longer than length.
     """
     if ellipsis:
-        ellipsis_length = len(ellipsis)
+        # Emojis are encoded as multiple characters, so we need to count them
+        # individually.
+        ellipsis_length = sum(
+            [2 if len(char.encode("utf-8")) > 1 else 1 for char in ellipsis]
+        )
     else:
         ellipsis_length = 0
 

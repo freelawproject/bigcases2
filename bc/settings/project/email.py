@@ -12,3 +12,6 @@ else:
 
 
 DEFAULT_FROM_EMAIL = "Bots.law <noreply@bots.law>"
+LOW_FUNDING_EMAIL_THRESHOLDS = env.list(
+    "LOW_FUNDING_EMAIL_THRESHOLDS", cast=float, default=[75.0, 40.0, 3.0]
+)

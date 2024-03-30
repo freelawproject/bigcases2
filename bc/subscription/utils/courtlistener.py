@@ -149,7 +149,7 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
 
 def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
     """
-    Performs a GET query on /api/rest/v3/docket-entries/
+    Performs a GET query on /api/rest/v3/recap/
     using the docket_id to get the first entry of the case.
 
     Args:
@@ -162,9 +162,16 @@ def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
     if not docket_id:
         return None
 
+    params: dict[str, str | int] = {
+        "docket_entry__docket__id": docket_id,
+        "docket_entry__entry_number": 1,
+        "order_by": "id",
+        "fields": "id,filepath_local,page_count,pacer_doc_id",
+    }
+
     response = requests.get(
-        f"{CL_API['docket-entries']}",
-        params={"docket__id": docket_id, "entry_number": 1},
+        f"{CL_API['recap-documents']}",
+        params=params,
         headers=auth_header(),
         timeout=5,
     )
@@ -174,7 +181,7 @@ def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
     if not data["count"]:
         return None
 
-    document = data["results"][0]["recap_documents"][0]
+    document = data["results"][0]
     return {
         "id": document["id"],
         "filepath_local": document["filepath_local"],
