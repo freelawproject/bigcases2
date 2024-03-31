@@ -282,9 +282,9 @@ class BlueskyAPI:
         return {
             "uri": url,
             "title": title_tag["content"] if title_tag else "",
-            "description": description_tag["content"]
-            if description_tag
-            else "",
+            "description": (
+                description_tag["content"] if description_tag else ""
+            ),
             "thumb": thumbnail,
         }
 
