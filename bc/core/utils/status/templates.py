@@ -1,6 +1,11 @@
 import re
 
-from .base import BaseTemplate, MastodonTemplate, TwitterTemplate
+from .base import (
+    BaseTemplate,
+    BlueskyTemplate,
+    MastodonTemplate,
+    TwitterTemplate,
+)
 
 DO_NOT_POST = re.compile(
     r"""(
@@ -101,6 +106,44 @@ TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE = TwitterTemplate(
 Docket: {docket_link}
 
 Context: {article_url}
+
+#CL{docket_id}""",
+)
+
+
+BLUESKY_FOLLOW_A_NEW_CASE = BlueskyTemplate(
+    link_placeholders=["docket_link"],
+    str_template="""I'm now following {docket}:
+
+[View Full Case]({docket_link})
+
+#CL{docket_id}""",
+)
+
+BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE = BlueskyTemplate(
+    link_placeholders=["docket_link", "article_url"],
+    str_template="""I'm now following {docket}:
+
+[View Full Case]({docket_link}) | [Background Info]({article_url})
+
+#CL{docket_id}""",
+)
+
+BLUESKY_POST_TEMPLATE = BlueskyTemplate(
+    link_placeholders=["pdf_link", "docket_link"],
+    str_template="""New filing: "{docket}"
+Doc #{doc_num}: {description}
+
+[Download PDF]({pdf_link}) | [View Full Case]({docket_link})
+
+#CL{docket_id}""",
+)
+
+BLUESKY_MINUTE_TEMPLATE = BlueskyTemplate(
+    link_placeholders=["docket_link"],
+    str_template="""New minute entry in {docket}: {description}
+
+[View Full Case]({docket_link})
 
 #CL{docket_id}""",
 )

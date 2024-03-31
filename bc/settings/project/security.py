@@ -20,6 +20,13 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "same-origin"
 
+# PERMISSIONS_POLICY
+# Dictionary to disable many potentially privacy-invading and annoying features
+# for all scripts:
+PERMISSIONS_POLICY: dict[str, list[str]] = {
+    "browsing-topics": [],
+}
+
 # CSP
 # Components:
 # - hCaptcha: https://docs.hcaptcha.com/#content-security-policy-settings

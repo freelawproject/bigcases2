@@ -49,7 +49,7 @@
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-10 lg:gap-24 pt-10 md:pt-20">
         {% url 'big_cases_about' as big_cases_about %}
-        {% include "includes/grid-list-item.html" with heading="Big Cases" content='Originally hosted by USA Today, my <a class="underline" href="https://twitter.com/big_cases">Twitter</a> and <a class="underline" rel="me" href="https://law.builders/@bigcases">Mastodon</a> bots post updates about the most important cases in the country.' href=big_cases_about %}
+        {% include "includes/grid-list-item.html" with heading="Big Cases" content='Originally hosted by USA Today, my <a class="underline" href="https://bsky.app/profile/bigcases.bots.law">BlueSky</a>, <a class="underline" rel="me" href="https://law.builders/@bigcases">Mastodon</a> and <a class="underline" href="https://twitter.com/big_cases">Twitter</a> bots post updates about the most important cases in the country.' href=big_cases_about %}
 
         {% url 'little_cases' as little_cases%}
         {% include "includes/grid-list-item.html" with heading='Little Cases' content='Want to make a custom bot that follows cases you think are important? My creators are making a system for that.' href=little_cases %}
@@ -75,7 +75,7 @@
             If you like what I do, please support Free Law Project with a donation.
           </p>
           <div class="tracking-[.8px] hidden sm:block text-base mt-8 md:w-2/3 lg:w-2/5">
-            {% include 'includes/action-button.html' with link="https://free.law/donate/" text="Donate Now" size="md" color='saffron' %}
+            {% include 'includes/action-button.html' with link="https://donate.free.law/forms/supportflp" text="Donate Now" size="md" color='saffron' %}
           </div>
       </div>
 
@@ -90,7 +90,7 @@
       </div>
     </section>
     <div class="flex tracking-[.8px] sm:hidden w-full pt-4 mt-8 flex-col text-md font-light">
-      {% include 'includes/action-button.html' with link="https://free.law/donate/" text="Donate Now" size="md" color='saffron' %}
+      {% include 'includes/action-button.html' with link="https://donate.free.law/forms/supportflp" text="Donate Now" size="md" color='saffron' %}
     </div>
   </div>
 </section>
