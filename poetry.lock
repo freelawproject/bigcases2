@@ -13,13 +13,13 @@ files = [
 
 [[package]]
 name = "art"
-version = "6.0"
+version = "6.1"
 description = "ASCII Art Library For Python"
 optional = false
 python-versions = ">=3.5"
 files = [
-    {file = "art-6.0-py3-none-any.whl", hash = "sha256:882e6b5a4c6045c6dace31147c0b8522c8ca70177a5922f172733d116123a187"},
-    {file = "art-6.0.tar.gz", hash = "sha256:884ef1c10e900387cce97789e8668125720cbf4459206641b91fc298c859cda9"},
+    {file = "art-6.1-py3-none-any.whl", hash = "sha256:159819c418001467f8d79616fa0814277deac97c8a363d1eb3e7c0a31526bfc3"},
+    {file = "art-6.1.tar.gz", hash = "sha256:6ab3031e3b7710039e73497b0e750cadfe04d4c1279ce3a123500dbafb9e1b64"},
 ]
 
 [package.extras]
@@ -2202,4 +2202,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "3863fdae90858e309746a9909d55d6532fc9b7a57fb578f0b38f100d94053cb6"
+content-hash = "86824c3ee0ff427a4a6167c45fb8004934f95ccda799697a727d023b7a7c901f"
