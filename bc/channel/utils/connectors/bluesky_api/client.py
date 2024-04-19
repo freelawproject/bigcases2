@@ -357,9 +357,17 @@ class BlueskyAPI:
                 "images": media,
             }
         elif message_object["facets"]:
-            card = self.fetch_embed_url_card(
-                message_object["facets"][-1]["features"][0]["uri"]
-            )
+            link: str
+            card: SocialCard | None
+
+            for facet in message_object["facets"]:
+                feature = facet["features"][0]
+                if (feature["$type"] == "app.bsky.richtext.facet#link"):
+                    link = feature["uri"]
+
+            if link:
+                card = self.fetch_embed_url_card(link)
+
             if card:
                 message_object["embed"] = {
                     "$type": "app.bsky.embed.external",
