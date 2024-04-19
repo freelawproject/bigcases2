@@ -362,7 +362,7 @@ class BlueskyAPI:
 
             for facet in message_object["facets"]:
                 feature = facet["features"][0]
-                if (feature["$type"] == "app.bsky.richtext.facet#link"):
+                if feature["$type"] == "app.bsky.richtext.facet#link":
                     link = feature["uri"]
 
             if link:
