@@ -11,6 +11,7 @@ class Session:
     didDoc: dict
     email: str
     emailConfirmed: bool
+    emailAuthFactor: bool
 
 
 @dataclass
