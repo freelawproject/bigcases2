@@ -70,6 +70,7 @@ TagFacet = TypedDict(
     "TagFacet", {"$type": Literal["app.bsky.richtext.facet#tag"], "tag": str}
 )
 
+
 class TextAnnotation(TypedDict):
     index: ByteSlice
     features: list[LinkFacet | TagFacet]

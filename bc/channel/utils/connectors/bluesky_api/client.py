@@ -271,7 +271,7 @@ class BlueskyAPI:
                         "$type": "app.bsky.richtext.facet#tag",
                         "tag": u.text,
                     }
-                ]
+                ],
             }
         return facets
 
