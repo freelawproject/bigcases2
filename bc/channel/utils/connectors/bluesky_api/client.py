@@ -273,6 +273,7 @@ class BlueskyAPI:
                     }
                 ],
             }
+            facets.append(annotation)
         return facets
 
     def fetch_embed_url_card(self, url: str) -> SocialCard | None:
