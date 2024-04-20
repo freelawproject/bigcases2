@@ -357,8 +357,8 @@ class BlueskyAPI:
                 "images": media,
             }
         elif message_object["facets"]:
-            link: str
-            card: SocialCard | None
+            link: str | None = None
+            card: SocialCard | None = None
 
             for facet in message_object["facets"]:
                 feature = facet["features"][0]
