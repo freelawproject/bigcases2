@@ -88,6 +88,35 @@ class BlueskyAPI:
         """Get current time in Server Timezone (UTC) and ISO format."""
         return datetime.now(timezone.utc).isoformat()
 
+    def _parse_tags(self, text: str) -> list[RegexMatch]:
+        """
+        Parses hashtags from text.
+
+        This helper function takes a string as input and attempts to extract
+        hashtags from it. If any hashtags are found, they are appended to a
+        list of hashtags. If no hashtags are found, an empty list is returned.
+
+        Args:
+            text (str): The text to parse.
+
+        Returns:
+            list[RegexMatch]: List of matches.
+        """
+        spans = []
+        # reference: https://github.com/bluesky-social/atproto/blob/fbc7e75c402e0c268e7e411353968985eeb4bb06/packages/api/src/rich-text/util.ts#L10
+        # given that our needs of a hashtag is very simple, we can do away with
+        # only parsing alphanumeric characters
+        tag_regex = r"(?:^|\s)#(?P<tag>[0-9]*[a-zA-Z][a-zA-Z0-9]*)"
+        for m in re.finditer(tag_regex, text):
+            spans.append(
+                RegexMatch(
+                    start=m.start("tag") - 1,
+                    end=m.end("tag"),
+                    text=m.group("tag"),
+                )
+            )
+        return spans
+
     def _parse_urls(self, text: str) -> list[RegexMatch]:
         """
         Parses a URL from text.
@@ -229,6 +258,21 @@ class BlueskyAPI:
                 ],
             }
             facets.append(annotation)
+
+        for u in self._parse_tags(text):
+            annotation = {
+                "index": {
+                    "byteStart": u.start,
+                    "byteEnd": u.end,
+                },
+                "features": [
+                    {
+                        "$type": "app.bsky.richtext.facet#tag",
+                        "tag": u.text,
+                    }
+                ],
+            }
+            facets.append(annotation)
         return facets
 
     def fetch_embed_url_card(self, url: str) -> SocialCard | None:
@@ -313,9 +357,17 @@ class BlueskyAPI:
                 "images": media,
             }
         elif message_object["facets"]:
-            card = self.fetch_embed_url_card(
-                message_object["facets"][-1]["features"][0]["uri"]
-            )
+            link: str | None = None
+            card: SocialCard | None = None
+
+            for facet in message_object["facets"]:
+                feature = facet["features"][0]
+                if feature["$type"] == "app.bsky.richtext.facet#link":
+                    link = feature["uri"]
+
+            if link:
+                card = self.fetch_embed_url_card(link)
+
             if card:
                 message_object["embed"] = {
                     "$type": "app.bsky.embed.external",
