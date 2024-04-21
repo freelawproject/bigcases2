@@ -106,13 +106,14 @@ class BlueskyAPI:
         # reference: https://github.com/bluesky-social/atproto/blob/fbc7e75c402e0c268e7e411353968985eeb4bb06/packages/api/src/rich-text/util.ts#L10
         # given that our needs of a hashtag is very simple, we can do away with
         # only parsing alphanumeric characters
-        tag_regex = r"(?:^|\s)#(?P<tag>[0-9]*[a-zA-Z][a-zA-Z0-9]*)"
-        for m in re.finditer(tag_regex, text):
+        tag_regex = rb"(?:^|\s)#(?P<tag>[0-9]*[a-zA-Z][a-zA-Z0-9]*)"
+        text_bytes = text.encode("UTF-8")
+        for m in re.finditer(tag_regex, text_bytes):
             spans.append(
                 RegexMatch(
                     start=m.start("tag") - 1,
                     end=m.end("tag"),
-                    text=m.group("tag"),
+                    text=m.group("tag").decode("UTF-8"),
                 )
             )
         return spans
