@@ -34,7 +34,7 @@ psycopg2-binary = "^2.9.6"
 ansicolors = "^1.1.8"
 prettytable = "^3.10.0"
 courts-db = "^0.10.17"
-django = "^5.0.3"
+Django = { git = "https://github.com/django/django.git", rev = "2e6ae1e96a405fc2ac318325956ce276cfb9830c" }
 djangorestframework = "^3.15.1"
 django-environ = "^0.11.2"
 sentry-sdk = "^1.44.0"
