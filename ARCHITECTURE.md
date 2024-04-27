@@ -12,7 +12,7 @@ BCB2 uses a [Postgres](https://www.postgresql.org/) database to keep track of ca
 
 ## Posting
 
-BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mastodon ([@big_cases@law.builders](https://law.builders/@big_cases)).
+BCB2 posts to Twitter ([@big_cases](https://twitter.com/big_cases)), Mastodon ([@big_cases@law.builders](https://law.builders/@bigcases)), and Bluesky ([@bigcases.bots.law](https://bsky.app/profile/bigcases.bots.law)).
 
 
 ## Interacting via social media
