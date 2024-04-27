@@ -28,7 +28,7 @@ To set up a development machine, do the following:
 
 1. Create a personal settings file. To do that, copy-paste the `.env.example` file to `.env.dev`.
 
-1. Modify your new `.env.dev` file and uncomment out the line `ALLOWED_HOSTS="*"`
+1. Modify your new `.env.dev` file and uncomment the line `ALLOWED_HOSTS="*"`
 
 1. Next, create the bridge network that docker relies on:
 

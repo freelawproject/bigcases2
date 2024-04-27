@@ -7,7 +7,7 @@ they happen. Currently, Big Cases Bot 2 sends to the following channels:
  - Mastodon: [@big_cases@law.builders][mastodonbc]
  - Bluesky: [@bigcases.bots.law][blueskybc]
 
-Big Cases Bot 2 is developed and maintained by [Free Law Project's][flp], a
+Big Cases Bot 2 is developed and maintained by the [Free Law Project][flp], a
 501(c)(3) that uses software and advocacy to enhance the legal system. It
 builds on the original [Big Cases Bot][bcb1] developed by Brad Heath for
 Twitter.
@@ -15,7 +15,7 @@ Twitter.
 The goals of Big Cases Bot 2 are:
 
 - First and foremost, to bring the bot back!
-- Expand the bot to Mastodon [and][discord] [other][slack] [platforms][teams]
+- Expand the bot to Mastodon, Bluesky, [and][discord] [other][slack] [platforms][teams]
 - Really invest in the bot to make it great
 
 Further development is intended, and all contributors, corrections and additions
@@ -40,7 +40,7 @@ easy.
 ## Contributions
 
 We're going to need a lot of help to make this a robust and great project. If
-you're interested in helping, check out ARCHITECTURE.md to get started. Feel
+you're interested in helping, check out [ARCHITECTURE.md](./ARCHITECTURE.md) to get started. Feel
 free to find bugs to work on in our issues list, or if you don't know where to
 begin, feel free to [send us an email][c], and include your resume if you've
 got one.
