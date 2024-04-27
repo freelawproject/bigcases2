@@ -12,7 +12,7 @@ BCB2 uses a [Postgres](https://www.postgresql.org/) database to keep track of ca
 
 ## Posting
 
-BCB2 posts to both Twitter ([@big_cases](https://twitter.com/big_cases)) and Mastodon ([@big_cases@law.builders](https://law.builders/@big_cases)).
+BCB2 posts to Twitter ([@big_cases](https://twitter.com/big_cases)), Mastodon ([@big_cases@law.builders](https://law.builders/@bigcases)), and Bluesky ([@bigcases.bots.law](https://bsky.app/profile/bigcases.bots.law)).
 
 
 ## Interacting via social media
@@ -27,6 +27,8 @@ To set up a development machine, do the following:
 1. Clone the [bigcases2](https://github.com/freelawproject/bigcases2) repository.
 
 1. Create a personal settings file. To do that, copy-paste the `.env.example` file to `.env.dev`.
+
+1. Modify your new `.env.dev` file and uncomment the line `ALLOWED_HOSTS="*"`
 
 1. Next, create the bridge network that docker relies on:
 
