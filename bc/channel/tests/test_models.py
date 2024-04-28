@@ -1,5 +1,6 @@
+from typing import cast
+
 from django.test import SimpleTestCase
-from numpy import cast
 
 from bc.channel.models import Channel, Post
 
