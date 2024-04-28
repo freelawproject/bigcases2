@@ -5,6 +5,7 @@ from django.test import SimpleTestCase
 from bc.channel.tests.factories import fake_token
 from bc.channel.utils.connectors.twitter import TwitterConnector
 from bc.core.utils.tests.base import faker
+from bc.settings.third_party import twitter
 
 
 class UploadMediaTest(SimpleTestCase):
@@ -16,7 +17,9 @@ class UploadMediaTest(SimpleTestCase):
     ):
         twitter_conn.get_api_object.return_value = mock_twitter_api
 
-        twitter_conn = TwitterConnector(fake_token(), fake_token())
+        twitter_conn = TwitterConnector(
+            fake_token(), fake_token(), fake_token()
+        )
         twitter_conn.upload_media(mock_image, "image alt text")
 
         expected_upload_media_calls = [
@@ -41,7 +44,9 @@ class AddStatusTest(SimpleTestCase):
     def test_no_image_no_thumbs(self, mock_get_api):
         mock_get_api().request().json.return_value = {"data": {"id": "1"}}
 
-        twitter_conn = TwitterConnector(fake_token(), fake_token())
+        twitter_conn = TwitterConnector(
+            fake_token(), fake_token(), fake_token()
+        )
         result = twitter_conn.add_status("this is the message")
         self.assertEqual(result, "1")
         twitter_conn.api_v2.request.assert_called_with(
@@ -59,7 +64,9 @@ class AddStatusTest(SimpleTestCase):
     ):
         twitter_conn.get_api_object.return_value = mock_twitter_api
 
-        twitter_conn = TwitterConnector(fake_token(), fake_token())
+        twitter_conn = TwitterConnector(
+            fake_token(), fake_token(), fake_token()
+        )
         twitter_conn.add_status("this has an image", text_image=mock_image)
 
         twitter_conn.api_v2.request.assert_called_with(
@@ -86,7 +93,9 @@ class AddStatusTest(SimpleTestCase):
         mock_image.description = "the image description"
         mock_image.to_bytes.return_value = "image bytes"
 
-        twitter_conn = TwitterConnector(fake_token(), fake_token())
+        twitter_conn = TwitterConnector(
+            fake_token(), fake_token(), fake_token()
+        )
         twitter_conn.add_status(
             "this has an image",
             text_image=mock_image,
@@ -108,7 +117,9 @@ class AddStatusTest(SimpleTestCase):
         thumb_4 = faker.binary(8)
         twitter_conn.get_api_object.return_value = mock_twitter_api
 
-        twitter_conn = TwitterConnector(fake_token(), fake_token())
+        twitter_conn = TwitterConnector(
+            fake_token(), fake_token(), fake_token()
+        )
         twitter_conn.add_status(
             "this has 4 thumbnails",
             thumbnails=[thumb_1, thumb_2, thumb_3, thumb_4],
@@ -137,7 +148,9 @@ class AddStatusTest(SimpleTestCase):
             call(thumb_2, "Thumbnail of page 2 of the PDF linked above."),
         ]
 
-        twitter_conn = TwitterConnector(fake_token(), fake_token())
+        twitter_conn = TwitterConnector(
+            fake_token(), fake_token(), fake_token()
+        )
         twitter_conn.add_status(
             "this has 2 thumbnails",
             None,
@@ -155,11 +168,25 @@ class AddStatusTest(SimpleTestCase):
     def test_always_calls_api_v2_request(self, twitter_conn, mock_twitter_api):
         twitter_conn.get_api_object.return_value = mock_twitter_api
 
-        twitter_conn = TwitterConnector(fake_token(), fake_token())
+        twitter_conn = TwitterConnector(
+            fake_token(), fake_token(), fake_token()
+        )
         twitter_conn.add_status("this is the message")
 
         twitter_conn.api_v2.request.assert_called_with(
             "tweets",
             params={"text": "this is the message"},
             method_override="POST",
+        )
+
+
+class ReprTest(SimpleTestCase):
+    @patch("TwitterAPI.TwitterAPI.TwitterAPI")
+    @patch.object(TwitterConnector, "get_api_object")
+    def test_repr(self, _get_api_object, _mock_twitter_api):
+        account = "big_cases"
+        twitter_conn = TwitterConnector(fake_token(), fake_token(), account)
+        self.assertEqual(
+            repr(twitter_conn),
+            f"<bc.channel.utils.connectors.twitter.TwitterConnector: account:'{account}'>",
         )

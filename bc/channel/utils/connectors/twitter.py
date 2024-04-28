@@ -11,9 +11,12 @@ from .base import ApiWrapper
 
 
 class TwitterConnector:
-    def __init__(self, access_token: str, access_token_secret: str) -> None:
+    def __init__(
+        self, access_token: str, access_token_secret: str, account: str
+    ) -> None:
         self.access_token = access_token
         self.access_token_secret = access_token_secret
+        self.account = account
         self.api = self.get_api_object("1.1")
         self.api_v2 = self.get_api_object("2")
 
@@ -99,3 +102,6 @@ class TwitterConnector:
         data = response.json()
 
         return data["data"]["id"]
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__module__}.{self.__class__.__name__}: account:'{self.account}'>"

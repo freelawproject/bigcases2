@@ -8,11 +8,7 @@ from bc.users.models import User
 
 from .utils.connectors.base import BaseAPIConnector
 from .utils.connectors.bluesky import BlueskyConnector
-from .utils.connectors.masto import (
-    MastodonConnector,
-    get_server_url,
-    masto_regex,
-)
+from .utils.connectors.masto import MastodonConnector, get_handle_parts
 from .utils.connectors.twitter import TwitterConnector
 
 
@@ -112,11 +108,12 @@ class Channel(AbstractDateTimeModel):
         match self.service:
             case self.TWITTER:
                 return TwitterConnector(
-                    self.access_token, self.access_token_secret
+                    self.access_token, self.access_token_secret, self.account
                 )
             case self.MASTODON:
+                account_part, instance_part = get_handle_parts(self.account)
                 return MastodonConnector(
-                    self.access_token, get_server_url(self.account)
+                    self.access_token, instance_part, account_part
                 )
             case self.BLUESKY:
                 return BlueskyConnector(self.account_id, self.access_token)
@@ -130,12 +127,10 @@ class Channel(AbstractDateTimeModel):
             case self.TWITTER:
                 return f"https://twitter.com/{self.account}"
             case self.MASTODON:
-                result = masto_regex.search(self.account)
-                assert len(result.groups()) == 2
-                account_part, instance_part = result.groups()
-                return f"https://{instance_part}/@{account_part}"
+                account_part, instance_part = get_handle_parts(self.account)
+                return f"{instance_part}@{account_part}"
             case self.BLUESKY:
-                return f"https://bsky.app/profile/{self.account_id}"
+                return f"https://bsky.app/profile/{self.account}"
             case _:
                 raise NotImplementedError(
                     f"Channel.self_url() not yet implemented for service {self.service}"
@@ -172,10 +167,14 @@ class Post(AbstractDateTimeModel):
     @property
     def post_url(self) -> str:
         service = self.channel.service
+        self_url = self.channel.self_url()
+
         match service:
             case Channel.MASTODON:
-                return f"https://law.builders/@bigcases/{self.object_id}"
+                return f"{self_url}/{self.object_id}"
             case Channel.TWITTER:
-                return f"https://twitter.com/big_cases/status/{self.object_id}"
+                return f"{self_url}/status/{self.object_id}"
+            case Channel.BLUESKY:
+                return f"{self_url}/post/{self.object_id}"
             case _:
                 raise NotImplementedError(f"Unknown service: '{service}'.")
