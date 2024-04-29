@@ -10,12 +10,14 @@ class BlueskyConnector:
     def __init__(self, identifier: str, password: str) -> None:
         self.identifier = identifier
         self.password = password
-        self.api = self.get_api_object()
+        self.api: BlueskyAPI = self.get_api_object()
 
     def get_api_object(self, _version=None) -> ApiWrapper:
         return BlueskyAPI(self.identifier, self.password)
 
-    def upload_media(self, media, alt_text) -> ImageBlob:
+    def upload_media(
+        self, media: bytes, _alt_text: str | None = None
+    ) -> ImageBlob | None:
         """Upload a new blob to be added to a post in a later request."""
         return self.api.post_media(media, mime_type="image/png")
 
@@ -49,7 +51,7 @@ class BlueskyConnector:
                     }
                 )
 
-        api_response = self.api.post_status(message, media)
+        api_response = self.api.status_post(message, media)
 
         return api_response["cid"]
 

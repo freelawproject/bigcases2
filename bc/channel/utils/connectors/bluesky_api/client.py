@@ -333,7 +333,7 @@ class BlueskyAPI:
             "thumb": thumbnail,
         }
 
-    def post_status(self, text: str, media: list[Thumbnail]) -> dict[str, str]:
+    def status_post(self, text: str, media: list[Thumbnail]) -> dict[str, str]:
         """
         Creates a new status post on Bluesky using the provided text and thumbnails.
 

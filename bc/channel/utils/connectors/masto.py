@@ -43,7 +43,7 @@ class MastodonConnector:
         self.access_token = access_token
         self.base_url = base_url
         self.account = account
-        self.api = self.get_api_object()
+        self.api: Mastodon = self.get_api_object()
 
     def get_api_object(self, _version=None) -> ApiWrapper:
         mastodon = Mastodon(
