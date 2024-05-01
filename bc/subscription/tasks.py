@@ -66,20 +66,27 @@ def enqueue_posts_for_new_case(
         docket = lookup_docket_by_cl_id(subscription.cl_docket_id)
 
     date_filed: date | None = None
-    date_filed_str = (
-        docket["date_filed"] if initial_document and docket else None
-    )
-    try:
-        date_filed = (
-            datetime.strptime(date_filed_str, "%Y-%m-%d").date()
-            if date_filed_str
-            else None
-        )
-    except ValueError:
-        # If the date_filed_str is not a valid date, just continue on
-        pass
+    days_old = 0
+
+    date_filed_str = docket["date_filed"] if docket else None
+    if date_filed_str:
+        try:
+            date_filed = (
+                datetime.strptime(date_filed_str, "%Y-%m-%d").date()
+                if date_filed_str
+                else None
+            )
+
+            assert date_filed is not None  # For type checking purposes
+            days_old = (date.today() - date_filed).days
+        except ValueError:
+            # If the date_filed_str is not a valid date, just continue on
+            pass
+
     initial_complaint_link = (
-        initial_document["absolute_url"] if initial_document else None
+        f"https://www.courtlistener.com{initial_document['absolute_url']}"
+        if initial_document
+        else None
     )
 
     initial_complaint_type: Literal["Petition", "Complaint"] | None = None
@@ -99,10 +106,12 @@ def enqueue_posts_for_new_case(
             docket_link=subscription.cl_url,
             docket_id=subscription.cl_docket_id,
             article_url=subscription.article_url,
-            date_filed=date_filed,
+            date_filed=date_filed if days_old >= 30 else None,
             initial_complaint_type=initial_complaint_type,
             initial_complaint_link=initial_complaint_link,
         )
+
+        print(message)
 
         api = channel.get_api_wrapper()
 

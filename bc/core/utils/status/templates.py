@@ -140,7 +140,7 @@ Filed: {{date_filed}}
  | [Background Info]({{article_url}})
 {% endif %}
 {% if initial_complaint_type and initial_complaint_link %}
- | [{{initial_complaint_type}}]({{initital_complaint_link}})
+ | [{{initial_complaint_type}}]({{initial_complaint_link}})
 {% endif %}
 
 #CL{{docket_id}}""",

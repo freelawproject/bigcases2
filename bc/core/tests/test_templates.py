@@ -557,7 +557,7 @@ class NewSubscriptionValidTemplateTest(SimpleTestCase):
 
     def test_check_output_validity_bluesky_template_w_initial_complaint(self):
         template = BLUESKY_FOLLOW_A_NEW_CASE
-        valid_multipliers = [5, 10, 20, 40, 46]
+        valid_multipliers = [5, 10, 20, 40, 47]
         for multiplier in valid_multipliers:
             with self.subTest(multiplier=multiplier, valid=True):
                 template.format(
@@ -570,7 +570,7 @@ class NewSubscriptionValidTemplateTest(SimpleTestCase):
 
                 self.assertTrue(template.is_valid)
 
-        invalid_multipliers = [47, 50, 100]
+        invalid_multipliers = [48, 50, 100]
         for multiplier in invalid_multipliers:
             with self.subTest(multiplier=multiplier, valid=False):
                 template.format(
@@ -615,7 +615,7 @@ class NewSubscriptionValidTemplateTest(SimpleTestCase):
         self,
     ):
         template = BLUESKY_FOLLOW_A_NEW_CASE
-        valid_multipliers = [5, 10, 20, 40, 42]
+        valid_multipliers = [5, 10, 20, 40, 43]
         for multiplier in valid_multipliers:
             with self.subTest(multiplier=multiplier, valid=True):
                 template.format(
@@ -629,7 +629,7 @@ class NewSubscriptionValidTemplateTest(SimpleTestCase):
 
                 self.assertTrue(template.is_valid)
 
-        invalid_multipliers = [43, 50, 100]
+        invalid_multipliers = [44, 50, 100]
         for multiplier in invalid_multipliers:
             with self.subTest(multiplier=multiplier, valid=False):
                 template.format(
@@ -647,7 +647,7 @@ class NewSubscriptionValidTemplateTest(SimpleTestCase):
         self,
     ):
         template = BLUESKY_FOLLOW_A_NEW_CASE
-        valid_multipliers = [5, 10, 20, 40, 42]
+        valid_multipliers = [5, 10, 20, 40, 43]
         for multiplier in valid_multipliers:
             with self.subTest(multiplier=multiplier, valid=True):
                 template.format(
@@ -661,7 +661,7 @@ class NewSubscriptionValidTemplateTest(SimpleTestCase):
 
                 self.assertTrue(template.is_valid)
 
-        invalid_multipliers = [43, 50, 100]
+        invalid_multipliers = [44, 50, 100]
         for multiplier in invalid_multipliers:
             with self.subTest(multiplier=multiplier, valid=False):
                 template.format(
@@ -679,7 +679,7 @@ class NewSubscriptionValidTemplateTest(SimpleTestCase):
         self,
     ):
         template = BLUESKY_FOLLOW_A_NEW_CASE
-        valid_multipliers = [5, 10, 20, 38]
+        valid_multipliers = [5, 10, 20, 39]
         for multiplier in valid_multipliers:
             with self.subTest(multiplier=multiplier, valid=True):
                 template.format(
@@ -694,7 +694,7 @@ class NewSubscriptionValidTemplateTest(SimpleTestCase):
 
                 self.assertTrue(template.is_valid)
 
-        invalid_multipliers = [39, 40, 50, 100]
+        invalid_multipliers = [40, 50, 100]
         for multiplier in invalid_multipliers:
             with self.subTest(multiplier=multiplier, valid=False):
                 template.format(
