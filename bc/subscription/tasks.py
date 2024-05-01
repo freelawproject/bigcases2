@@ -111,8 +111,6 @@ def enqueue_posts_for_new_case(
             initial_complaint_link=initial_complaint_link,
         )
 
-        print(message)
-
         api = channel.get_api_wrapper()
 
         sponsor_message = None

@@ -426,6 +426,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
         api_wrapper = self.mock_api_wrapper()
         mock_api.return_value = api_wrapper
         mock_lookup.return_value = None
+        mock_docket_by_cl_id.return_value = None
         message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
             docket=self.subscription.name_with_summary,
             docket_link=self.subscription.cl_url,
@@ -449,6 +450,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
         api_wrapper = self.mock_api_wrapper()
         mock_api.return_value = api_wrapper
         mock_lookup.return_value = None
+        mock_docket_by_cl_id.return_value = None
         message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
             docket=self.subscription_w_link.name_with_summary,
             docket_link=self.subscription_w_link.cl_url,
