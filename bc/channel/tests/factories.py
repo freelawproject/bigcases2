@@ -96,7 +96,7 @@ class ChannelFactory(DjangoModelFactory):
         )
         mastodon = factory.Trait(
             service=Channel.MASTODON,
-            account="BigCases2-faux",
+            account="@BigCases2-faux@mastodon.test",
             account_id="Mastodon-big-cases-email-faux",
             enabled=True,
         )
