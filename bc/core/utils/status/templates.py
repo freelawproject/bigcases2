@@ -1,11 +1,6 @@
 import re
 
-from .base import (
-    BaseTemplate,
-    BlueskyTemplate,
-    MastodonTemplate,
-    TwitterTemplate,
-)
+from .base import BlueskyTemplate, MastodonTemplate, TwitterTemplate
 
 DO_NOT_POST = re.compile(
     r"""(
@@ -50,23 +45,30 @@ Docket: {docket_link}
 )
 
 MASTODON_FOLLOW_A_NEW_CASE = MastodonTemplate(
-    link_placeholders=[],
-    str_template="""I'm now following {docket}:
+    link_placeholders=["docket_link", "initial_complaint_link", "article_url"],
+    # Remove extra newlines caused by empty template blocks
+    post_replace=[
+        ("\n\n\n\n", "\n\n"),
+        ("\n\n\n\n", "\n\n"),
+        ("\n\n\n", "\n\n"),
+    ],
+    str_template="""I'm now following {{docket}}:
 
-{docket_link}
+{% if date_filed %}
+Filed: {{date_filed}}
+{% endif %}
 
-#CL{docket_id}""",
-)
+Docket: {{docket_link}}
 
-MASTODON_FOLLOW_A_NEW_CASE_W_ARTICLE = MastodonTemplate(
-    link_placeholders=["article_url"],
-    str_template="""I'm now following {docket}:
+{% if initial_complaint_type and initial_complaint_link %}
+{{initial_complaint_type}}: {{initial_complaint_link}}
+{% endif %}
 
-Docket: {docket_link}
+{% if article_url %}
+Context: {{article_url}}
+{% endif %}
 
-Context: {article_url}
-
-#CL{docket_id}""",
+#CL{{docket_id}}""",
 )
 
 
@@ -89,44 +91,59 @@ Docket: {docket_link}
 #CL{docket_id}""",
 )
 
-
 TWITTER_FOLLOW_A_NEW_CASE = TwitterTemplate(
-    link_placeholders=[],
-    str_template="""I'm now following {docket}:
+    link_placeholders=["docket_link", "initial_complaint_link", "article_url"],
+    # Remove extra newlines caused by empty template blocks
+    post_replace=[
+        ("\n\n\n\n", "\n\n"),
+        ("\n\n\n\n", "\n\n"),
+        ("\n\n\n", "\n\n"),
+    ],
+    str_template="""I'm now following {{docket}}:
 
-{docket_link}
+{% if date_filed %}
+Filed: {{date_filed}}
+{% endif %}
 
-#CL{docket_id}""",
+Docket: {{docket_link}}
+
+{% if initial_complaint_type and initial_complaint_link %}
+{{initial_complaint_type}}: {{initial_complaint_link}}
+{% endif %}
+
+{% if article_url %}
+Context: {{article_url}}
+{% endif %}
+
+#CL{{docket_id}}""",
 )
-
-TWITTER_FOLLOW_A_NEW_CASE_W_ARTICLE = TwitterTemplate(
-    link_placeholders=["article_url"],
-    str_template="""I'm now following {docket}:
-
-Docket: {docket_link}
-
-Context: {article_url}
-
-#CL{docket_id}""",
-)
-
 
 BLUESKY_FOLLOW_A_NEW_CASE = BlueskyTemplate(
-    link_placeholders=["docket_link"],
-    str_template="""I'm now following {docket}:
+    link_placeholders=["docket_link", "article_url", "initial_complaint_link"],
+    # Remove extra newlines caused by empty template blocks
+    post_replace=[
+        ("\n\n\n\n", "\n\n"),
+        ("\n\n\n\n", "\n\n"),
+        ("\n\n\n", "\n\n"),
+        ("\n\n\n", "\n\n"),
+        ("\n\n |", " |"),
+        ("\n |", " |"),
+    ],
+    str_template="""I'm now following {{docket}}:
 
-[View Full Case]({docket_link})
+{% if date_filed %}
+Filed: {{date_filed}}
+{% endif %}
 
-#CL{docket_id}""",
-)
+[View Full Case]({{docket_link}})
+{% if article_url %}
+ | [Background Info]({{article_url}})
+{% endif %}
+{% if initial_complaint_type and initial_complaint_link %}
+ | [{{initial_complaint_type}}]({{initital_complaint_link}})
+{% endif %}
 
-BLUESKY_FOLLOW_A_NEW_CASE_W_ARTICLE = BlueskyTemplate(
-    link_placeholders=["docket_link", "article_url"],
-    str_template="""I'm now following {docket}:
-
-[View Full Case]({docket_link}) | [Background Info]({article_url})
-
-#CL{docket_id}""",
+#CL{{docket_id}}""",
 )
 
 BLUESKY_POST_TEMPLATE = BlueskyTemplate(

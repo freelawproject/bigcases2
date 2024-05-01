@@ -88,6 +88,12 @@ class ChannelFactory(DjangoModelFactory):
     group = SubFactory(GroupFactory)
 
     class Params:
+        bluesky = factory.Trait(
+            service=Channel.BLUESKY,
+            account="BigCases2-faux.bsky.social",
+            account_id="Bigsky-big-cases-email-faux",
+            enabled=True,
+        )
         mastodon = factory.Trait(
             service=Channel.MASTODON,
             account="BigCases2-faux",

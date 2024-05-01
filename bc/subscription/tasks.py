@@ -1,4 +1,5 @@
-from typing import Literal
+from datetime import date, datetime
+from typing import Literal, TypeVar
 
 from django.conf import settings
 from django.db import transaction
@@ -20,8 +21,11 @@ from bc.core.utils.status.templates import DO_NOT_PAY, DO_NOT_POST
 from bc.sponsorship.selectors import check_active_sponsorships
 from bc.sponsorship.services import log_purchase
 from bc.subscription.utils.courtlistener import (
+    DocketDict,
     DocumentDict,
     download_pdf_from_cl,
+    is_bankruptcy,
+    lookup_docket_by_cl_id,
     lookup_document_by_doc_id,
     lookup_initial_complaint,
     purchase_pdf_by_doc_id,
@@ -37,6 +41,7 @@ def enqueue_posts_for_new_case(
     subscription: Subscription,
     document: bytes | None = None,
     check_sponsor_message: bool = False,
+    initial_document: DocumentDict | None = None,
 ) -> None:
     """
     Enqueue jobs to create a post in the available channels after
@@ -53,10 +58,38 @@ def enqueue_posts_for_new_case(
     if document:
         files = get_thumbnails_from_range(document, "[1,2,3,4]")
 
-    for channel in get_channels_per_subscription(subscription.pk):
-        template = get_new_case_template(
-            channel.service, subscription.article_url
+    if initial_document is None:
+        initial_document = lookup_initial_complaint(subscription.cl_docket_id)
+
+    docket: DocketDict | None = None
+    if subscription.cl_docket_id:
+        docket = lookup_docket_by_cl_id(subscription.cl_docket_id)
+
+    date_filed: date | None = None
+    date_filed_str = (
+        docket["date_filed"] if initial_document and docket else None
+    )
+    try:
+        date_filed = (
+            datetime.strptime(date_filed_str, "%Y-%m-%d").date()
+            if date_filed_str
+            else None
         )
+    except ValueError:
+        # If the date_filed_str is not a valid date, just continue on
+        pass
+    initial_complaint_link = (
+        initial_document["absolute_url"] if initial_document else None
+    )
+
+    initial_complaint_type: Literal["Petition", "Complaint"] | None = None
+    if initial_complaint_link and docket:
+        initial_complaint_type = (
+            "Petition" if is_bankruptcy(docket) else "Complaint"
+        )
+
+    for channel in get_channels_per_subscription(subscription.pk):
+        template = get_new_case_template(channel.service)
 
         if channel.group:
             template.border_color = channel.group.border_color_rgb
@@ -66,6 +99,9 @@ def enqueue_posts_for_new_case(
             docket_link=subscription.cl_url,
             docket_id=subscription.cl_docket_id,
             article_url=subscription.article_url,
+            date_filed=date_filed,
+            initial_complaint_type=initial_complaint_type,
+            initial_complaint_link=initial_complaint_link,
         )
 
         api = channel.get_api_wrapper()
@@ -251,7 +287,9 @@ def check_initial_complaint_before_posting(
             return subscription
 
     # Got the document or no sponsorship. Tweet and toot.
-    enqueue_posts_for_new_case(subscription, document)
+    enqueue_posts_for_new_case(
+        subscription, document, initial_document=cl_document
+    )
 
     return subscription
 
@@ -320,7 +358,7 @@ def process_fetch_webhook_event(
     if record_type == "filing_webhook":
         enqueue_posts_for_docket_alert(filing_webhook_event, pdf_data, True)
     else:
-        enqueue_posts_for_new_case(subscription, pdf_data, True)
+        enqueue_posts_for_new_case(subscription, pdf_data, True, cl_document)
 
     return record_pk
 

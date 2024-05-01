@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import TypedDict
+from typing import Any, NotRequired, TypedDict, cast
 
 import courts_db
 import requests
@@ -113,7 +113,23 @@ def auth_header() -> dict:
     return header_dict
 
 
-def lookup_docket_by_cl_id(cl_id: int):
+class DocketIDBDataDict(TypedDict):
+    nature_of_suit: str | None
+
+
+class DocketDict(TypedDict):
+    id: int
+    case_name: str
+    court_id: str
+    date_filed: NotRequired[str]
+    docket_number: str
+    idb_data: NotRequired[DocketIDBDataDict | None]
+    nature_of_suit: NotRequired[str]
+    pacer_case_id: str
+    slug: str
+
+
+def lookup_docket_by_cl_id(cl_id: int) -> DocketDict:
     """
     Performs a GET query on /api/rest/v3/dockets/
     to get a Docket using the CourtListener ID
@@ -125,6 +141,7 @@ def lookup_docket_by_cl_id(cl_id: int):
 
 
 class DocumentDict(TypedDict):
+    absolute_url: str
     id: int
     page_count: int
     filepath_local: str
@@ -138,7 +155,9 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     """
     response = requests.get(
         f"{CL_API['recap-documents']}{doc_id}/",
-        params={"fields": "id,filepath_local,page_count,pacer_doc_id"},
+        params={
+            "fields": "id,absolute_url,filepath_local,page_count,pacer_doc_id"
+        },
         headers=auth_header(),
         timeout=5,
     )
@@ -166,7 +185,7 @@ def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
         "docket_entry__docket__id": docket_id,
         "docket_entry__entry_number": 1,
         "order_by": "id",
-        "fields": "id,filepath_local,page_count,pacer_doc_id",
+        "fields": "id,absolute_url,filepath_local,page_count,pacer_doc_id",
     }
 
     response = requests.get(
@@ -184,6 +203,7 @@ def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
     document = data["results"][0]
     return {
         "id": document["id"],
+        "absolute_url": document["absolute_url"],
         "filepath_local": document["filepath_local"],
         "page_count": document["page_count"],
         "pacer_doc_id": document["pacer_doc_id"],
@@ -308,3 +328,43 @@ def handle_multi_defendant_cases(queue):
         # TODO
         raise NotImplementedError
     logger.debug("handle_multi_defendant_cases(): done")
+
+
+def is_bankruptcy(docket: DocketDict) -> bool:
+    """
+    For a given docket document (i.e., one retrieved via
+    `lookup_docket_by_cl_id`), try to determine if it's
+
+    Args:
+        docket (dict): The docket document for the case
+
+    Returns:
+        bool: Whether this is a bankruptcy case
+    """
+
+    # There seems to be a few approaches we could take here:
+    #
+    # - Check the nature_of_suit field and compare against the bankruptcy code (4900)
+    #   listed at https://github.com/freelawproject/courtlistener/blob/main/cl/recap/constants.py#L583
+    #
+    #  - Check the nature_of_suit filed inside the idb_data field and compare
+    #    against the bankruptcy code listed above
+    #
+    # - Check the court name/id against a list of bankruptcy courts, but I
+    #   don't think we have that anywhere handy at the moment.
+    #
+    # For now, I'm going to go with a combo of the first two approaches, since
+    # it seems like the most efficient path for now.
+
+    if not docket:
+        return False
+
+    # idb_data is sometimes present and None, so do this instead of
+    # providing a default to the get function so we always have a dict even
+    # if it's an empty one.
+    idb_data = docket.get("idb_data") or cast(DocketIDBDataDict, {})
+
+    nature_of_suit = docket.get("nature_of_suit")
+    idb_nature_of_suit = idb_data.get("nature_of_suit")
+
+    return "4900" in [nature_of_suit, idb_nature_of_suit]
