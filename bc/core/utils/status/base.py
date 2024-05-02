@@ -28,7 +28,6 @@ class BaseTemplate:
     link_placeholders: list[str]
     max_characters: int
     border_color: tuple[int, ...] = (243, 195, 62)
-    post_replace: list[tuple[str, str]] = field(default_factory=list)
     is_valid: bool = True
     _django_template: Template | None = None
 
@@ -132,9 +131,6 @@ class BaseTemplate:
             text = str(self.django_template.render(Context(kwargs)))
         else:
             text = self.str_template.format(**kwargs)
-
-        for find_str, sub_str in self.post_replace:
-            text = text.replace(find_str, sub_str)
 
         self.is_valid = self._check_output_validity(text)
 
