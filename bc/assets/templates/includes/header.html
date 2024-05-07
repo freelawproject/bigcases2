@@ -180,14 +180,17 @@
                         </div>
                       </a>
 
-                      <a href="{% url 'logout' %}" class="flex items-start -m-3 p-3 hover:bg-gray-100 text-gray-900">
-                        <div class="h-4 w-4 relative flex-shrink-0 ">
-                          {% include './inlines/logout.svg' %}
-                        </div>
-                        <div class="ml-2">
-                            <p class="text-sm font-medium">Sign Out</p>
-                        </div>
-                      </a>
+                      <form id="logout-form" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="flex items-start -m-3 p-3 hover:bg-gray-100 text-gray-900">
+                          <div class="h-4 w-4 relative flex-shrink-0 ">
+                            {% include './inlines/logout.svg' %}
+                          </div>
+                          <div class="ml-2">
+                              <p class="text-sm font-medium">Sign Out</p>
+                          </div>
+                        </button>
+                      </form>
                   </div>
                   </div>
                 </div>
