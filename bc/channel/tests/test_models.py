@@ -8,7 +8,9 @@ from bc.channel.models import Channel, Post
 class ModelsUrlTest(SimpleTestCase):
     def setUp(self) -> None:
         self.bluesky_channel = Channel(
-            service=Channel.BLUESKY, account="bigcases.bots.law"
+            service=Channel.BLUESKY,
+            account="@bigcases.bots.law",
+            account_id="bigcases.bots.law",
         )
         self.mastodon_channel = Channel(
             service=Channel.MASTODON, account="@bigcases@law.builders"

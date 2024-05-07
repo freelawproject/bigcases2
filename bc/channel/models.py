@@ -130,7 +130,7 @@ class Channel(AbstractDateTimeModel):
                 account_part, instance_part = get_handle_parts(self.account)
                 return f"{instance_part}@{account_part}"
             case self.BLUESKY:
-                return f"https://bsky.app/profile/{self.account}"
+                return f"https://bsky.app/profile/{self.account_id}"
             case _:
                 raise NotImplementedError(
                     f"Channel.self_url() not yet implemented for service {self.service}"
