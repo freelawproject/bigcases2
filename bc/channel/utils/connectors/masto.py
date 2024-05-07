@@ -21,25 +21,28 @@ masto_regex = re.compile(r"@(.+)@(.+)")
 logger = logging.getLogger(__name__)
 
 
-def get_server_url(handle: str) -> str:
+def get_handle_parts(handle: str) -> tuple[str, str]:
     """
     extracts the server name from the Mastodon handle and returns the URL
     Args:
         handle (str): the mastodon handle
     Returns:
-        str: Mastodon server's URL
+        tuple:
+            str: Mastodon server's URL
+            str: Mastodon handle
     """
     result = masto_regex.search(handle)
     if result:
-        _, instance_part = result.groups()
-        return f"https://{instance_part}/"
-    return ""
+        account_part, instance_part = result.groups()
+        return (account_part, f"https://{instance_part}/")
+    return ("", "")
 
 
 class MastodonConnector:
-    def __init__(self, access_token: str, base_url: str) -> None:
+    def __init__(self, access_token: str, base_url: str, account: str) -> None:
         self.access_token = access_token
         self.base_url = base_url
+        self.account = account
         self.api = self.get_api_object()
 
     def get_api_object(self, _version=None) -> ApiWrapper:
@@ -142,3 +145,6 @@ class MastodonConnector:
         )
 
         return response
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__module__}.{self.__class__.__name__}: base_url:'{self.base_url}', account:'{self.account}'>"
