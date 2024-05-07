@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
-from requests import HTTPError
+from requests import HTTPError, ReadTimeout
 
 from .types import (
     ImageBlob,
@@ -297,7 +297,7 @@ class BlueskyAPI:
                 timeout=self._timeout,
             )
             resp.raise_for_status()
-        except HTTPError:
+        except (HTTPError, ReadTimeout):
             return None
 
         soup = BeautifulSoup(resp.text, "html.parser")
