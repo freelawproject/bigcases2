@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Literal, TypeVar
+from typing import Literal
 
 from django.conf import settings
 from django.db import transaction

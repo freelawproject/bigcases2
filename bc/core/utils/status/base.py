@@ -1,5 +1,5 @@
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from string import Formatter
 
 from django.template import Context, NodeList, Template
