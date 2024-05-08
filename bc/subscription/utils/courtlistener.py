@@ -330,41 +330,15 @@ def handle_multi_defendant_cases(queue):
     logger.debug("handle_multi_defendant_cases(): done")
 
 
-def is_bankruptcy(docket: DocketDict) -> bool:
+def is_bankruptcy(court_id: str) -> bool:
     """
-    For a given docket document (i.e., one retrieved via
-    `lookup_docket_by_cl_id`), try to determine if it's
+    For a given court id, try to determine if it's a bankruptcy court.
 
     Args:
-        docket (dict): The docket document for the case
+        court_id (str): The court id to check the type of
 
     Returns:
-        bool: Whether this is a bankruptcy case
+        bool: Whether this is a bankruptcy court
     """
 
-    # There seems to be a few approaches we could take here:
-    #
-    # - Check the nature_of_suit field and compare against the bankruptcy code (4900)
-    #   listed at https://github.com/freelawproject/courtlistener/blob/main/cl/recap/constants.py#L583
-    #
-    #  - Check the nature_of_suit filed inside the idb_data field and compare
-    #    against the bankruptcy code listed above
-    #
-    # - Check the court name/id against a list of bankruptcy courts, but I
-    #   don't think we have that anywhere handy at the moment.
-    #
-    # For now, I'm going to go with a combo of the first two approaches, since
-    # it seems like the most efficient path for now.
-
-    if not docket:
-        return False
-
-    # idb_data is sometimes present and None, so do this instead of
-    # providing a default to the get function so we always have a dict even
-    # if it's an empty one.
-    idb_data = docket.get("idb_data") or cast(DocketIDBDataDict, {})
-
-    nature_of_suit = docket.get("nature_of_suit")
-    idb_nature_of_suit = idb_data.get("nature_of_suit")
-
-    return "4900" in [nature_of_suit, idb_nature_of_suit]
+    return court_id.lower().endswith("b") if court_id is not None else False

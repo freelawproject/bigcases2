@@ -90,9 +90,11 @@ def enqueue_posts_for_new_case(
     )
 
     initial_complaint_type: Literal["Petition", "Complaint"] | None = None
-    if initial_complaint_link and docket:
+    if initial_complaint_link:
         initial_complaint_type = (
-            "Petition" if is_bankruptcy(docket) else "Complaint"
+            "Petition"
+            if is_bankruptcy(subscription.cl_court_id)
+            else "Complaint"
         )
 
     for channel in get_channels_per_subscription(subscription.pk):
