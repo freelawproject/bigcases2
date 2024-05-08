@@ -5,7 +5,8 @@ from textwrap import fill, wrap
 
 from django.contrib.staticfiles import finders
 from PIL import Image, ImageFont, ImageOps
-from PIL.ImageDraw import Draw
+from PIL.Image import Image as ImageCls
+from PIL.ImageDraw import Draw, ImageDraw
 
 
 @dataclass
@@ -173,7 +174,7 @@ class TextImage:
         return ceil(width), ceil(height)
 
     def get_bbox_dimensions(
-        self, canvas: Draw, title: str, desc: str
+        self, canvas: ImageDraw, title: str, desc: str
     ) -> tuple[int, int]:
         """
         Returns the dimensions(width and height, in pixels) of the text(title and
@@ -226,7 +227,7 @@ class TextImage:
         y = ceil((self.img.height - height) / 2)
         return x, y
 
-    def make_image(self) -> Image:
+    def make_image(self) -> ImageCls:
         self.width, _ = self.get_initial_dimensions()
         max_character_count = self.get_max_character_count()
         # wrap the title and the description using the max_character_count
@@ -297,9 +298,9 @@ class SponsoredThumbnail:
     small_text: str | None = None
     title_font_path: str | None = finders.find("fonts/CooperHewitt-Bold.otf")
     small_font_path: str | None = finders.find("fonts/CooperHewitt-Medium.otf")
-    text_box: Image = field(init=False)
-    background: Image = field(init=False)
-    overlay_layer: Image = field(init=False)
+    text_box: ImageCls = field(init=False)
+    background: ImageCls = field(init=False)
+    overlay_layer: ImageCls = field(init=False)
 
     def __post_init__(self) -> None:
         self.title_font = ImageFont.truetype(self.title_font_path, 46)
@@ -330,7 +331,7 @@ class SponsoredThumbnail:
 
         return (bbox_width, bbox_height)
 
-    def _fill_text_box(self) -> Image:
+    def _fill_text_box(self) -> ImageCls:
         """
         Creates a canvas for the text box and draw the sponsored text inside it
 
