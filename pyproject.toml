@@ -88,10 +88,21 @@ exclude = '''
 '''
 line-length = 79
 
+[tool.'django-stubs']
+django_settings_module = "bc.settings"
 
 [tool.isort]
 profile = "black"
 line_length = 79
+
+[tool.mypy]
+ignore_missing_imports = true
+plugins = "mypy_django_plugin.main"
+exclude = "migrations/*"
+
+[[tool.mypy.overrides]]
+module="django_stubs_ext.*"
+follow_imports="normal"
 
 [tool.pylint.messages_control]
 disable = "C0330, C0326"
@@ -102,6 +113,3 @@ max-line-length = "79"
 [build-system]
 build-backend = "poetry.core.masonry.api"
 requires = ["poetry-core>=1.0.0"]
-
-[tool.poetry.scripts]
-bigcases2 = "bigcases2.cli:cli"
