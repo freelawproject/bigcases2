@@ -3,7 +3,10 @@ from unittest.mock import MagicMock, patch
 from django.core.exceptions import ValidationError
 from django.test import SimpleTestCase
 
-from bc.subscription.utils.courtlistener import get_docket_id_from_query
+from bc.subscription.utils.courtlistener import (
+    get_docket_id_from_query,
+    is_bankruptcy,
+)
 
 
 class SearchBarTest(SimpleTestCase):
@@ -73,3 +76,15 @@ class SearchBarTest(SimpleTestCase):
 
             result = get_docket_id_from_query(test["query"])
             self.assertEqual(result, test["docket_id"])
+
+
+class IsBankruptcyTest(SimpleTestCase):
+    def test_is_bankruptcy(self):
+        self.assertTrue(is_bankruptcy("13B"))
+        self.assertTrue(is_bankruptcy("13b"))
+
+    def test_is_bankruptcy_false(self):
+        self.assertFalse(is_bankruptcy("13f"))
+
+    def test_is_bankruptcy_none(self):
+        self.assertFalse(is_bankruptcy(None))  # type: ignore

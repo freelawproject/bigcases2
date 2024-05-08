@@ -5,19 +5,21 @@
 #   MagicMocks, so those lines are commented to ignore the [attr-defined]
 #   error.
 import re
+from typing import cast
 from unittest.mock import ANY, MagicMock, call, patch
 
 from django.test import SimpleTestCase
 
 from bc.core.management.commands.make_dev_data import MakeDevData
 from bc.subscription.tests.factories import SubscriptionFactory
+from bc.subscription.utils.courtlistener import DocketDict
 
-CL_DOCKET_RESULT = {
-    "docket_id": 42,
+CL_DOCKET_RESULT: DocketDict = {
+    "id": 42,
     "docket_number": "US 12345",
     "case_name": "US v Bobolink",
-    "court_id": 5,
-    "pacer_case_id": 89,
+    "court_id": "5",
+    "pacer_case_id": "89",
     "slug": "cl_slug_for_docket",
 }
 
@@ -43,7 +45,7 @@ class TestMakeDataDev(SimpleTestCase):
     return_value=([], "subbed randoms"),
 )
 class TestCreate(SimpleTestCase):
-    cl_docket_result: dict[str, object] = {}
+    cl_docket_result = cast(DocketDict, {})
     mock_big_cases_group: MagicMock = MagicMock()
     mocked_make_big_cases_group_and_channels: MagicMock = MagicMock()
     mocked_make_little_cases_group_and_channels: MagicMock = MagicMock()
@@ -404,7 +406,7 @@ class NumSubdToGroupStrTest(SimpleTestCase):
 # @see https://docs.python.org/3/library/unittest.mock.html#where-to-patch
 @patch("bc.core.management.commands.make_dev_data.lookup_docket_by_cl_id")
 class TestMakeSubsFromClDocketId(NumSubdToGroupStrTest, SimpleTestCase):
-    cl_docket_result: dict[str, object] = {}
+    cl_docket_result: DocketDict = cast(DocketDict, {})
     mocked_channels: MagicMock = MagicMock()
     mock_big_cases_group: MagicMock = MagicMock()
 
@@ -447,8 +449,8 @@ class TestMakeSubsFromClDocketId(NumSubdToGroupStrTest, SimpleTestCase):
             cl_docket_id=67890,
             docket_number="US 12345",
             docket_name="US v Bobolink",
-            cl_court_id=5,
-            pacer_case_id=89,
+            cl_court_id="5",
+            pacer_case_id="89",
             cl_slug="cl_slug_for_docket",
             channels=self.mock_big_cases_group.channels.all(),
         )

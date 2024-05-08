@@ -95,6 +95,15 @@ class Command(BaseCommand):
         if case_summary:
             result["case_summary"] = case_summary
 
+        article_url = result.get("article_url", "")
+        custom_article_url = input(
+            "\nEnter a an article url or press enter to leave it empty:\n\n"
+            + (f"Default: {article_url}\n" if article_url else "")
+            + "article_url: "
+        )
+        if custom_article_url:
+            result["article_url"] = custom_article_url
+
         instance = "channel" if options["show_channels"] else "group"
         self.stdout.write(
             self.style.SUCCESS(
