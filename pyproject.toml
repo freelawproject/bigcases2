@@ -24,7 +24,7 @@ version = "0.0.1"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-art = "^6.1"
+art = "^6.2"
 requests = "^2.31.0"
 python-dotenv = "^1.0.0"
 "Mastodon.py" = {extras = ["cryptography"], version = "^1.8.0"}
