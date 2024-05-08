@@ -2,6 +2,10 @@ import re
 from dataclasses import dataclass
 from string import Formatter
 
+from django.template import Context, NodeList, Template
+from django.template.base import VariableNode
+from django.template.defaulttags import IfNode
+
 from bc.core.utils.string_utils import trunc
 
 from ..images import TextImage
@@ -25,6 +29,7 @@ class BaseTemplate:
     max_characters: int
     border_color: tuple[int, ...] = (243, 195, 62)
     is_valid: bool = True
+    _django_template: Template | None = None
 
     def __len__(self) -> int:
         """Returns the length of the template without the placeholders
@@ -41,7 +46,15 @@ class BaseTemplate:
         using a dictionary that returns a blank string for each key
         and then computes the len of the new string.
         """
-        clean_template = self.str_template.format_map(AlwaysBlankValueDict())
+        if self.django_template:
+            clean_template = self.django_template.render(
+                Context(AlwaysBlankValueDict())
+            )
+        else:
+            clean_template = self.str_template.format_map(
+                AlwaysBlankValueDict()
+            )
+
         return len(clean_template)
 
     def _available_space(self, *args, **kwargs) -> int:
@@ -56,12 +69,20 @@ class BaseTemplate:
         placeholder_characters = sum(
             [
                 len(str(kwargs.get(field_name)))
-                for text, field_name, *_ in Formatter().parse(
-                    self.str_template
-                )
+                for field_name in self.template_fields
                 if field_name and field_name not in excluded
             ]
         )
+        if self.django_template:
+            # Remove flow control tags from the template
+            placeholder_characters += sum(
+                [
+                    len(x)
+                    for x in re.findall(
+                        r"{%[^%]*%}", self.str_template, re.MULTILINE
+                    )
+                ]
+            )
 
         return self.max_characters - len(self) - placeholder_characters
 
@@ -81,9 +102,13 @@ class BaseTemplate:
         url_pattern = r"https?://\S+"
         url_count = len(re.findall(url_pattern, text))
         linkless_output = re.sub(url_pattern, "", text)
+        unfilled_template_items = re.findall(r"({\w+}|{%|%})", linkless_output)
 
         # Twitter and Mastodon both count links as 23 chars at present
-        return len(linkless_output) + (23 * url_count) <= self.max_characters
+        return (
+            len(linkless_output) + (23 * url_count) <= self.max_characters
+            and len(unfilled_template_items) == 0
+        )
 
     def format(self, *args, **kwargs) -> tuple[str, TextImage | None]:
         image = None
@@ -102,12 +127,54 @@ class BaseTemplate:
                     available_space,
                     "…\n\n[full entry below 👇]",
                 )
-
-        text = self.str_template.format(**kwargs)
+        if self.django_template:
+            text = str(self.django_template.render(Context(kwargs)))
+        else:
+            text = self.str_template.format(**kwargs)
 
         self.is_valid = self._check_output_validity(text)
 
         return text, image
+
+    @property
+    def _is_django_template(self) -> bool:
+        """Checks if the template is a Django template
+
+        Returns:
+            bool: True if the template is a Django template, False otherwise.
+        """
+
+        return "{%" in self.str_template or "{{" in self.str_template
+
+    @property
+    def django_template(self) -> Template | None:
+        """Returns the Django template object
+
+        Returns:
+            Template: Django template object
+        """
+
+        if not self._django_template and self._is_django_template:
+            self._django_template = Template(self.str_template)
+        return self._django_template
+
+    @property
+    def template_fields(self) -> list[str]:
+        """Returns the template fields
+
+        Returns:
+            list[str]: list of fields in the template
+        """
+        if self.django_template:
+            return _get_node_list_fields(
+                self.django_template.compile_nodelist()
+            )
+        else:
+            return [
+                field_name
+                for _, field_name, *_ in Formatter().parse(self.str_template)
+                if field_name
+            ]
 
 
 @dataclass
@@ -147,4 +214,19 @@ class BlueskyTemplate(BaseTemplate):
         markup language.
         """
         cleaned_text = re.sub(r"(?<=])\(\S+\)", "", text)
-        return len(cleaned_text) <= self.max_characters
+        unfilled_template_items = re.findall(r"({\w+}|{%|%})", cleaned_text)
+
+        return (
+            len(cleaned_text) <= self.max_characters
+            and len(unfilled_template_items) == 0
+        )
+
+
+def _get_node_list_fields(nodelist: NodeList) -> list[str]:
+    fields: list[str] = []
+    for node in nodelist:
+        if isinstance(node, VariableNode):
+            fields.append(str(node.filter_expression))
+        if isinstance(node, IfNode):
+            fields.extend(_get_node_list_fields(node.nodelist))
+    return fields

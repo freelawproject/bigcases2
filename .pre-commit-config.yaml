@@ -48,7 +48,7 @@ repos:
        args: [--py311-plus]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.991
+    rev: v1.10.0
     hooks:
      - id: mypy
        additional_dependencies: [
@@ -60,12 +60,12 @@ repos:
           django-hcaptcha==0.2.0,
           django-htmx==1.17.3,
           django-rq==2.10.2,
-          django-stubs==4.2.0,
+          django-stubs==5.0.0,
           "django-tailwind[reload]==3.8.0",
           "Mastodon.py[cryptography]==1.8.0",
           pillow==10.3.0,
           psycopg2-binary==2.9.6,
-          sentry-sdk==1.44.0,
+          sentry-sdk==2.1.1,
           twitterapi==2.8.2,
           types-requests==2.31.0.1,
         ]

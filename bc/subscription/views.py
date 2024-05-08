@@ -95,9 +95,7 @@ class AddCaseView(LoginRequiredMixin, View):
                 # Verify that all templates produce valid post content
                 for channel_id in channels:
                     channel = Channel.objects.get(pk=channel_id)
-                    template = get_new_case_template(
-                        channel.service, subscription.article_url
-                    )
+                    template = get_new_case_template(channel.service)
 
                     template.format(
                         docket=subscription.name_with_summary,
