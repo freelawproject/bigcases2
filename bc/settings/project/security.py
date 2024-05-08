@@ -92,10 +92,15 @@ if DEVELOPMENT:
     # about this, you can check the following links:
     #   https://github.com/freelawproject/bigcases2/pull/210#discussion_r1182078837
     #   https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#configure-internal-ips
-    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips] + [
-        "127.0.0.1"
-    ]
+    try:
+        hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+        INTERNAL_IPS = [".".join(ip.split(".")[:-1] + ["1"]) for ip in ips] + [
+            "127.0.0.1"
+        ]
+    except (
+        socket.gaierror
+    ):  # this is needed as the pre-commit mypy check fails here
+        INTERNAL_IPS = ["127.0.0.1"]
 else:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
