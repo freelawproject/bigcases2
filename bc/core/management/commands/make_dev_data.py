@@ -128,26 +128,30 @@ class MakeDevData:
         self,
     ) -> tuple[Group | GroupFactory, str]:
         """
-        Make 1 big cases Group and 2 channels for it (Mastodon and Twitter)
+        Make 1 big cases Group and channels for it
+        (Bluesky, Mastodon, and Twitter)
 
         :return: the big cases Group, a string saying that they were made
         :rtype: tuple[Group | GroupFactory, str]
         """
-        info = "Big Cases Group and the Mastodon and Twitter Channels"
-        big_cases_group = self._make_group_and_2_channels(True, "Big cases")
+        info = (
+            "Big Cases Group and the Bluesky, Mastodon, and Twitter Channels"
+        )
+        big_cases_group = self._make_group_and_channels(True, "Big cases")
         return big_cases_group, self._made_str(self.NUM_BIGCASES_GROUPS, info)
 
     def make_little_cases_group_and_channels(
         self,
     ) -> tuple[Group | GroupFactory, str]:
         """
-        Make 1 little cases Group and 2 channels for it (Mastodon and Twitter)
+        Make 1 little cases Group and channels for it
+        (Bluesky, Mastodon and Twitter)
 
         :return: the little cases Group, a string saying that they were made
         :rtype: tuple[Group | GroupFactory, str]
         """
-        info = "Little Cases Group and the Mastodon and Twitter Channels"
-        little_cases_group = self._make_group_and_2_channels(
+        info = "Little Cases Group and the Bluesky, Mastodon, and Twitter Channels"
+        little_cases_group = self._make_group_and_channels(
             False, "Little cases"
         )
         return little_cases_group, self._made_str(
@@ -289,7 +293,7 @@ class MakeDevData:
         )
 
     @staticmethod
-    def _make_group_and_2_channels(
+    def _make_group_and_channels(
         is_big_cases: bool = False, name: str | None = None
     ) -> Group | GroupFactory:
         if name is None:
@@ -298,10 +302,12 @@ class MakeDevData:
             new_cases_group = GroupFactory.create(
                 name=name, is_big_cases=is_big_cases
             )
+        bluesky_ch = ChannelFactory.create(bluesky=True, group=new_cases_group)
         mastodon_ch = ChannelFactory.create(
             mastodon=True, group=new_cases_group
         )
         twitter_ch = ChannelFactory.create(twitter=True, group=new_cases_group)
+        new_cases_group.channels.add(bluesky_ch)
         new_cases_group.channels.add(mastodon_ch)
         new_cases_group.channels.add(twitter_ch)
         return new_cases_group
