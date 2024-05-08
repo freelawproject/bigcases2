@@ -58,30 +58,29 @@ def enqueue_posts_for_new_case(
     if document:
         files = get_thumbnails_from_range(document, "[1,2,3,4]")
 
-    if initial_document is None:
-        initial_document = lookup_initial_complaint(subscription.cl_docket_id)
-
     docket: DocketDict | None = None
-    if subscription.cl_docket_id:
-        docket = lookup_docket_by_cl_id(subscription.cl_docket_id)
-
-    date_filed: date | None = None
+    date_filed: date
     days_old = 0
 
-    date_filed_str = docket["date_filed"] if docket else None
-    if date_filed_str:
-        try:
-            date_filed = (
-                datetime.strptime(date_filed_str, "%Y-%m-%d").date()
-                if date_filed_str
-                else None
+    if subscription.cl_docket_id:
+        if initial_document is None:
+            initial_document = lookup_initial_complaint(
+                subscription.cl_docket_id
             )
+        docket = lookup_docket_by_cl_id(subscription.cl_docket_id)
 
-            assert date_filed is not None  # For type checking purposes
-            days_old = (date.today() - date_filed).days
-        except ValueError:
-            # If the date_filed_str is not a valid date, just continue on
-            pass
+        date_filed_str = docket["date_filed"] if docket else None
+        if date_filed_str:
+            try:
+                date_filed = datetime.strptime(
+                    date_filed_str, "%Y-%m-%d"
+                ).date()
+
+                assert date_filed is not None  # For type checking purposes
+                days_old = (date.today() - date_filed).days
+            except ValueError:
+                # If the date_filed_str is not a valid date, just continue on
+                pass
 
     initial_complaint_link = (
         f"https://www.courtlistener.com{initial_document['absolute_url']}"
@@ -89,13 +88,9 @@ def enqueue_posts_for_new_case(
         else None
     )
 
-    initial_complaint_type: Literal["Petition", "Complaint"] | None = None
-    if initial_complaint_link:
-        initial_complaint_type = (
-            "Petition"
-            if is_bankruptcy(subscription.cl_court_id)
-            else "Complaint"
-        )
+    initial_complaint_type: Literal["Petition", "Complaint"] = (
+        "Petition" if is_bankruptcy(subscription.cl_court_id) else "Complaint"
+    )
 
     for channel in get_channels_per_subscription(subscription.pk):
         template = get_new_case_template(channel.service)
