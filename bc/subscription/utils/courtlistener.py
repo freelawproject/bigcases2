@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import Any, NotRequired, TypedDict, cast
+from typing import NotRequired, TypedDict
 
 import courts_db
 import requests
