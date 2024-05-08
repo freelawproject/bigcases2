@@ -99,7 +99,7 @@ if DEVELOPMENT:
         ]
     except (
         socket.gaierror
-    ):  # this is needed as  the pre-commit mypy check fails here
+    ):  # this is needed as the pre-commit mypy check fails here
         INTERNAL_IPS = ["127.0.0.1"]
 else:
     SESSION_COOKIE_SECURE = True
