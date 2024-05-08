@@ -707,18 +707,18 @@ testing = ["mock (>=2.0.0)"]
 
 [[package]]
 name = "django-ses"
-version = "3.5.0"
-description = "A Django email backend for Amazon's Simple Email Service"
+version = "4.0.0"
+description = "A Django email backend for Amazon's Simple Email Service (SES)"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = "<4.0,>=3.8"
 files = [
-    {file = "django_ses-3.5.0-py3-none-any.whl", hash = "sha256:3522fe531155eb06bb015b3b36324c059194450633b33f9bd5bc9d1328822fe2"},
-    {file = "django_ses-3.5.0.tar.gz", hash = "sha256:dc1644f50608fbf3a64f085a371c61d56d68eba3c5efa69651f13dc3ba05049d"},
+    {file = "django_ses-4.0.0-py3-none-any.whl", hash = "sha256:43e869a3fd3aa22dbe9e4c2031163dd93448ddb801e12033c8d3f12c2df5ce80"},
+    {file = "django_ses-4.0.0.tar.gz", hash = "sha256:dd86175e2669bf90c4d66d97ae317dcf8e21a4ff3d9a8859fcbca3be5ad15626"},
 ]
 
 [package.dependencies]
 boto3 = ">=1.0.0"
-django = ">=2.2"
+django = ">=3.2"
 pytz = ">=2016.10"
 
 [package.extras]
@@ -2213,4 +2213,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0e3188a1d10360720a97582b74fdf0fc7f2322c2c154661c2c3ebb6d6150ace3"
+content-hash = "9cb5a2715a81dcbd4f3ca4e7c8250843c73ec81b14c8fd89fbd442f371e14440"
