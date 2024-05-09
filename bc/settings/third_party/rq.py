@@ -14,8 +14,11 @@ RQ_QUEUES = {
     },
 }
 
-RQ_MAX_NUMBER_OF_RETRIES = env.int("RQ_MAX_NUMBER_OF_RETRIES", default=3)
-RQ_RETRY_INTERVAL = env.int("RQ_RETRY_INTERVAL", default=20)
+RQ_MAX_NUMBER_OF_RETRIES: int = env.int("RQ_MAX_NUMBER_OF_RETRIES", default=3)
+RQ_RETRY_INTERVAL: int = env.int("RQ_RETRY_INTERVAL", default=20)
+RQ_POST_RETRY_INTERVALS: list[int] = env.list(
+    "RQ_POST_RETRY_INTERVALS", cast=int, default=[20, 60, 120]
+)
 
 if TESTING:
     for queueConfig in RQ_QUEUES.values():
