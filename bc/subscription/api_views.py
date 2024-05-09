@@ -82,7 +82,7 @@ def handle_docket_alert_webhook(request: Request) -> Response:
                 depends_on=webhook_event_handler,
                 retry=Retry(
                     max=settings.RQ_MAX_NUMBER_OF_RETRIES,
-                    interval=settings.RQ_RETRY_INTERVAL,
+                    interval=settings.RQ_POST_RETRY_INTERVALS,
                 ),
             )
 

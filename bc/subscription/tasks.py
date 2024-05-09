@@ -3,7 +3,7 @@ from typing import Literal
 
 from django.conf import settings
 from django.db import transaction
-from django_rq.queues import get_queue
+from django_rq.queues import Queue, get_queue
 from rq import Retry
 
 from bc.channel.models import Channel, Post
@@ -34,7 +34,7 @@ from bc.subscription.utils.courtlistener import (
 from .models import FilingWebhookEvent, Subscription
 from .types import Document
 
-queue = get_queue("default")
+queue: Queue = get_queue("default")
 
 
 def enqueue_posts_for_new_case(
@@ -124,7 +124,7 @@ def enqueue_posts_for_new_case(
             files,
             retry=Retry(
                 max=settings.RQ_MAX_NUMBER_OF_RETRIES,
-                interval=settings.RQ_RETRY_INTERVAL,
+                interval=settings.RQ_POST_RETRY_INTERVALS,
             ),
         )
 
@@ -164,7 +164,7 @@ def enqueue_posts_for_docket_alert(
             sponsor_message,
             retry=Retry(
                 max=settings.RQ_MAX_NUMBER_OF_RETRIES,
-                interval=settings.RQ_RETRY_INTERVAL,
+                interval=settings.RQ_POST_RETRY_INTERVALS,
             ),
         )
 
