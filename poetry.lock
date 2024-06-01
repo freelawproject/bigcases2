@@ -600,17 +600,17 @@ tests = ["jinja2 (>=2.9.6)", "pytest", "pytest-cov", "pytest-django", "pytest-ru
 
 [[package]]
 name = "django-debug-toolbar"
-version = "4.3.0"
+version = "4.4.2"
 description = "A configurable set of panels that display various debug information about the current request/response."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_debug_toolbar-4.3.0-py3-none-any.whl", hash = "sha256:e09b7dcb8417b743234dfc57c95a7c1d1d87a88844abd13b4c5387f807b31bf6"},
-    {file = "django_debug_toolbar-4.3.0.tar.gz", hash = "sha256:0b0dddee5ea29b9cb678593bc0d7a6d76b21d7799cb68e091a2148341a80f3c4"},
+    {file = "django_debug_toolbar-4.4.2-py3-none-any.whl", hash = "sha256:5d7afb2ea5f8730241e5b0735396e16cd1fd8c6b53a2f3e1e30bbab9abb23728"},
+    {file = "django_debug_toolbar-4.4.2.tar.gz", hash = "sha256:9204050fcb1e4f74216c5b024bc76081451926a6303993d6c513f5e142675927"},
 ]
 
 [package.dependencies]
-django = ">=3.2.4"
+django = ">=4.2.9"
 sqlparse = ">=0.2"
 
 [[package]]
@@ -703,13 +703,13 @@ testing = ["mock (>=2.0.0)"]
 
 [[package]]
 name = "django-ses"
-version = "4.0.0"
+version = "4.1.0"
 description = "A Django email backend for Amazon's Simple Email Service (SES)"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "django_ses-4.0.0-py3-none-any.whl", hash = "sha256:43e869a3fd3aa22dbe9e4c2031163dd93448ddb801e12033c8d3f12c2df5ce80"},
-    {file = "django_ses-4.0.0.tar.gz", hash = "sha256:dd86175e2669bf90c4d66d97ae317dcf8e21a4ff3d9a8859fcbca3be5ad15626"},
+    {file = "django_ses-4.1.0-py3-none-any.whl", hash = "sha256:26a898b04f9e32bd40c87a24bab1672d5f9007be09d11389346078b757827b21"},
+    {file = "django_ses-4.1.0.tar.gz", hash = "sha256:354db724b32201ef9b384f93e17966a42cbba31787d66d8deb081ace4931d60c"},
 ]
 
 [package.dependencies]
@@ -2185,4 +2185,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "5287fdfd1acc9d5e49a24d62b543d5f6a4c8106fb2050746dd6e8f4c89b79396"
+content-hash = "d4cb0b38453027f81711605399a90b909a646f5a9ccaf07a0ec0b131c4ab6e21"
