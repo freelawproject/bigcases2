@@ -12,6 +12,8 @@ class Session:
     email: str
     emailConfirmed: bool
     emailAuthFactor: bool
+    active: bool
+    status: str = ""
 
 
 @dataclass
