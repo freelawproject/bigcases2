@@ -3,6 +3,7 @@ import socket
 import environ
 
 from ..django import DEVELOPMENT, INSTALLED_APPS, TESTING
+from ..project.testing import TESTING
 from ..third_party.aws import AWS_S3_CUSTOM_DOMAIN
 from ..third_party.sentry import SENTRY_REPORT_URI
 
@@ -86,7 +87,11 @@ if DEVELOPMENT:
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_DOMAIN = None
     # For debug_toolbar
-    INSTALLED_APPS.append("debug_toolbar")
+    if not TESTING:
+        INSTALLED_APPS = [
+            *INSTALLED_APPS,
+            "debug_toolbar",
+        ]
 
     # Get the list of IPv4 addresses for the interface on the same host. If you want to know more
     # about this, you can check the following links:
