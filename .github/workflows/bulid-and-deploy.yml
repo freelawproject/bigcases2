@@ -38,6 +38,10 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
     - name: Create Kubeconfig with AWS CLI
       run: aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+    - name: Update Environment Variables
+      env:
+        BOTS_ENV: bots-env
+      run: kubectl annotate es $BOTS_ENV force-sync=$(date +%s) --overwrite -n ${{ env.EKS_NAMESPACE }} && kubectl wait es -n ${{ env.EKS_NAMESPACE }} --for=jsonpath="{.status.conditions[?(@.reason=='SecretSynced')].status}"=True --timeout=30s $BOTS_ENV
     - name: Collect static assets and check unapplied migration exit code
       id: checkMigration
       # Do big complicated thing to get secrets into the image.
