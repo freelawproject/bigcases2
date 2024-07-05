@@ -27,9 +27,4 @@ def get_full_host(context):
         protocol = "https" if r.is_secure() else "http"
         domain_and_port = r.get_host()
 
-    return mark_safe(
-        "{protocol}://{domain_and_port}".format(
-            protocol=protocol,
-            domain_and_port=domain_and_port,
-        )
-    )
+    return mark_safe(f"{protocol}://{domain_and_port}")
