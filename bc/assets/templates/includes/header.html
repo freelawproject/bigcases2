@@ -5,7 +5,9 @@
         <div class="flex w-full justify-between items-center py-6 md:space-x-6 lg:space-x-10">
             <div class="absolute top-6">
                     <div alt='Yellow robot with white background logo'  layout="responsive" class="rounded-lg border-2 p-2 border-gray-400 h-30 w-[120px] lg:h-32 lg:w-44 bg-white">
-                        {% include "includes/logo.svg" %}
+                        <a href="{% url 'homepage' %}">
+                            {% include "includes/logo.svg" %}
+                        </a>
                     </div>
 
             </div>
@@ -22,7 +24,9 @@
                     <div class="pt-[11px] pb-6 px-[11px]">
                       <div class="flex items-start justify-between">
                         <div class="h-30 w-[100px] lg:h-32 lg:w-44">
-                            {% include "includes/logo.svg" %}
+                            <a href="{% url 'homepage' %}">
+                                {% include "includes/logo.svg" %}
+                            </a>
                         </div>
                         <button type="button" id="close-dropdown-mobile" class="navbar-burger rounded-md items-center text-amber-400 p-1 hover:text-amber-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
                             <div class="h-6 w-6">
