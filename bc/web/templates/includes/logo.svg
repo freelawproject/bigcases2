@@ -3,9 +3,31 @@
    version="1.1"
    viewBox="0 0 460 300"
    id="svg3227"
+   sodipodi:docname="logo.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview39"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="2.7533333"
+     inkscape:cx="229.90315"
+     inkscape:cy="208.11138"
+     inkscape:window-width="1920"
+     inkscape:window-height="1004"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3227" />
   <defs
      id="defs46" />
   <g
@@ -156,7 +178,7 @@
   <a
      id="a3366"
      xlink:href="https://free.law"
-     transform="matrix(1.3967881,0,0,1,-177.80391,0)">
+     transform="matrix(0.94832645,0,0,0.72664461,16.533836,77.260738)">
     <rect
        class="link-box"
        width="276.26648"
