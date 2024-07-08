@@ -58,3 +58,27 @@
 .prose code::before {
   content: "";
 }
+
+.link-box {
+    fill: transparent;
+}
+
+.logo-1 {
+fill: #ce1a6f;
+}
+
+.logo-1, .logo-2, .logo-3 {
+stroke-width: 0px;
+}
+
+.logo-2 {
+fill: #848582;
+}
+
+.logo-4 {
+display: none;
+}
+
+.logo-3 {
+fill: #ea9c25;
+}
