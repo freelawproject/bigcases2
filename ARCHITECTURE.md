@@ -38,7 +38,7 @@ To set up a development machine, do the following:
 
 1. `cd` into bigcases2/docker/bigcasesbot, then launch the server by running:
 
-    `docker-compose up -d`
+    `docker compose up -d --build`
 
 1. Once that's done, it'll be up at http://localhost:8888 (note the port; it's different than normal)
 
