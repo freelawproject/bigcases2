@@ -3,52 +3,54 @@
 <html lang="en">
 
 <head>
-    {% block head %}
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Language" content="en"/>
-    <meta name="language" content="en_us"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="description" content="Use Bots.law to get court alerts in Slack, Discord, MS Teams, Twitter, Mastodon, and Google Chat. Home of the Big Cases bots."/>
-    <meta name="htmx-config" content='{"includeIndicatorStyles":false}'>
-    <meta property="og:type" content="website"/>
-    <meta property="og:title" content="Bots.law"/>
-    <meta property="og:description" content="Use Bots.law to get court alerts in Slack, Discord, MS Teams, Twitter, Mastodon, and Google Chat. Home of the Big Cases bots.">
-    <meta property="og:url" content="{% block og_url %}{% get_full_host %}{{ request.path }}{% endblock %}"/>
-    <meta property="og:site_name" content="Bots.law"/>
-    <meta property="og:image" content="{% static "png/og-image-1280x640.png" %}"/>
-    <meta property="og:image:type" content="image/png"/>
-    <meta property="twitter:image:alt" content="The Bots.law logo"/>
-    <meta property="og:image:width" content="1280"/>
-    <meta property="og:image:height" content="640"/>
+  {% block head %}
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Language" content="en"/>
+  <meta name="language" content="en_us"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="description" content="Use Bots.law to get court alerts in Slack, Discord, MS Teams, Twitter, Mastodon, and Google Chat. Home of the Big Cases bots."/>
+  <meta name="htmx-config" content='{"includeIndicatorStyles":false}'>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="Bots.law"/>
+  <meta property="og:description" content="Use Bots.law to get court alerts in Slack, Discord, MS Teams, Twitter, Mastodon, and Google Chat. Home of the Big Cases bots.">
+  <meta property="og:url" content="{% block og_url %}{% get_full_host %}{{ request.path }}{% endblock %}"/>
+  <meta property="og:site_name" content="Bots.law"/>
+  <meta property="og:image" content="{% static "png/og-image-1280x640.png" %}"/>
+  <meta property="og:image:type" content="image/png"/>
+  <meta property="twitter:image:alt" content="The Bots.law logo"/>
+  <meta property="og:image:width" content="1280"/>
+  <meta property="og:image:height" content="640"/>
 
-    <title>{% block title %}{% endblock %} — Bots.law</title>
-    {% endblock %}
-    {% tailwind_preload_css %}
-    {% tailwind_css %}
+  <title>{% block title %}{% endblock %} — Bots.law</title>
+  {% endblock %}
+  {% tailwind_preload_css %}
+  {% tailwind_css %}
 
-    <link rel="icon" href="{% static "ico/favicon.ico" %}" sizes="any">
-    <link rel="icon" href="{% static "svg/icon.svg" %}" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="{% static "png/apple-touch-icon.png" %}">
+  {# Touch icons, etc from: https://evilmartians.com/chronicles/how-to-favicon-in-2021-six-files-that-fit-most-needs #}
+  <link rel="icon" href="{% static "ico/favicon.ico" %}" sizes="32x32">
+  <link rel="icon" href="{% static "svg/favicon.svg" %}" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{% static "png/apple-touch-icon.png" %}">
+  {# Add hashes to manifest by hand. They're the first 12 chars of the MD5 of the file. #}
+  <link rel="manifest" href="{% static "json/manifest.json" %}">
 </head>
 
 <body class="font-sans text-bcb-black">
-    {% include "includes/header.html" %}
+  {% include "includes/header.html" %}
 
-    <main id="content">
-        {% block content %}{% endblock %}
-    </main>
+  <main id="content">
+    {% block content %}{% endblock %}
+  </main>
 
-    {% include "includes/footer.html" %}
+  {% include "includes/footer.html" %}
 
-    <script
-        defer
-        data-domain="bots.law"
-        src="https://plausible.io/js/script.js"></script>
+  <script
+    defer
+    data-domain="bots.law"
+    src="https://plausible.io/js/script.js"></script>
 
+  <script src="{% static "js/dropdown.js" %}"></script>
 
-    <script src="{% static "js/dropdown.js" %}"></script>
-
-    {% block footer-scripts %}{% endblock %}
+  {% block footer-scripts %}{% endblock %}
 </body>
 
 </html>
