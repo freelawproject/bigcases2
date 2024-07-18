@@ -642,33 +642,33 @@ files = [
 
 [[package]]
 name = "django-htmx"
-version = "1.17.3"
+version = "1.18.0"
 description = "Extensions for using Django with htmx."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django-htmx-1.17.3.tar.gz", hash = "sha256:a2069219920d7ef0883ddbf5e8d931069db145a0d4a8a032a2708f840c7a68a6"},
-    {file = "django_htmx-1.17.3-py3-none-any.whl", hash = "sha256:0de964ca257eda2a4ebeeaa8181320119378fa5f95a2fc2f2bfbdd35034ed424"},
+    {file = "django_htmx-1.18.0-py3-none-any.whl", hash = "sha256:48f3b8a784467bfcc30562067b87ecbc4ad9b739cc269eec5f3789c16d2cb2ce"},
+    {file = "django_htmx-1.18.0.tar.gz", hash = "sha256:db8a0cc15bcd0f7ae929bcb9108d9e6be228843092aca7956d977c31c4d95aae"},
 ]
 
 [package.dependencies]
 asgiref = ">=3.6"
-Django = ">=3.2"
+django = ">=3.2"
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.19.0"
+version = "4.20.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django-permissions-policy-4.19.0.tar.gz", hash = "sha256:eb3b1d7fae46d0ce26ae2fa3b1b9865f4120e3bfbae9fda838fed53cf150e591"},
-    {file = "django_permissions_policy-4.19.0-py3-none-any.whl", hash = "sha256:0286d925c4ea2de2ddbd34852b8eea562bfb7f2d3fc6492ffc0290de3c90bddc"},
+    {file = "django_permissions_policy-4.20.0-py3-none-any.whl", hash = "sha256:6473a698d04a87eb05bfd86bf7c5aec59afbbd7a5cadcb85a5fc6aa0a26a1639"},
+    {file = "django_permissions_policy-4.20.0.tar.gz", hash = "sha256:e56141f7b407d2d220e415f9ceb6a19fadda826fb4460e78b30422536fdd4d42"},
 ]
 
 [package.dependencies]
 asgiref = ">=3.6"
-Django = ">=3.2"
+django = ">=3.2"
 
 [[package]]
 name = "django-ratelimit"
@@ -2184,4 +2184,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2495468755dc36e93bd256e169c215eafcacea36aa1fe0364a2a7fe0f3ff2a37"
+content-hash = "3b0bae94762044210f225f1041ea17e8610fc713918961fc1f2cf5347167dc82"
