@@ -39,7 +39,7 @@ queue: Queue = get_queue("default")
 
 def enqueue_posts_for_new_case(
     subscription: Subscription,
-    document: bytes | str | None = None,
+    document_url: str | None = None,
     check_sponsor_message: bool = False,
     initial_document: DocumentDict | None = None,
 ) -> None:
@@ -49,21 +49,15 @@ def enqueue_posts_for_new_case(
 
     Args:
         subscription (Subscription): the new subscription object.
-        document (bytes | str | None): The document, either as raw bytes or as
-            a URL path to download the file.
+        document_url (str | None): URL path to download the docuement.
         check_sponsor_message (bool, optional): designates whether this method
             should check the sponsorships field and compute the sponsor_message
             for each channel. Defaults to False.
     """
 
     files = None
-    # TODO: Refactor to remove isinstance check in the if statements
-    # This code was added to handle potential data already in the queue
-    # during deployment.
-    if isinstance(document, str):
-        document = download_pdf_from_cl(document)
-
-    if document is not None and isinstance(document, bytes):
+    if document_url:
+        document = download_pdf_from_cl(document_url)
         files = get_thumbnails_from_range(document, "[1,2,3,4]")
 
     docket: DocketDict | None = None
@@ -139,7 +133,7 @@ def enqueue_posts_for_new_case(
 
 def enqueue_posts_for_docket_alert(
     webhook_event: FilingWebhookEvent,
-    document: bytes | str | None = None,
+    document_url: str | None = None,
     check_sponsor_message: bool = False,
 ) -> None:
     """
@@ -148,12 +142,10 @@ def enqueue_posts_for_docket_alert(
 
     Args:
         webhook_event (FilingWebhookEvent): The FilingWebhookEvent record.
-        document (bytes | None, optional): document as bytes or the URL to
-            download the file.
+        document_url (str | None): URL to download the document.
         check_sponsor_message (bool, optional): designates whether this method
-            should check.
-        the sponsorships field and compute the sponsor_message for each channel.
-            Defaults to False.
+            should check. the sponsorships field and compute the sponsor_message
+            for each channel. Defaults to False.
     """
     if not webhook_event.subscription:
         return
@@ -171,7 +163,7 @@ def enqueue_posts_for_docket_alert(
             make_post_for_webhook_event,
             channel.pk,
             webhook_event.pk,
-            document,
+            document_url,
             sponsor_message,
             retry=Retry(
                 max=settings.RQ_MAX_NUMBER_OF_RETRIES,
@@ -244,10 +236,10 @@ def check_webhook_before_posting(fwe_pk: int):
         return filing_webhook_event
 
     # check if the document is available or there's a sponsorship to purchase it.
-    document = None
+    document_url = None
     cl_document = lookup_document_by_doc_id(filing_webhook_event.doc_id)
     if cl_document["filepath_local"]:
-        document = cl_document["filepath_local"]
+        document_url = cl_document["filepath_local"]
     else:
         sponsorship = check_active_sponsorships(
             filing_webhook_event.subscription.pk
@@ -267,7 +259,7 @@ def check_webhook_before_posting(fwe_pk: int):
             return filing_webhook_event
 
     # Got the document or no sponsorship. Tweet and toot.
-    enqueue_posts_for_docket_alert(filing_webhook_event, document)
+    enqueue_posts_for_docket_alert(filing_webhook_event, document_url)
 
     return filing_webhook_event
 
@@ -289,10 +281,10 @@ def check_initial_complaint_before_posting(
     """
     subscription = Subscription.objects.get(pk=subscription_pk)
 
-    document = None
+    document_url = None
     cl_document = lookup_initial_complaint(subscription.cl_docket_id)
     if cl_document and cl_document["filepath_local"]:
-        document = download_pdf_from_cl(cl_document["filepath_local"])
+        document_url = cl_document["filepath_local"]
     elif cl_document and cl_document["pacer_doc_id"]:
         sponsorship = check_active_sponsorships(subscription.pk)
         if sponsorship:
@@ -303,7 +295,7 @@ def check_initial_complaint_before_posting(
 
     # Got the document or no sponsorship. Tweet and toot.
     enqueue_posts_for_new_case(
-        subscription, document, initial_document=cl_document
+        subscription, document_url, initial_document=cl_document
     )
 
     return subscription
@@ -352,7 +344,7 @@ def process_fetch_webhook_event(
             "The RECAP document doesn't have a path to download the file"
         )
 
-    pdf_data = cl_document["filepath_local"]
+    pdf_path = cl_document["filepath_local"]
 
     sponsor_groups = get_sponsored_groups_per_subscription(subscription.pk)
 
@@ -371,9 +363,9 @@ def process_fetch_webhook_event(
         log_purchase(sponsor_groups, subscription.pk, document)
 
     if record_type == "filing_webhook":
-        enqueue_posts_for_docket_alert(filing_webhook_event, pdf_data, True)
+        enqueue_posts_for_docket_alert(filing_webhook_event, pdf_path, True)
     else:
-        enqueue_posts_for_new_case(subscription, pdf_data, True, cl_document)
+        enqueue_posts_for_new_case(subscription, pdf_path, True, cl_document)
 
     return record_pk
 
@@ -382,7 +374,7 @@ def process_fetch_webhook_event(
 def make_post_for_webhook_event(
     channel_pk: int,
     fwe_pk: int,
-    document: bytes | str | None,
+    document_url: str | None,
     sponsor_text: str | None = None,
 ) -> Post:
     """Post a new status in the given channel using the data of the given webhook
@@ -391,8 +383,7 @@ def make_post_for_webhook_event(
     Args:
         channel_pk (int): The pk of the channel where the post will be created.
         fwe_pk (int): The PK of the FilingWebhookEvent record.
-        document (bytes | str | None): The document, either as raw bytes or as
-            a URL path to download the file.
+        document_url (str | None): URL path to download the document.
         sponsor_text (str | None): sponsor message to include in the thumbnails.
 
     Returns:
@@ -424,13 +415,8 @@ def make_post_for_webhook_event(
     )
 
     files = None
-    # TODO: Refactor to remove isinstance check in the if statements
-    # This code was added to handle potential data already in the queue
-    # during deployment.
-    if isinstance(document, str):
-        document = download_pdf_from_cl(document)
-
-    if document is not None and isinstance(document, bytes):
+    if document_url:
+        document = download_pdf_from_cl(document_url)
         thumbnail_range = "[1,2,3]" if image else "[1,2,3,4]"
         files = get_thumbnails_from_range(document, thumbnail_range)
 
