@@ -177,6 +177,7 @@ class ProcessFetchWebhookEventTest(TestCase):
 @patch("bc.subscription.tasks.add_sponsored_text_to_thumbnails")
 @patch("bc.subscription.tasks.get_thumbnails_from_range")
 @patch.object(Channel, "get_api_wrapper")
+@patch("bc.subscription.tasks.download_pdf_from_cl")
 class MakePostForWebhookEventTest(TestCase):
     webhook_event = None
     webhook_minute_entry = None
@@ -212,7 +213,7 @@ class MakePostForWebhookEventTest(TestCase):
         return wrapper
 
     def test_can_create_full_post_no_document(
-        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+        self, mock_download, mock_api, mock_thumbnails, mock_add_sponsor_text
     ):
         mock_api.return_value = self.mock_api_wrapper(self.status_id)
 
@@ -223,11 +224,12 @@ class MakePostForWebhookEventTest(TestCase):
 
         self.assertEqual(post.object_id, self.status_id)
         self.assertIn("New filing", post.text)
+        mock_download.assert_not_called()
         mock_add_sponsor_text.assert_not_called()
         mock_thumbnails.assert_not_called()
 
     def test_can_create_minute_entry_no_document(
-        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+        self, mock_download, mock_api, mock_thumbnails, mock_add_sponsor_text
     ):
         mock_api.return_value = self.mock_api_wrapper(self.status_id)
 
@@ -239,10 +241,10 @@ class MakePostForWebhookEventTest(TestCase):
         self.assertEqual(post.object_id, self.status_id)
         self.assertIn("New minute entry", post.text)
 
+        mock_download.assert_not_called()
         mock_add_sponsor_text.assert_not_called()
         mock_thumbnails.assert_not_called()
 
-    @patch("bc.subscription.tasks.download_pdf_from_cl")
     def test_get_three_thumbnails_from_documents(
         self, mock_download, mock_api, mock_thumbnails, mock_add_sponsor_text
     ):
@@ -251,15 +253,6 @@ class MakePostForWebhookEventTest(TestCase):
         # Remove the short description to make sure the template will use the long one
         self.webhook_event.short_description = ""
         self.webhook_event.save(update_fields=["short_description"])
-
-        # This test case handles scenarios where the document is provided
-        # directly as a binary object.
-        make_post_for_webhook_event(
-            self.channel.pk, self.webhook_event.pk, self.bin_object
-        )
-
-        mock_thumbnails.assert_called_with(self.bin_object, "[1,2,3]")
-        mock_add_sponsor_text.assert_not_called()
 
         # This test case verifies that `make_post_for_webhook_event` can handle
         # document URLs as input, in contrast to the previous test that used
@@ -274,31 +267,34 @@ class MakePostForWebhookEventTest(TestCase):
         mock_add_sponsor_text.assert_not_called()
 
     def test_get_four_thumbnails_from_document(
-        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+        self, mock_download, mock_api, mock_thumbnails, mock_add_sponsor_text
     ):
         mock_api.return_value = self.mock_api_wrapper(self.status_id)
+        mock_download.return_value = self.bin_object
 
         make_post_for_webhook_event(
-            self.channel.pk, self.webhook_event.pk, self.bin_object
+            self.channel.pk, self.webhook_event.pk, self.fake_document_path
         )
-
+        mock_download.assert_called_once_with(self.fake_document_path)
         mock_thumbnails.assert_called_with(self.bin_object, "[1,2,3,4]")
         mock_add_sponsor_text.assert_not_called()
 
     def test_add_sponsor_text_to_thumbails(
-        self, mock_api, mock_thumbnails, mock_add_sponsor_text
+        self, mock_download, mock_api, mock_thumbnails, mock_add_sponsor_text
     ):
         sponsor_text = "This document contributed by Free Law Project"
         mock_api.return_value = self.mock_api_wrapper(self.status_id)
         mock_thumbnails.return_value = [self.bin_object for _ in range(4)]
+        mock_download.return_value = self.bin_object
 
         make_post_for_webhook_event(
             self.channel.pk,
             self.webhook_event.pk,
-            self.bin_object,
+            self.fake_document_path,
             sponsor_text,
         )
 
+        mock_download.assert_called_once_with(self.fake_document_path)
         mock_thumbnails.assert_called_with(self.bin_object, "[1,2,3,4]")
         mock_add_sponsor_text.assert_called_with(
             mock_thumbnails(), sponsor_text
@@ -360,10 +356,8 @@ class EnqueuePostsForNewCaseTest(TestCase):
         )
 
     @patch("bc.subscription.tasks.enqueue_posts_for_new_case")
-    @patch("bc.subscription.tasks.download_pdf_from_cl")
     def test_can_download_initial_complaint(
         self,
-        mock_download,
         mock_enqueue,
         mock_api,
         mock_queue,
@@ -377,15 +371,12 @@ class EnqueuePostsForNewCaseTest(TestCase):
             "filepath_local": local_filepath,
             "pacer_doc_id": "051023651280",
         }
-        mock_download.return_value = faker.binary(3)
 
         check_initial_complaint_before_posting(self.subscription.pk)
-
         mock_lookup.assert_called_once_with(self.subscription.cl_docket_id)
-        mock_download.assert_called_with(local_filepath)
         mock_enqueue.assert_called_once_with(
             self.subscription,
-            mock_download(),
+            local_filepath,
             initial_document=mock_lookup.return_value,
         )
 
@@ -500,24 +491,6 @@ class EnqueuePostsForNewCaseTest(TestCase):
             article_url=self.subscription_w_link.article_url,
         )
 
-        # This test case ensures backward compatibility with legacy tasks using
-        # the old bytes document format, which is scheduled for deprecation. It
-        # verifies that the system can still process tasks enqueued before the
-        # format change.
-        enqueue_posts_for_new_case(self.subscription_w_link, document)
-
-        # Since we passed the PDF as a bytes object, we don't expect the
-        # download function to be called.
-        mock_download_pdf.assert_not_called()
-        mock_thumbnails.assert_called_once_with(document, "[1,2,3,4]")
-        mock_queue.enqueue.assert_called_once_with(
-            api_wrapper.add_status,
-            message,
-            None,
-            [thumb_1, thumb_2],
-            retry=mock_retry(),
-        )
-
         # This test case verifies the handling of document URLs.
         # We provide a fake URL to the enqueue function and expect:
         # - The download PDF function to be called with the URL.
@@ -538,8 +511,10 @@ class EnqueuePostsForNewCaseTest(TestCase):
 
     @patch("bc.subscription.tasks.add_sponsored_text_to_thumbnails")
     @patch("bc.subscription.tasks.get_thumbnails_from_range")
+    @patch("bc.subscription.tasks.download_pdf_from_cl")
     def test_can_create_post_w_sponsored_thumbnails(
         self,
+        mock_download_pdf,
         mock_thumbnails,
         mock_sponsored,
         mock_api,
@@ -559,7 +534,9 @@ class EnqueuePostsForNewCaseTest(TestCase):
         mock_lookup.return_value = None
         mock_docket_by_cl_id.return_value = None
 
+        fake_path = faker.url()
         document = faker.binary(2)
+        mock_download_pdf.return_value = document
 
         thumb_1 = faker.binary(4)
         thumb_2 = faker.binary(6)
@@ -583,7 +560,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
             article_url=self.subscription_w_link.article_url,
         )
 
-        enqueue_posts_for_new_case(self.subscription_w_link, document, True)
+        enqueue_posts_for_new_case(self.subscription_w_link, fake_path, True)
 
         expected_enqueue_calls = [
             call(
@@ -601,7 +578,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
                 retry=mock_retry(),
             ),
         ]
-
+        mock_download_pdf.assert_called_once_with(fake_path)
         mock_thumbnails.assert_called_once_with(document, "[1,2,3,4]")
         mock_sponsored.assert_called_with(
             [thumb_1, thumb_2], sponsorship.watermark_message
