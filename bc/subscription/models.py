@@ -147,7 +147,7 @@ class FilingWebhookEvent(AbstractDateTimeModel):
     )
     pacer_doc_id = models.CharField(
         help_text="The ID of the document in PACER.",
-        max_length=32,
+        max_length=64,
         blank=True,
     )
     document_number = models.BigIntegerField(
