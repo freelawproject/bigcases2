@@ -101,7 +101,7 @@ BLUESKY_FOLLOW_A_NEW_CASE = BlueskyTemplate(
 
 Filed: {{date_filed}}{% endif %}
 
-View Full Case{{docket_link}}{% if article_url %} | Background Info{{article_url}}{% endif %}{% if initial_complaint_type and initial_complaint_link %} | {{initial_complaint_type}}{{initial_complaint_link}}{% endif %}
+[View Full Case]({{docket_link}}){% if article_url %} | [Background Info]({{article_url}}){% endif %}{% if initial_complaint_type and initial_complaint_link %} | [{{initial_complaint_type}}]({{initial_complaint_link}}){% endif %}
 
 #CL{{docket_id}}""",
 )
@@ -111,7 +111,7 @@ BLUESKY_POST_TEMPLATE = BlueskyTemplate(
     str_template="""New filing: "{docket}"
 Doc #{doc_num}: {description}
 
-Download PDF{pdf_link} | View Full Case{docket_link}
+[Download PDF]({pdf_link}) | [View Full Case]({docket_link})
 
 #CL{docket_id}""",
 )
@@ -120,7 +120,7 @@ BLUESKY_MINUTE_TEMPLATE = BlueskyTemplate(
     link_placeholders=["docket_link"],
     str_template="""New minute entry in {docket}: {description}
 
-View Full Case{docket_link}
+[View Full Case]({docket_link})
 
 #CL{docket_id}""",
 )
