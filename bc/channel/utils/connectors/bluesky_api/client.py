@@ -207,7 +207,7 @@ class BlueskyAPI:
             str: string containing the original text with all link markup
             notations removed.
         """
-        return re.sub(r"(?<=])\(\S+\)", "", text)
+        return re.sub(r"(?<=])\(\S+\)|[\[]|[\]]", "", text)
 
     def _parse_text_facets(self, text) -> list[TextAnnotation]:
         """
