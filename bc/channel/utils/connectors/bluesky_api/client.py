@@ -162,13 +162,16 @@ class BlueskyAPI:
             list[RegexMatch]: List of matches.
         """
         spans = []
+        # Delimiters for embedded link URLs
+        link_url_open = r"[\[]"
+        link_url_close = r"[\]]"
         # Matches anything that isn't a square closing bracket
         name_regex = "[^]]+"
         # Matches http:// or https:// followed by anything but a closing parenthesis
         url_regex = "http[s]?://[^)]+"
         # Combined regex expression with named groups.
         markup_regex = (
-            rf"(?P<name>\[{name_regex}])(?P<uri>\(\s*{url_regex}\s*\))"
+            rf"(?P<opening_tag>{link_url_open})(?P<name>{name_regex})(?P<closing_tag>{link_url_close})(?P<uri>\(\s*{url_regex}\s*\))"
         ).encode()
         text_bytes = text.encode("UTF-8")
         offset = 0
@@ -183,12 +186,16 @@ class BlueskyAPI:
             # only post the cleaned-up version without them
             spans.append(
                 RegexMatch(
-                    start=m.start("name") - offset,
-                    end=m.end("name") - offset,
+                    start=m.start("opening_tag") - offset,
+                    end=m.end("name") - len(m.group("opening_tag")) - offset,
                     text=cleaned_uri,
                 )
             )
-            offset += len(m.group("uri"))
+            offset += (
+                len(m.group("uri"))
+                + len(m.group("opening_tag"))
+                + len(m.group("closing_tag"))
+            )
         return spans
 
     def _clean_text(sef, text: str) -> str:
