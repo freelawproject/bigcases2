@@ -637,13 +637,13 @@ files = [
 
 [[package]]
 name = "django-htmx"
-version = "1.18.0"
+version = "1.19.0"
 description = "Extensions for using Django with htmx."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_htmx-1.18.0-py3-none-any.whl", hash = "sha256:48f3b8a784467bfcc30562067b87ecbc4ad9b739cc269eec5f3789c16d2cb2ce"},
-    {file = "django_htmx-1.18.0.tar.gz", hash = "sha256:db8a0cc15bcd0f7ae929bcb9108d9e6be228843092aca7956d977c31c4d95aae"},
+    {file = "django_htmx-1.19.0-py3-none-any.whl", hash = "sha256:875a642814e52278c1728842436beda2001847a493ab79fd82da3fb46ead140f"},
+    {file = "django_htmx-1.19.0.tar.gz", hash = "sha256:e7e17304e78e07f96eca0affc3ce1806edfdf3538bb7cb1912452b101f3e627d"},
 ]
 
 [package.dependencies]
@@ -652,13 +652,13 @@ django = ">=3.2"
 
 [[package]]
 name = "django-permissions-policy"
-version = "4.20.0"
+version = "4.21.0"
 description = "Set the draft security HTTP header Permissions-Policy (previously Feature-Policy) on your Django app."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django_permissions_policy-4.20.0-py3-none-any.whl", hash = "sha256:6473a698d04a87eb05bfd86bf7c5aec59afbbd7a5cadcb85a5fc6aa0a26a1639"},
-    {file = "django_permissions_policy-4.20.0.tar.gz", hash = "sha256:e56141f7b407d2d220e415f9ceb6a19fadda826fb4460e78b30422536fdd4d42"},
+    {file = "django_permissions_policy-4.21.0-py3-none-any.whl", hash = "sha256:9ec1edd028d8f4ea0cc9c1f44ad0c8c3339aec3aa796e40630dd3c3875f3b50e"},
+    {file = "django_permissions_policy-4.21.0.tar.gz", hash = "sha256:233f5de198ba8f4ee85ba9ffd5dacfd02c9d661bdaf11e91eb45ae02e6f0e915"},
 ]
 
 [package.dependencies]
@@ -1964,7 +1964,7 @@ files = [
 
 [package.dependencies]
 requests = "*"
-requests_oauthlib = "*"
+requests-oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -2190,4 +2190,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "561d53383f69b26e49c23be5bba651212c6993a1d692b3f62e8116d4aa14a5b2"
+content-hash = "7ad11dabaaab6abca5414133f04f1dbcdf8e11ba8b9483a0fa4273e219e68485"
