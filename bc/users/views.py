@@ -4,6 +4,7 @@ from email.utils import parseaddr
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout, update_session_auth_hash
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordResetView
@@ -15,6 +16,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.http import urlencode
 from django.utils.timezone import now
+from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import (
     sensitive_post_parameters,
     sensitive_variables,
@@ -44,6 +46,7 @@ from .utils.email import EmailType, emails, message_dict
 @sensitive_variables("cd", "signed_pk", "email")
 @ratelimiter_unsafe_10_per_m
 @ratelimiter_unsafe_2000_per_h
+@never_cache
 def register(request: HttpRequest) -> HttpResponse:
     """allow only an anonymous user to register"""
     if not request.user.is_anonymous:
@@ -108,6 +111,7 @@ def register(request: HttpRequest) -> HttpResponse:
     )
 
 
+@never_cache
 def register_success(request: HttpRequest) -> HttpResponse:
     """
     Let the user know they have been registered and allow them
@@ -129,6 +133,7 @@ def register_success(request: HttpRequest) -> HttpResponse:
 
 
 @sensitive_variables("signed_pk")
+@never_cache
 def confirm_email(request, signed_pk):
     """Confirms email addresses for a user and sends an email to the admins.
 
@@ -239,6 +244,7 @@ class RateLimitedPasswordResetView(PasswordResetView):
     "email",
 )
 @login_required
+@never_cache
 def profile_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
     old_email = request.user.email
     user = request.user
@@ -287,6 +293,7 @@ def profile_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 @sensitive_post_parameters("old_password", "new_password1", "new_password2")
 @login_required
+@never_cache
 def password_change(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = PasswordChangeForm(user=request.user, data=request.POST)
@@ -308,6 +315,7 @@ def password_change(request: AuthenticatedHttpRequest) -> HttpResponse:
 @login_required
 @ratelimiter_unsafe_10_per_m
 @ratelimiter_unsafe_2000_per_h
+@never_cache
 def take_out(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         email: EmailType = emails["take_out_requested"]
@@ -337,6 +345,7 @@ def take_out_done(request: HttpRequest) -> HttpResponse:
 @login_required
 @ratelimiter_unsafe_10_per_m
 @ratelimiter_unsafe_2000_per_h
+@never_cache
 def delete_account(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         delete_form = AccountDeleteForm(request, request.POST)
@@ -365,3 +374,24 @@ def delete_account(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 def delete_profile_done(request: HttpRequest) -> HttpResponse:
     return render(request, "profile/deleted.html")
+
+
+class SafeRedirectLoginView(auth_views.LoginView):
+    """
+    Custom LoginView that validates and sanitizes the redirect URL after a
+    successful login.
+    This view inherits from Django's built-in LoginView but adds an extra layer
+    of security by ensuring the redirect URL submitted by the login form is safe
+    It prevents potential open redirect vulnerabilities.
+    """
+
+    def get_redirect_url(self):
+        """
+        Return the user-originating redirect URL if it's safe. otherwise falls
+        back to the default.
+        This method ensures users cannot be redirected to malicious URLs after
+        logging in, even if they attempt to provide one.
+        """
+        return get_redirect_or_login_url(
+            self.request, self.redirect_field_name
+        )
