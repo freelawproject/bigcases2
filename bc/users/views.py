@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.http import urlencode
 from django.utils.timezone import now
+from django.views.decorators.cache import never_cache
 from django.views.decorators.debug import (
     sensitive_post_parameters,
     sensitive_variables,
@@ -45,6 +46,7 @@ from .utils.email import EmailType, emails, message_dict
 @sensitive_variables("cd", "signed_pk", "email")
 @ratelimiter_unsafe_10_per_m
 @ratelimiter_unsafe_2000_per_h
+@never_cache
 def register(request: HttpRequest) -> HttpResponse:
     """allow only an anonymous user to register"""
     if not request.user.is_anonymous:
@@ -109,6 +111,7 @@ def register(request: HttpRequest) -> HttpResponse:
     )
 
 
+@never_cache
 def register_success(request: HttpRequest) -> HttpResponse:
     """
     Let the user know they have been registered and allow them
@@ -130,6 +133,7 @@ def register_success(request: HttpRequest) -> HttpResponse:
 
 
 @sensitive_variables("signed_pk")
+@never_cache
 def confirm_email(request, signed_pk):
     """Confirms email addresses for a user and sends an email to the admins.
 
@@ -240,6 +244,7 @@ class RateLimitedPasswordResetView(PasswordResetView):
     "email",
 )
 @login_required
+@never_cache
 def profile_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
     old_email = request.user.email
     user = request.user
@@ -288,6 +293,7 @@ def profile_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 @sensitive_post_parameters("old_password", "new_password1", "new_password2")
 @login_required
+@never_cache
 def password_change(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = PasswordChangeForm(user=request.user, data=request.POST)
@@ -309,6 +315,7 @@ def password_change(request: AuthenticatedHttpRequest) -> HttpResponse:
 @login_required
 @ratelimiter_unsafe_10_per_m
 @ratelimiter_unsafe_2000_per_h
+@never_cache
 def take_out(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         email: EmailType = emails["take_out_requested"]
@@ -338,6 +345,7 @@ def take_out_done(request: HttpRequest) -> HttpResponse:
 @login_required
 @ratelimiter_unsafe_10_per_m
 @ratelimiter_unsafe_2000_per_h
+@never_cache
 def delete_account(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         delete_form = AccountDeleteForm(request, request.POST)
