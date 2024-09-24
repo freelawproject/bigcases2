@@ -26,14 +26,11 @@ PDF_URL_PATTERN = re.compile(
     r"(?P<url_for_redirect>(https:\/{2}storage\.courtlistener\.com\/recap\/gov.uscourts.(?P<court>[a-z]+).(?P<pacer_case_id>\d+)))(?:\/.*)"
 )
 
-CL_API = {
-    "docket": "https://www.courtlistener.com/api/rest/v3/dockets/",
-    "docket-alerts": "https://www.courtlistener.com/api/rest/v3/docket-alerts/",
-    "docket-entries": "https://www.courtlistener.com/api/rest/v3/docket-entries/",
-    "recap-documents": "https://www.courtlistener.com/api/rest/v3/recap-documents/",
-    "recap-fetch": "https://www.courtlistener.com/api/rest/v3/recap-fetch/",
-    "media-storage": "https://storage.courtlistener.com/",
-}
+CL_API_URL = (
+    lambda suffix: f"https://www.courtlistener.com/api/rest/v4/{suffix}/"
+)
+
+CL_MEDIA_STORAGE = "https://storage.courtlistener.com/"
 
 pacer_to_cl_ids = {
     # Maps PACER ids to their CL equivalents
@@ -131,10 +128,10 @@ class DocketDict(TypedDict):
 
 def lookup_docket_by_cl_id(cl_id: int) -> DocketDict:
     """
-    Performs a GET query on /api/rest/v3/dockets/
+    Performs a GET query on /api/rest/v4/dockets/
     to get a Docket using the CourtListener ID
     """
-    url = f"{CL_API['docket']}{cl_id}/"
+    url = f"{CL_API_URL('dockets')}{cl_id}/"
     response = requests.get(url, headers=auth_header(), timeout=5)
     response.raise_for_status()
     return response.json()
@@ -150,11 +147,11 @@ class DocumentDict(TypedDict):
 
 def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
     """
-    Performs a GET query on /api/rest/v3/recap-documents/
+    Performs a GET query on /api/rest/v4/recap-documents/
     using the document_id to get a recap document
     """
     response = requests.get(
-        f"{CL_API['recap-documents']}{doc_id}/",
+        f"{CL_API_URL('recap-documents')}{doc_id}/",
         params={
             "fields": "id,absolute_url,filepath_local,page_count,pacer_doc_id"
         },
@@ -168,7 +165,7 @@ def lookup_document_by_doc_id(doc_id: int | None) -> DocumentDict:
 
 def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
     """
-    Performs a GET query on /api/rest/v3/recap/
+    Performs a GET query on /api/rest/v4/recap/
     using the docket_id to get the first entry of the case.
 
     Args:
@@ -189,7 +186,7 @@ def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
     }
 
     response = requests.get(
-        f"{CL_API['recap-documents']}",
+        f"{CL_API_URL('recap-documents')}",
         params=params,
         headers=auth_header(),
         timeout=5,
@@ -197,7 +194,7 @@ def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
     response.raise_for_status()
 
     data = response.json()
-    if not data["count"]:
+    if not data["results"]:
         return None
 
     document = data["results"][0]
@@ -211,7 +208,7 @@ def lookup_initial_complaint(docket_id: int | None) -> DocumentDict | None:
 
 
 def download_pdf_from_cl(filepath: str) -> bytes:
-    document_url = f"{CL_API['media-storage']}{filepath}"
+    document_url = f"{CL_MEDIA_STORAGE}{filepath}"
     document_request = requests.get(document_url, timeout=3)
     document_request.raise_for_status()
     return document_request.content
@@ -219,12 +216,12 @@ def download_pdf_from_cl(filepath: str) -> bytes:
 
 def purchase_pdf_by_doc_id(doc_id: int | None, docket_id: int | None) -> int:
     """
-    Performs a POST query on /api/rest/v3/recap-fetch/
+    Performs a POST query on /api/rest/v4/recap-fetch/
     using the document_id from CL and the PACER's login
     credentials.
     """
     response = requests.post(
-        f"{CL_API['recap-fetch']}",
+        f"{CL_API_URL('recap-fetch')}",
         json={
             "request_type": 2,
             "pacer_username": settings.PACER_USERNAME,
@@ -242,19 +239,19 @@ def purchase_pdf_by_doc_id(doc_id: int | None, docket_id: int | None) -> int:
 
 def lookup_docket_by_case_number(court: str, docket_number: str):
     """
-    Performs a GET query on /api/rest/v3/dockets/
+    Performs a GET query on /api/rest/v4/dockets/
     using the court_id and docket_number to get a
     Docket.
     """
 
     response = requests.get(
-        CL_API["docket"],
+        CL_API_URL("dockets"),
         params={"court_id": court, "docket_number": docket_number},
         headers=auth_header(),
         timeout=5,
     )
     data = response.json()
-    num_results = data["count"]
+    num_results = len(data["results"])
     if num_results == 1:
         return data["results"][0]
     elif num_results == 0:
@@ -296,11 +293,11 @@ def lookup_docket_by_case_number(court: str, docket_number: str):
 
 def subscribe_to_docket_alert(cl_id: int) -> bool:
     """
-    Performs a POST query on /api/rest/v3/docket-alerts/
+    Performs a POST query on /api/rest/v4/docket-alerts/
     to subscribe to docket alerts for a given CourtListener docket ID.
     """
     response = requests.post(
-        CL_API["docket-alerts"],
+        CL_API_URL("docket-alerts"),
         headers=auth_header(),
         data={
             "docket": cl_id,
