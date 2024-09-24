@@ -23,6 +23,7 @@ version = "0.0.1"
 "Organisation Homepage" = "https://free.law/"
 
 [tool.poetry.dependencies]
+ada-url = "^1.15.3"
 python = "^3.11"
 art = "^6.2"
 requests = "^2.32.0"

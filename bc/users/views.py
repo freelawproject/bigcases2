@@ -4,6 +4,7 @@ from email.utils import parseaddr
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import logout, update_session_auth_hash
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordResetView
@@ -373,3 +374,24 @@ def delete_account(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 def delete_profile_done(request: HttpRequest) -> HttpResponse:
     return render(request, "profile/deleted.html")
+
+
+class SafeRedirectLoginView(auth_views.LoginView):
+    """
+    Custom LoginView that validates and sanitizes the redirect URL after a
+    successful login.
+    This view inherits from Django's built-in LoginView but adds an extra layer
+    of security by ensuring the redirect URL submitted by the login form is safe
+    It prevents potential open redirect vulnerabilities.
+    """
+
+    def get_redirect_url(self):
+        """
+        Return the user-originating redirect URL if it's safe. otherwise falls
+        back to the default.
+        This method ensures users cannot be redirected to malicious URLs after
+        logging in, even if they attempt to provide one.
+        """
+        return get_redirect_or_login_url(
+            self.request, self.redirect_field_name
+        )
