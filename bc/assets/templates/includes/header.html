@@ -1,4 +1,4 @@
-{% load static %}
+{% load static web_extras %}
 
 <div class="relative bg-gray-200 border-b-2 border-gray-400">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10">
@@ -204,7 +204,13 @@
               {% else %}
                 <div class="w-20 text-sm font-medium sm:text-md">
                   {% url 'sign-in' as sign_in %}
-                  {% include './action-button.html' with link=sign_in text="Sign In" size='sm' %}
+                  {% if request.path != "/sign-out/" %}
+                    {% with sign_in|addstr:"?next="|addstr:request.path as sign_in_w_redirect %}
+                    {% include './action-button.html' with link=sign_in_w_redirect text="Sign In" size='sm' %}
+                    {% endwith %}
+                  {% else %}
+                    {% include './action-button.html' with link=sign_in text="Sign In" size='sm' %}
+                  {% endif %}
                 </div>
               {% endif %}
             </div>
