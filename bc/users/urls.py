@@ -7,6 +7,7 @@ from bc.core.utils.network import ratelimiter_unsafe_10_per_m
 from .forms import ConfirmedEmailAuthenticationForm
 from .views import (
     RateLimitedPasswordResetView,
+    SafeRedirectLoginView,
     confirm_email,
     delete_account,
     delete_profile_done,
@@ -24,7 +25,7 @@ urlpatterns = [
     path(
         "sign-in/",
         ratelimiter_unsafe_10_per_m(
-            auth_views.LoginView.as_view(
+            SafeRedirectLoginView.as_view(
                 template_name="register/login.html",
                 authentication_form=ConfirmedEmailAuthenticationForm,
             )

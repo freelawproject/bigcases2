@@ -1,22 +1,66 @@
+from ada_url import URL
 from django.conf import settings
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.http import url_has_allowed_host_and_scheme
 
+BASE_URL = (
+    "https://www.courtlistener.com"
+    if not settings.DEVELOPMENT
+    else "http://localhost:8000"
+)
 
-def get_redirect_or_login_url(request: HttpRequest, field_name: str) -> str:
-    """Get the redirect if it's safe, or send the user to the login page
+
+def parse_url_with_ada(url: str) -> str:
+    """Parses a URL using the `URL` class from the `Ada`.
+
+    Handles relative paths by adding the `BASE_URL` to the class constructor.
+    If the URL is already absolute, this step has no effect. Extracts the
+    parsed URL from the `href` attribute and attempts to remove the `BASE_URL`
+    if it was added previously.
+
+    Returns an empty string If the input URL is invalid or cannot be parsed.
+
+    :param url: The URL to parse.
+    :return: The parsed URL or an empty string if the input URL is invalid or
+    cannot be parsed.
+    """
+    if not url:
+        return ""
+
+    try:
+        ada_url = URL(url, base=BASE_URL)
+        return ada_url.href.replace(BASE_URL, "")
+    except ValueError:
+        return ""
+
+
+def get_redirect_or_login_url(
+    request: HttpRequest, redirect_field_name: str
+) -> str:
+    """
+    Retrieves a safe redirect URL from the request or returns the login URL.
+
+    This function checks for a redirect URL in both the POST and GET data of
+    the provided request object. It then parses the retrieved URL using the
+    `parse_url_with_ada` helper and performs safety checks using the
+    `is_safe_url` function.
 
     :param request: The HTTP request
-    :param field_name: The field where the redirect is located
+    :param redirect_field_name: The name of the field containing the redirect
+    URL.
     :return: Either the value requested or the default LOGIN_REDIRECT_URL, if
     a sanity or security check failed.
     """
-    url = request.GET.get(field_name, "")
-    is_safe = is_safe_url(url, request)
-    if not is_safe:
+    redirect_url = request.POST.get(
+        redirect_field_name,
+        request.GET.get(redirect_field_name, ""),
+    )
+    cleaned_url = parse_url_with_ada(redirect_url)
+    safe = is_safe_url(cleaned_url, request)
+    if not safe:
         return settings.LOGIN_REDIRECT_URL
-    return url
+    return cleaned_url
 
 
 def is_safe_url(url: str, request: HttpRequest) -> bool:
@@ -45,11 +89,10 @@ def is_safe_url(url: str, request: HttpRequest) -> bool:
     """
     sign_in_url = reverse("sign-in") in url
     register_in_url = reverse("register") in url
+    no_url = not url
     not_safe_url = not url_has_allowed_host_and_scheme(
         url,
         allowed_hosts={request.get_host()},
         require_https=request.is_secure(),
     )
-    if any([sign_in_url, register_in_url, not_safe_url]):
-        return False
-    return True
+    return not any([sign_in_url, register_in_url, no_url, not_safe_url])
