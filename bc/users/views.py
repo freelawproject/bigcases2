@@ -8,8 +8,10 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordResetView
+from django.core.exceptions import SuspiciousOperation, ValidationError
 from django.core.mail import send_mail
 from django.core.signing import BadSignature, SignatureExpired
+from django.core.validators import validate_email
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -116,9 +118,18 @@ def register_success(request: HttpRequest) -> HttpResponse:
     """
     Let the user know they have been registered and allow them
     to continue where they left off.
+
+    Changes here should be reflected in the CourtListener's
+    register_success function.
     """
     redirect_to = get_redirect_or_login_url(request, "next")
     email = request.GET.get("email", "")
+    if email:
+        try:
+            validate_email(email)
+        except ValidationError:
+            raise SuspiciousOperation("Invalid Email address")
+
     default_from = parseaddr(settings.DEFAULT_FROM_EMAIL)[1]
     return render(
         request,
