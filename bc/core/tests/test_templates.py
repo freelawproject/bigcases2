@@ -1,11 +1,17 @@
+import re
+from unittest.mock import patch
+
 from django.test import SimpleTestCase
 
+from bc.channel.tests.factories import fake_token
+from bc.channel.utils.connectors.bluesky_api.client import BlueskyAPI
 from bc.core.utils.status.templates import (
     BLUESKY_FOLLOW_A_NEW_CASE,
     MASTODON_FOLLOW_A_NEW_CASE,
     TWITTER_FOLLOW_A_NEW_CASE,
     MastodonTemplate,
 )
+from bc.core.utils.tests.base import faker
 
 
 class NewSubscriptionValidTemplateTest(SimpleTestCase):
@@ -804,3 +810,30 @@ class MastodonTemplateTest(SimpleTestCase):
                 msg="Failed with dict: %s.\n%s is longer than %s"
                 % (test, result, template.max_characters),
             )
+
+
+class BlueskyTemplateTest(SimpleTestCase):
+
+    @patch(
+        "bc.channel.utils.connectors.bluesky_api.client.BlueskyAPI._get_session"
+    )
+    def test_create_posts_with_no_brackets(self, mock_session):
+        fake_article_url = faker.url()
+        fake_docket_url = faker.url()
+        fake_initial_complaint_link = faker.url()
+
+        message, _ = BLUESKY_FOLLOW_A_NEW_CASE.format(
+            docket=faker.text(),
+            docket_link=fake_docket_url,
+            docket_id=faker.random_int(100_000, 400_000),
+            article_url=fake_article_url,
+            date_filed=None,
+            initial_complaint_type="Complaint",
+            initial_complaint_link=fake_initial_complaint_link,
+        )
+        bluesky_connector = BlueskyAPI(fake_token(), fake_token())
+        post_content = bluesky_connector._clean_text(message)
+        # This regular expression ensures that no brackets are included in
+        # the content of the post to enclose embedded links
+        pattern = r"View Full Case | Complaint | Context"
+        self.assertIsNotNone(re.search(pattern, post_content))
