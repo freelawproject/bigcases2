@@ -25,7 +25,7 @@ version = "0.0.1"
 [tool.poetry.dependencies]
 ada-url = "^1.15.3"
 python = "^3.11"
-art = "^6.2"
+art = "^6.3"
 requests = "^2.32.0"
 python-dotenv = "^1.0.0"
 "Mastodon.py" = {extras = ["cryptography"], version = "^1.8.0"}
