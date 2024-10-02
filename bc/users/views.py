@@ -312,7 +312,7 @@ def password_change(request: AuthenticatedHttpRequest) -> HttpResponse:
             form.save()
             msg = message_dict["pwd_changed_successfully"]
             messages.add_message(request, msg["level"], msg["message"])
-            update_session_auth_hash(request, form.user)
+            update_session_auth_hash(request, request.user)
             return HttpResponseRedirect(reverse("password_change"))
     else:
         form = PasswordChangeForm(user=request.user)
