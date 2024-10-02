@@ -60,7 +60,7 @@ repos:
           django-hcaptcha==0.2.0,
           django-htmx==1.17.3,
           django-rq==2.10.2,
-          django-stubs==5.0.0,
+          django-stubs==5.1.0,
           "django-tailwind[reload]==3.8.0",
           "Mastodon.py[cryptography]==1.8.0",
           pillow==10.3.0,
