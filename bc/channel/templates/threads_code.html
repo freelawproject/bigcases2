@@ -1,0 +1,13 @@
+{% extends "post.html" %}
+{% block title %}Threads Authorization Code{% endblock %}
+
+{% block post_title %}Threads Onboarding{% endblock %}
+
+{% block post_content %}
+  <p class="lead">You're almost done! Use the code below in your CLI to complete the setup for this Threads account.</p>
+
+  <h3>Authorization Code:</h3>
+  <div class="flex bg-gray-200 rounded-lg p-5">
+    <p class="w-full break-all">{{code}}</p>
+  </div>
+{% endblock %}
