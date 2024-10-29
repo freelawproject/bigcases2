@@ -62,10 +62,12 @@ class Channel(AbstractDateTimeModel):
     TWITTER = 1
     MASTODON = 2
     BLUESKY = 3
+    THREADS = 4
     CHANNELS = (
         (TWITTER, "Twitter"),
         (MASTODON, "Mastodon"),
         (BLUESKY, "Bluesky"),
+        (THREADS, "Threads"),
     )
     service = models.PositiveSmallIntegerField(
         help_text="Type of the service",
