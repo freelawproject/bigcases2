@@ -4,11 +4,12 @@ from mastodon import Mastodon
 from TwitterAPI import TwitterAPI
 
 from bc.channel.utils.connectors.bluesky_api.client import BlueskyAPI
+from bc.channel.utils.connectors.threads_api.client import ThreadsAPI
 from bc.core.utils.images import TextImage
 
 from .bluesky_api.types import ImageBlob
 
-ApiWrapper = Union[Mastodon, TwitterAPI, BlueskyAPI]
+ApiWrapper = Union[Mastodon, TwitterAPI, BlueskyAPI, ThreadsAPI]
 
 
 class BaseAPIConnector(Protocol):
@@ -30,7 +31,7 @@ class BaseAPIConnector(Protocol):
 
     def upload_media(
         self, media: bytes, alt_text: str
-    ) -> int | ImageBlob | None:
+    ) -> int | str | ImageBlob | None:
         """
         creates a media attachment to be used with a new status.
 
