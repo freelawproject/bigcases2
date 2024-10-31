@@ -34,11 +34,13 @@ def main():
     # Get a short-lived token first:
     response = requests.post(
         SHORT_LIVED_ACCESS_TOKEN_URL,
-        data={"client_id": APP_ID,
-              "client_secret": APP_SECRET,
-              "code": threads_code,
-              "grant_type": "authorization_code",
-              "redirect_uri": THREADS_CALLBACK,},
+        data={
+            "client_id": APP_ID,
+            "client_secret": APP_SECRET,
+            "code": threads_code,
+            "grant_type": "authorization_code",
+            "redirect_uri": THREADS_CALLBACK,
+        },
     )
 
     if response.status_code != 200:
@@ -87,7 +89,9 @@ def main():
     print("Enable: True")
     print(f"Access Token: {long_access_token}")
     if expires_in is not None:
-        print(f"\nNote: Token will expire in {expires_in / 86400:.1f} days unless refreshed.")
+        print(
+            f"\nNote: Token will expire in {expires_in / 86400:.1f} days unless refreshed."
+        )
 
 
 if __name__ == "__main__":
