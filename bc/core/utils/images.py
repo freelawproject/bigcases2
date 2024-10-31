@@ -478,11 +478,24 @@ def resize_image(
     min_aspect_ratio: float | None = None,
     max_aspect_ratio: float | None = None,
 ):
+    """
+    Resizes and crops an image to meet specified width and aspect ratio constraints.
+
+    Args:
+        image (bytes): Original image bytes.
+        min_width (int | None): Minimum width for the resized image.
+        max_width (int | None): Maximum width for the resized image.
+        min_aspect_ratio (float | None): Minimum aspect ratio (width/height).
+        max_aspect_ratio (float | None): Maximum aspect ratio (width/height).
+
+    Returns:
+        bytes: Resized and cropped image bytes in the original format.
+    """
     with Image.open(io.BytesIO(image)) as img:
         original_format = img.format
         width, height = img.size
         aspect_ratio = width / height
-        logger.info(f"Initial img size: {img.size}, a.ratio: {aspect_ratio}")
+        logger.info(f"Initial img size: {img.size}, asp.ratio: {aspect_ratio}")
 
         # Step 1: Adjust width to fit within min and max constraints
         if min_width is not None and width < min_width:
@@ -501,18 +514,18 @@ def resize_image(
         aspect_ratio = width / height
         if min_aspect_ratio is not None and aspect_ratio < min_aspect_ratio:
             # Crop height if too tall
-            new_height = int(width / min_aspect_ratio)
-            crop_height = (height - new_height) // 2
-            img = img.crop((0, crop_height, width, height - crop_height))
+            target_height = round(width / min_aspect_ratio)
+            crop_margin = round((height - target_height) / 2)
+            img = img.crop((0, crop_margin, width, height - crop_margin))
             logger.info(
                 f"Cropped height to fit min aspect ratio "
                 f"{min_aspect_ratio}: {img.size}"
             )
         elif max_aspect_ratio is not None and aspect_ratio > max_aspect_ratio:
             # Crop width if too wide
-            new_width = int(height * max_aspect_ratio)
-            crop_width = (width - new_width) // 2
-            img = img.crop((crop_width, 0, width - crop_width, height))
+            target_width = round(height * max_aspect_ratio)
+            crop_margin = round((width - target_width) / 2)
+            img = img.crop((crop_margin, 0, width - crop_margin, height))
             logger.info(
                 f"Cropped width to fit max aspect ratio "
                 f"{max_aspect_ratio}: {img.size}"
