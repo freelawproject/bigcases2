@@ -9,6 +9,11 @@ logger = logging.getLogger(__name__)
 
 
 class ThreadsConnector:
+    """
+    A connector for interfacing with the Threads API, which complies with
+    the BaseAPIConnector protocol.
+    """
+
     def __init__(
         self, account: str, account_id: str, access_token: str
     ) -> None:
@@ -28,6 +33,21 @@ class ThreadsConnector:
         return api
 
     def upload_media(self, media: bytes, _alt_text=None) -> str:
+        """
+        Uploads media to public storage for Threads API compatibility.
+
+        Since Threads API requires media to be accessible via public URL,
+        this method resizes the image as needed, uploads it to S3, and
+        returns the public URL.
+
+        Args:
+            media (bytes): The image bytes to be uploaded.
+            _alt_text (str, optional): Alternative text for accessibility
+                (not currently used, required by protocol).
+
+        Returns:
+            str: Public URL of the uploaded image.
+        """
         return self.api.resize_and_upload_to_public_storage(media)
 
     def add_status(
@@ -35,9 +55,23 @@ class ThreadsConnector:
         message: str,
         text_image: TextImage | None = None,
         thumbnails: list[bytes] | None = None,
-    ) -> int:
+    ) -> str:
         """
-        Creates a new status update using the Threads API.
+        Creates and publishes a new status update on Threads.
+
+        This method determines the type of post (text-only, single image,
+        or carousel) based on the provided media. If multiple images are
+        provided, a carousel post is created. Otherwise, it creates a
+        single image or text-only post.
+
+        Args:
+            message (str): The text content of the status.
+            text_image (TextImage | None): An optional main image with text.
+            thumbnails (list[bytes] | None): Optional list of thumbnails for
+                a carousel post.
+
+        Returns:
+            str: The ID of the published status.
         """
         media: list[str] = []
 
@@ -74,14 +108,15 @@ class ThreadsConnector:
                     continue
                 media.append(item_container_id)
 
-        # Carousel post (multiple images)
+        # Determine container id to be published based on media count:
         if len(media) > 1:
+            # Carousel post (multiple images)
             container_id = self.api.create_carousel_container(media, message)
-        # Single image post
         elif len(media) == 1:
+            # Single image post
             container_id = media[0]
-        # Text-only post
         else:
+            # Text-only post
             container_id = self.api.create_text_only_container(message)
 
         return self.api.publish_container(container_id)
