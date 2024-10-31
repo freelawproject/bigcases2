@@ -1,6 +1,11 @@
 import re
 
-from .base import BlueskyTemplate, MastodonTemplate, TwitterTemplate
+from .base import (
+    BlueskyTemplate,
+    MastodonTemplate,
+    ThreadsTemplate,
+    TwitterTemplate,
+)
 
 DO_NOT_POST = re.compile(
     r"""(
@@ -123,4 +128,39 @@ BLUESKY_MINUTE_TEMPLATE = BlueskyTemplate(
 [View Full Case]({docket_link})
 
 #CL{docket_id}""",
+)
+
+THREADS_POST_TEMPLATE = ThreadsTemplate(
+    link_placeholders=["pdf_link", "docket_link"],
+    str_template="""New filing: "{docket}"
+Doc #{doc_num}: {description}
+
+PDF: {pdf_link}
+Docket: {docket_link}
+
+#CL{docket_id}""",
+)
+
+THREADS_MINUTE_TEMPLATE = ThreadsTemplate(
+    link_placeholders=["docket_link"],
+    str_template="""New minute entry in {docket}: {description}
+
+Docket: {docket_link}
+
+#CL{docket_id}""",
+)
+
+THREADS_FOLLOW_A_NEW_CASE = ThreadsTemplate(
+    link_placeholders=["docket_link", "initial_complaint_link", "article_url"],
+    str_template="""I'm now following {{docket}}:{% if date_filed %}
+
+Filed: {{date_filed}}{% endif %}
+
+Docket: {{docket_link}}{% if initial_complaint_type and initial_complaint_link %}
+
+{{initial_complaint_type}}: {{initial_complaint_link}}{% endif %}{% if article_url %}
+
+Context: {{article_url}}{% endif %}
+
+#CL{{docket_id}}""",
 )

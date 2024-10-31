@@ -1,4 +1,5 @@
 import io
+import logging
 from dataclasses import dataclass, field
 from math import ceil, sqrt
 from textwrap import fill, wrap
@@ -7,6 +8,8 @@ from django.contrib.staticfiles import finders
 from PIL import Image, ImageFont, ImageOps
 from PIL.Image import Image as ImageCls
 from PIL.ImageDraw import Draw, ImageDraw
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -447,3 +450,84 @@ def add_sponsored_text_to_thumbnails(
         thumbnail.add_sponsored_text()
         watermarked_thumbnails.append(thumbnail.to_bytes())
     return watermarked_thumbnails
+
+
+def convert_to_jpeg(
+    image: bytes,
+    quality: int = 85,
+) -> bytes:
+    # Load the image from bytes
+    with Image.open(io.BytesIO(image)) as img:
+
+        # Ensure image is in RGB mode (JPEG requirement, no transparency)
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
+        # Save the converted image to JPEG format
+        jpeg_image = io.BytesIO()
+        img.save(jpeg_image, format="JPEG", quality=quality)
+        jpeg_image.seek(0)  # Move to the beginning of the byte stream
+
+    return jpeg_image.getvalue()
+
+
+def resize_image(
+    image: bytes,
+    min_width: int | None = None,
+    max_width: int | None = None,
+    min_aspect_ratio: float | None = None,
+    max_aspect_ratio: float | None = None,
+):
+    with Image.open(io.BytesIO(image)) as img:
+        original_format = img.format
+        width, height = img.size
+        aspect_ratio = width / height
+        logger.info(f"Initial img size: {img.size}, a.ratio: {aspect_ratio}")
+
+        # Step 1: Adjust width to fit within min and max constraints
+        if min_width is not None and width < min_width:
+            new_width = min_width
+            new_height = int(new_width / aspect_ratio)
+            img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            logger.info(f"Resized to min width {min_width}: {img.size}")
+        elif max_width is not None and width > max_width:
+            new_width = max_width
+            new_height = int(new_width / aspect_ratio)
+            img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            logger.info(f"Resized to max width {max_width}: {img.size}")
+
+        # Step 2: Crop to fit aspect ratio constraints if necessary
+        width, height = img.size  # Updated dimensions
+        aspect_ratio = width / height
+        if min_aspect_ratio is not None and aspect_ratio < min_aspect_ratio:
+            # Crop height if too tall
+            new_height = int(width / min_aspect_ratio)
+            crop_height = (height - new_height) // 2
+            img = img.crop((0, crop_height, width, height - crop_height))
+            logger.info(
+                f"Cropped height to fit min aspect ratio "
+                f"{min_aspect_ratio}: {img.size}"
+            )
+        elif max_aspect_ratio is not None and aspect_ratio > max_aspect_ratio:
+            # Crop width if too wide
+            new_width = int(height * max_aspect_ratio)
+            crop_width = (width - new_width) // 2
+            img = img.crop((crop_width, 0, width - crop_width, height))
+            logger.info(
+                f"Cropped width to fit max aspect ratio "
+                f"{max_aspect_ratio}: {img.size}"
+            )
+
+        # Save the modified image in the original format
+        resized_image = io.BytesIO()
+        if original_format:
+            img.save(resized_image, format=original_format)
+        else:
+            img.save(resized_image)
+
+        resized_image.seek(0)
+
+    logger.info(
+        f"Final image size: {img.size}, aspect ratio: {width / height}"
+    )
+    return resized_image.getvalue()

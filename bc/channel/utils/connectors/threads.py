@@ -1,8 +1,11 @@
-from bc.core.utils.images import TextImage
-from .alt_text_utils import text_image_alt_text, thumb_num_alt_text
+import logging
 
-from .base import ApiWrapper
+from bc.core.utils.images import TextImage
+
+from .alt_text_utils import text_image_alt_text, thumb_num_alt_text
 from .threads_api.client import ThreadsAPI
+
+logger = logging.getLogger(__name__)
 
 
 class ThreadsConnector:
@@ -12,9 +15,9 @@ class ThreadsConnector:
         self.account = account
         self.account_id = account_id
         self.access_token = access_token
-        self.api: ThreadsAPI = self.get_api_object()
+        self.api = self.get_api_object()
 
-    def get_api_object(self) -> ApiWrapper:
+    def get_api_object(self, _version=None) -> ThreadsAPI:
         """
         Returns an instance of the ThreadsAPI class.
         """
@@ -24,20 +27,8 @@ class ThreadsConnector:
         )
         return api
 
-    def upload_media(
-        self,
-        media: bytes,
-        message: str,
-        alt_text: str,
-        is_carousel_item: bool,
-    ) -> str:
-        container_id = self.api.upload_media(
-            media,
-            message,
-            alt_text,
-            is_carousel_item,
-        )
-        return container_id
+    def upload_media(self, media: bytes, _alt_text=None) -> str:
+        return self.api.resize_and_upload_to_public_storage(media)
 
     def add_status(
         self,
@@ -49,36 +40,54 @@ class ThreadsConnector:
         Creates a new status update using the Threads API.
         """
         media: list[str] = []
-        is_carousel_item = (len(thumbnails) > 1 or
-                            (len(thumbnails) > 0 and text_image is not None))
+
+        # Count media elements to determine type of post:
+        multiple_thumbnails = thumbnails is not None and len(thumbnails) > 1
+        text_image_and_thumbnail = (
+            thumbnails is not None
+            and len(thumbnails) > 0
+            and text_image is not None
+        )
+        is_carousel_item = multiple_thumbnails or text_image_and_thumbnail
+
         if text_image:
-            container_id = self.upload_media(
-                text_image.to_bytes(),
+            image_url = self.upload_media(text_image.to_bytes())
+            item_container_id = self.api.create_image_container(
+                image_url,
                 message,
                 text_image_alt_text(text_image.description),
                 is_carousel_item,
             )
-            if container_id:
-                media.append(container_id)
+            if item_container_id:
+                media.append(item_container_id)
 
         if thumbnails:
             for idx, thumbnail in enumerate(thumbnails):
-                container_id = self.upload_media(
-                    thumbnail,
+                thumbnail_url = self.upload_media(thumbnail)
+                item_container_id = self.api.create_image_container(
+                    thumbnail_url,
                     message,
                     thumb_num_alt_text(idx),
                     is_carousel_item,
                 )
-                if not container_id:
+                if not item_container_id:
                     continue
-                media.append(container_id)
+                media.append(item_container_id)
 
-        if is_carousel_item:
+        # Carousel post (multiple images)
+        if len(media) > 1:
             container_id = self.api.create_carousel_container(media, message)
-        else:
+        # Single image post
+        elif len(media) == 1:
             container_id = media[0]
+        # Text-only post
+        else:
+            container_id = self.api.create_text_only_container(message)
 
         return self.api.publish_container(container_id)
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__module__}.{self.__class__.__name__}: account:'{self.account}'>"
+        return (
+            f"<{self.__class__.__module__}.{self.__class__.__name__}: "
+            f"account:'{self.account}'>"
+        )
