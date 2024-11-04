@@ -201,7 +201,5 @@ class ThreadsAPI:
         image_s3_url = put_object_in_bucket(
             resized_image,
             file_name_in_bucket,
-            settings.THREADS_BUCKET_NAME,
-            settings.THREADS_BUCKET_REGION,
         )
         return image_s3_url

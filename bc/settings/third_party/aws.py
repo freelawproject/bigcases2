@@ -7,6 +7,7 @@ DEVELOPMENT = env.bool("DEVELOPMENT", default=True)
 if DEVELOPMENT:
     AWS_ACCESS_KEY_ID = env("AWS_DEV_ACCESS_KEY_ID", default="")
     AWS_SECRET_ACCESS_KEY = env("AWS_DEV_SECRET_ACCESS_KEY", default="")
+    AWS_SESSION_TOKEN = env("AWS_DEV_SESSION_TOKEN", default="")
 else:
     AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", default="")
     AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", default="")
