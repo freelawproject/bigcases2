@@ -202,6 +202,6 @@ class ThreadsAPI:
             resized_image,
             file_name_in_bucket,
             settings.THREADS_BUCKET_NAME,
-            settings.THREADS_BUCKET_ZONE,
+            settings.THREADS_BUCKET_REGION,
         )
         return image_s3_url

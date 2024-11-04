@@ -14,7 +14,7 @@ def put_object_in_bucket(
     media: bytes,
     file_name: str,
     bucket_name: str,
-    zone: str = "us-east-1",
+    region: str = "us-east-1",
     content_type: str = "image/jpeg",
     acl: str = "public-read",
 ) -> str:
@@ -30,5 +30,5 @@ def put_object_in_bucket(
         ContentType=content_type,
         ACL=acl,
     )
-    bucket_base_uri = f"https://{bucket_name}.s3.{zone}.amazonaws.com"
+    bucket_base_uri = f"https://{bucket_name}.s3.{region}.amazonaws.com"
     return f"{bucket_base_uri}/{file_name}"
