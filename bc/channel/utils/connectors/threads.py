@@ -120,7 +120,10 @@ class ThreadsConnector:
             container_id = self.api.create_text_only_container(message)
 
         if container_id is None:
-            logger.error("ThreadsConnector could not get container to publish!")
+            logger.error(
+                "ThreadsConnector could not get container to publish!"
+            )
+            return ""
 
         return self.api.publish_container(container_id)
 

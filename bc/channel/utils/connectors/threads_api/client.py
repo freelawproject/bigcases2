@@ -39,7 +39,7 @@ class ThreadsAPI:
         self._timeout = timeout
         self._base_account_url = f"{_BASE_API_URL}/{self._account_id}"
 
-    def publish_container(self, container_id: str) -> str | None:
+    def publish_container(self, container_id: str) -> str:
         """
         Publishes a media container to Threads.
 
@@ -55,7 +55,7 @@ class ThreadsAPI:
             "access_token": self._access_token,
         }
         response = self.attempt_post(base_url, params)
-        return response.json().get("id") if response is not None else None
+        return response.json().get("id") if response is not None else ""
 
     def create_image_container(
         self,
