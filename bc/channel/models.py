@@ -139,7 +139,7 @@ class Channel(AbstractDateTimeModel):
             case self.BLUESKY:
                 return f"https://bsky.app/profile/{self.account_id}"
             case self.THREADS:
-                return f"https://www.threads.net/@{self.account_id}"
+                return f"https://www.threads.net/@{self.account}"
             case _:
                 raise NotImplementedError(
                     f"Channel.self_url() not yet implemented for service {self.service}"
