@@ -119,6 +119,9 @@ class ThreadsConnector:
             # Text-only post
             container_id = self.api.create_text_only_container(message)
 
+        if container_id is None:
+            logger.error("ThreadsConnector could not get container to publish!")
+
         return self.api.publish_container(container_id)
 
     def __repr__(self) -> str:

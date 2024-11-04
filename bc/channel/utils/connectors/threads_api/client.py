@@ -28,12 +28,18 @@ class ThreadsAPI:
     Docs: https://developers.facebook.com/docs/threads/posts
     """
 
-    def __init__(self, account_id: str, access_token: str) -> None:
+    def __init__(
+        self,
+        account_id: str,
+        access_token: str,
+        timeout: int = 30,
+    ) -> None:
         self._account_id = account_id
         self._access_token = access_token
+        self._timeout = timeout
         self._base_account_url = f"{_BASE_API_URL}/{self._account_id}"
 
-    def publish_container(self, container_id: str) -> str:
+    def publish_container(self, container_id: str) -> str | None:
         """
         Publishes a media container to Threads.
 
@@ -48,8 +54,8 @@ class ThreadsAPI:
             "creation_id": container_id,
             "access_token": self._access_token,
         }
-        response = requests.post(base_url, params=params)
-        return response.json()["id"]
+        response = self.attempt_post(base_url, params)
+        return response.json().get("id") if response is not None else None
 
     def create_image_container(
         self,
@@ -57,7 +63,7 @@ class ThreadsAPI:
         message: str,
         alt_text: str,
         is_carousel_item: bool = False,
-    ) -> str:
+    ) -> str | None:
         """
         Creates a container for an image post on Threads, to be published
         using the method publish_container.
@@ -83,14 +89,14 @@ class ThreadsAPI:
             params["is_carousel_item"] = "true"
         else:
             params["text"] = message
-        response = requests.post(base_url, params=params)
-        return response.json()["id"]
+        response = self.attempt_post(base_url, params)
+        return response.json().get("id") if response is not None else None
 
     def create_carousel_container(
         self,
         children: list[str],
         message: str,
-    ) -> str:
+    ) -> str | None:
         """
         Creates a carousel container with multiple images on Threads,
         to be published using the method publish_container.
@@ -109,10 +115,10 @@ class ThreadsAPI:
             "children": ",".join(children),
             "text": message,
         }
-        response = requests.post(base_url, params=params)
-        return response.json()["id"]
+        response = self.attempt_post(base_url, params)
+        return response.json().get("id") if response is not None else None
 
-    def create_text_only_container(self, message: str) -> str:
+    def create_text_only_container(self, message: str) -> str | None:
         """
         Creates a container for a text-only post on Threads,
         to be published using the method publish_container.
@@ -129,8 +135,35 @@ class ThreadsAPI:
             "media_type": "TEXT",
             "text": message,
         }
-        response = requests.post(base_url, params=params)
-        return response.json()["id"]
+        response = self.attempt_post(base_url, params)
+        return response.json().get("id") if response is not None else None
+
+    def attempt_post(
+        self,
+        url: str,
+        params: dict,
+    ) -> requests.Response | None:
+        """
+        Attempts to send a POST request to a specified URL with given parameters.
+        If the request is successful, the response is returned, otherwise `None` is returned.
+        """
+        try:
+            response = requests.post(url, params=params, timeout=self._timeout)
+            response.raise_for_status()
+        except requests.exceptions.Timeout:
+            logger.error(
+                f"Post request to Threads API timed out\n"
+                f"Request URL: {url}"
+            )
+            return None
+        except requests.exceptions.HTTPError as err:
+            logger.error(
+                f"An error occurred when trying to post to Threads API\n"
+                f"Request URL: {url}\n\n"
+                f"{err}"
+            )
+            return None
+        return response
 
     @staticmethod
     def resize_and_upload_to_public_storage(media: bytes) -> str:
