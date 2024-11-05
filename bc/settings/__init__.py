@@ -11,4 +11,5 @@ from .third_party.pacer import *
 from .third_party.redis import *
 from .third_party.rq import *
 from .third_party.sentry import *
+from .third_party.threads import *
 from .third_party.twitter import *

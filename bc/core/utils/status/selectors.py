@@ -8,18 +8,22 @@ from .templates import (
     MASTODON_FOLLOW_A_NEW_CASE,
     MASTODON_MINUTE_TEMPLATE,
     MASTODON_POST_TEMPLATE,
+    THREADS_FOLLOW_A_NEW_CASE,
+    THREADS_MINUTE_TEMPLATE,
+    THREADS_POST_TEMPLATE,
     TWITTER_FOLLOW_A_NEW_CASE,
     TWITTER_MINUTE_TEMPLATE,
     TWITTER_POST_TEMPLATE,
     BlueskyTemplate,
     MastodonTemplate,
+    ThreadsTemplate,
     TwitterTemplate,
 )
 
 
 def get_template_for_channel(
     service: int, document_number: int | None
-) -> TwitterTemplate | MastodonTemplate | BlueskyTemplate:
+) -> TwitterTemplate | MastodonTemplate | BlueskyTemplate | ThreadsTemplate:
     """Returns a template object that uses the data of a webhook to
     create a new status update in the given service. This method
     checks the document number to pick one of the templates available.
@@ -30,8 +34,8 @@ def get_template_for_channel(
             event.
 
     Returns:
-        TwitterTemplate | MastodonTemplate | BlueskyTemplate: template object to create
-            a new post.
+        TwitterTemplate | MastodonTemplate | BlueskyTemplate | ThreadsTemplate:
+         template object to create a new post.
     """
     match service:
         case Channel.TWITTER:
@@ -51,6 +55,12 @@ def get_template_for_channel(
                 BLUESKY_POST_TEMPLATE
                 if document_number
                 else BLUESKY_MINUTE_TEMPLATE
+            )
+        case Channel.THREADS:
+            return (
+                THREADS_POST_TEMPLATE
+                if document_number
+                else THREADS_MINUTE_TEMPLATE
             )
         case _:
             raise NotImplementedError(
@@ -74,6 +84,7 @@ def get_new_case_template(service: int) -> BaseTemplate:
         Channel.BLUESKY: BLUESKY_FOLLOW_A_NEW_CASE,
         Channel.MASTODON: MASTODON_FOLLOW_A_NEW_CASE,
         Channel.TWITTER: TWITTER_FOLLOW_A_NEW_CASE,
+        Channel.THREADS: THREADS_FOLLOW_A_NEW_CASE,
     }
 
     if service in new_case_templates:

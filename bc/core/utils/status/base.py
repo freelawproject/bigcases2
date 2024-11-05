@@ -222,6 +222,19 @@ class BlueskyTemplate(BaseTemplate):
         )
 
 
+@dataclass
+class ThreadsTemplate(BaseTemplate):
+    max_characters: int = 300
+
+    def __len__(self) -> int:
+        """This method overrides `Template.__len__`.
+
+        All links (URLs) longer than 24 chars long (without `https://www.`)
+        posted in Threads are truncated, so they can take up to 23 characters.
+        """
+        return 24 * len(self.link_placeholders) + self.count_fixed_characters()
+
+
 def _get_node_list_fields(nodelist: NodeList) -> list[str]:
     fields: list[str] = []
     for node in nodelist:

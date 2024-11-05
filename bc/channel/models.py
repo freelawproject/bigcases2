@@ -9,6 +9,7 @@ from bc.users.models import User
 from .utils.connectors.base import BaseAPIConnector
 from .utils.connectors.bluesky import BlueskyConnector
 from .utils.connectors.masto import MastodonConnector, get_handle_parts
+from .utils.connectors.threads import ThreadsConnector
 from .utils.connectors.twitter import TwitterConnector
 
 
@@ -62,10 +63,12 @@ class Channel(AbstractDateTimeModel):
     TWITTER = 1
     MASTODON = 2
     BLUESKY = 3
+    THREADS = 4
     CHANNELS = (
         (TWITTER, "Twitter"),
         (MASTODON, "Mastodon"),
         (BLUESKY, "Bluesky"),
+        (THREADS, "Threads"),
     )
     service = models.PositiveSmallIntegerField(
         help_text="Type of the service",
@@ -117,6 +120,10 @@ class Channel(AbstractDateTimeModel):
                 )
             case self.BLUESKY:
                 return BlueskyConnector(self.account_id, self.access_token)
+            case self.THREADS:
+                return ThreadsConnector(
+                    self.account, self.account_id, self.access_token
+                )
             case _:
                 raise NotImplementedError(
                     f"No wrapper implemented for service: '{self.service}'."
@@ -131,6 +138,8 @@ class Channel(AbstractDateTimeModel):
                 return f"{instance_part}@{account_part}"
             case self.BLUESKY:
                 return f"https://bsky.app/profile/{self.account_id}"
+            case self.THREADS:
+                return f"https://www.threads.net/@{self.account}"
             case _:
                 raise NotImplementedError(
                     f"Channel.self_url() not yet implemented for service {self.service}"

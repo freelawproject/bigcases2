@@ -1,7 +1,6 @@
 from bc.core.utils.images import TextImage
 
 from .alt_text_utils import text_image_alt_text, thumb_num_alt_text
-from .base import ApiWrapper
 from .bluesky_api.client import BlueskyAPI
 from .bluesky_api.types import ImageBlob, Thumbnail
 
@@ -10,9 +9,9 @@ class BlueskyConnector:
     def __init__(self, identifier: str, password: str) -> None:
         self.identifier = identifier
         self.password = password
-        self.api: BlueskyAPI = self.get_api_object()
+        self.api = self.get_api_object()
 
-    def get_api_object(self, _version=None) -> ApiWrapper:
+    def get_api_object(self, _version=None) -> BlueskyAPI:
         return BlueskyAPI(self.identifier, self.password)
 
     def upload_media(
