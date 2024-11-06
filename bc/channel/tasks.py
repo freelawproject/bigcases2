@@ -92,10 +92,8 @@ def refresh_threads_access_token(channel_pk):
     channel.access_token = new_access_token
     channel.save()
 
-    # Schedule the next token refresh
-    delay_seconds = (
-        expires_in - 86400
-    )  # Subtract one day to avoid expiration before the task runs
+    # Schedule the next token refresh one day before expiration
+    delay_seconds = expires_in - 86400
     queue.enqueue_in(
         timedelta(seconds=delay_seconds if delay_seconds > 0 else expires_in),
         refresh_threads_access_token,
