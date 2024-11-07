@@ -69,7 +69,11 @@ def refresh_threads_access_token(channel_pk):
         "grant_type": "th_refresh_token",
         "access_token": channel.access_token,
     }
-    response = requests.get(refresh_access_token_url, params=params)
+    response = requests.get(
+        refresh_access_token_url,
+        params=params,
+        timeout=10,
+    )
 
     if response.status_code != 200:
         logger.error(
