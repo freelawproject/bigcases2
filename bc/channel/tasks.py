@@ -1,5 +1,3 @@
-import logging
-
 from django.conf import settings
 from django_rq.queues import get_queue
 from rq import Retry
@@ -7,8 +5,6 @@ from rq import Retry
 from .models import Channel, Group
 
 queue = get_queue("default")
-
-logger = logging.getLogger(__name__)
 
 
 def enqueue_text_status_for_channel(channel: Channel, text: str) -> None:

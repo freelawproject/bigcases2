@@ -1,5 +1,3 @@
-import logging
-
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -12,8 +10,6 @@ from bc.core.utils.cloudfront import create_cache_invalidation
 from .models import Channel, Group
 
 queue = get_queue("default")
-
-logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=Group)
