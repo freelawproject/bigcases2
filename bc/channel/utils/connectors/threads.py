@@ -33,6 +33,17 @@ class ThreadsConnector:
         return api
 
     def validate_access_token(self) -> tuple[bool, str]:
+        """
+        Ensures that the access token used by the connector is up-to-date.
+
+        This method delegates the validation of the access token to the underlying
+        `ThreadsAPI` instance by checking the access token's expiration date and
+        refreshing it if necessary.
+
+        Returns:
+            tuple[bool, str]: A tuple where the first element is a boolean
+             indicating whether the token was refreshed, and the second element is the current access token.
+        """
         return self.api.validate_access_token()
 
     def upload_media(self, media: bytes, _alt_text=None) -> str:

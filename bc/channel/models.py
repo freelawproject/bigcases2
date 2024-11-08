@@ -158,6 +158,12 @@ class Channel(AbstractDateTimeModel):
                 )
 
     def validate_access_token(self):
+        """
+        Validates and refreshes the access token for the channel if necessary.
+
+        This method implements a locking mechanism to avoid multiple tasks
+        from concurrently trying to validate the same token.
+        """
         if self.service not in self.CHANNELS_TO_REFRESH:
             return
         r = make_redis_interface("CACHE")
@@ -165,7 +171,9 @@ class Channel(AbstractDateTimeModel):
         lock = r.lock(lock_key, sleep=1, timeout=60)
         blocking_timeout = 60
         try:
+            # Use a blocking lock to wait until locking task is finished
             lock.acquire(blocking=True, blocking_timeout=blocking_timeout)
+            # Then perform action to validate
             self._refresh_access_token()
         except LockError as e:
             logger.error(
@@ -194,6 +202,9 @@ class Channel(AbstractDateTimeModel):
             )
 
     def _get_refresh_lock_key(self):
+        """
+        Constructs the Redis key used for locking during access token refresh.
+        """
         return f"token_refresh_lock_{self.account_id}@{self.get_service_display()}"
 
     def __str__(self) -> str:

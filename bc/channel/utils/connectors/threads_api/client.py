@@ -167,6 +167,17 @@ class ThreadsAPI:
         return response
 
     def validate_access_token(self) -> tuple[bool, str]:
+        """
+        Validates the current access token and refreshes it if necessary.
+
+        This method checks the expiration date of the access token stored in the Redis cache.
+        If the expiration date is missing, expired, or will expire within two days,
+        it attempts to refresh the token by calling `refresh_access_token`.
+
+        Returns:
+            tuple[bool, str]: A tuple where the first element is a boolean
+             indicating whether the token was refreshed, and the second element is the current access token.
+        """
         r = make_redis_interface("CACHE")
         refreshed = False
 
@@ -192,6 +203,14 @@ class ThreadsAPI:
         return refreshed, self._access_token
 
     def refresh_access_token(self) -> bool:
+        """
+        Refreshes the access token by making a request to the Threads API.
+
+        If the refresh is successful, it updates the access token and its expiration date in the cache.
+
+        Returns:
+            bool: `True` if the access token was successfully refreshed and updated; `False` otherwise.
+        """
         refresh_access_token_url = (
             "https://graph.threads.net/refresh_access_token"
         )
@@ -231,6 +250,12 @@ class ThreadsAPI:
         return True
 
     def _set_token_expiration_in_cache(self, expires_in: int):
+        """
+        Stores the access token's expiration date in the Redis cache.
+
+        Args:
+            expires_in (int): The number of seconds until the access token expires.
+        """
         delay = timedelta(seconds=expires_in)
         expiration_date = (datetime.now(timezone.utc) + delay).isoformat()
         r = make_redis_interface("CACHE")
@@ -239,12 +264,15 @@ class ThreadsAPI:
             r.set(
                 key,
                 expiration_date.encode("utf-8"),
-                ex=expires_in,
+                ex=expires_in,  # ensure the cache entry expires when the token does
             )
         except Exception as e:
             logger.error(f"Could not set {key} in cache:\n{e}")
 
-    def _get_expiration_key(self):
+    def _get_expiration_key(self) -> str:
+        """
+        Returns the Redis key used for storing the access token's expiration date.
+        """
         return f"threads_token_expiration_{self._account_id}"
 
     @staticmethod
