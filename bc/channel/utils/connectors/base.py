@@ -73,4 +73,17 @@ class BaseAPIConnector(Protocol):
 
 
 class RefreshableBaseAPIConnector(BaseAPIConnector, Protocol):
-    def validate_access_token(self) -> tuple[bool, str]: ...
+    """
+    Extends BaseAPIConnector to add logic to validate access tokens.
+    """
+
+    def validate_access_token(self) -> tuple[bool, str]:
+        """
+        Validates the access token and refreshes it if necessary.
+
+        Returns:
+            tuple[bool, str]: A tuple where the first element is a boolean
+             indicating if the token was refreshed, and the second element
+             is the current access token.
+        """
+        ...
