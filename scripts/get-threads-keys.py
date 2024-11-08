@@ -50,6 +50,7 @@ def main():
             "grant_type": "authorization_code",
             "redirect_uri": THREADS_CALLBACK,
         },
+        timeout=10,
     )
 
     if response.status_code != 200:
@@ -67,7 +68,11 @@ def main():
         "client_secret": APP_SECRET,
         "access_token": short_lived_access_token,
     }
-    response = requests.get(LONG_LIVED_ACCESS_TOKEN_URL, params=params)
+    response = requests.get(
+        LONG_LIVED_ACCESS_TOKEN_URL,
+        params=params,
+        timeout=10,
+    )
 
     if response.status_code != 200:
         raise Exception(
@@ -79,7 +84,10 @@ def main():
     expires_in = long_lived_data.get("expires_in")
 
     user_info_url = f"{USER_INFO_BASE_URL}/{user_id}?fields=username&access_token={long_access_token}"
-    response = requests.get(user_info_url)
+    response = requests.get(
+        user_info_url,
+        timeout=10,
+    )
 
     if response.status_code != 200:
         raise Exception(
