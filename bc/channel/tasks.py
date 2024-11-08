@@ -16,6 +16,7 @@ def enqueue_text_status_for_channel(channel: Channel, text: str) -> None:
         channel (Channel): The channel object.
         text (str): Message for the new status.
     """
+    channel.validate_access_token()
     api = channel.get_api_wrapper()
     queue.enqueue(
         api.add_status,
