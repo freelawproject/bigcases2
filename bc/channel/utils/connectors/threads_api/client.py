@@ -1,11 +1,12 @@
 import logging
 import time
 import uuid
+from datetime import datetime, timedelta, timezone
 
 import requests
-from django.conf import settings
 
 from bc.core.utils.images import convert_to_jpeg, resize_image
+from bc.core.utils.redis import make_redis_interface
 from bc.core.utils.s3 import put_object_in_bucket
 
 logger = logging.getLogger(__name__)
@@ -164,6 +165,87 @@ class ThreadsAPI:
             )
             return None
         return response
+
+    def validate_access_token(self) -> tuple[bool, str]:
+        r = make_redis_interface("CACHE")
+        refreshed = False
+
+        try:
+            cached_expiration_date = r.get(self._get_expiration_key())
+        except Exception as e:
+            logger.error(
+                f"Could not retrieve cached token, will attempt to refresh.\n"
+                f"Redis error: {e}"
+            )
+            return self.refresh_access_token(), self._access_token
+
+        if cached_expiration_date is None:
+            return self.refresh_access_token(), self._access_token
+
+        expiration_date = datetime.fromisoformat(str(cached_expiration_date))
+        delta = expiration_date - datetime.now(timezone.utc)
+        will_expire_soon = delta <= timedelta(days=2)
+
+        if will_expire_soon:
+            refreshed = self.refresh_access_token()
+
+        return refreshed, self._access_token
+
+    def refresh_access_token(self) -> bool:
+        refresh_access_token_url = (
+            "https://graph.threads.net/refresh_access_token"
+        )
+        params = {
+            "grant_type": "th_refresh_token",
+            "access_token": self._access_token,
+        }
+        try:
+            response = requests.get(
+                refresh_access_token_url,
+                params=params,
+                timeout=10,
+            )
+            response.raise_for_status()
+        except requests.exceptions.RequestException as err:
+            logger.error(
+                f"Failed to refresh access token for Threads account {self._account_id}:\n"
+                f"{err}"
+            )
+            return False
+
+        data = response.json()
+        new_access_token = data.get("access_token")
+        expires_in = data.get("expires_in")  # In seconds
+
+        if new_access_token is None or expires_in is None:
+            logger.error(
+                f"Missing 'access_token' or 'expires_in' in refresh access token response for Threads account {self._account_id}. "
+                f"If the issue persists, a new access token can be retrieved manually with the script again.\n"
+                f"Response data: {data}"
+            )
+            return False
+
+        self._access_token = new_access_token
+        self._set_token_expiration_in_cache(expires_in)
+
+        return True
+
+    def _set_token_expiration_in_cache(self, expires_in: int):
+        delay = timedelta(seconds=expires_in)
+        expiration_date = (datetime.now(timezone.utc) + delay).isoformat()
+        r = make_redis_interface("CACHE")
+        key = self._get_expiration_key()
+        try:
+            r.set(
+                key,
+                expiration_date.encode("utf-8"),
+                ex=expires_in,
+            )
+        except Exception as e:
+            logger.error(f"Could not set {key} in cache:\n{e}")
+
+    def _get_expiration_key(self):
+        return f"threads_token_expiration_{self._account_id}"
 
     @staticmethod
     def resize_and_upload_to_public_storage(media: bytes) -> str:

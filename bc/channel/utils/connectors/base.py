@@ -70,3 +70,7 @@ class BaseAPIConnector(Protocol):
             int: The unique identifier for the new status.
         """
         ...
+
+
+class RefreshableBaseAPIConnector(BaseAPIConnector, Protocol):
+    def validate_access_token(self) -> tuple[bool, str]: ...

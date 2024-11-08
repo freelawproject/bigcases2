@@ -1,5 +1,9 @@
+import json
+from datetime import datetime, timedelta, timezone
+
 import environ
 import requests
+from redis import Redis
 
 env = environ.FileAwareEnv()
 
@@ -13,6 +17,11 @@ SHORT_LIVED_ACCESS_TOKEN_URL = "https://graph.threads.net/oauth/access_token"
 LONG_LIVED_ACCESS_TOKEN_URL = "https://graph.threads.net/access_token"
 
 USER_INFO_BASE_URL = "https://graph.threads.net/v1.0"
+
+REDIS_HOST = env("REDIS_HOST", default="redis://bc2-redis")
+REDIS_PORT = env("REDIS_PORT", default=6379)
+
+r = Redis.from_url(url=f"{REDIS_HOST}:{REDIS_PORT}", db=1)
 
 
 def main():
@@ -88,10 +97,29 @@ def main():
     print(f"Account id: {user_id}")
     print("Enable: True")
     print(f"Access Token: {long_access_token}")
-    if expires_in is not None:
-        print(
-            f"\nNote: Token will expire in {expires_in / 86400:.1f} days unless refreshed."
+    if expires_in is None:
+        print("Could not retrieve expiration time for access token")
+        return
+
+    # Set expiration date in cache so we can refresh the token automatically
+    delay = timedelta(seconds=expires_in - 20)
+    expiration_date = (datetime.now(timezone.utc) + delay).isoformat()
+    expiration_key = f"threads_token_expiration_{user_id}"
+    print(
+        f"\nNote: Token will expire on {expiration_date} unless refreshed.\n"
+    )
+
+    try:
+        r.set(
+            expiration_key,
+            expiration_date,
+            ex=expires_in,
         )
+        print(
+            f"Expiration date saved in cache as {expiration_key} for {delay} seconds."
+        )
+    except Exception as e:
+        print(f"Could not set expiration date in cache:\n{e}")
 
 
 if __name__ == "__main__":

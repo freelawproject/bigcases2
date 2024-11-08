@@ -1,16 +1,25 @@
+import logging
+
 from django.db import models
 from django.urls import reverse
+from redis.exceptions import LockError
 
 from bc.core.models import AbstractDateTimeModel
 from bc.core.utils.color import format_color_str
 from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
-from .utils.connectors.base import BaseAPIConnector
+from ..core.utils.redis import make_redis_interface
+from .utils.connectors.base import (
+    BaseAPIConnector,
+    RefreshableBaseAPIConnector,
+)
 from .utils.connectors.bluesky import BlueskyConnector
 from .utils.connectors.masto import MastodonConnector, get_handle_parts
 from .utils.connectors.threads import ThreadsConnector
 from .utils.connectors.twitter import TwitterConnector
+
+logger = logging.getLogger(__name__)
 
 
 class Group(AbstractDateTimeModel):
@@ -70,6 +79,7 @@ class Channel(AbstractDateTimeModel):
         (BLUESKY, "Bluesky"),
         (THREADS, "Threads"),
     )
+    CHANNELS_TO_REFRESH = [THREADS]
     service = models.PositiveSmallIntegerField(
         help_text="Type of the service",
         choices=CHANNELS,
@@ -107,7 +117,9 @@ class Channel(AbstractDateTimeModel):
         blank=True,
     )
 
-    def get_api_wrapper(self) -> BaseAPIConnector:
+    def get_api_wrapper(
+        self,
+    ) -> BaseAPIConnector | RefreshableBaseAPIConnector:
         match self.service:
             case self.TWITTER:
                 return TwitterConnector(
@@ -144,6 +156,45 @@ class Channel(AbstractDateTimeModel):
                 raise NotImplementedError(
                     f"Channel.self_url() not yet implemented for service {self.service}"
                 )
+
+    def validate_access_token(self):
+        if self.service not in self.CHANNELS_TO_REFRESH:
+            return
+        r = make_redis_interface("CACHE")
+        lock_key = self._get_refresh_lock_key()
+        lock = r.lock(lock_key, sleep=1, timeout=60)
+        blocking_timeout = 60
+        try:
+            lock.acquire(blocking=True, blocking_timeout=blocking_timeout)
+            self._refresh_access_token()
+        except LockError as e:
+            logger.error(
+                f"LockError while acquiring lock for channel {self}: {e}"
+            )
+            raise e
+        finally:
+            if lock.owned():
+                try:
+                    lock.release()
+                except Exception as e:
+                    logger.error(
+                        f"Error releasing lock for channel {self}:\n{e}"
+                    )
+
+    def _refresh_access_token(self):
+        api = self.get_api_wrapper()
+        try:
+            refreshed, access_token = api.validate_access_token()
+            if refreshed:
+                self.access_token = access_token
+                self.save()
+        except Exception as e:
+            logger.error(
+                f"Error when trying to refresh token for channel {self.pk}:\n{e}"
+            )
+
+    def _get_refresh_lock_key(self):
+        return f"token_refresh_lock_{self.account_id}@{self.get_service_display()}"
 
     def __str__(self) -> str:
         if self.account:

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class ThreadsConnector:
     """
     A connector for interfacing with the Threads API, which complies with
-    the BaseAPIConnector protocol.
+    the RefreshableBaseAPIConnector protocol.
     """
 
     def __init__(
@@ -31,6 +31,9 @@ class ThreadsConnector:
             self.access_token,
         )
         return api
+
+    def validate_access_token(self) -> tuple[bool, str]:
+        return self.api.validate_access_token()
 
     def upload_media(self, media: bytes, _alt_text=None) -> str:
         """

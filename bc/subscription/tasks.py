@@ -110,6 +110,7 @@ def enqueue_posts_for_new_case(
             initial_complaint_link=initial_complaint_link,
         )
 
+        channel.validate_access_token()
         api = channel.get_api_wrapper()
 
         sponsor_message = None
@@ -422,6 +423,8 @@ def make_post_for_webhook_event(
 
     if sponsor_text and files:
         files = add_sponsored_text_to_thumbnails(files, sponsor_text)
+
+    channel.validate_access_token()
 
     api = channel.get_api_wrapper()
     api_post_id = api.add_status(message, image, files)

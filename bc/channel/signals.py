@@ -1,5 +1,4 @@
 import logging
-from datetime import timedelta
 
 from django.conf import settings
 from django.db.models.signals import post_save
@@ -11,7 +10,6 @@ from rq import Retry
 from bc.core.utils.cloudfront import create_cache_invalidation
 
 from .models import Channel, Group
-from .tasks import refresh_threads_access_token
 
 queue = get_queue("default")
 
@@ -54,19 +52,4 @@ def channel_handler(sender, instance=None, created=False, **kwargs):
                 max=settings.RQ_MAX_NUMBER_OF_RETRIES,
                 interval=settings.RQ_RETRY_INTERVAL,
             ),
-        )
-
-    # Schedule initial token refresh 2 days after creation
-    if created and instance.service == Channel.THREADS:
-        queue.enqueue_in(
-            timedelta(days=2),
-            refresh_threads_access_token,
-            channel_pk=instance.pk,
-            retry=Retry(
-                max=settings.RQ_MAX_NUMBER_OF_RETRIES,
-                interval=settings.RQ_RETRY_INTERVAL,
-            ),
-        )
-        logger.info(
-            f"Scheduled new refresh token for newly created channel {instance} in 2 days"
         )
