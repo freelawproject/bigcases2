@@ -181,13 +181,12 @@ class Channel(AbstractDateTimeModel):
             )
             raise e
         finally:
-            if lock.owned():
-                try:
-                    lock.release()
-                except Exception as e:
-                    logger.error(
-                        f"Error releasing lock for channel {self}:\n{e}"
-                    )
+            if not lock.owned():
+                return
+            try:
+                lock.release()
+            except Exception as e:
+                logger.error(f"Error releasing lock for channel {self}:\n{e}")
 
     def _refresh_access_token(self):
         api = self.get_api_wrapper()
