@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 
 _BASE_API_URL = "https://graph.threads.net/v1.0"
 
+r = make_redis_interface("CACHE")
+
 
 class ThreadsAPI:
     """
@@ -178,7 +180,6 @@ class ThreadsAPI:
             tuple[bool, str]: A tuple where the first element is a boolean
              indicating whether the token was refreshed, and the second element is the current access token.
         """
-        r = make_redis_interface("CACHE")
         refreshed = False
 
         try:
@@ -258,7 +259,6 @@ class ThreadsAPI:
         """
         delay = timedelta(seconds=expires_in)
         expiration_date = (datetime.now(timezone.utc) + delay).isoformat()
-        r = make_redis_interface("CACHE")
         key = self._get_expiration_key()
         try:
             r.set(
