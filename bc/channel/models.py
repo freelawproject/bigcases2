@@ -21,6 +21,8 @@ from .utils.connectors.twitter import TwitterConnector
 
 logger = logging.getLogger(__name__)
 
+r = make_redis_interface("CACHE")
+
 
 class Group(AbstractDateTimeModel):
     name = models.CharField(
@@ -166,7 +168,6 @@ class Channel(AbstractDateTimeModel):
         """
         if self.service not in self.CHANNELS_TO_REFRESH:
             return
-        r = make_redis_interface("CACHE")
         lock_key = self._get_refresh_lock_key()
         lock = r.lock(lock_key, sleep=1, timeout=60)
         blocking_timeout = 60
