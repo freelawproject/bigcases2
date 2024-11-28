@@ -1777,13 +1777,13 @@ files = [
 
 [[package]]
 name = "redis"
-version = "5.1.0"
+version = "5.2.0"
 description = "Python client for Redis database and key-value store"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "redis-5.1.0-py3-none-any.whl", hash = "sha256:fd4fccba0d7f6aa48c58a78d76ddb4afc698f5da4a2c1d03d916e4fd7ab88cdd"},
-    {file = "redis-5.1.0.tar.gz", hash = "sha256:b756df1e4a3858fcc0ef861f3fc53623a96c41e2b1f5304e09e0fe758d333d40"},
+    {file = "redis-5.2.0-py3-none-any.whl", hash = "sha256:ae174f2bb3b1bf2b09d54bf3e51fbc1469cf6c10aa03e21141f51969801a7897"},
+    {file = "redis-5.2.0.tar.gz", hash = "sha256:0b1087665a771b1ff2e003aa5bdd354f15a70c9e25d5a7dbf9c722c16528a7b0"},
 ]
 
 [package.dependencies]
@@ -2035,7 +2035,7 @@ files = [
 
 [package.dependencies]
 requests = "*"
-requests-oauthlib = "*"
+requests_oauthlib = "*"
 
 [[package]]
 name = "types-pyopenssl"
@@ -2261,4 +2261,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "de38f628b4bcf6a5e914f4828aaf450928842fb69caf0c974aa53c16156b67a7"
+content-hash = "c79c9de4ac15cbde8365792ea2ef452c97ca93035033c89ff21367359e187de5"
