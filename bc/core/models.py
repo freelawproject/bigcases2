@@ -27,10 +27,10 @@ class BannerConfig(models.Model):
         default=False,
         help_text="If another config is currently active, enabling this one will deactivate the first one.",
     )
-    banner_title = models.CharField(max_length=255)
-    banner_text = models.TextField()
-    banner_button_text = models.CharField(max_length=40)
-    banner_button_link = models.URLField()
+    banner_title = models.CharField(max_length=255, null=True, blank=True)
+    banner_text = models.TextField(null=True, blank=True)
+    banner_button_text = models.CharField(max_length=40, null=True, blank=True)
+    banner_button_link = models.URLField(null=True, blank=True)
 
     class Meta:
         # This constraint ensures that only one BannerConfig
@@ -45,7 +45,8 @@ class BannerConfig(models.Model):
 
     def __str__(self):
         status = "active" if self.is_active else "inactive"
-        return f"{self.pk}: {self.banner_title} ({status})"
+        title = self.banner_title or "Banner"
+        return f"{self.pk}: {title} ({status})"
 
     def save(self, *args, **kwargs):
         # If this banner is being activated, deactivate others.
