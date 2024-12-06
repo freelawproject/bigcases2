@@ -1,0 +1,38 @@
+{% comment %}
+  This template renders a banner that fills the horizontal space available and
+  conditionally displays a title, a text, and a button, based on the following params:
+
+  Parameters:
+    title: The title for the banner, displayed in bold text (optional)
+    text: The text for the banner, displayed in regular text (optional)
+    button_text: Text of the button (Optional: No button is displayed if not provided)
+    button_link: The URL that the button points to (Optional: No button is displayed if not provided)
+
+  The banner elements (title, text, button) are displayed in a row in large screens, and as a column
+  in small and medium screens.
+
+  It's advisable to wrap this template with a div tag and use the parent element to handle
+  the sizing and the responsive behavior. Here's an example:
+
+  <div class="flex w-44 md:w-48 lg:w-52">
+    {% include 'includes/banner.html' with button_text="Donate Today" button_link="https://donate.free.law/forms/supportflp" title="Today is GivingTuesday!" %}
+  </div>
+{% endcomment %}
+
+<div class="flex w-full justify-center items-center py-2 px-4 sm:px-6 md:px-10">
+  <div class="flex lg:flex-row flex-col justify-center items-center py-3 text-center">
+    {% if title %}
+      <strong class="pr-0 lg:pr-6">{{ title }}</strong>
+    {% endif %}
+    {% if text %}
+      <span class="text-sm pr-2 mb-2 lg:mb-0 text-start">
+        {{ text }}
+      </span>
+    {% endif %}
+    {% if button_text and button_link %}
+      <div class="w-28 text-sm font-medium mr-1 outline rounded-md outline-1 hover:text-gray-300">
+        {% include './action-button.html' with link=button_link text=button_text size='sm' color='' %}
+      </div>
+    {% endif %}
+  </div>
+</div>
