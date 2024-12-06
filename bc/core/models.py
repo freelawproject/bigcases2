@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 
 class AbstractDateTimeModel(models.Model):
@@ -18,3 +19,41 @@ class AbstractDateTimeModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class BannerConfig(models.Model):
+
+    is_active = models.BooleanField(
+        default=False,
+        help_text="If another config is currently active, enabling this one will deactivate the first one.",
+    )
+    banner_title = models.CharField(max_length=255, null=True, blank=True)
+    banner_text = models.TextField(null=True, blank=True)
+    banner_button_text = models.CharField(max_length=40, null=True, blank=True)
+    banner_button_link = models.URLField(null=True, blank=True)
+
+    class Meta:
+        # This constraint ensures that only one BannerConfig
+        # can have is_active = True at any given time.
+        constraints = [
+            models.UniqueConstraint(
+                fields=["is_active"],
+                condition=Q(is_active=True),
+                name="only_one_active_banner",
+            )
+        ]
+
+    def __str__(self):
+        status = "active" if self.is_active else "inactive"
+        title = self.banner_title or "Banner"
+        return f"{self.pk}: {title} ({status})"
+
+    def save(self, *args, **kwargs):
+        # If this banner is being activated, deactivate others.
+        if self.is_active:
+            # Deactivate all other active banners
+            BannerConfig.objects.filter(is_active=True).exclude(
+                pk=self.pk
+            ).update(is_active=False)
+
+        super().save(*args, **kwargs)
