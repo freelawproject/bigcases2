@@ -1,9 +1,9 @@
 {% load static web_extras %}
 
-{% if BANNER_ENABLED %}
+{% if HEADER_BANNER_ENABLED %}
 <div class="border-b-2 border-gray-400 bg-gradient-to-b from-gray-300 via-white to-white">
   <div class="max-w-7xl mx-auto">
-    {% include './banner.html' with button_text="Donate Today" button_link="https://donate.free.law/forms/supportflp" text="The Big Cases bot and its friends are an initiative of Free Law Project, a non-profit dedicated to improving the legal system. Help us in our quest to share legal information with the world. Donate before the end of 2024 to power free and open legal information for everyone." %}
+    {% include './banner.html' with button_text=HEADER_BANNER_BUTTON_TEXT button_link=HEADER_BANNER_BUTTON_LINK text=HEADER_BANNER_TEXT title=HEADER_BANNER_TITLE %}
   </div>
 </div>
 {% endif %}
