@@ -18,6 +18,7 @@ name = "Big Cases Bot 2"
 readme = "README.md"
 repository = "https://github.com/freelawproject/bigcases2"
 version = "0.0.1"
+package-mode = false
 
 [tool.poetry.urls]
 "Organisation Homepage" = "https://free.law/"
