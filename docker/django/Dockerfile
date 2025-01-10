@@ -20,7 +20,7 @@ RUN apt-get update --option "Acquire::Retries=3" --quiet=2 && \
 
 # poetry
 # https://python-poetry.org/docs/configuration/#using-environment-variables
-ENV POETRY_VERSION=1.3.2 \
+ENV POETRY_VERSION=2.0.0 \
     # make poetry install to this location
     POETRY_HOME="/opt/poetry" \
     # Don't build a virtualenv to save space
@@ -43,7 +43,7 @@ FROM build-base as python-base
 WORKDIR $PYSETUP_PATH
 
 COPY poetry.lock pyproject.toml ./
-RUN poetry install --no-root $(test "$BUILD_ENV" != "dev" && echo "--without dev")
+RUN poetry install $(test "$BUILD_ENV" != "dev" && echo "--without dev")
 
 COPY . /opt/bigcases2
 
