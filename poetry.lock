@@ -663,13 +663,13 @@ tests = ["jinja2 (>=2.9.6)", "pytest", "pytest-cov", "pytest-django", "pytest-ru
 
 [[package]]
 name = "django-debug-toolbar"
-version = "4.4.2"
+version = "5.0.1"
 description = "A configurable set of panels that display various debug information about the current request/response."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "django_debug_toolbar-4.4.2-py3-none-any.whl", hash = "sha256:5d7afb2ea5f8730241e5b0735396e16cd1fd8c6b53a2f3e1e30bbab9abb23728"},
-    {file = "django_debug_toolbar-4.4.2.tar.gz", hash = "sha256:9204050fcb1e4f74216c5b024bc76081451926a6303993d6c513f5e142675927"},
+    {file = "django_debug_toolbar-5.0.1-py3-none-any.whl", hash = "sha256:7456cc2e951db37dab335686db7803c4a0ecb6736d120705f6668db9548bf49f"},
+    {file = "django_debug_toolbar-5.0.1.tar.gz", hash = "sha256:296f6f18a80710e84fbb8361538ae5ec522a75ebe9ab67db34bcf1026cbeb420"},
 ]
 
 [package.dependencies]
@@ -765,13 +765,13 @@ sentry = ["sentry-sdk (>=1.0.0)"]
 
 [[package]]
 name = "django-ses"
-version = "4.3.2"
+version = "4.4.0"
 description = "A Django email backend for Amazon's Simple Email Service (SES)"
 optional = false
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "django_ses-4.3.2-py3-none-any.whl", hash = "sha256:eed713751a95f0204954a3d9532651fcde835fa48179556ddbac75a671fd8de4"},
-    {file = "django_ses-4.3.2.tar.gz", hash = "sha256:4440847259b3a5a1d33c02467dacbe23d12b8105e04a4c17dba38110f4bfae77"},
+    {file = "django_ses-4.4.0-py3-none-any.whl", hash = "sha256:1d310c34b307a380f3c9a2091e6e7fc2cf19650f229d1df044b19e140fb77b63"},
+    {file = "django_ses-4.4.0.tar.gz", hash = "sha256:8cf9213f84de0315dd03b0ddc0e126d39c79847af5ba27000adcac3314f4bfae"},
 ]
 
 [package.dependencies]
@@ -2244,4 +2244,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "091d20a5dda4450f9d0401db8518fa2c45f8310cd239ccd354943034f6c1c442"
+content-hash = "be31c351d263252b58d318ddda4afa3b6c109cd9a097b6d2979034cd13da248c"
