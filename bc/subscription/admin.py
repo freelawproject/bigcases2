@@ -15,6 +15,12 @@ class SubscriptionAdmin(admin.ModelAdmin):
         ChannelInline,
     ]
     exclude = ["channel"]
+    search_fields = (
+        "cl_docket_id",
+        "pacer_case_id",
+        "channel__group__name",
+    )
+    list_filter = ("channel__group",)
 
 
 admin.site.register(Subscription, SubscriptionAdmin)
