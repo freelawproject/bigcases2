@@ -57,7 +57,7 @@ factory-boy = "^3.3.0"
 faker = "^37.0.2"
 disposable-email-domains = "^0.0.90"
 django-hcaptcha = "^0.2.0"
-beautifulsoup4 = "^4.12.2"
+beautifulsoup4 = "^4.13.3"
 django-permissions-policy = "^4.25.0"
 
 [tool.poetry.group.dev.dependencies]
