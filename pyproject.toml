@@ -52,7 +52,7 @@ django-tailwind = "^3.8.0"
 django-ratelimit = "^4.1.0"
 twitterapi = "^2.8.2"
 django-ses = "^4.4.0"
-django-htmx = "^1.22.0"
+django-htmx = "^1.23.0"
 factory-boy = "^3.3.0"
 faker = "^37.0.2"
 disposable-email-domains = "^0.0.90"
@@ -73,7 +73,7 @@ django-stubs = "^5.1.0"
 types-requests = "^2.32.0.20240523"
 types-redis = "^4.6.0.2"
 ipython = "^9.0.2"
-django-debug-toolbar = "^5.0.1"
+django-debug-toolbar = "^5.1.0"
 django-tailwind = {extras = ["reload"], version = "^3.8.0"}
 
 [tool.black]
