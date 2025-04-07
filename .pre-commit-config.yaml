@@ -31,12 +31,12 @@ repos:
        args: [--line-length=79, --transform-concats]
 
   - repo: https://github.com/psf/black
-    rev: 24.10.0
+    rev: 25.1.0
     hooks:
      - id: black
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
+    rev: 6.0.1
     hooks:
      - id: isort
        name: isort (python)
@@ -48,7 +48,7 @@ repos:
        args: [--py311-plus]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.14.1
+    rev: v1.15.0
     hooks:
      - id: mypy
        additional_dependencies: [
