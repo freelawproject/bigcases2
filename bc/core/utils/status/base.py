@@ -6,9 +6,8 @@ from django.template import Context, NodeList, Template
 from django.template.base import VariableNode
 from django.template.defaulttags import IfNode
 
+from bc.core.utils.images import TextImage
 from bc.core.utils.string_utils import trunc
-
-from ..images import TextImage
 
 
 class InvalidTemplate(Exception):

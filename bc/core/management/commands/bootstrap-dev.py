@@ -44,12 +44,12 @@ class Command(VerboseCommand):
             "-r",
             type=int,
             action="append",
-            help=f"Create a subscription with data from a "
-            f"real case in Court Listener with the "
-            f"Court Listener docket id (integer) that you provide."
-            f"  This will be subscribed as a big case.  "
-            f"You can use this option multiple times to  subscribe to "
-            f"multiple cases. Ex: --real-case 67490069 --real-case 67490070",
+            help="Create a subscription with data from a "
+            "real case in Court Listener with the "
+            "Court Listener docket id (integer) that you provide."
+            "  This will be subscribed as a big case.  "
+            "You can use this option multiple times to  subscribe to "
+            "multiple cases. Ex: --real-case 67490069 --real-case 67490070",
         )
 
     def handle(self, *args, **options) -> None:

@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Q
 
 
 class AbstractDateTimeModel(models.Model):
@@ -22,7 +21,6 @@ class AbstractDateTimeModel(models.Model):
 
 
 class BannerConfig(models.Model):
-
     is_active = models.BooleanField(
         default=False,
         help_text="If another config is currently active, enabling this one will deactivate the first one.",

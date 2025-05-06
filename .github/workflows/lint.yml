@@ -17,6 +17,8 @@ jobs:
         with:
           python-version: "3.11"
 
+      - uses: pre-commit/action@v3.0.0
+
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
@@ -50,25 +52,3 @@ jobs:
           --follow-imports=skip \
           --exclude 'migrations/*' \
           .
-
-      - name: Flynt f-string Formatter
-        run: >
-          flynt .
-          --line-length=79
-          --transform-concats
-          --fail-on-change
-
-      - name: Black Code Formatter
-        uses: psf/black@stable
-
-  lint-isort:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.9"
-
-      - name: isort Import Sorter
-        uses: isort/isort-action@v1

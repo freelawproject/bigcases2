@@ -85,7 +85,9 @@ class AddCaseView(LoginRequiredMixin, View):
         docket["case_summary"] = cd["case_summary"]
         docket["article_url"] = cd["article_url"]
         try:
-            with transaction.atomic():  # Inner atomic block, create a savepoint
+            with (
+                transaction.atomic()
+            ):  # Inner atomic block, create a savepoint
                 (
                     subscription,
                     created,

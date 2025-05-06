@@ -20,7 +20,7 @@ def get_thumbnails_from_range(document: bytes, page_range: str) -> list[bytes]:
     thumbnails = requests.post(
         f"{settings.DOCTOR_HOST}/convert/pdf/thumbnails/",
         data={"pages": page_range, "max_dimension": "1920"},
-        files={"file": (f"dummy.pdf", document)},
+        files={"file": ("dummy.pdf", document)},
         timeout=60,
     )
 

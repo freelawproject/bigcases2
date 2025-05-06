@@ -26,9 +26,10 @@ PDF_URL_PATTERN = re.compile(
     r"(?P<url_for_redirect>(https:\/{2}storage\.courtlistener\.com\/recap\/gov.uscourts.(?P<court>[a-z]+).(?P<pacer_case_id>\d+)))(?:\/.*)"
 )
 
-CL_API_URL = (
-    lambda suffix: f"https://www.courtlistener.com/api/rest/v4/{suffix}/"
-)
+
+def CL_API_URL(suffix):
+    return f"https://www.courtlistener.com/api/rest/v4/{suffix}/"
+
 
 CL_MEDIA_STORAGE = "https://storage.courtlistener.com/"
 
