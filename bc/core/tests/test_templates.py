@@ -9,6 +9,7 @@ from bc.core.utils.status.templates import (
     BLUESKY_FOLLOW_A_NEW_CASE,
     MASTODON_FOLLOW_A_NEW_CASE,
     TWITTER_FOLLOW_A_NEW_CASE,
+    THREADS_FOLLOW_A_NEW_CASE,
     MastodonTemplate,
 )
 from bc.core.utils.tests.base import faker
@@ -837,3 +838,83 @@ class BlueskyTemplateTest(SimpleTestCase):
         # the content of the post to enclose embedded links
         pattern = r"View Full Case | Complaint | Context"
         self.assertIsNotNone(re.search(pattern, post_content))
+
+
+class NoEscapeTemplateTest(SimpleTestCase):
+
+    def test_mastodon_follow_new_case_template_no_escape(self):
+        fake_docket_link = faker.url()
+        fake_docket_id = faker.random_int(100_000, 400_000)
+        message, _ = MASTODON_FOLLOW_A_NEW_CASE.format(
+            docket="someone's case",
+            docket_link=fake_docket_link,
+            docket_id=fake_docket_id,
+        )
+        correct_message = """I'm now following someone's case:
+
+Docket: {docket_link}
+
+#CL{docket_id}""".format(docket_link=fake_docket_link,
+            docket_id=fake_docket_id)
+
+        self.assertEqual(message, correct_message)
+
+
+    def test_twitter_follow_new_case_template_no_escape(self):
+        fake_docket_url = faker.url()
+        fake_docket_id = faker.random_int(100_000, 400_000)
+
+        message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
+            docket="someone's case",
+            docket_link=fake_docket_url,
+            docket_id=fake_docket_id,
+        )
+
+        correct_message = """I'm now following someone's case:
+
+Docket: {docket_link}
+
+#CL{docket_id}""".format(docket_link=fake_docket_url,
+            docket_id=fake_docket_id,)
+
+        self.assertEqual(message, correct_message)
+
+
+    def test_bluesky_follow_new_case_template_no_escape(self):
+        fake_docket_url = faker.url()
+        fake_docket_id = faker.random_int(100_000, 400_000)
+
+        message, _ = BLUESKY_FOLLOW_A_NEW_CASE.format(
+            docket="someone's case",
+            docket_link=fake_docket_url,
+            docket_id=fake_docket_id,
+        )
+
+        correct_message = """I'm now following someone's case:
+
+[View Full Case]({docket_link})
+
+#CL{docket_id}""".format(docket_link=fake_docket_url,
+            docket_id=fake_docket_id,)
+
+        self.assertEqual(message, correct_message)
+
+
+    def test_threads_follow_new_case_template_no_escape(self):
+        fake_docket_url = faker.url()
+        fake_docket_id = faker.random_int(100_000, 400_000)
+
+        message, _ = THREADS_FOLLOW_A_NEW_CASE.format(
+            docket="someone's case",
+            docket_link=fake_docket_url,
+            docket_id=fake_docket_id,
+        )
+
+        correct_message = """I'm now following someone's case:
+
+Docket: {docket_link}
+
+#CL{docket_id}""".format(docket_link=fake_docket_url,
+            docket_id=fake_docket_id,)
+
+        self.assertEqual(message, correct_message)

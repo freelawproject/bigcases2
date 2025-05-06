@@ -51,7 +51,7 @@ Docket: {docket_link}
 
 MASTODON_FOLLOW_A_NEW_CASE = MastodonTemplate(
     link_placeholders=["docket_link", "initial_complaint_link", "article_url"],
-    str_template="""I'm now following {{docket}}:{% if date_filed %}
+    str_template="""{% autoescape off %}I'm now following {{docket}}:{% if date_filed %}
 
 Filed: {{date_filed}}{% endif %}
 
@@ -61,7 +61,7 @@ Docket: {{docket_link}}{% if initial_complaint_type and initial_complaint_link %
 
 Context: {{article_url}}{% endif %}
 
-#CL{{docket_id}}""",
+#CL{{docket_id}}{% endautoescape %}""",
 )
 
 
@@ -86,7 +86,7 @@ Docket: {docket_link}
 
 TWITTER_FOLLOW_A_NEW_CASE = TwitterTemplate(
     link_placeholders=["docket_link", "initial_complaint_link", "article_url"],
-    str_template="""I'm now following {{docket}}:{% if date_filed %}
+    str_template="""{% autoescape off %}I'm now following {{docket}}:{% if date_filed %}
 
 Filed: {{date_filed}}{% endif %}
 
@@ -96,19 +96,19 @@ Docket: {{docket_link}}{% if initial_complaint_type and initial_complaint_link %
 
 Context: {{article_url}}{% endif %}
 
-#CL{{docket_id}}""",
+#CL{{docket_id}}{% endautoescape %}""",
 )
 
 BLUESKY_FOLLOW_A_NEW_CASE = BlueskyTemplate(
     link_placeholders=["docket_link", "article_url", "initial_complaint_link"],
     # Remove extra newlines caused by empty template blocks
-    str_template="""I'm now following {{docket}}:{% if date_filed %}
+    str_template="""{% autoescape off %}I'm now following {{docket}}:{% if date_filed %}
 
 Filed: {{date_filed}}{% endif %}
 
 [View Full Case]({{docket_link}}){% if article_url %} | [Background Info]({{article_url}}){% endif %}{% if initial_complaint_type and initial_complaint_link %} | [{{initial_complaint_type}}]({{initial_complaint_link}}){% endif %}
 
-#CL{{docket_id}}""",
+#CL{{docket_id}}{% endautoescape %}""",
 )
 
 BLUESKY_POST_TEMPLATE = BlueskyTemplate(
@@ -152,7 +152,7 @@ Docket: {docket_link}
 
 THREADS_FOLLOW_A_NEW_CASE = ThreadsTemplate(
     link_placeholders=["docket_link", "initial_complaint_link", "article_url"],
-    str_template="""I'm now following {{docket}}:{% if date_filed %}
+    str_template="""{% autoescape off %}I'm now following {{docket}}:{% if date_filed %}
 
 Filed: {{date_filed}}{% endif %}
 
@@ -162,5 +162,5 @@ Docket: {{docket_link}}{% if initial_complaint_type and initial_complaint_link %
 
 Context: {{article_url}}{% endif %}
 
-#CL{{docket_id}}""",
+#CL{{docket_id}}{% endautoescape %}""",
 )
