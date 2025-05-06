@@ -1,6 +1,4 @@
 # Run using `docker-compose up`
-version: "3.7"
-
 networks:
   bc2_net_overlay:
     driver: bridge
