@@ -12,9 +12,7 @@ class VerboseCommand(BaseCommand):
 
     def handle(self, *args, **options):
         verbosity = options.get("verbosity")
-        if not verbosity:
-            self.logger.setLevel(logging.WARN)
-        elif verbosity == 0:
+        if not verbosity or verbosity == 0:
             self.logger.setLevel(logging.WARN)
         elif verbosity == 1:  # default
             self.logger.setLevel(logging.INFO)

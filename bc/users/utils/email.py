@@ -90,8 +90,7 @@ emails: dict[str, EmailType] = {
     # Used both when people want to confirm an email address and when they
     # want to reset their password, with one small tweak in the wording.
     "no_account_found": {
-        "subject": "Password reset and username information on "
-        "Bots.law.com",
+        "subject": "Password reset and username information on Bots.law.com",
         "body": "Hello,\n\n"
         ""
         "Somebody — probably you — has asked that we send %s "

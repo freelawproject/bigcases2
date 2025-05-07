@@ -155,8 +155,7 @@ class ThreadsAPI:
             response.raise_for_status()
         except requests.exceptions.Timeout:
             logger.error(
-                f"Post request to Threads API timed out\n"
-                f"Request URL: {url}"
+                f"Post request to Threads API timed out\nRequest URL: {url}"
             )
             return None
         except requests.exceptions.HTTPError as err:

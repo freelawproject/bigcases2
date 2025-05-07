@@ -54,8 +54,7 @@ class TextImageTest(SimpleTestCase):
             self.assertLessEqual(
                 instance.width,
                 instance.max_width,
-                msg="Failed with dict: %s.\n%s is larger than %s"
-                % (test, instance.width, instance.max_width),
+                msg=f"Failed with dict: {test}.\n{instance.width} is larger than {instance.max_width}",
             )
 
             # compute the max number of character to render in each line

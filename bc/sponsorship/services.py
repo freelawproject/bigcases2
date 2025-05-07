@@ -36,7 +36,9 @@ def log_purchase(
     """
     # Gets the ids of the active sponsorships from each sponsor group.
     sponsorship_ids: list[int] = [
-        group.sponsorships.first().pk for group in sponsored_groups if group.sponsorships.count()  # type: ignore
+        group.sponsorships.first().pk  # type: ignore [misc,union-attr]
+        for group in sponsored_groups
+        if group.sponsorships.count()
     ]
     sponsorships = get_sponsorships_for_subscription(
         sponsorship_ids, subscription_pk

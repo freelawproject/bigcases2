@@ -5,7 +5,6 @@ from django.test import SimpleTestCase
 from bc.channel.tests.factories import fake_token
 from bc.channel.utils.connectors.twitter import TwitterConnector
 from bc.core.utils.tests.base import faker
-from bc.settings.third_party import twitter
 
 
 class UploadMediaTest(SimpleTestCase):

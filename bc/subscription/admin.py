@@ -1,7 +1,5 @@
 from django.contrib import admin
 
-from bc.channel.models import Channel
-
 from .models import FilingWebhookEvent, Subscription
 
 

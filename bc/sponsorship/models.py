@@ -56,8 +56,7 @@ class Transaction(AbstractDateTimeModel):
         on_delete=models.PROTECT,
     )
     type = models.SmallIntegerField(
-        help_text="The type of the transaction. Possible values "
-        "are: %s" % ", ".join([f"({t[0]}): {t[1]}" for t in TYPES]),
+        help_text=f"The type of the transaction. Possible values are: {', '.join([f'({t[0]}): {t[1]}' for t in TYPES])}",
         default=SPONSORSHIP,
         choices=TYPES,
     )

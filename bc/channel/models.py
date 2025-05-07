@@ -6,10 +6,10 @@ from redis.exceptions import LockError
 
 from bc.core.models import AbstractDateTimeModel
 from bc.core.utils.color import format_color_str
+from bc.core.utils.redis import make_redis_interface
 from bc.sponsorship.models import Sponsorship
 from bc.users.models import User
 
-from ..core.utils.redis import make_redis_interface
 from .utils.connectors.base import (
     BaseAPIConnector,
     RefreshableBaseAPIConnector,
@@ -92,8 +92,7 @@ class Channel(AbstractDateTimeModel):
     )
     account_id = models.CharField(
         help_text=(
-            "Service's ID number, username, etc. for the account, "
-            "if applicable"
+            "Service's ID number, username, etc. for the account, if applicable"
         ),
         max_length=100,
     )
@@ -182,12 +181,13 @@ class Channel(AbstractDateTimeModel):
             )
             raise e
         finally:
-            if not lock.owned():
-                return
-            try:
-                lock.release()
-            except Exception as e:
-                logger.error(f"Error releasing lock for channel {self}:\n{e}")
+            if lock.owned():
+                try:
+                    lock.release()
+                except Exception as e:
+                    logger.error(
+                        f"Error releasing lock for channel {self}:\n{e}"
+                    )
 
     def _refresh_access_token(self):
         api = self.get_api_wrapper()
