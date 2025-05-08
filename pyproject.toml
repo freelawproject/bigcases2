@@ -24,7 +24,7 @@ package-mode = false
 "Organisation Homepage" = "https://free.law/"
 
 [tool.poetry.dependencies]
-ada-url = "^1.21.0"
+ada-url = "^1.23.0"
 python = "^3.11"
 art = "^6.4"
 requests = "^2.32.0"
