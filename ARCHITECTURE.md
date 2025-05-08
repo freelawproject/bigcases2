@@ -49,14 +49,11 @@ To set up a development machine, do the following:
 
         docker exec -it bc2-django python manage.py bootstrap-dev
 
-1. Lookup specific data from CourtListener:
+1. Lookup specific data from CourtListener and create a CourtListener docket alert subscription:
 
-        docker exec -it bc2-django python manage.py lookup 64983976
+        docker exec -it bc2-django python manage.py subscribe 64983976
 
-    This will use CL API to lookup the Docket `64983976`and output its data in the console. This command also accepts the following command line options:
-
-      - `--add`: saves the case in the database
-      - `--subscribe`: creates a CourtListener docket alert subscription
+    This will use CL API to lookup the Docket `64983976`, output its data in the console, add it to your local DB, and create a corresponding CourtListener docket subscription.
 
 1. Post something manually in the registered channels:
 
