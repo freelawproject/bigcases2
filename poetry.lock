@@ -78,14 +78,14 @@ files = [
 
 [[package]]
 name = "art"
-version = "6.4"
+version = "6.5"
 description = "ASCII Art Library For Python"
 optional = false
 python-versions = ">=3.6"
 groups = ["main"]
 files = [
-    {file = "art-6.4-py3-none-any.whl", hash = "sha256:4e58b6f0a0bb8574efb311eff24bdd28bf889c0c526ccbbb5410c644340a301c"},
-    {file = "art-6.4.tar.gz", hash = "sha256:417fea674bff8cea7ed058291ad1b81a6032dfce5152f28e629fa4a798a2c14c"},
+    {file = "art-6.5-py3-none-any.whl", hash = "sha256:70706408144c45c666caab690627d5c74aea7b6c7ce8cc968408ddeef8d84afd"},
+    {file = "art-6.5.tar.gz", hash = "sha256:a98d77b42c278697ec6cf4b5bdcdfd997f6b2425332da078d4e31e31377d1844"},
 ]
 
 [package.extras]
@@ -2025,4 +2025,4 @@ test = ["pytest (>=6.0.0)", "setuptools (>=65)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "1f1f62801cc15ffdc214df8331cde774eecc5ea6cf7d915f6cefb3b02f62174c"
+content-hash = "cc100b916b4533371c25bc2ce7d9e141ef730ea3f876bb1534322245d368a072"
