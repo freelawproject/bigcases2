@@ -2,10 +2,9 @@ import socket
 
 import environ
 
-from ..django import DEVELOPMENT, INSTALLED_APPS, TESTING
-from ..project.testing import TESTING
-from ..third_party.aws import AWS_S3_CUSTOM_DOMAIN
-from ..third_party.sentry import SENTRY_REPORT_URI
+from bc.settings.django import DEVELOPMENT, INSTALLED_APPS
+from bc.settings.project.testing import TESTING
+from bc.settings.third_party.aws import AWS_S3_CUSTOM_DOMAIN
 
 env = environ.FileAwareEnv()
 

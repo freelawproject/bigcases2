@@ -458,7 +458,6 @@ def convert_to_jpeg(
 ) -> bytes:
     # Load the image from bytes
     with Image.open(io.BytesIO(image)) as img:
-
         # Ensure image is in RGB mode (JPEG requirement, no transparency)
         if img.mode != "RGB":
             img = img.convert("RGB")

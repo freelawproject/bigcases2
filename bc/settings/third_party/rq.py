@@ -1,9 +1,10 @@
 import environ
 
-env = environ.FileAwareEnv()
+from bc.settings.project.testing import TESTING
 
-from ..project.testing import TESTING
 from .redis import REDIS_DATABASES, REDIS_HOST, REDIS_PORT
+
+env = environ.FileAwareEnv()
 
 RQ_SHOW_ADMIN_LINK = True
 

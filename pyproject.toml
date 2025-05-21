@@ -24,22 +24,22 @@ package-mode = false
 "Organisation Homepage" = "https://free.law/"
 
 [tool.poetry.dependencies]
-ada-url = "^1.21.0"
+ada-url = "^1.23.0"
 python = "^3.11"
-art = "^6.4"
+art = "^6.5"
 requests = "^2.32.0"
-python-dotenv = "^1.0.0"
+python-dotenv = "^1.1.0"
 "Mastodon.py" = {extras = ["cryptography"], version = "^2.0.1"}
 cryptography = "^44.0.1"
 http-ece = "^1.2.0"
 psycopg2-binary = "^2.9.6"
 ansicolors = "^1.1.8"
-prettytable = "^3.15.1"
+prettytable = "^3.16.0"
 courts-db = "^0.10.17"
-Django = "^5.1.8"
-djangorestframework = "^3.15.2"
+Django = "^5.1.9"
+djangorestframework = "^3.16.0"
 django-environ = "^0.12.0"
-sentry-sdk = "^2.24.0"
+sentry-sdk = "^2.27.0"
 django-csp = "^3.8"
 redis = "^5.2.1"
 django-rq = "^3.0.0"
@@ -48,54 +48,31 @@ ipython = "^9.0.2"
 pillow = "^11.0.0"
 django-storages = "^1.14.2"
 boto3 = "^1.37.18"
-django-tailwind = "^3.8.0"
+django-tailwind = "^4.0.1"
 django-ratelimit = "^4.1.0"
 twitterapi = "^2.8.2"
 django-ses = "^4.4.0"
-django-htmx = "^1.22.0"
+django-htmx = "^1.23.0"
 factory-boy = "^3.3.0"
-faker = "^37.0.2"
+faker = "^37.1.0"
 disposable-email-domains = "^0.0.90"
 django-hcaptcha = "^0.2.0"
 beautifulsoup4 = "^4.13.3"
-django-permissions-policy = "^4.25.0"
+django-permissions-policy = "^4.26.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.1.0"
-flake8 = "^6.0.0"
-isort = "^5.12.0"
 mypy = "^1.10.0"
-pylint = "^2.16.1"
 wheel = "^0.45.1"
-pre-commit = "^4.1.0"
-flynt = "^0.77"
-django-stubs = "^5.1.0"
+pre-commit = "^4.2.0"
+django-stubs = "^5.2.0"
 types-requests = "^2.32.0.20240523"
 types-redis = "^4.6.0.2"
 ipython = "^9.0.2"
-django-debug-toolbar = "^5.0.1"
-django-tailwind = {extras = ["reload"], version = "^3.8.0"}
-
-[tool.black]
-include = '''.*\.pyi?$'''
-exclude = '''
-(
-      \.eggs
-    | .*\.egg-info
-    | .*migrations.*
-    | \.mypy_cache
-    | __pycache__
-    | \.venv
-)
-'''
-line-length = 79
+django-debug-toolbar = "^5.2.0"
+django-tailwind = {extras = ["reload"], version = "^4.0.1"}
 
 [tool.'django-stubs']
 django_settings_module = "bc.settings"
-
-[tool.isort]
-profile = "black"
-line_length = 79
 
 [tool.mypy]
 ignore_missing_imports = true
@@ -106,11 +83,38 @@ exclude = "migrations/*"
 module="django_stubs_ext.*"
 follow_imports="normal"
 
-[tool.pylint.messages_control]
-disable = "C0330, C0326"
-
-[tool.pylint.format]
-max-line-length = "79"
+[tool.ruff]
+line-length = 79
+lint.select = [
+  # flake8-bugbear
+  "B",
+  # flake8-comprehensions
+  "C4",
+  # pycodestyle
+  "E",
+  # Pyflakes errors
+  "F",
+  # isort
+  "I",
+  # flake8-simplify
+  "SIM",
+  # flake8-tidy-imports
+  "TID",
+  # pyupgrade
+  "UP",
+  # Pyflakes warnings
+  "W",
+]
+lint.ignore = [
+  # flake8-bugbear opinionated rules
+  "B9",
+  # line-too-long
+  "E501",
+  # suppressible-exception
+  "SIM105",
+  # if-else-block-instead-of-if-exp
+  "SIM108",
+]
 
 [build-system]
 build-backend = "poetry.core.masonry.api"

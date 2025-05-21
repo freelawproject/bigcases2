@@ -1,12 +1,10 @@
 name: Lint
 
 on:
+  pull_request:
   push:
     branches:
-      - '**'
-  pull_request:
-    branches:
-      - 'main'
+      - main
 
 jobs:
   lint:
@@ -18,6 +16,8 @@ jobs:
         id: cp311
         with:
           python-version: "3.11"
+
+      - uses: pre-commit/action@v3.0.1
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -52,25 +52,3 @@ jobs:
           --follow-imports=skip \
           --exclude 'migrations/*' \
           .
-
-      - name: Flynt f-string Formatter
-        run: >
-          flynt .
-          --line-length=79
-          --transform-concats
-          --fail-on-change
-
-      - name: Black Code Formatter
-        uses: psf/black@stable
-
-  lint-isort:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.9"
-
-      - name: isort Import Sorter
-        uses: isort/isort-action@v1

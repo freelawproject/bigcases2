@@ -746,8 +746,7 @@ class MastodonTemplateTest(SimpleTestCase):
             self.assertEqual(
                 result,
                 test["length"],
-                msg="Failed with dict: %s.\n%s is longer than %s"
-                % (test, result, test["length"]),
+                msg=f"Failed with dict: {test}.\n{result} is longer than {test['length']}",
             )
 
     def test_compute_length_of_template_with_links(self):
@@ -787,8 +786,7 @@ class MastodonTemplateTest(SimpleTestCase):
             self.assertEqual(
                 result,
                 test["length"],
-                msg="Failed with dict: %s.\n%s is longer than %s"
-                % (test, result, test["length"]),
+                msg=f"Failed with dict: {test}.\n{result} is longer than {test['length']}",
             )
 
     def test_truncate_descriptions(self):
@@ -808,13 +806,11 @@ class MastodonTemplateTest(SimpleTestCase):
             result, _ = template.format(**test)
             self.assertTrue(
                 len(result) <= template.max_characters,
-                msg="Failed with dict: %s.\n%s is longer than %s"
-                % (test, result, template.max_characters),
+                msg=f"Failed with dict: {test}.\n{result} is longer than {template.max_characters}",
             )
 
 
 class BlueskyTemplateTest(SimpleTestCase):
-
     @patch(
         "bc.channel.utils.connectors.bluesky_api.client.BlueskyAPI._get_session"
     )

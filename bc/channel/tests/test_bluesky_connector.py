@@ -3,10 +3,8 @@ from unittest.mock import call, patch
 from django.test import SimpleTestCase
 
 from bc.channel.tests.factories import fake_token
-from bc.channel.utils.connectors import bluesky
 from bc.channel.utils.connectors.alt_text_utils import thumb_num_alt_text
 from bc.channel.utils.connectors.bluesky import BlueskyConnector
-from bc.channel.utils.connectors.bluesky_api.client import _BASE_API_URL
 from bc.core.utils.tests.base import faker
 
 

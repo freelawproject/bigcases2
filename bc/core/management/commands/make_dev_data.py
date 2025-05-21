@@ -238,7 +238,7 @@ class MakeDevData:
         )
         return subs, self._made_str(
             num,
-            f"{info} {docket_ids}" f"\n{self.INDENT_STR}{subd_to_big_cases}",
+            f"{info} {docket_ids}\n{self.INDENT_STR}{subd_to_big_cases}",
         )
 
     def make_random_subscriptions(
