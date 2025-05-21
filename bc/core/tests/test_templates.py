@@ -837,7 +837,6 @@ class BlueskyTemplateTest(SimpleTestCase):
 
 
 class NoEscapeTemplateTest(SimpleTestCase):
-
     def test_mastodon_follow_new_case_template_no_escape(self):
         fake_docket_link = faker.url()
         fake_docket_id = faker.random_int(100_000, 400_000)
