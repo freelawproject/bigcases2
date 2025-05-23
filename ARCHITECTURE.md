@@ -49,32 +49,9 @@ To set up a development machine, do the following:
 
         docker exec -it bc2-django python manage.py bootstrap-dev
 
-1. Lookup specific data from CourtListener:
-
-        docker exec -it bc2-django python manage.py lookup 64983976
-
-    This will use CL API to lookup the Docket `64983976`and output its data in the console. This command also accepts the following command line options:
-
-      - `--add`: saves the case in the database
-      - `--subscribe`: creates a CourtListener docket alert subscription
-
 1. Post something manually in the registered channels:
 
         docker exec -it bc2-django python manage.py post
-
-1. Create mastodon subscription to push notifications:
-
-        docker exec -it bc2-django python manage.py mastodon-subscribe
-
-    This command requires that the following variables are set in the .env file: `MASTODON_SHARED_KEY`, `MASTODON_PUBLIC_KEY`, `MASTODON_PRIVATE_KEY`and `HOSTNAME`. We added a script to generate the first three variables. Execute the following command to use the script and paste the result in your .env file:
-
-        docker exec -it bc2-django python /opt/bigcases2/scripts/get-mastodon-keys.py
-
-    Make sure that the `MASTODON_TOKEN` and `MASTODON_SERVER` are set before using the previous command.
-
-1. Delete mastodon subscription to push notifications:
-
-        docker exec -it bc2-django python manage.py mastodon-unsubscribe
 
 ## Server
 
