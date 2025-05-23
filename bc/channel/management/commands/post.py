@@ -54,7 +54,9 @@ class Command(BaseCommand):
 
         if not group_count and not channel_count:
             self.stdout.write(
-                self.style.ERROR("No channels have been configured in the database")
+                self.style.ERROR(
+                    "No channels have been configured in the database"
+                )
             )
             return
 
