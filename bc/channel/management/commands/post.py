@@ -49,6 +49,17 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        group_count = Group.objects.count()
+        channel_count = Channel.objects.count()
+
+        if not group_count and not channel_count:
+            self.stdout.write(
+                self.style.ERROR(
+                    "No channels have been configured in the database"
+                )
+            )
+            return
+
         if not options["show_channels"]:
             table, mapping = show_channel_groups_table()
         else:
