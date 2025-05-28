@@ -9,7 +9,7 @@ from bc.core.utils.images import TextImage
 
 from .bluesky_api.types import ImageBlob
 
-ApiWrapper = Union[Mastodon, TwitterAPI, BlueskyAPI, ThreadsAPI]
+ApiWrapper = Union[Mastodon, TwitterAPI, BlueskyAPI, ThreadsAPI]  # noqa: UP007
 
 
 class BaseAPIConnector(Protocol):
