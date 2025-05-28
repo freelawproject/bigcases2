@@ -2,7 +2,11 @@ ARG BUILD_ENV=prod
 
 FROM python:3.11-slim as build-base
 
-RUN apt-get update --option "Acquire::Retries=3" --quiet=2 && \
+# Install apt dependencies
+# caching: https://docs.docker.com/build/cache/optimize/#use-cache-mounts
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update --option "Acquire::Retries=3" --quiet=2 && \
     apt-get install -y build-essential curl &&\
     curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install \
