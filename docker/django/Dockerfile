@@ -2,6 +2,10 @@ ARG BUILD_ENV=prod
 
 FROM python:3.11 as build-base
 
+# Install uv
+# https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
+COPY --from=ghcr.io/astral-sh/uv:0.7 /uv /uvx /bin/
+
 # Install apt dependencies
 # caching: https://docs.docker.com/build/cache/optimize/#use-cache-mounts
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -16,46 +20,33 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         nodejs \
         # So postgres can compile and users can use dbshell
         libpq-dev postgresql-client \
-        # For installing poetry and git-based deps
-        curl git
+        # For installing Git-based deps
+        git
 
-# poetry
-# https://python-poetry.org/docs/configuration/#using-environment-variables
-ENV POETRY_VERSION=2.0.0 \
-    # make poetry install to this location
-    POETRY_HOME="/opt/poetry" \
-    # Don't build a virtualenv to save space
-    POETRY_VIRTUALENVS_CREATE=false \
-    # do not ask any interactive question
-    POETRY_NO_INTERACTION=1
-
-ENV PYTHONUNBUFFERED=1 \
-    # this is where our requirements are copied to
-    PYSETUP_PATH="/opt/pysetup"
-
-RUN python -m venv $POETRY_HOME && \
-    $POETRY_HOME/bin/pip install poetry==$POETRY_VERSION --quiet --upgrade && \
-    ln -s $POETRY_HOME/bin/poetry "$(dirname $(which python))/poetry"  # make accessible via $PATH
-
+# set environment variables
+ENV PYTHONUNBUFFERED=1
 
 ARG BUILD_ENV=prod
 FROM build-base as python-base
 
-WORKDIR $PYSETUP_PATH
-
-COPY poetry.lock pyproject.toml ./
-RUN poetry install $(test "$BUILD_ENV" != "dev" && echo "--without dev")
-
-COPY . /opt/bigcases2
-
-WORKDIR /opt
+WORKDIR /opt/bigcases2
 
 # We log to stdout by default, but we have a config for logging here. Even if
 # we don't use this logger, we need to have the file or else Python is unhappy.
 RUN mkdir /var/log/bigcases2 \
   && chown -R www-data:www-data /var/log/bigcases2
 
-WORKDIR /opt/bigcases2
+# Install Python dependencies
+COPY pyproject.toml uv.lock ./
+# https://docs.astral.sh/uv/guides/integration/docker/#caching
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PROJECT_ENVIRONMENT=/venv \
+    PATH="/venv/bin:$PATH"
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync
+
+COPY . .
 
 # freelawproject/bigcases2:latest-rq
 FROM python-base as rq

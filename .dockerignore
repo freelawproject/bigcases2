@@ -3,8 +3,8 @@
 
 # Except a few things...
 !bc
-!poetry.lock
 !pyproject.toml
+!uv.lock
 !docker
 !manage.py
 !scripts
