@@ -10,7 +10,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.7 /uv /uvx /bin/
 # caching: https://docs.docker.com/build/cache/optimize/#use-cache-mounts
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    apt-get update --option "Acquire::Retries=3" --quiet=2 && \
+    apt-get update --quiet=2 && \
     curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install \
         --no-install-recommends \
