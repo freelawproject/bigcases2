@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import environ
 import requests
@@ -110,7 +110,7 @@ def main():
 
     # Set expiration date in cache so we can refresh the token automatically
     delay = timedelta(seconds=expires_in - 20)
-    expiration_date = (datetime.now(timezone.utc) + delay).isoformat()
+    expiration_date = (datetime.now(UTC) + delay).isoformat()
     expiration_key = f"threads_token_expiration_{user_id}"
     print(
         f"\nNote: Token will expire on {expiration_date} unless refreshed.\n"

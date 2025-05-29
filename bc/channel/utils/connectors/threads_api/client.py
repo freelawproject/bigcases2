@@ -1,7 +1,7 @@
 import logging
 import time
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import requests
 
@@ -194,7 +194,7 @@ class ThreadsAPI:
             return self.refresh_access_token(), self._access_token
 
         expiration_date = datetime.fromisoformat(str(cached_expiration_date))
-        delta = expiration_date - datetime.now(timezone.utc)
+        delta = expiration_date - datetime.now(UTC)
         will_expire_soon = delta <= timedelta(days=2)
 
         if will_expire_soon:
@@ -257,7 +257,7 @@ class ThreadsAPI:
             expires_in (int): The number of seconds until the access token expires.
         """
         delay = timedelta(seconds=expires_in)
-        expiration_date = (datetime.now(timezone.utc) + delay).isoformat()
+        expiration_date = (datetime.now(UTC) + delay).isoformat()
         key = self._get_expiration_key()
         try:
             r.set(

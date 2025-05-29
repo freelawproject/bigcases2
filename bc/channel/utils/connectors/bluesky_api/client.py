@@ -1,6 +1,6 @@
 import logging
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from urllib.parse import urljoin
 
 import requests
@@ -86,7 +86,7 @@ class BlueskyAPI:
 
     def get_current_time_iso(self) -> str:
         """Get current time in Server Timezone (UTC) and ISO format."""
-        return datetime.now(timezone.utc).isoformat()
+        return datetime.now(UTC).isoformat()
 
     def _parse_tags(self, text: str) -> list[RegexMatch]:
         """
