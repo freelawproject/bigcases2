@@ -120,7 +120,6 @@ dependencies = [
     { name = "redis" },
     { name = "requests" },
     { name = "sentry-sdk" },
-    { name = "twitterapi" },
 ]
 
 [package.dev-dependencies]
@@ -171,7 +170,6 @@ requires-dist = [
     { name = "redis", specifier = ">=5.2.1" },
     { name = "requests", specifier = ">=2.32.0" },
     { name = "sentry-sdk", specifier = ">=2.27.0" },
-    { name = "twitterapi", specifier = ">=2.8.2" },
 ]
 
 [package.metadata.requires-dev]
@@ -786,15 +784,6 @@ wheels = [
 ]
 
 [[package]]
-name = "oauthlib"
-version = "3.2.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/6d/fa/fbf4001037904031639e6bfbfc02badfc7e12f137a8afa254df6c4c8a670/oauthlib-3.2.2.tar.gz", hash = "sha256:9859c40929662bec5d64f34d01c99e093149682a3f38915dc0655d5a633dd918", size = 177352, upload-time = "2022-10-17T20:04:27.471Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7e/80/cab10959dc1faead58dc8384a781dfbf93cb4d33d50988f7a69f1b7c9bbe/oauthlib-3.2.2-py3-none-any.whl", hash = "sha256:8139f29aac13e25d502680e9e19963e83f16838d48a0d71c287fe40e7067fbca", size = 151688, upload-time = "2022-10-17T20:04:24.037Z" },
-]
-
-[[package]]
 name = "packaging"
 version = "23.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1030,19 +1019,6 @@ wheels = [
 ]
 
 [[package]]
-name = "requests-oauthlib"
-version = "1.3.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "oauthlib" },
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/95/52/531ef197b426646f26b53815a7d2a67cb7a331ef098bb276db26a68ac49f/requests-oauthlib-1.3.1.tar.gz", hash = "sha256:75beac4a47881eeb94d5ea5d6ad31ef88856affe2332b9aafb52c6452ccf0d7a", size = 52027, upload-time = "2022-01-29T18:52:24.037Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/6f/bb/5deac77a9af870143c684ab46a7934038a53eb4aa975bc0687ed6ca2c610/requests_oauthlib-1.3.1-py2.py3-none-any.whl", hash = "sha256:2577c501a2fb8d05a304c09d090d6e47c306fef15809d102b327cf8364bddab5", size = 23892, upload-time = "2022-01-29T18:52:22.279Z" },
-]
-
-[[package]]
 name = "rq"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1138,16 +1114,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/4f/97/d957b3a5f6da825cb
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/c4/366a09036c07f46eb8c9b2af39c97f502ef24f11f2a6e4d763655d9f2708/traitlets-5.14.2-py3-none-any.whl", hash = "sha256:fcdf85684a772ddeba87db2f398ce00b40ff550d1528c03c14dbf6a02003cd80", size = 85371, upload-time = "2024-03-12T12:37:43.661Z" },
 ]
-
-[[package]]
-name = "twitterapi"
-version = "2.8.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-    { name = "requests-oauthlib" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b7/58/e19c2a2fd371d9197e3193c00f6ff575bc4355bfac60cac67aca2eb34174/TwitterAPI-2.8.2.tar.gz", hash = "sha256:78429482810de69713da6ce906a83c2895b0334d4f0e489fec32cbbca62f184b", size = 12997, upload-time = "2023-03-23T02:06:28.078Z" }
 
 [[package]]
 name = "types-pyopenssl"

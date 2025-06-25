@@ -103,7 +103,7 @@ class BaseTemplate:
         linkless_output = re.sub(url_pattern, "", text)
         unfilled_template_items = re.findall(r"({\w+}|{%|%})", linkless_output)
 
-        # Twitter and Mastodon both count links as 23 chars at present
+        # Mastodon counts links as 23 chars at present
         return (
             len(linkless_output) + (23 * url_count) <= self.max_characters
             and len(unfilled_template_items) == 0
@@ -185,19 +185,6 @@ class MastodonTemplate(BaseTemplate):
 
         All links count as 23 characters in mastodon no matter how long
         they really are.
-        """
-        return 23 * len(self.link_placeholders) + self.count_fixed_characters()
-
-
-@dataclass
-class TwitterTemplate(BaseTemplate):
-    max_characters: int = 280
-
-    def __len__(self) -> int:
-        """This method overrides `Template.__len__`.
-
-        All links (URLs) posted in Tweets are shortened using t.co service.
-        They count as 23 characters.
         """
         return 23 * len(self.link_placeholders) + self.count_fixed_characters()
 

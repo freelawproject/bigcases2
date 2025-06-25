@@ -12,4 +12,3 @@ from .third_party.redis import *  # noqa: F403
 from .third_party.rq import *  # noqa: F403
 from .third_party.sentry import *  # noqa: F403
 from .third_party.threads import *  # noqa: F403
-from .third_party.twitter import *  # noqa: F403

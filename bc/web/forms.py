@@ -5,10 +5,10 @@ from .models import BotSuggestion, WaitList
 
 
 class BotSuggestionForm(ModelForm):
-    TWITTER = "twitter"
+    BLUESKY = "bluesky"
     MASTODON = "mastodon"
     PLATFORMS = (
-        (TWITTER, "Twitter"),
+        (BLUESKY, "Bluesky"),
         (MASTODON, "Mastodon"),
     )
     BOOLEAN_CHOICES = ((True, "Yes"), (False, "No"))

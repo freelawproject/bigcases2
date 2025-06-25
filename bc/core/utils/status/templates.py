@@ -4,7 +4,6 @@ from .base import (
     BlueskyTemplate,
     MastodonTemplate,
     ThreadsTemplate,
-    TwitterTemplate,
 )
 
 DO_NOT_POST = re.compile(
@@ -64,40 +63,6 @@ Context: {{article_url}}{% endif %}
 #CL{{docket_id}}{% endautoescape %}""",
 )
 
-
-TWITTER_POST_TEMPLATE = TwitterTemplate(
-    link_placeholders=["pdf_link"],
-    str_template="""New filing: "{docket}"
-Doc #{doc_num}: {description}
-
-PDF: {pdf_link}
-
-#CL{docket_id}""",
-)
-
-TWITTER_MINUTE_TEMPLATE = TwitterTemplate(
-    link_placeholders=["docket_link"],
-    str_template="""New minute entry in {docket}: {description}
-
-Docket: {docket_link}
-
-#CL{docket_id}""",
-)
-
-TWITTER_FOLLOW_A_NEW_CASE = TwitterTemplate(
-    link_placeholders=["docket_link", "initial_complaint_link", "article_url"],
-    str_template="""{% autoescape off %}I'm now following {{docket}}:{% if date_filed %}
-
-Filed: {{date_filed}}{% endif %}
-
-Docket: {{docket_link}}{% if initial_complaint_type and initial_complaint_link %}
-
-{{initial_complaint_type}}: {{initial_complaint_link}}{% endif %}{% if article_url %}
-
-Context: {{article_url}}{% endif %}
-
-#CL{{docket_id}}{% endautoescape %}""",
-)
 
 BLUESKY_FOLLOW_A_NEW_CASE = BlueskyTemplate(
     link_placeholders=["docket_link", "article_url", "initial_complaint_link"],

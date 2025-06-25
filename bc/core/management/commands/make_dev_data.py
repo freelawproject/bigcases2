@@ -129,14 +129,12 @@ class MakeDevData:
     ) -> tuple[Group | GroupFactory, str]:
         """
         Make 1 big cases Group and channels for it
-        (Bluesky, Mastodon, and Twitter)
+        (Bluesky and Mastodon)
 
         :return: the big cases Group, a string saying that they were made
         :rtype: tuple[Group | GroupFactory, str]
         """
-        info = (
-            "Big Cases Group and the Bluesky, Mastodon, and Twitter Channels"
-        )
+        info = "Big Cases Group and the Bluesky and Mastodon Channels"
         big_cases_group = self._make_group_and_channels(True, "Big cases")
         return big_cases_group, self._made_str(self.NUM_BIGCASES_GROUPS, info)
 
@@ -145,12 +143,12 @@ class MakeDevData:
     ) -> tuple[Group | GroupFactory, str]:
         """
         Make 1 little cases Group and channels for it
-        (Bluesky, Mastodon and Twitter)
+        (Bluesky and Mastodon)
 
         :return: the little cases Group, a string saying that they were made
         :rtype: tuple[Group | GroupFactory, str]
         """
-        info = "Little Cases Group and the Bluesky, Mastodon, and Twitter Channels"
+        info = "Little Cases Group and the Bluesky and Mastodon Channels"
         little_cases_group = self._make_group_and_channels(
             False, "Little cases"
         )
@@ -306,10 +304,8 @@ class MakeDevData:
         mastodon_ch = ChannelFactory.create(
             mastodon=True, group=new_cases_group
         )
-        twitter_ch = ChannelFactory.create(twitter=True, group=new_cases_group)
         new_cases_group.channels.add(bluesky_ch)
         new_cases_group.channels.add(mastodon_ch)
-        new_cases_group.channels.add(twitter_ch)
         return new_cases_group
 
     @staticmethod

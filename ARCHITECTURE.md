@@ -12,7 +12,7 @@ BCB2 uses a [Postgres](https://www.postgresql.org/) database to keep track of ca
 
 ## Posting
 
-BCB2 posts to Twitter ([@big_cases](https://twitter.com/big_cases)), Mastodon ([@big_cases@law.builders](https://law.builders/@bigcases)), and Bluesky ([@bigcases.bots.law](https://bsky.app/profile/bigcases.bots.law)).
+BCB2 posts to Mastodon ([@big_cases@law.builders](https://law.builders/@bigcases)) and Bluesky ([@bigcases.bots.law](https://bsky.app/profile/bigcases.bots.law)).
 
 
 ## Interacting via social media
@@ -57,13 +57,12 @@ To set up a development machine, do the following:
 
 ### What does the server do?
 
-- Receives webhooks from CourtListener, Twitter, and Mastodon
+- Receives webhooks from CourtListener and Mastodon
 - Processes new documents from CourtListener (generate thumbnails, create posts, post)
 
 ## Incoming webhooks
 
 - `/webhooks/docket-[secret]`: From CourtListener, delivered when there is a new document in a followed case. The full URL is secret.
-- `/webhooks/twitter`: From Twitter, Account Activity API
 - `/webhooks/mastodon`: From Mastodon instance, Web Push API
 
 ## Images
