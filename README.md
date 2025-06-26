@@ -3,7 +3,6 @@
 Big Cases Bot 2 is a bot that sends messages about important federal cases as
 they happen. Currently, Big Cases Bot 2 sends to the following channels:
 
- - Twitter: [@big_cases][twitterbc]
  - Mastodon: [@big_cases@law.builders][mastodonbc]
  - Bluesky: [@bigcases.bots.law][blueskybc]
 
@@ -61,6 +60,5 @@ It costs a lot to build and maintain this system and we need your support.
 [bcb1]: https://github.com/bdheath/Big-Cases
 [c]: https://free.law/contact/
 [litte]: https://github.com/freelawproject/bigcases2/issues/8
-[twitterbc]: https://twitter.com/big_cases
 [mastodonbc]: https://law.builders/@bigcases
 [blueskybc]: https://bsky.app/profile/bigcases.bots.law

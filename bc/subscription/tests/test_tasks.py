@@ -5,8 +5,8 @@ from django.test import TestCase
 from bc.channel.models import Channel, Post
 from bc.channel.tests.factories import ChannelFactory, GroupFactory
 from bc.core.utils.status.templates import (
+    BLUESKY_FOLLOW_A_NEW_CASE,
     MASTODON_FOLLOW_A_NEW_CASE,
-    TWITTER_FOLLOW_A_NEW_CASE,
 )
 from bc.core.utils.tests.base import faker
 from bc.sponsorship.tests.factories import SponsorshipFactory
@@ -314,7 +314,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.channel = ChannelFactory(twitter=True)
+        cls.channel = ChannelFactory(bluesky=True)
         cls.subscription = SubscriptionFactory(channels=[cls.channel])
         cls.subscription_w_link = SubscriptionFactory(
             article=True, channels=[cls.channel]
@@ -424,7 +424,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
         mock_api.return_value = api_wrapper
         mock_lookup.return_value = None
         mock_docket_by_cl_id.return_value = None
-        message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
+        message, _ = BLUESKY_FOLLOW_A_NEW_CASE.format(
             docket=self.subscription.name_with_summary,
             docket_link=self.subscription.cl_url,
             docket_id=self.subscription.cl_docket_id,
@@ -448,7 +448,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
         mock_api.return_value = api_wrapper
         mock_lookup.return_value = None
         mock_docket_by_cl_id.return_value = None
-        message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
+        message, _ = BLUESKY_FOLLOW_A_NEW_CASE.format(
             docket=self.subscription_w_link.name_with_summary,
             docket_link=self.subscription_w_link.cl_url,
             docket_id=self.subscription_w_link.cl_docket_id,
@@ -484,7 +484,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
         thumb_2 = faker.binary(6)
         mock_thumbnails.return_value = [thumb_1, thumb_2]
         mock_download_pdf.return_value = document
-        message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
+        message, _ = BLUESKY_FOLLOW_A_NEW_CASE.format(
             docket=self.subscription_w_link.name_with_summary,
             docket_link=self.subscription_w_link.cl_url,
             docket_id=self.subscription_w_link.cl_docket_id,
@@ -546,7 +546,7 @@ class EnqueuePostsForNewCaseTest(TestCase):
         thumb_4 = faker.binary(7)
         mock_sponsored.return_value = [thumb_3, thumb_4]
 
-        twitter_message, _ = TWITTER_FOLLOW_A_NEW_CASE.format(
+        bluesky_message, _ = BLUESKY_FOLLOW_A_NEW_CASE.format(
             docket=self.subscription_w_link.name_with_summary,
             docket_link=self.subscription_w_link.cl_url,
             docket_id=self.subscription_w_link.cl_docket_id,
@@ -565,14 +565,14 @@ class EnqueuePostsForNewCaseTest(TestCase):
         expected_enqueue_calls = [
             call(
                 api_wrapper.add_status,
-                masto_message,
+                bluesky_message,
                 None,
                 [thumb_1, thumb_2],
                 retry=mock_retry(),
             ),
             call(
                 api_wrapper.add_status,
-                twitter_message,
+                masto_message,
                 None,
                 [thumb_3, thumb_4],
                 retry=mock_retry(),
@@ -598,7 +598,7 @@ class EnqueuePostsForNewFilingTest(TestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.channel = ChannelFactory(twitter=True)
+        cls.channel = ChannelFactory(bluesky=True)
         cls.subscription = SubscriptionFactory(channels=[cls.channel])
         cls.webhook_event = FilingWebhookEventFactory(
             docket_id=65745614,
