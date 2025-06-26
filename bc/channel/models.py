@@ -17,6 +17,7 @@ from .utils.connectors.base import (
 from .utils.connectors.bluesky import BlueskyConnector
 from .utils.connectors.masto import MastodonConnector, get_handle_parts
 from .utils.connectors.threads import ThreadsConnector
+from .utils.connectors.twitter import TwitterConnector
 
 logger = logging.getLogger(__name__)
 
@@ -70,11 +71,12 @@ class Channel(AbstractDateTimeModel):
     BCB to broadcast or to issue commands to BCB.
     """
 
-    # TWITTER = 1 Twitter is deprecated, leaving this for documentation.
+    TWITTER = 1
     MASTODON = 2
     BLUESKY = 3
     THREADS = 4
     CHANNELS = (
+        (TWITTER, "Twitter"),
         (MASTODON, "Mastodon"),
         (BLUESKY, "Bluesky"),
         (THREADS, "Threads"),
@@ -120,6 +122,10 @@ class Channel(AbstractDateTimeModel):
         self,
     ) -> BaseAPIConnector | RefreshableBaseAPIConnector:
         match self.service:
+            case self.TWITTER:
+                return TwitterConnector(
+                    self.access_token, self.access_token_secret, self.account
+                )
             case self.MASTODON:
                 account_part, instance_part = get_handle_parts(self.account)
                 return MastodonConnector(
@@ -138,6 +144,8 @@ class Channel(AbstractDateTimeModel):
 
     def self_url(self):
         match self.service:
+            case self.TWITTER:
+                return f"https://twitter.com/{self.account}"
             case self.MASTODON:
                 account_part, instance_part = get_handle_parts(self.account)
                 return f"{instance_part}@{account_part}"
@@ -215,7 +223,7 @@ class Post(AbstractDateTimeModel):
         "Channel", related_name="posts", on_delete=models.CASCADE
     )
     object_id = models.CharField(
-        help_text="The object's id returned by Bluesky/Mastodon/etc's API",
+        help_text="The object's id returned by Twitter/Mastodon/etc's API",
     )
     text = models.TextField(
         help_text="The post content",
@@ -235,6 +243,8 @@ class Post(AbstractDateTimeModel):
         match service:
             case Channel.MASTODON:
                 return f"{self_url}/{self.object_id}"
+            case Channel.TWITTER:
+                return f"{self_url}/status/{self.object_id}"
             case Channel.BLUESKY:
                 return f"{self_url}/post/{self.object_id}"
             case _:

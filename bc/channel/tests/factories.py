@@ -72,8 +72,8 @@ class GroupFactory(DjangoModelFactory):
 class ChannelFactory(DjangoModelFactory):
     """
     Traits:
-      - bluesky Create an enabled Channel for Bluesky
       - mastodon Create an enabled Channel for Mastodon
+      - twitter Create an enabled Channel for Twitter
     """
 
     class Meta:
@@ -98,5 +98,11 @@ class ChannelFactory(DjangoModelFactory):
             service=Channel.MASTODON,
             account="@BigCases2-faux@mastodon.test",
             account_id="Mastodon-big-cases-email-faux",
+            enabled=True,
+        )
+        twitter = factory.Trait(
+            service=Channel.TWITTER,
+            account="BigCases2-faux",
+            account_id="Twitter-big-cases-email-faux",
             enabled=True,
         )

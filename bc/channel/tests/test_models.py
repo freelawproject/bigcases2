@@ -15,6 +15,9 @@ class ModelsUrlTest(SimpleTestCase):
         self.mastodon_channel = Channel(
             service=Channel.MASTODON, account="@bigcases@law.builders"
         )
+        self.twitter_channel = Channel(
+            service=Channel.TWITTER, account="big_cases"
+        )
 
     def test_self_url(self) -> None:
         test_cases = [
@@ -25,6 +28,10 @@ class ModelsUrlTest(SimpleTestCase):
             {
                 "channel": self.mastodon_channel,
                 "expected_url": "https://law.builders/@bigcases",
+            },
+            {
+                "channel": self.twitter_channel,
+                "expected_url": "https://twitter.com/big_cases",
             },
         ]
 
@@ -43,6 +50,10 @@ class ModelsUrlTest(SimpleTestCase):
             {
                 "channel": self.mastodon_channel,
                 "expected_url": "https://law.builders/@bigcases/12345",
+            },
+            {
+                "channel": self.twitter_channel,
+                "expected_url": "https://twitter.com/big_cases/status/12345",
             },
         ]
 

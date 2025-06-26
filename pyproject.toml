@@ -10,6 +10,7 @@ keywords = [
     "legal",
     "courts",
     "bots",
+    "twitter",
     "mastodon",
 ]
 classifiers = [
@@ -59,6 +60,7 @@ dependencies = [
     "redis>=5.2.1",
     "requests>=2.32.0,",
     "sentry-sdk>=2.27.0",
+    "twitterapi>=2.8.2",
 ]
 
 [dependency-groups]
