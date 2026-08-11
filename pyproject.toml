@@ -27,7 +27,7 @@ urls.Repository = "https://github.com/freelawproject/bigcases2"
 urls."Organisation Homepage" = "https://free.law/"
 
 dependencies = [
-    "Django>=5.1.9,<5.2",
+    "Django>=5.1.9,<5.3",
     "Mastodon.py>=2.0.1",
     "ada-url>=1.23.0",
     "ansicolors>=1.1.8",
