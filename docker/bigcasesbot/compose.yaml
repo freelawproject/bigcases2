@@ -12,7 +12,7 @@ services:
     networks:
       - bc2_net_overlay
     ports:
-      - 5050:5050
+      - 127.0.0.1:5050:5050
 
   bc2-postgresql:
     container_name: bc2-postgresql
@@ -82,7 +82,7 @@ services:
     volumes:
       - ../..:/opt/bigcases2
     ports:
-      - "8888:8000"
+      - "127.0.0.1:8888:8000"
     networks:
       - bc2_net_overlay
     env_file:
