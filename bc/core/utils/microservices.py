@@ -5,6 +5,16 @@ import requests
 from django.conf import settings
 
 
+def doctor_auth_headers() -> dict[str, str]:
+    """
+    Returns the bearer token header doctor requires once its own
+    DOCTOR_AUTH_TOKENS setting is on, or nothing while DOCTOR_AUTH_TOKEN
+    is blank.
+    """
+    token = settings.DOCTOR_AUTH_TOKEN
+    return {"Authorization": f"Bearer {token}"} if token else {}
+
+
 def get_thumbnails_from_range(document: bytes, page_range: str) -> list[bytes]:
     """
     Returns a list that contains a thumbnail(as a binary object) for each
@@ -21,9 +31,12 @@ def get_thumbnails_from_range(document: bytes, page_range: str) -> list[bytes]:
         f"{settings.DOCTOR_HOST}/convert/pdf/thumbnails/",
         data={"pages": page_range, "max_dimension": "1920"},
         files={"file": ("dummy.pdf", document)},
+        headers=doctor_auth_headers(),
         timeout=60,
     )
 
+    # A 401 from doctor is JSON, not a zip; say so instead of BadZipFile.
+    thumbnails.raise_for_status()
     zipfile = ZipFile(BytesIO(thumbnails.content))
     return [
         zipfile.open(file_name).read()
