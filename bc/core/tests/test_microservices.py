@@ -26,6 +26,7 @@ class DoctorAuthHeadersTest(SimpleTestCase):
         with patch("bc.core.utils.microservices.requests.post") as post:
             post.return_value.content = _EMPTY_ZIP
             get_thumbnails_from_range(b"%PDF-", "[1]")
+        post.return_value.raise_for_status.assert_called_once_with()
         self.assertEqual(
             post.call_args.kwargs["headers"],
             {"Authorization": "Bearer s3cret"},

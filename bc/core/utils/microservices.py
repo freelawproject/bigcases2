@@ -35,6 +35,8 @@ def get_thumbnails_from_range(document: bytes, page_range: str) -> list[bytes]:
         timeout=60,
     )
 
+    # A 401 from doctor is JSON, not a zip; say so instead of BadZipFile.
+    thumbnails.raise_for_status()
     zipfile = ZipFile(BytesIO(thumbnails.content))
     return [
         zipfile.open(file_name).read()
