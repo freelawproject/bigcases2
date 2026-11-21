@@ -130,3 +130,29 @@ class AddCaseViewTest(TestCase):
             list(subscription.channel.all()), [self.curator_channel]
         )
         self.assertEqual(queue.enqueue.call_count, 2)
+
+
+@patch("bc.subscription.views.lookup_docket_by_cl_id", side_effect=fake_docket)
+class SearchViewTest(TestCase):
+    def setUp(self) -> None:
+        self.curator = UserFactory(channels=[ChannelFactory(mastodon=True)])
+        self.outsider = UserFactory()
+        self.url = reverse("search_cases")
+        self.params = {"q": "https://www.courtlistener.com/docket/1000/x/"}
+
+    def test_anonymous_user_is_redirected(self, lookup) -> None:
+        r = self.client.get(self.url, self.params)
+        self.assertEqual(r.status_code, HTTPStatus.FOUND)
+        lookup.assert_not_called()
+
+    def test_user_without_channels_cannot_search(self, lookup) -> None:
+        self.client.force_login(self.outsider)
+        r = self.client.get(self.url, self.params)
+        self.assertEqual(r.status_code, HTTPStatus.FORBIDDEN)
+        lookup.assert_not_called()
+
+    def test_curator_can_search(self, lookup) -> None:
+        self.client.force_login(self.curator)
+        r = self.client.get(self.url, self.params)
+        self.assertEqual(r.status_code, HTTPStatus.OK)
+        lookup.assert_called_once_with(1000)

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
@@ -28,7 +29,12 @@ from .utils.courtlistener import (
 queue = get_queue("default")
 
 
+@login_required
 def search(request: Request) -> Response:
+    # Lookups use our CourtListener token, so only curators may search.
+    if not Channel.objects.filter(user=request.user).exists():
+        raise PermissionDenied
+
     query = request.GET.get("q")
     context = {"query": query}
     try:
