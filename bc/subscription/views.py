@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -29,11 +31,39 @@ from .utils.courtlistener import (
 queue = get_queue("default")
 
 
+def get_curated_channels_or_403(
+    user, requested_ids: Iterable[str] = ()
+) -> list[Channel]:
+    """
+    Check that a user may add cases, and to the channels they asked for.
+
+    The user must curate at least one channel, and every requested channel
+    id must be one of theirs. Unknown or non-numeric ids fail the check.
+
+    Args:
+        user: the user making the request
+        requested_ids: channel ids as submitted, e.g. from request.POST
+
+    Returns:
+        list[Channel]: the requested channels
+
+    Raises:
+        PermissionDenied: if any check fails
+    """
+    user_channels = {
+        str(channel.pk): channel
+        for channel in Channel.objects.filter(user=user)
+    }
+    requested = set(requested_ids)
+    if not user_channels or not requested <= user_channels.keys():
+        raise PermissionDenied
+    return [user_channels[pk] for pk in requested]
+
+
 @login_required
 def search(request: Request) -> Response:
     # Lookups use our CourtListener token, so only curators may search.
-    if not Channel.objects.filter(user=request.user).exists():
-        raise PermissionDenied
+    get_curated_channels_or_403(request.user)
 
     query = request.GET.get("q")
     context = {"query": query}
@@ -83,18 +113,12 @@ class AddCaseView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         docket_id = request.POST.get("docketId")
 
-        # Only curators may add cases, and only to channels they curate.
         # Check this before touching the DB: creating or updating a
         # subscription changes the name, summary and article URL that every
         # channel following the case uses in its posts.
-        user_channels = {
-            str(channel.pk): channel
-            for channel in Channel.objects.filter(user=request.user)
-        }
-        requested_ids = set(request.POST.getlist("channels"))
-        if not user_channels or not requested_ids <= user_channels.keys():
-            raise PermissionDenied
-        channels = [user_channels[pk] for pk in requested_ids]
+        channels = get_curated_channels_or_403(
+            request.user, request.POST.getlist("channels")
+        )
 
         form = AddSubscriptionForm(request.POST)
         if not channels:
