@@ -1,7 +1,6 @@
 from http import HTTPStatus
 from unittest.mock import patch
 
-from django.http import HttpResponse
 from django.test import TestCase
 from django.urls import reverse
 
@@ -42,7 +41,7 @@ class AddCaseViewTest(TestCase):
         )
         self.url = reverse("add_cases")
 
-    def post(self, docket_id: int, channels: list) -> HttpResponse:
+    def post(self, docket_id: int, channels: list):
         return self.client.post(
             self.url,
             {
