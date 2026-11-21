@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import render
 from django.views import View
@@ -63,9 +63,31 @@ class AddCaseView(LoginRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         docket_id = request.POST.get("docketId")
+
+        # Only curators may add cases, and only to channels they curate.
+        # Check this before touching the DB: creating or updating a
+        # subscription changes the name, summary and article URL that every
+        # channel following the case uses in its posts.
+        user_channels = {
+            str(channel.pk): channel
+            for channel in Channel.objects.filter(user=request.user)
+        }
+        requested_ids = set(request.POST.getlist("channels"))
+        if not user_channels or not requested_ids <= user_channels.keys():
+            raise PermissionDenied
+        channels = [user_channels[pk] for pk in requested_ids]
+
         form = AddSubscriptionForm(request.POST)
+        if not channels:
+            form.add_error(None, "Select at least one channel.")
         if not form.is_valid():
-            context = {"docket_id": docket_id, "form": form}
+            context = {
+                "docket_id": docket_id,
+                "form": form,
+                "channels": get_channel_groups_per_user(request.user.pk),
+            }
+            if form.non_field_errors():
+                context["error"] = " ".join(form.non_field_errors())
             template = "./includes/search_htmx/case-form.html"
             return render(request, template, context)
 
@@ -92,11 +114,9 @@ class AddCaseView(LoginRequiredMixin, View):
                     subscription,
                     created,
                 ) = create_or_update_subscription_from_docket(docket)
-                channels = request.POST.getlist("channels")
 
                 # Verify that all templates produce valid post content
-                for channel_id in channels:
-                    channel = Channel.objects.get(pk=channel_id)
+                for channel in channels:
                     template = get_new_case_template(channel.service)
 
                     template.format(
@@ -124,8 +144,7 @@ class AddCaseView(LoginRequiredMixin, View):
             template = "./includes/search_htmx/case-form.html"
             return render(request, template, context)
 
-        for channel_id in channels:
-            subscription.channel.add(channel_id)
+        subscription.channel.add(*channels)
 
         if created:
             queue.enqueue(
