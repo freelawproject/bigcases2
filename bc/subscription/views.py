@@ -67,6 +67,19 @@ class AddCaseView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         return render(request, "./add-case.html")
 
+    def render_form_with_error(self, request, context, selected_channels):
+        """Re-render the case form, keeping the channels the user chose."""
+        context["channels"] = get_channel_groups_per_user(request.user.pk)
+        context["selected_channels"] = {c.pk for c in selected_channels}
+        template = "./includes/search_htmx/case-form.html"
+        response = render(request, template, context)
+        # Wire up the group "All/None" buttons, as the search view does.
+        return trigger_client_event(
+            response,
+            "groupCheckbox",
+            after="settle",
+        )
+
     def post(self, request, *args, **kwargs):
         docket_id = request.POST.get("docketId")
 
@@ -87,15 +100,10 @@ class AddCaseView(LoginRequiredMixin, View):
         if not channels:
             form.add_error(None, "Select at least one channel.")
         if not form.is_valid():
-            context = {
-                "docket_id": docket_id,
-                "form": form,
-                "channels": get_channel_groups_per_user(request.user.pk),
-            }
+            context = {"docket_id": docket_id, "form": form}
             if form.non_field_errors():
                 context["error"] = " ".join(form.non_field_errors())
-            template = "./includes/search_htmx/case-form.html"
-            return render(request, template, context)
+            return self.render_form_with_error(request, context, channels)
 
         try:
             docket = lookup_docket_by_cl_id(docket_id)
@@ -105,8 +113,7 @@ class AddCaseView(LoginRequiredMixin, View):
                 "form": form,
                 "error": "There was an error trying to submit the form. Please try again.",
             }
-            template = "./includes/search_htmx/case-form.html"
-            return render(request, template, context)
+            return self.render_form_with_error(request, context, channels)
 
         cd = form.cleaned_data
         docket["case_name"] = cd["docket_name"]
@@ -138,7 +145,6 @@ class AddCaseView(LoginRequiredMixin, View):
             context = {
                 "docket_id": docket_id,
                 "form": form,
-                "channels": get_channel_groups_per_user(request.user.pk),
                 "error": (
                     "The combination of name, summary and article URL exceeds "
                     f"the maximum character limit for {channel.get_service_display()} "
@@ -147,8 +153,7 @@ class AddCaseView(LoginRequiredMixin, View):
                     "have made these changes, resubmit the form."
                 ),
             }
-            template = "./includes/search_htmx/case-form.html"
-            return render(request, template, context)
+            return self.render_form_with_error(request, context, channels)
 
         subscription.channel.add(*channels)
 

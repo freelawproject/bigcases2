@@ -114,6 +114,33 @@ class AddCaseViewTest(TestCase):
         self.assert_followed_case_unchanged()
         queue.enqueue.assert_not_called()
 
+    def test_form_errors_keep_selected_channels(self, lookup, queue) -> None:
+        second_channel = ChannelFactory(
+            mastodon=True, group=self.curator_channel.group
+        )
+        self.curator.channels.add(second_channel)
+        self.client.force_login(self.curator)
+
+        r = self.client.post(
+            self.url,
+            {
+                "docketId": 1000,
+                "channels": [self.curator_channel.pk],
+                "docket_name": "Name",
+                "article_url": "not a url",
+            },
+        )
+        self.assertEqual(r.status_code, HTTPStatus.OK)
+        content = r.content.decode()
+        self.assertRegex(
+            content, rf'id="id_channel_{self.curator_channel.pk}"\s+checked'
+        )
+        self.assertNotRegex(
+            content, rf'id="id_channel_{second_channel.pk}"\s+checked'
+        )
+        self.assertIn("groupCheckbox", r.headers["HX-Trigger-After-Settle"])
+        self.assertFalse(Subscription.objects.filter(cl_docket_id=1000))
+
     @patch("bc.subscription.services.find_court_by_id", return_value=[])
     def test_curator_can_add_case_to_own_channel(
         self, find_court, lookup, queue
