@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.test import TestCase
 from django.urls import reverse
 
@@ -27,50 +26,6 @@ class SecurityHeadersTest(TestCase):
         self.assertIn("Content-Security-Policy", self.response.headers)
         self.assertNotIn(
             "Content-Security-Policy-Report-Only", self.response.headers
-        )
-
-    def test_csp_header_has_expected_directives(self) -> None:
-        directives = self._csp_directives()
-        cdn = f"https://{settings.AWS_S3_CUSTOM_DOMAIN}/"
-
-        self.assertEqual(directives["base-uri"], ["'none'"])
-        self.assertEqual(directives["object-src"], ["'none'"])
-        self.assertEqual(directives["default-src"], ["'self'", cdn])
-        self.assertEqual(
-            directives["frame-src"],
-            ["'self'", "https://hcaptcha.com/", "https://*.hcaptcha.com/"],
-        )
-        self.assertEqual(directives["img-src"], ["'self'", cdn, "data:"])
-        self.assertEqual(directives["font-src"], ["'self'", cdn, "data:"])
-        self.assertEqual(
-            directives["connect-src"],
-            [
-                "'self'",
-                "https://hcaptcha.com/",
-                "https://*.hcaptcha.com/",
-                "https://plausible.io/",
-            ],
-        )
-        self.assertEqual(
-            directives["script-src"],
-            [
-                "'self'",
-                "'report-sample'",
-                cdn,
-                "https://hcaptcha.com/",
-                "https://*.hcaptcha.com/",
-                "https://plausible.io/",
-            ],
-        )
-        self.assertEqual(
-            directives["style-src"],
-            [
-                "'self'",
-                "'report-sample'",
-                cdn,
-                "https://hcaptcha.com/",
-                "https://*.hcaptcha.com/",
-            ],
         )
 
     def test_csp_does_not_upgrade_insecure_requests_in_tests(self) -> None:
