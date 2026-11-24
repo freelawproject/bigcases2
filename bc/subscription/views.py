@@ -1,6 +1,9 @@
+from collections.abc import Iterable
+
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ValidationError
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.shortcuts import render
 from django.views import View
@@ -28,7 +31,40 @@ from .utils.courtlistener import (
 queue = get_queue("default")
 
 
+def get_curated_channels_or_403(
+    user, requested_ids: Iterable[str] = ()
+) -> list[Channel]:
+    """
+    Check that a user may add cases, and to the channels they asked for.
+
+    The user must curate at least one channel, and every requested channel
+    id must be one of theirs. Unknown or non-numeric ids fail the check.
+
+    Args:
+        user: the user making the request
+        requested_ids: channel ids as submitted, e.g. from request.POST
+
+    Returns:
+        list[Channel]: the requested channels
+
+    Raises:
+        PermissionDenied: if any check fails
+    """
+    user_channels = {
+        str(channel.pk): channel
+        for channel in Channel.objects.filter(user=user)
+    }
+    requested = set(requested_ids)
+    if not user_channels or not requested <= user_channels.keys():
+        raise PermissionDenied
+    return [user_channels[pk] for pk in requested]
+
+
+@login_required
 def search(request: Request) -> Response:
+    # Lookups use our CourtListener token, so only curators may search.
+    get_curated_channels_or_403(request.user)
+
     query = request.GET.get("q")
     context = {"query": query}
     try:
@@ -61,13 +97,37 @@ class AddCaseView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         return render(request, "./add-case.html")
 
+    def render_form_with_error(self, request, context, selected_channels):
+        """Re-render the case form, keeping the channels the user chose."""
+        context["channels"] = get_channel_groups_per_user(request.user.pk)
+        context["selected_channels"] = {c.pk for c in selected_channels}
+        template = "./includes/search_htmx/case-form.html"
+        response = render(request, template, context)
+        # Wire up the group "All/None" buttons, as the search view does.
+        return trigger_client_event(
+            response,
+            "groupCheckbox",
+            after="settle",
+        )
+
     def post(self, request, *args, **kwargs):
         docket_id = request.POST.get("docketId")
+
+        # Check this before touching the DB: creating or updating a
+        # subscription changes the name, summary and article URL that every
+        # channel following the case uses in its posts.
+        channels = get_curated_channels_or_403(
+            request.user, request.POST.getlist("channels")
+        )
+
         form = AddSubscriptionForm(request.POST)
+        if not channels:
+            form.add_error(None, "Select at least one channel.")
         if not form.is_valid():
             context = {"docket_id": docket_id, "form": form}
-            template = "./includes/search_htmx/case-form.html"
-            return render(request, template, context)
+            if form.non_field_errors():
+                context["error"] = " ".join(form.non_field_errors())
+            return self.render_form_with_error(request, context, channels)
 
         try:
             docket = lookup_docket_by_cl_id(docket_id)
@@ -77,8 +137,7 @@ class AddCaseView(LoginRequiredMixin, View):
                 "form": form,
                 "error": "There was an error trying to submit the form. Please try again.",
             }
-            template = "./includes/search_htmx/case-form.html"
-            return render(request, template, context)
+            return self.render_form_with_error(request, context, channels)
 
         cd = form.cleaned_data
         docket["case_name"] = cd["docket_name"]
@@ -92,11 +151,9 @@ class AddCaseView(LoginRequiredMixin, View):
                     subscription,
                     created,
                 ) = create_or_update_subscription_from_docket(docket)
-                channels = request.POST.getlist("channels")
 
                 # Verify that all templates produce valid post content
-                for channel_id in channels:
-                    channel = Channel.objects.get(pk=channel_id)
+                for channel in channels:
                     template = get_new_case_template(channel.service)
 
                     template.format(
@@ -112,7 +169,6 @@ class AddCaseView(LoginRequiredMixin, View):
             context = {
                 "docket_id": docket_id,
                 "form": form,
-                "channels": get_channel_groups_per_user(request.user.pk),
                 "error": (
                     "The combination of name, summary and article URL exceeds "
                     f"the maximum character limit for {channel.get_service_display()} "
@@ -121,11 +177,9 @@ class AddCaseView(LoginRequiredMixin, View):
                     "have made these changes, resubmit the form."
                 ),
             }
-            template = "./includes/search_htmx/case-form.html"
-            return render(request, template, context)
+            return self.render_form_with_error(request, context, channels)
 
-        for channel_id in channels:
-            subscription.channel.add(channel_id)
+        subscription.channel.add(*channels)
 
         if created:
             queue.enqueue(

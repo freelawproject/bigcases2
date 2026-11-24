@@ -53,7 +53,7 @@
             {% for channel in group.channels.all %}
               <div>
                 <label for="id_channel_{{channel.pk}}" class="flex items-center">
-                  <input type="checkbox" name="channels" value="{{channel.pk}}" id="id_channel_{{channel.pk}}" checked class="group-{{group.pk}}">
+                  <input type="checkbox" name="channels" value="{{channel.pk}}" id="id_channel_{{channel.pk}}" {% if selected_channels is None or channel.pk in selected_channels %}checked{% endif %} class="group-{{group.pk}}">
                   <div class="flex ml-2 font-normal">
                     {{channel.get_service_display}}
                   </div>
