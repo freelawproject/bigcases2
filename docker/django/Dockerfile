@@ -24,7 +24,15 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         git
 
 # set environment variables
-ENV PYTHONUNBUFFERED=1
+ENV \
+    # Point libpq at a client certificate that doesn't exist. Otherwise libpq
+    # looks in $HOME/.postgresql/. Gunicorn workers run as www-data but keep
+    # HOME=/root, which www-data can't read, so libpq gives up on SSL and the
+    # database connection fails. A missing certificate is fine: SSL still
+    # encrypts the connection without one.
+    # https://github.com/freelawproject/courtlistener/issues/2827
+    PGSSLCERT=/tmp/postgresql.crt \
+    PYTHONUNBUFFERED=1
 
 ARG BUILD_ENV=prod
 FROM build-base AS python-base
