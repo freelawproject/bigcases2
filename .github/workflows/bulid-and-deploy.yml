@@ -6,7 +6,7 @@ on:
 env:
   AWS_REGION: us-west-2
   EKS_CLUSTER_NAME: courtlistener
-  EKS_NAMESPACE: court-listener
+  EKS_NAMESPACE: bots
 
 jobs:
   build:
