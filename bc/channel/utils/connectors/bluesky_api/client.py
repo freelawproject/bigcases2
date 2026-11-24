@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 from urllib.parse import urljoin
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from requests import HTTPError, ReadTimeout
 
 from .types import (
@@ -304,23 +304,24 @@ class BlueskyAPI:
                 timeout=self._timeout,
             )
             resp.raise_for_status()
-        except (HTTPError, ReadTimeout):
+        except HTTPError, ReadTimeout:
             return None
 
         soup = BeautifulSoup(resp.text, "html.parser")
 
         # parse out the "og:title" and "og:description" HTML meta tags
-        title_tag = soup.find("meta", property="og:title")
-        description_tag = soup.find("meta", property="og:description")
+        title = self._get_meta_content(soup, "og:title")
+        description = self._get_meta_content(soup, "og:description")
 
         # if there is an "og:image" HTML meta tag, fetch and upload that image
-        image_tag = soup.find("meta", property="og:image")
-        if not image_tag:
+        image_url = self._get_meta_content(soup, "og:image")
+        if not image_url:
             return None
 
-        mime_tag = soup.find("meta", property="og:image:type")
-        mime_type = mime_tag["content"] if mime_tag else "image/png"
-        img_url = urljoin(url, image_tag["content"])
+        mime_type = (
+            self._get_meta_content(soup, "og:image:type") or "image/png"
+        )
+        img_url = urljoin(url, image_url)
         try:
             resp = requests.get(img_url, timeout=self._timeout)
             resp.raise_for_status()
@@ -333,12 +334,29 @@ class BlueskyAPI:
 
         return {
             "uri": url,
-            "title": title_tag["content"] if title_tag else "",
-            "description": (
-                description_tag["content"] if description_tag else ""
-            ),
+            "title": title or "",
+            "description": description or "",
             "thumb": thumbnail,
         }
+
+    @staticmethod
+    def _get_meta_content(soup: BeautifulSoup, prop: str) -> str | None:
+        """
+        Returns the value of the content attribute of the first <meta> tag
+        with the given property, or None if there isn't one.
+
+        Args:
+            soup (BeautifulSoup): The parsed HTML document.
+            prop (str): The value of the property attribute to look for.
+
+        Returns:
+            str (optional): The content of the meta tag.
+        """
+        tag = soup.find("meta", property=prop)
+        if not isinstance(tag, Tag):
+            return None
+        content = tag.get("content")
+        return content if isinstance(content, str) else None
 
     def status_post(self, text: str, media: list[Thumbnail]) -> dict[str, str]:
         """

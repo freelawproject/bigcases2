@@ -42,6 +42,7 @@ class GroupFactory(DjangoModelFactory):
 
     class Meta:
         model = Group
+        skip_postgeneration_save = True
 
     name = factory.LazyFunction(faker.last_name)
     is_big_cases = False

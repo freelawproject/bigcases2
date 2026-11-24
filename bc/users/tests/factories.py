@@ -10,6 +10,7 @@ from bc.users.models import User
 class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
+        skip_postgeneration_save = True
 
     username = LazyAttribute(lambda _: faker.user_name())
     first_name = LazyAttribute(lambda _: faker.first_name())

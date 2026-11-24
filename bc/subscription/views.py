@@ -131,7 +131,7 @@ class AddCaseView(LoginRequiredMixin, View):
 
         try:
             docket = lookup_docket_by_cl_id(docket_id)
-        except (HTTPError, ReadTimeout):
+        except HTTPError, ReadTimeout:
             context = {
                 "docket_id": docket_id,
                 "form": form,
