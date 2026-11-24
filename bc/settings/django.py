@@ -103,7 +103,7 @@ DATABASES = {
             # See: https://www.postgresql.org/docs/current/libpq-ssl.html#LIBPQ-SSL-PROTECTION
             # Use "require" everywhere so a broken SSL setup fails loudly
             # instead of quietly falling back to an unencrypted connection.
-            # Dev and CI run Postgres with SSL on (docker/postgresql/).
+            # Dev and CI run Postgres with SSL on, too.
             "sslmode": env("DB_SSL_MODE", default="require"),
         },
     },

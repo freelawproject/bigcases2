@@ -16,11 +16,17 @@ services:
 
   bc2-postgresql:
     container_name: bc2-postgresql
-    # Postgres with SSL turned on and required, like production (RDS).
-    build:
-      context: ../postgresql
-      args:
-        POSTGRES_VERSION: 18.6-alpine
+    # Debian-based (not alpine) because it ships a self-signed "snakeoil"
+    # certificate. SSL is on so dev connects the way production does.
+    image: postgres:18.6
+    command:
+      - postgres
+      - -c
+      - ssl=on
+      - -c
+      - ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+      - -c
+      - ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
