@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "bc.subscription",
     "bc.web",
     # other apps
+    "csp",
     "django_rq",
     "hcaptcha",
     "tailwind",

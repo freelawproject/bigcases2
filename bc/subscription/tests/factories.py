@@ -14,6 +14,7 @@ local_faker.add_provider(LegalProvider)
 class SubscriptionFactory(DjangoModelFactory):
     class Meta:
         model = Subscription
+        skip_postgeneration_save = True
 
     cl_docket_id = factory.LazyAttribute(
         lambda _: faker.random_int(100_000, 400_000)

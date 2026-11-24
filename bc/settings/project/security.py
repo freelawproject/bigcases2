@@ -1,6 +1,8 @@
 import socket
+from typing import Any
 
 import environ
+from csp.constants import NONE, REPORT_SAMPLE, SELF
 
 from bc.settings.django import DEVELOPMENT, INSTALLED_APPS
 from bc.settings.project.testing import TESTING
@@ -31,52 +33,56 @@ PERMISSIONS_POLICY: dict[str, list[str]] = {
 # Components:
 # - hCaptcha: https://docs.hcaptcha.com/#content-security-policy-settings
 # - Plausible: https://github.com/plausible/docs/issues/20
-CSP_CONNECT_SRC = (
-    "'self'",
-    "https://hcaptcha.com/",
-    "https://*.hcaptcha.com/",
-    "https://plausible.io/",
-)
-CSP_FONT_SRC = (
-    "'self'",
-    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
-    "data:",  # Some browser extensions like this.
-)
-CSP_FRAME_SRC = (
-    "'self'",
-    "https://hcaptcha.com/",
-    "https://*.hcaptcha.com/",
-)
-CSP_IMG_SRC = (
-    "'self'",
-    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
-    "data:",  # @tailwindcss/forms uses data URIs for images.
-)
-CSP_OBJECT_SRC = "'none'"
-CSP_SCRIPT_SRC = (
-    "'self'",
-    "'report-sample'",
-    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
-    "https://hcaptcha.com/",
-    "https://*.hcaptcha.com/",
-    "https://plausible.io/",
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "'report-sample'",
-    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
-    "https://hcaptcha.com/",
-    "https://*.hcaptcha.com/",
-)
-CSP_DEFAULT_SRC = (
-    "'self'",
-    f"https://{AWS_S3_CUSTOM_DOMAIN}/",
-)
-CSP_BASE_URI = "'none'"
+CONTENT_SECURITY_POLICY: dict[str, Any] = {
+    "DIRECTIVES": {
+        "base-uri": [NONE],
+        "connect-src": [
+            SELF,
+            "https://hcaptcha.com/",
+            "https://*.hcaptcha.com/",
+            "https://plausible.io/",
+        ],
+        "default-src": [
+            SELF,
+            f"https://{AWS_S3_CUSTOM_DOMAIN}/",
+        ],
+        "font-src": [
+            SELF,
+            f"https://{AWS_S3_CUSTOM_DOMAIN}/",
+            "data:",  # Some browser extensions like this.
+        ],
+        "frame-src": [
+            SELF,
+            "https://hcaptcha.com/",
+            "https://*.hcaptcha.com/",
+        ],
+        "img-src": [
+            SELF,
+            f"https://{AWS_S3_CUSTOM_DOMAIN}/",
+            "data:",  # @tailwindcss/forms uses data URIs for images.
+        ],
+        "object-src": [NONE],
+        "script-src": [
+            SELF,
+            REPORT_SAMPLE,
+            f"https://{AWS_S3_CUSTOM_DOMAIN}/",
+            "https://hcaptcha.com/",
+            "https://*.hcaptcha.com/",
+            "https://plausible.io/",
+        ],
+        "style-src": [
+            SELF,
+            REPORT_SAMPLE,
+            f"https://{AWS_S3_CUSTOM_DOMAIN}/",
+            "https://hcaptcha.com/",
+            "https://*.hcaptcha.com/",
+        ],
+    },
+}
 if not any(
     (DEVELOPMENT, TESTING)
 ):  # Development and test aren’t used over HTTPS (yet)
-    CSP_UPGRADE_INSECURE_REQUESTS = True
+    CONTENT_SECURITY_POLICY["DIRECTIVES"]["upgrade-insecure-requests"] = True
 
 
 RATELIMIT_VIEW = "bc.web.views.ratelimited"

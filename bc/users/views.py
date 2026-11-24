@@ -159,7 +159,7 @@ def confirm_email(request, signed_pk):
             "register/confirm.html",
             {"expired": True},
         )
-    except (BadSignature, User.DoesNotExist):
+    except BadSignature, User.DoesNotExist:
         return render(
             request,
             "register/confirm.html",

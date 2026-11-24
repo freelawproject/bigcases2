@@ -20,6 +20,6 @@ def check_redis() -> bool:
     r = make_redis_interface("QUEUE")
     try:
         r.ping()
-    except (redis.exceptions.ConnectionError, ConnectionRefusedError):
+    except redis.exceptions.ConnectionError, ConnectionRefusedError:
         return False
     return True

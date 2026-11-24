@@ -15,7 +15,6 @@ from mastodon.errors import (
 from bc.core.utils.images import TextImage
 
 from .alt_text_utils import text_image_alt_text, thumb_num_alt_text
-from .base import ApiWrapper
 
 masto_regex = re.compile(r"@(.+)@(.+)")
 logger = logging.getLogger(__name__)
@@ -45,7 +44,7 @@ class MastodonConnector:
         self.account = account
         self.api: Mastodon = self.get_api_object()
 
-    def get_api_object(self, _version=None) -> ApiWrapper:
+    def get_api_object(self, _version=None) -> Mastodon:
         mastodon = Mastodon(
             api_base_url=self.base_url,
             access_token=self.access_token,

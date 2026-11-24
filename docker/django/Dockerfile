@@ -1,17 +1,17 @@
 ARG BUILD_ENV=prod
 
-FROM python:3.11 as build-base
+FROM python:3.14 AS build-base
 
 # Install uv
 # https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
-COPY --from=ghcr.io/astral-sh/uv:0.7 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.13 /uv /uvx /bin/
 
 # Install apt dependencies
 # caching: https://docs.docker.com/build/cache/optimize/#use-cache-mounts
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update --quiet=2 && \
-    curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_24.x | bash - && \
     apt-get install \
         --no-install-recommends \
         --assume-yes \
@@ -27,7 +27,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 ENV PYTHONUNBUFFERED=1
 
 ARG BUILD_ENV=prod
-FROM build-base as python-base
+FROM build-base AS python-base
 
 WORKDIR /opt/bigcases2
 
@@ -49,18 +49,18 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY . .
 
 # freelawproject/bigcases2:latest-rq
-FROM python-base as rq
+FROM python-base AS rq
 
 CMD python manage.py rqworker --with-scheduler
 
 # freelawproject/bigcases2:latest-tailwind-reload-dev
-FROM python-base as tailwind-reload-dev
+FROM python-base AS tailwind-reload-dev
 
 CMD python /opt/bigcases2/manage.py tailwind install --no-input  && \
     python /opt/bigcases2/manage.py tailwind start --no-input
 
 #freelawproject/bigcases2:latest-web-dev
-FROM python-base as web-dev
+FROM python-base AS web-dev
 
 CMD python /opt/bigcases2/manage.py migrate  && \
     python /opt/bigcases2/manage.py runserver 0.0.0.0:8000
@@ -68,7 +68,7 @@ CMD python /opt/bigcases2/manage.py migrate  && \
 WORKDIR /opt/bigcases2
 
 #freelawproject/bigcases2:latest-web-prod
-FROM python-base as web-prod
+FROM python-base AS web-prod
 
 CMD python /opt/bigcases2/manage.py migrate && \
     gunicorn wsgi:application \

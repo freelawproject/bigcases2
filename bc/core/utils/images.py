@@ -11,6 +11,11 @@ from PIL.ImageDraw import Draw, ImageDraw
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_SPONSORED_SMALL_TEXT = (
+    "Learn more about supporting Free Law Project at "
+    "https://bots.law/sponsors/"
+)
+
 
 @dataclass
 class TextImage:
@@ -209,7 +214,7 @@ class TextImage:
 
         width = title_bbox[2] if title_bbox[2] > desc_bbox[2] else desc_bbox[2]
 
-        return width, height
+        return int(width), int(height)
 
     def get_anchor_coordinates(
         self, width: int, height: int
@@ -298,7 +303,7 @@ class SponsoredThumbnail:
     thumbnail: bytes
     format: str = "png"
     margin: int = 40
-    small_text: str | None = None
+    small_text: str = DEFAULT_SPONSORED_SMALL_TEXT
     title_font_path: str | None = finders.find("fonts/CooperHewitt-Bold.otf")
     small_font_path: str | None = finders.find("fonts/CooperHewitt-Medium.otf")
     text_box: ImageCls = field(init=False)
@@ -306,6 +311,8 @@ class SponsoredThumbnail:
     overlay_layer: ImageCls = field(init=False)
 
     def __post_init__(self) -> None:
+        if not self.title_font_path or not self.small_font_path:
+            raise ValueError("Unable to find the fonts for sponsored text.")
         self.title_font = ImageFont.truetype(self.title_font_path, 46)
         self.small_font = ImageFont.truetype(self.small_font_path, 22)
         self.background = Image.open(io.BytesIO(self.thumbnail)).convert(
@@ -316,7 +323,7 @@ class SponsoredThumbnail:
             "RGBA", self.background.size, (255, 255, 255, 0)
         )
         if not self.small_text:
-            self.small_text = "Learn more about supporting Free Law Project at https://bots.law/sponsors/"
+            self.small_text = DEFAULT_SPONSORED_SMALL_TEXT
 
     def get_text_box_dimensions(self) -> tuple[int, int]:
         """
@@ -332,7 +339,7 @@ class SponsoredThumbnail:
         bbox_height = title_h + small_h
         bbox_width = max(title_w, small_w)
 
-        return (bbox_width, bbox_height)
+        return (int(bbox_width), int(bbox_height))
 
     def _fill_text_box(self) -> ImageCls:
         """
@@ -457,6 +464,7 @@ def convert_to_jpeg(
     quality: int = 85,
 ) -> bytes:
     # Load the image from bytes
+    img: ImageCls
     with Image.open(io.BytesIO(image)) as img:
         # Ensure image is in RGB mode (JPEG requirement, no transparency)
         if img.mode != "RGB":
@@ -490,6 +498,7 @@ def resize_image(
     Returns:
         bytes: Resized and cropped image bytes in the original format.
     """
+    img: ImageCls
     with Image.open(io.BytesIO(image)) as img:
         original_format = img.format
         width, height = img.size
